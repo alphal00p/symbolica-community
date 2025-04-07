@@ -12,8 +12,9 @@ rust-version = "1.73"
 version = "0.1.0"
 
 [features]
+default = [ "spenso"]
 vakint = ["dep:vakint"]
-default = ["vakint"]
+spenso = ["dep:spenso"]
 
 [profile.release]
 codegen-units = 1
@@ -23,11 +24,29 @@ lto = true
 inherits = "dev"
 opt-level = 3
 
+[[bin]]
+name = "stub_gen"
+doc = false
+
 [lib]
 name = "symbolica_community"
 crate-type = ["lib", "cdylib"]
 
 [dependencies]
-symbolica = { version = "0.12.1", features = ["python_no_module"] }
-pyo3 = { version = "0.20.0", features = ["abi3-py37"] }
+symbolica = { version = "0.16.0", features = ["python_no_module"] }
+pyo3 = { version = "0.23.0", features = ["abi3-py37", "anyhow", "num-complex"] }
+
+anyhow = "*"
 vakint = { git = "https://github.com/alphal00p/vakint", branch = "main", optional = true }
+spenso = { version = "0.4.1", optional = true, features = ["shadowing"] }
+itertools = "0.13.0"
+delegate = "0.13.1"
+auto_enums = "0.8.6"
+thiserror = "1.0.65"
+pyo3-stub-gen = "0.6.0"
+env_logger = "0.11.5"
+
+[patch.crates-io]
+# symbolica = { git = "https://github.com/benruijl/symbolica", branch = "no_namespace" }
+spenso = { path = "../spenso" }
+symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}

@@ -4,8 +4,12 @@ build-backend = "maturin"
 
 [project]
 authors = [
-  {email = "benruyl@gmail.com"},
-  {name = "Ben Ruijl"},
+    { email = "benruyl@gmail.com" },
+    { name = "Ben Ruijl" },
+    { email = "mail@lucien.ch" },
+    { name = "Lucien Huber" },
+    { email = "valentin.hirschi@gmail.com" },
+    { name = "Valentin Hischi" },
 ]
 name = "symbolica-community"
 summary = "Community-enhanced version of Symbolica: a blazing fast computer algebra system"
@@ -21,9 +25,14 @@ classifiers = [
 ]
 dynamic = ["version"]
 [project.optional-dependencies]
-tests = [
-    "pytest",
-]
+tests = ["pytest"]
 [tool.maturin]
 python-source = "python"
 features = ["pyo3/extension-module"]
+
+[tool.poetry]
+package-mode = false
+
+
+[tool.uv]
+package = false

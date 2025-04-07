@@ -18,20 +18,24 @@
 
 This repository contains a community-enhanced [Symbolica](https://github.com/benruijl/symbolica) library. It adds extra functionality to existing Symbolica types and defines new ones.
 
-For example, a community function that computes a Dirac trace, can be injected into a Symbolica `Expression`:
-
-```python
-Expression.parse("gamma(mu1,mu2,mu3,mu4)").trace()
-```
+Currently, `symbolica-community` integrates with the following two packages:
+- [spenso](https://github.com/alphal00p/spenso): perform tensor network computations (see [example](https://github.com/benruijl/symbolica-community/blob/main/python/symbolica_community/examples/physics/tensors.py)) 
+- [vakint](https://github.com/alphal00p/vakint): compute massive vacuum bubbles (see [example](https://github.com/benruijl/symbolica-community/blob/main/python/symbolica_community/examples/physics/vakint.py))
 
 
 ## Usage
 
-The community-enhanced version is currently in the testing stage and requires manual building. In the near future, it will be accessible through `pip` and `crates.io`.
+The community-enhanced version can easily be installed next to a regular Symbolica installation. Make sure to either use the community version or the regular version in your project, as they are incompatible.
 
+## Python
 
-### Python
-To use the extension in Python, use `maturin` to build it:
+This package can be installed for Python >3.5 using `pip`:
+
+```sh
+pip install symbolica-community
+```
+
+or can be manually built using `maturin`:
 
 ```bash
 maturin build --release

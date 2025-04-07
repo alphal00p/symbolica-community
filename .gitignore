@@ -1,0 +1,20 @@
+.envrc
+flake.nix
+flake.lock
+/.direnv
+/.venv
+/.zed
+/target
+/.vscode
+*.cpp
+*.so
+*.pyc
+.envrc
+.direnv/
+# Devenv
+#.devenv/
+.devenv*
+devenv.lock
+devenv.nix
+devenv.yaml
+uv.lock
