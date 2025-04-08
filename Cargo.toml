@@ -5,16 +5,17 @@ description = "A blazing fast computer algebra system with community enhancement
 edition = "2021"
 keywords = ["algebra", "symbolic", "manipulation", "mathematics", "physics"]
 license = "MIT"
-name = "symbolica"
+name = "symbolica_community"
 readme = "Readme.md"
 repository = "https://github.com/benruijl/symbolica-community"
 rust-version = "1.73"
 version = "0.1.0"
 
 [features]
-default = [ "spenso"]
+default = [ "shadowing"]
 vakint = ["dep:vakint"]
 spenso = ["dep:spenso"]
+shadowing=["spenso"]
 
 [profile.release]
 codegen-units = 1
@@ -43,10 +44,13 @@ itertools = "0.13.0"
 delegate = "0.13.1"
 auto_enums = "0.8.6"
 thiserror = "1.0.65"
-pyo3-stub-gen = "0.6.0"
+pyo3-stub-gen = "0.7.0"
 env_logger = "0.11.5"
 
+spenso-macros = {git="https://github.com/alphal00p/spenso",rev="20fd120584646ce5b1f5c6f8dd7240341b2a1a98",features=["shadowing"]}
+
 [patch.crates-io]
-# symbolica = { git = "https://github.com/benruijl/symbolica", branch = "no_namespace" }
-spenso = { path = "../spenso" }
-symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}
+symbolica = { git = "https://github.com/benruijl/symbolica", rev = "57f25f34928ca667bd5889d94ed616d15e2ad94f" }
+# spenso = { path = "../spenso/spenso" ,features = ["shadowing"] }
+spenso={git="https://github.com/alphal00p/spenso",rev="20fd120584646ce5b1f5c6f8dd7240341b2a1a98"}
+# symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}

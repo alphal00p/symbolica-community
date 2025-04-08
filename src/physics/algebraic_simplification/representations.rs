@@ -1,0 +1,125 @@
+use spenso::structure::representation::{Euclidean, Minkowski, RepName};
+use spenso_macros::SimpleRepresentation;
+use symbolica::atom::Atom;
+
+#[rustfmt::skip]
+#[derive(SimpleRepresentation)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
+    Default,
+)]
+#[representation(name = "spf", dual_name = "SpinAntiFundamental")] // Specify the dual name
+pub struct SpinFundamental {}
+
+#[rustfmt::skip]
+#[derive(SimpleRepresentation)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
+    Default,
+)]
+#[representation(name = "lor", dual_name = "LorentzUp")] // Specify the dual name
+pub struct Lorentz {}
+
+#[rustfmt::skip]
+#[derive(SimpleRepresentation)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
+    Default,
+)]
+#[representation(name = "cof", dual_name = "ColorAntiFundamental")] // Specify the dual name
+pub struct ColorFundamental {}
+
+#[rustfmt::skip]
+#[derive(SimpleRepresentation)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
+    Default,
+)]
+#[representation(name = "cos", dual_name = "ColorAntiSextet")] // Specify the dual name
+pub struct ColorSextet {}
+
+#[rustfmt::skip]
+#[derive(SimpleRepresentation)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
+    Default,
+)]
+#[representation(name = "bis", self_dual)] // Specify the dual name
+pub struct Bispinor {}
+
+#[rustfmt::skip]
+#[derive(SimpleRepresentation)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
+    Default,
+)]
+#[representation(name = "coad", self_dual)] // Specify the dual name
+pub struct ColorAdjoint {}
+
+pub fn initialize() {
+    let _ = Minkowski {}.to_symbolic([Atom::Zero]);
+    let _ = Euclidean {}.to_symbolic([Atom::Zero]);
+    let _ = Lorentz {}.to_symbolic([Atom::Zero]);
+    let _ = SpinFundamental {}.to_symbolic([Atom::Zero]);
+    let _ = Bispinor {}.to_symbolic([Atom::Zero]);
+    let _ = ColorAdjoint {}.to_symbolic([Atom::Zero]);
+    let _ = ColorFundamental {}.to_symbolic([Atom::Zero]);
+    let _ = ColorSextet {}.to_symbolic([Atom::Zero]);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_spin_fundamental() {
+        let spin_fundamental = SpinFundamental::default();
+
+        // let dual = spin_fundamental.dual();
+
+        assert_eq!(spin_fundamental.dual(), SpinAntiFundamental {});
+        // assert_eq!(spin_fundamental.dual_name(), "SpinAntiFundamental");
+    }
+}

@@ -9,6 +9,8 @@ use vakint::{
 #[cfg(feature = "spenso")]
 pub mod tensors;
 
+pub mod algebraic_simplification;
+
 use pyo3::{
     pyfunction,
     types::{PyAnyMethods, PyModule, PyModuleMethods},

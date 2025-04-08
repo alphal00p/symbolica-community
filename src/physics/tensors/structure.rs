@@ -10,7 +10,7 @@ use spenso::{
     structure::{
         abstract_index::AbstractIndex,
         dimension::Dimension,
-        representation::{ExtendibleReps, Rep, RepName, Representation},
+        representation::{ExtendibleReps, LibraryRep, RepName, Representation},
         slot::{IsAbstractSlot, Slot},
         AtomStructure, HasName, IndexLess, IndexlessNamedStructure, NamedStructure,
         StructureContract, TensorStructure, ToSymbolic, VecStructure,
@@ -19,9 +19,9 @@ use spenso::{
 };
 use symbolica::{
     api::python::PythonExpression,
-    atom::{Atom, AtomView, Symbol},
+    atom::{Atom, AtomView, NamespacedSymbol, Symbol},
     state::State,
-    symbol,
+    symbol, wrap_symbol,
 };
 use thiserror::Error;
 
@@ -36,7 +36,7 @@ use pyo3_stub_gen::derive::*;
 /// This has an optional name, and accompanying symbolica expressions that are considered as additional non-indexed arguments.
 /// The structure is essentially a list of `Slots` that are used to define the structure of the tensor.
 pub struct SpensoIndices {
-    pub structure: NamedStructure<Symbol, Vec<Atom>, Rep>,
+    pub structure: NamedStructure<Symbol, Vec<Atom>, LibraryRep>,
 }
 
 impl From<ShadowedStructure> for SpensoIndices {
@@ -223,7 +223,7 @@ impl<'py> FromPyObject<'py> for PossiblyIndexed {
         } else if let Ok(s) = structure.extract::<Vec<usize>>() {
             Ok(PossiblyIndexed::Unindexed(SpensoStucture {
                 structure: IndexLess::from_iter(
-                    s.into_iter().map(|s| ExtendibleReps::EUCLIDEAN.new_rep(s)),
+                    s.into_iter().map(|s| ExtendibleReps::EUCLIDEAN.rep(s)),
                 )
                 .into(),
             }))
@@ -257,7 +257,7 @@ impl From<ShadowedStructure> for PossiblyIndexed {
 }
 
 impl TensorStructure for PossiblyIndexed {
-    type Slot = Slot<Rep>;
+    type Slot = Slot<LibraryRep>;
 
     fn dual(self) -> Self {
         match self {
@@ -275,19 +275,19 @@ impl TensorStructure for PossiblyIndexed {
             PossiblyIndexed::Unindexed(u) => u.structure,
         }{
             #[auto_enum(Iterator)]
-            fn external_structure_iter(&self) -> impl Iterator<Item =  Slot<Rep>>;
+            fn external_structure_iter(&self) -> impl Iterator<Item =  Slot<LibraryRep>>;
             #[auto_enum(Iterator)]
             fn external_dims_iter(&self) -> impl Iterator<Item = Dimension>;
             #[auto_enum(Iterator)]
             fn external_reps_iter(
                 &self,
-            ) -> impl Iterator<Item = Representation<Rep>>;
+            ) -> impl Iterator<Item = Representation<LibraryRep>>;
             #[auto_enum(Iterator)]
             fn external_indices_iter(&self) -> impl Iterator<Item = AbstractIndex>;
             fn get_aind(&self, i: usize) -> Option<AbstractIndex>;
-            fn get_rep(&self, i: usize) -> Option<Representation<Rep>>;
+            fn get_rep(&self, i: usize) -> Option<Representation<LibraryRep>>;
             fn get_dim(&self, i: usize) -> Option<Dimension>;
-            fn get_slot(&self, i: usize) -> Option<Slot<Rep>>;
+            fn get_slot(&self, i: usize) -> Option<Slot<LibraryRep>>;
 
             fn order(&self) -> usize;
         }
@@ -544,7 +544,7 @@ impl SpensoStucture {
 ///  COLORANTISEXT: Rep = Rep::Dualizable(-4);
 ///
 pub struct SpensoRepresentation {
-    pub representation: Representation<Rep>,
+    pub representation: Representation<LibraryRep>,
 }
 
 // #[gen_stub_pymethods]
@@ -553,15 +553,50 @@ impl SpensoRepresentation {
     #[new]
     #[pyo3(signature =
            (
-           name,dimension,dual=false))]
+           name,dimension,is_self_dual=false))]
     /// Register a new representation with the given name and dimension. If dual is true, the representation will be dualizable, else it will be self-dual.
-    pub fn register_new(name: Bound<'_, PyAny>, dimension: usize, dual: bool) -> PyResult<Self> {
+    pub fn register_new(
+        name: Bound<'_, PyAny>,
+        dimension: Bound<'_, PyAny>,
+        is_self_dual: bool,
+    ) -> PyResult<Self> {
         let name = name.extract::<PyBackedStr>()?;
 
-        let rep = if dual {
-            Rep::new_dual(&name).unwrap().new_rep(dimension)
+        let dim = if let Ok(i) = dimension.extract::<usize>() {
+            Dimension::from(i)
+        } else if let Ok(expr) = dimension.extract::<PythonExpression>() {
+            let id = match expr.expr.as_view() {
+                AtomView::Var(v) => v.get_symbol(),
+                _ => {
+                    return Err(exceptions::PyTypeError::new_err(
+                        "Only symbols can be abstract indices",
+                    ))
+                }
+            };
+
+            Dimension::from(id)
+        } else if let Ok(s) = dimension.extract::<PyBackedStr>() {
+            let ns = "spenso_python";
+            let id = Symbol::new(NamespacedSymbol {
+                symbol: format!("{}::{}", ns, s).into(),
+                namespace: ns.into(),
+                file: file!().into(),
+                line: line!() as usize,
+            })
+            .build()
+            .unwrap();
+
+            Dimension::from(id)
         } else {
-            Rep::new_self_dual(&name).unwrap().new_rep(dimension)
+            return Err(PyTypeError::new_err(
+                "dimension must be an non-zero integer or a symbol",
+            ));
+        };
+
+        let rep = if is_self_dual {
+            LibraryRep::new_self_dual(&name).unwrap().rep(dim)
+        } else {
+            LibraryRep::new_dual(&name).unwrap().rep(dim)
         };
         Ok(SpensoRepresentation {
             representation: rep,
@@ -572,7 +607,7 @@ impl SpensoRepresentation {
     fn __call__(&self, aind: Bound<'_, PyAny>) -> PyResult<SpensoSlot> {
         if let Ok(i) = aind.extract::<isize>() {
             Ok(SpensoSlot {
-                slot: self.representation.new_slot(i),
+                slot: self.representation.slot(i),
             })
         } else if let Ok(expr) = aind.extract::<PythonExpression>() {
             let id = match expr.expr.as_view() {
@@ -586,15 +621,13 @@ impl SpensoRepresentation {
 
             let aind = AbstractIndex::Symbol(id.into());
             Ok(SpensoSlot {
-                slot: self.representation.new_slot(aind),
+                slot: self.representation.slot(aind),
             })
         } else if let Ok(s) = aind.extract::<PyBackedStr>() {
             let id = symbol!(&s);
 
             Ok(SpensoSlot {
-                slot: self
-                    .representation
-                    .new_slot(AbstractIndex::Symbol(id.into())),
+                slot: self.representation.slot(AbstractIndex::Symbol(id.into())),
             })
         } else {
             Err(PyTypeError::new_err("aind must be an integer or a symbol"))
@@ -623,7 +656,7 @@ impl SpensoRepresentation {
 #[pyclass(name = "Slot", module = "symbolica_community.tensors")]
 #[derive(Clone)]
 pub struct SpensoSlot {
-    pub slot: Slot<Rep>,
+    pub slot: Slot<LibraryRep>,
 }
 
 // #[gen_stub_pymethods]
@@ -651,14 +684,12 @@ impl SpensoSlot {
     ) -> PyResult<Self> {
         let name = name.extract::<PyBackedStr>()?;
         let rep = if dual {
-            Rep::new_dual(&name).unwrap().new_rep(dimension)
+            LibraryRep::new_dual(&name).unwrap().rep(dimension)
         } else {
-            Rep::new_self_dual(&name).unwrap().new_rep(dimension)
+            LibraryRep::new_self_dual(&name).unwrap().rep(dimension)
         };
         if let Ok(i) = aind.extract::<isize>() {
-            Ok(SpensoSlot {
-                slot: rep.new_slot(i),
-            })
+            Ok(SpensoSlot { slot: rep.slot(i) })
         } else if let Ok(expr) = aind.extract::<PythonExpression>() {
             let id = match expr.expr.as_view() {
                 AtomView::Var(v) => v.get_symbol(),
@@ -671,13 +702,13 @@ impl SpensoSlot {
 
             let aind = AbstractIndex::Symbol(id.into());
             Ok(SpensoSlot {
-                slot: rep.new_slot(aind),
+                slot: rep.slot(aind),
             })
         } else if let Ok(s) = aind.extract::<PyBackedStr>() {
             let id = symbol!(&s);
 
             Ok(SpensoSlot {
-                slot: rep.new_slot(AbstractIndex::Symbol(id.into())),
+                slot: rep.slot(AbstractIndex::Symbol(id.into())),
             })
         } else {
             Err(PyTypeError::new_err("aind must be an integer or a symbol"))
