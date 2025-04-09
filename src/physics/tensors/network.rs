@@ -1,16 +1,9 @@
-use pyo3::{
-    exceptions::{PyRuntimeError, PyTypeError},
-    prelude::*,
-};
+use pyo3::{exceptions::PyRuntimeError, prelude::*};
 
-use spenso::{
-    network::TensorNetwork,
-    parametric::MixedTensor,
-    tensor_library::{ExplicitKey, ShadowedStructure, TensorLibrary},
-};
+use spenso::{network::TensorNetwork, parametric::MixedTensor, tensor_library::ShadowedStructure};
 use symbolica::{api::python::PythonExpression, atom::Atom};
 
-use super::{structure::PossiblyIndexed, ModuleInit, Spensor};
+use super::{library::SpensorLibrary, structure::PossiblyIndexed, ModuleInit, Spensor};
 use pyo3_stub_gen::derive::*;
 
 #[gen_stub_pyclass(module = "symbolica_community.tensors")]
@@ -42,36 +35,6 @@ pub fn python_to_tensor_network(
     library: &SpensorLibrary,
 ) -> anyhow::Result<SpensoNet> {
     SpensoNet::from_expression(a, library)
-}
-
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(name = "TensorLibrary", module = "symbolica_community.tensors")]
-// #[derive(Clone)]
-pub struct SpensorLibrary {
-    library: TensorLibrary<MixedTensor<f64, ExplicitKey>>,
-}
-
-#[pymethods]
-impl SpensorLibrary {
-    #[new]
-    pub fn new() -> Self {
-        let mut a = Self {
-            library: TensorLibrary::new(),
-        };
-        a.library.update_ids();
-        a
-    }
-
-    pub fn register(&mut self, tensor: Spensor) -> PyResult<()> {
-        self.library.insert_explicit(
-            tensor
-                .tensor
-                .clone()
-                .map_structure_fallible(ExplicitKey::try_from)
-                .map_err(|s| PyTypeError::new_err(s.to_string()))?,
-        );
-        Ok(())
-    }
 }
 
 pub type ParsingNet = TensorNetwork<MixedTensor<f64, ShadowedStructure>, Atom>;

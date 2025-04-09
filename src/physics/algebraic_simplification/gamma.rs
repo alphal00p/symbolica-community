@@ -18,21 +18,17 @@ pub struct GammaSymbols {
     pub projp: Symbol,
     pub projm: Symbol,
     pub gamma5: Symbol,
-    pub dim: Symbol,
     pub gamma_chain: Symbol,
     pub gamma_trace: Symbol,
-    pub dot: Symbol,
 }
 
 pub static GS: LazyLock<GammaSymbols> = LazyLock::new(|| GammaSymbols {
-    gamma: symbol!("gamma"),
-    projp: symbol!("projp"),
-    projm: symbol!("projm"),
-    gamma5: symbol!("gamma5"),
-    dim: symbol!("dim"),
-    gamma_chain: symbol!("gamma_chain"),
-    gamma_trace: symbol!("gamma_trace"),
-    dot: symbol!("dot"),
+    gamma: symbol!("alg::gamma"),
+    projp: symbol!("alg::projp"),
+    projm: symbol!("alg::projm"),
+    gamma5: symbol!("alg::gamma5"),
+    gamma_chain: symbol!("alg::gamma_chain"),
+    gamma_trace: symbol!("alg::gamma_trace"),
 });
 
 pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
@@ -196,7 +192,7 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
     // );
     //
     fn gamma_tracer(arg: AtomView, _context: &Context, out: &mut Atom) -> bool {
-        let gamma_trace = symbol!("gamma_trace");
+        let gamma_trace = GS.gamma_trace;
 
         let mut found = false;
         if let AtomView::Fun(f) = arg {
@@ -314,7 +310,7 @@ mod test {
     fn gamma_alg() {
         initialize();
         let expr = parse_lit!(
-            symbolica_community::gamma_chain(mink(4, 0), mink(4, 0), b(1), b(2)),
+            alg::gamma_chain(mink(4, 0), mink(4, 0), b(1), b(2)),
             "spenso"
         )
         .unwrap()
@@ -325,7 +321,7 @@ mod test {
         let expr = parse_lit!(
             p(mink(4, nu1))
                 * (p(mink(4, nu3)) + q(mink(4, nu3)))
-                * symbolica_community::gamma_chain(
+                * alg::gamma_chain(
                     mink(4, nu1),
                     mink(4, mu),
                     mink(4, nu3),
@@ -377,7 +373,7 @@ mod test {
         let expr = parse_lit!(
             p(mink(4, nu1))
                 * (p(mink(4, nu3)) + q(mink(4, nu3)))
-                * symbolica_community::gamma_chain(
+                * alg::gamma_chain(
                     mink(4, nu1),
                     mink(4, mu),
                     mink(4, nu),
@@ -405,7 +401,7 @@ mod test {
         let expr = parse_lit!(
             p(mink(dim, nu1))
                 * (p(mink(dim, nu3)) + q(mink(dim, nu3)))
-                * symbolica_community::gamma_chain(
+                * alg::gamma_chain(
                     mink(dim, nu1),
                     mink(dim, nu),
                     mink(dim, nu),
@@ -431,7 +427,7 @@ mod test {
         let expr = parse_lit!(
             p(mink(dim, nu1))
                 * (p(mink(dim, nu3)) + q(mink(dim, nu3)))
-                * symbolica_community::gamma_chain(
+                * alg::gamma_chain(
                     mink(dim, nu1),
                     mink(dim, nu),
                     mink(dim, nu3),
@@ -462,7 +458,7 @@ mod test {
                 * symbolica_community::q(mink(dim, nu2))
                 * (symbolica_community::p(mink(dim, nu3)) + symbolica_community::q(mink(dim, nu3)))
                 * symbolica_community::q(mink(dim, nu4))
-                * symbolica_community::gamma_chain(
+                * alg::gamma_chain(
                     mink(dim, nu1),
                     mink(dim, nu4),
                     mink(dim, nu3),
@@ -484,7 +480,7 @@ mod test {
         );
 
         let expr = parse_lit!(
-            symbolica_community::gamma_chain(
+            alg::gamma_chain(
                 mink(dim, mu),
                 mink(dim, nu),
                 mink(dim, mu),

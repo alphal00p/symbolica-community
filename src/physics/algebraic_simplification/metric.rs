@@ -27,7 +27,7 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
     let mut expr = view.expand();
 
     let mut reps = vec![];
-    for i in LibraryRep::all_self_duals() {
+    for i in LibraryRep::all_self_duals().chain(LibraryRep::all_inline_metrics()) {
         reps.push(Replacement::new(
             (function!(ETS.id, i.to_pattern(RS.a__), i.to_pattern(RS.i__))
                 * function!(RS.f_, RS.a___, i.to_pattern(RS.i__), RS.b___))
@@ -129,9 +129,6 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
 
     let mut atom = Atom::new();
 
-    // for r in &reps {
-    //     println!("{:#}", r);
-    // }
     while expr.replace_multiple_into(&reps, &mut atom) {
         std::mem::swap(&mut expr, &mut atom);
         expr = expr.expand();
@@ -142,7 +139,7 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
 
 pub fn to_dots_impl(expr: AtomView) -> Atom {
     let mut reps = vec![];
-    for i in LibraryRep::all_self_duals() {
+    for i in LibraryRep::all_self_duals().chain(LibraryRep::all_inline_metrics()) {
         reps.push(Replacement::new(
             (function!(RS.f_, i.to_pattern(RS.i__)) * function!(RS.g_, i.to_pattern(RS.i__)))
                 .to_pattern(),

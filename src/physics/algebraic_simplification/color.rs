@@ -27,10 +27,10 @@ pub struct ColorSymbols {
 }
 
 pub static CS: LazyLock<ColorSymbols> = LazyLock::new(|| ColorSymbols {
-    t: symbol!("t"),
-    f: symbol!("f"),
-    tr: symbol!("TR"),
-    nc: symbol!("Nc"),
+    t: symbol!("alg::t"),
+    f: symbol!("alg::f"),
+    tr: symbol!("alg::TR"),
+    nc: symbol!("alg::Nc"),
 });
 
 pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
@@ -201,5 +201,20 @@ pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
         Ok(expression)
     } else {
         Err(ColorError::NotFully(expression))
+    }
+}
+pub trait ColorSimplifier {
+    fn simplify_color(&self) -> Result<Atom, ColorError>;
+}
+
+impl ColorSimplifier for Atom {
+    fn simplify_color(&self) -> Result<Atom, ColorError> {
+        color_simplify_impl(self.as_atom_view())
+    }
+}
+
+impl<'a> ColorSimplifier for AtomView<'a> {
+    fn simplify_color(&self) -> Result<Atom, ColorError> {
+        color_simplify_impl(self.as_atom_view())
     }
 }

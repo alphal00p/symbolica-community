@@ -34,6 +34,7 @@ use symbolica::{
 
 use pyo3_stub_gen::{define_stub_info_gatherer, derive::*};
 
+pub mod library;
 pub mod network;
 pub mod structure;
 

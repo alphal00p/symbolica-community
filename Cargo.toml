@@ -12,10 +12,10 @@ rust-version = "1.73"
 version = "0.1.0"
 
 [features]
-default = [ "shadowing"]
+default = [ "spenso", "algebraic_simplification"]
+algebraic_simplification = ["dep:spenso"]
 vakint = ["dep:vakint"]
 spenso = ["dep:spenso"]
-shadowing=["spenso"]
 
 [profile.release]
 codegen-units = 1
@@ -47,11 +47,11 @@ thiserror = "1.0.65"
 pyo3-stub-gen = "0.7.0"
 env_logger = "0.11.5"
 
-# spenso-macros = {git="https://github.com/alphal00p/spenso",rev="20fd120584646ce5b1f5c6f8dd7240341b2a1a98",features=["shadowing"]}
+spenso-macros = {git="https://github.com/alphal00p/spenso",rev="90969b43462c4cf042611977036104562a09c699",features=["shadowing"]}
 
-spenso-macros = {path = "../spenso/spenso-macros"}
+# spenso-macros = {path = "../spenso/spenso-macros"}
 [patch.crates-io]
 symbolica = { git = "https://github.com/benruijl/symbolica", rev = "57f25f34928ca667bd5889d94ed616d15e2ad94f" }
-spenso = { path = "../spenso/spenso" ,features = ["shadowing"] }
-# spenso={git="https://github.com/alphal00p/spenso",rev="20fd120584646ce5b1f5c6f8dd7240341b2a1a98"}
+# spenso = { path = "../spenso/spenso" ,features = ["shadowing"] }
+spenso={git="https://github.com/alphal00p/spenso",rev="90969b43462c4cf042611977036104562a09c699"}
 # symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}

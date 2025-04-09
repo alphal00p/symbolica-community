@@ -30,6 +30,11 @@ pub(crate) fn initialize(m: &Bound<'_, PyModule>) -> PyResult<()> {
         tensors::initialize_spenso(m)?;
     }
 
+    #[cfg(feature = "algebraic_simplification")]
+    {
+        algebraic_simplification::initialize_alg_simp(m)?;
+    }
+
     #[cfg(feature = "vakint")]
     {
         m.add_class::<VakintWrapper>()?;
