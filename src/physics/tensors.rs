@@ -150,20 +150,11 @@ pub enum SliceOrIntOrExpanded<'a> {
     Expanded(Vec<usize>),
 }
 
+#[derive(IntoPyObject)]
 pub enum TensorElements {
     Real(Py<PyFloat>),
     Complex(Py<PyComplex>),
     Symbolica(PythonExpression),
-}
-
-impl IntoPy<PyObject> for TensorElements {
-    fn into_py(self, py: Python<'_>) -> PyObject {
-        match self {
-            TensorElements::Real(f) => f.into_py(py),
-            TensorElements::Complex(c) => c.into_py(py),
-            TensorElements::Symbolica(s) => s.into_py(py),
-        }
-    }
 }
 
 impl From<ConcreteOrParam<RealOrComplex<f64>>> for TensorElements {
@@ -171,12 +162,12 @@ impl From<ConcreteOrParam<RealOrComplex<f64>>> for TensorElements {
         match value {
             ConcreteOrParam::Concrete(RealOrComplex::Real(f)) => {
                 TensorElements::Real(Python::with_gil(|py| {
-                    PyFloat::new_bound(py, f).as_unbound().to_owned()
+                    PyFloat::new(py, f).as_unbound().to_owned()
                 }))
             }
             ConcreteOrParam::Concrete(RealOrComplex::Complex(c)) => {
                 TensorElements::Complex(Python::with_gil(|py| {
-                    PyComplex::from_doubles_bound(py, c.re, c.im)
+                    PyComplex::from_doubles(py, c.re, c.im)
                         .as_unbound()
                         .to_owned()
                 }))
@@ -191,8 +182,14 @@ impl From<ConcreteOrParam<RealOrComplex<f64>>> for TensorElements {
 impl Spensor {
     pub fn structure(&self) -> Py<PyAny> {
         match self.tensor.structure() {
-            PossiblyIndexed::Indexed(a) => Python::with_gil(|py| a.clone().into_py(py)),
-            PossiblyIndexed::Unindexed(a) => Python::with_gil(|py| a.clone().into_py(py)),
+            PossiblyIndexed::Indexed(a) => {
+                Python::with_gil(|py| a.clone().into_pyobject(py).map(|a| a.into_any().unbind()))
+                    .unwrap()
+            }
+            PossiblyIndexed::Unindexed(a) => {
+                Python::with_gil(|py| a.clone().into_pyobject(py).map(|a| a.into_any().unbind()))
+                    .unwrap()
+            }
         }
     }
 
@@ -259,14 +256,21 @@ impl Spensor {
                     .collect();
 
                 if let Some(slice) = slice {
-                    return Ok(Python::with_gil(|py| slice.into_py(py)));
+                    return Ok(
+                        Python::with_gil(|py| slice.into_pyobject(py).map(|a| a.unbind()))?
+                            .into_any(),
+                    );
                 } else {
                     return Err(PyIndexError::new_err("slice out of bounds"));
                 }
             }
         };
 
-        Ok(Python::with_gil(|py| TensorElements::from(out).into_py(py)))
+        Ok(Python::with_gil(|py| {
+            TensorElements::from(out)
+                .into_pyobject(py)
+                .map(|a| a.unbind())
+        })?)
     }
 
     fn __setitem__<'py>(

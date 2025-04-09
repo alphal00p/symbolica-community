@@ -1747,7 +1747,6 @@ dependencies = [
 [[package]]
 name = "spenso"
 version = "0.4.1"
-source = "git+https://github.com/alphal00p/spenso?rev=20fd120584646ce5b1f5c6f8dd7240341b2a1a98#20fd120584646ce5b1f5c6f8dd7240341b2a1a98"
 dependencies = [
  "ahash",
  "anyhow",
@@ -1782,7 +1781,6 @@ dependencies = [
 [[package]]
 name = "spenso-macros"
 version = "0.1.0"
-source = "git+https://github.com/alphal00p/spenso?rev=20fd120584646ce5b1f5c6f8dd7240341b2a1a98#20fd120584646ce5b1f5c6f8dd7240341b2a1a98"
 dependencies = [
  "proc-macro2",
  "quote",

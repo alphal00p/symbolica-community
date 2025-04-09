@@ -89,8 +89,9 @@ impl SpensoNet {
     }
 
     fn contract(&mut self) -> PyResult<()> {
-        self.network.contract();
-        Ok(())
+        self.network
+            .contract()
+            .map_err(|a| PyRuntimeError::new_err(a.to_string()))
     }
 
     fn result(&self) -> PyResult<Spensor> {

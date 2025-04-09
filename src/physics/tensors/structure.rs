@@ -12,16 +12,15 @@ use spenso::{
         dimension::Dimension,
         representation::{ExtendibleReps, LibraryRep, RepName, Representation},
         slot::{IsAbstractSlot, Slot},
-        AtomStructure, HasName, IndexLess, IndexlessNamedStructure, NamedStructure,
-        StructureContract, TensorStructure, ToSymbolic, VecStructure,
+        HasName, IndexLess, NamedStructure, StructureContract, TensorStructure, ToSymbolic,
+        VecStructure,
     },
     tensor_library::{ExplicitKey, ShadowedStructure},
 };
 use symbolica::{
     api::python::PythonExpression,
     atom::{Atom, AtomView, NamespacedSymbol, Symbol},
-    state::State,
-    symbol, wrap_symbol,
+    symbol,
 };
 use thiserror::Error;
 
@@ -134,7 +133,7 @@ impl SpensoIndices {
                     .map_err(|s| PyIndexError::new_err(s.to_string()))?
                     .into();
 
-                Ok(Python::with_gil(|py| out.into_py(py)))
+                Ok(Python::with_gil(|py| out.into_pyobject(py).map(|a| a.unbind()))?.into_any())
             }
             SliceOrIntOrExpanded::Expanded(idxs) => {
                 let out: usize = self
@@ -143,7 +142,7 @@ impl SpensoIndices {
                     .map_err(|s| PyIndexError::new_err(s.to_string()))?
                     .into();
 
-                Ok(Python::with_gil(|py| out.into_py(py)))
+                Ok(Python::with_gil(|py| out.into_pyobject(py).map(|a| a.unbind()))?.into_any())
             }
             SliceOrIntOrExpanded::Slice(s) => {
                 let r = s.indices(self.structure.size().unwrap() as isize)?;
@@ -176,7 +175,12 @@ impl SpensoIndices {
                     .collect();
 
                 match slice {
-                    Ok(slice) => Ok(Python::with_gil(|py| slice.into_py(py))),
+                    Ok(slice) => {
+                        Ok(
+                            Python::with_gil(|py| slice.into_pyobject(py).map(|a| a.unbind()))?
+                                .into_any(),
+                        )
+                    }
                     Err(e) => Err(PyIndexError::new_err(e.to_string())),
                 }
             }
@@ -311,7 +315,20 @@ impl HasName for PossiblyIndexed {
 }
 
 impl StructureContract for PossiblyIndexed {
-    fn concat(&mut self, other: &Self) {}
+    fn concat(&mut self, other: &Self) {
+        match self {
+            PossiblyIndexed::Indexed(i) => {
+                if let PossiblyIndexed::Indexed(j) = other {
+                    i.structure.concat(&j.structure).into()
+                } else {
+                    panic!("Cannot merge indexed and unindexed structures")
+                }
+            }
+            PossiblyIndexed::Unindexed(_) => {
+                panic!("Cannot concat indexed and unindexed structures")
+            }
+        }
+    }
     #[must_use]
     fn merge_at(&self, other: &Self, positions: (usize, usize)) -> Self {
         match self {
@@ -471,7 +488,7 @@ impl SpensoStucture {
                     .map_err(|s| PyIndexError::new_err(s.to_string()))?
                     .into();
 
-                Ok(Python::with_gil(|py| out.into_py(py)))
+                Ok(Python::with_gil(|py| out.into_pyobject(py).map(|a| a.unbind()))?.into_any())
             }
             SliceOrIntOrExpanded::Expanded(idxs) => {
                 let out: usize = self
@@ -480,7 +497,7 @@ impl SpensoStucture {
                     .map_err(|s| PyIndexError::new_err(s.to_string()))?
                     .into();
 
-                Ok(Python::with_gil(|py| out.into_py(py)))
+                Ok(Python::with_gil(|py| out.into_pyobject(py).map(|a| a.unbind()))?.into_any())
             }
             SliceOrIntOrExpanded::Slice(s) => {
                 let r = s.indices(self.structure.size().unwrap() as isize)?;
@@ -513,7 +530,12 @@ impl SpensoStucture {
                     .collect();
 
                 match slice {
-                    Ok(slice) => Ok(Python::with_gil(|py| slice.into_py(py))),
+                    Ok(slice) => {
+                        Ok(
+                            Python::with_gil(|py| slice.into_pyobject(py).map(|a| a.unbind()))?
+                                .into_any(),
+                        )
+                    }
                     Err(e) => Err(PyIndexError::new_err(e.to_string())),
                 }
             }
