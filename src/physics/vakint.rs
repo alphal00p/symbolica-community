@@ -7,6 +7,8 @@ use pyo3::{PyObject, PyResult};
 use symbolica::api::python::PythonExpression;
 use symbolica::atom::{Atom, Symbol};
 use symbolica::domains::float::{Complex, Float, RealNumberLike};
+
+use symbolica::symbol;
 use vakint::{
     vakint_symbol, EvaluationMethod, EvaluationOrder, FMFTOptions, LoopNormalizationFactor,
     MATADOptions, NumericalEvaluationResult, PySecDecOptions, Vakint, VakintError,
@@ -362,6 +364,7 @@ impl VakintWrapper {
         let value = res
             .value
             .to_atom(vakint_symbol!(self.vakint.settings.epsilon_symbol.clone()));
+
         Ok(value.into())
     }
 

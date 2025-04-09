@@ -1,4 +1,3 @@
-pub mod trace;
 #[cfg(feature = "vakint")]
 pub mod vakint;
 #[cfg(feature = "vakint")]
@@ -6,23 +5,15 @@ use vakint::{
     NumericalEvaluationResultWrapper, VakintEvaluationMethodWrapper, VakintExpressionWrapper,
     VakintWrapper,
 };
+#[cfg(feature = "algebraic_simplification")]
+pub mod algebraic_simplification;
 #[cfg(feature = "spenso")]
 pub mod tensors;
 
-pub mod algebraic_simplification;
-
 use pyo3::{
-    pyfunction,
-    types::{PyAnyMethods, PyModule, PyModuleMethods},
-    wrap_pyfunction, Bound, PyResult,
+    types::{PyModule, PyModuleMethods},
+    Bound, PyResult,
 };
-use symbolica::api::python::PythonExpression;
-
-/// Compute the Diract trace.
-#[pyfunction(name = "trace")]
-fn python_trace(a: PythonExpression) -> PythonExpression {
-    trace::trace(a.expr.as_view()).into()
-}
 
 pub(crate) fn initialize(m: &Bound<'_, PyModule>) -> PyResult<()> {
     #[cfg(feature = "spenso")]

@@ -12,8 +12,9 @@ rust-version = "1.73"
 version = "0.1.0"
 
 [features]
+
 default = [ "spenso", "algebraic_simplification", "vakint"]
-algebraic_simplification = ["dep:spenso"]
+algebraic_simplification = ["dep:spenso", "dep:spenso-macros"]
 vakint = ["dep:vakint"]
 spenso = ["dep:spenso"]
 
@@ -38,7 +39,7 @@ symbolica = { version = "0.16.0", features = ["python_no_module"] }
 pyo3 = { version = "0.23.0", features = ["abi3-py37", "anyhow", "num-complex"] }
 
 anyhow = "*"
-vakint = { git = "https://github.com/alphal00p/vakint", branch = "vk_for_sb_0_16_latest", optional = true }
+vakint = { git = "https://github.com/alphal00p/vakint", branch = "vk_for_sb_0_16_latest", optional=true }
 spenso = { version = "0.4.1", optional = true, features = ["shadowing"] }
 itertools = "0.13.0"
 delegate = "0.13.1"
@@ -47,7 +48,7 @@ thiserror = "1.0.65"
 pyo3-stub-gen = "0.7.0"
 env_logger = "0.11.5"
 
-spenso-macros = {git="https://github.com/alphal00p/spenso",rev="90969b43462c4cf042611977036104562a09c699",features=["shadowing"]}
+spenso-macros = {git="https://github.com/alphal00p/spenso",rev="90969b43462c4cf042611977036104562a09c699",features=["shadowing"],optional=true}
 
 # spenso-macros = {path = "../spenso/spenso-macros"}
 [patch.crates-io]
