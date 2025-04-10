@@ -1,3 +1,4 @@
+#![allow(uncommon_codepoints)]
 use pyo3::prelude::*;
 
 pub mod physics;

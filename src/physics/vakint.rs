@@ -8,7 +8,6 @@ use symbolica::api::python::PythonExpression;
 use symbolica::atom::{Atom, Symbol};
 use symbolica::domains::float::{Complex, Float, RealNumberLike};
 
-use symbolica::symbol;
 use vakint::{
     vakint_symbol, EvaluationMethod, EvaluationOrder, FMFTOptions, LoopNormalizationFactor,
     MATADOptions, NumericalEvaluationResult, PySecDecOptions, Vakint, VakintError,

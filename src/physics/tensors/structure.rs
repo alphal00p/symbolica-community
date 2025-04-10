@@ -4,27 +4,32 @@ use pyo3::{
     exceptions::{self, PyIndexError, PyRuntimeError, PyTypeError},
     prelude::*,
     pybacked::PyBackedStr,
-    types::PyTuple,
+    types::{PyDict, PyTuple},
 };
 use spenso::{
     structure::{
-        abstract_index::AbstractIndex,
+        abstract_index::{AbstractIndex, AbstractIndexError},
         dimension::Dimension,
-        representation::{ExtendibleReps, LibraryRep, RepName, Representation},
+        representation::{ExtendibleReps, LibraryRep, Minkowski, RepName, Representation},
         slot::{IsAbstractSlot, Slot},
         HasName, IndexLess, NamedStructure, StructureContract, TensorStructure, ToSymbolic,
         VecStructure,
     },
-    tensor_library::{ExplicitKey, ShadowedStructure},
+    tensor_library::{ExplicitKey, ShadowedStructure, ETS},
 };
 use symbolica::{
-    api::python::PythonExpression,
-    atom::{Atom, AtomView, NamespacedSymbol, Symbol},
+    api::python::{ConvertibleToExpression, PythonExpression},
+    atom::{Atom, AtomView, FunctionBuilder, NamespacedSymbol, Symbol},
     symbol,
 };
 use thiserror::Error;
 
-use super::{ModuleInit, SliceOrIntOrExpanded};
+use crate::physics::algebraic_simplification::{gamma::AGS, representations::Bispinor};
+
+use super::{
+    library::{TensorNamespace, WEYL},
+    ModuleInit, SliceOrIntOrExpanded,
+};
 use auto_enums::auto_enum;
 use pyo3_stub_gen::derive::*;
 
@@ -51,6 +56,36 @@ impl ModuleInit for SpensoIndices {
         m.add_class::<SpensoStucture>()?;
         m.add_class::<SpensoRepresentation>()?;
         Ok(())
+    }
+}
+
+pub enum ArithmeticStructure {
+    Convertible(ConvertibleToExpression),
+    Structure(SpensoIndices),
+    Expression(PythonExpression),
+}
+
+impl ArithmeticStructure {
+    pub fn to_expression(self) -> PyResult<PythonExpression> {
+        match self {
+            ArithmeticStructure::Convertible(expr) => Ok(expr.to_expression()),
+            ArithmeticStructure::Structure(indices) => indices.to_expression(),
+            ArithmeticStructure::Expression(expr) => Ok(expr),
+        }
+    }
+}
+
+impl<'a> FromPyObject<'a> for ArithmeticStructure {
+    fn extract_bound(ob: &Bound<'a, PyAny>) -> PyResult<Self> {
+        if let Ok(ob) = ob.extract::<ConvertibleToExpression>() {
+            Ok(ArithmeticStructure::Convertible(ob))
+        } else if let Ok(ob) = ob.extract::<SpensoIndices>() {
+            Ok(ArithmeticStructure::Structure(ob))
+        } else {
+            Err(exceptions::PyTypeError::new_err(
+                "Only convertible expressions and spenso indices can be used",
+            ))
+        }
     }
 }
 
@@ -185,6 +220,58 @@ impl SpensoIndices {
                 }
             }
         }
+    }
+
+    /// Add this expression to `other`, returning the result.
+    pub fn __add__(&self, rhs: ArithmeticStructure) -> PyResult<PythonExpression> {
+        let rhs = rhs.to_expression()?;
+        Ok((self.to_expression()?.expr.as_ref() + rhs.expr.as_ref()).into())
+    }
+
+    /// Add this expression to `other`, returning the result.
+    pub fn __radd__(&self, rhs: ArithmeticStructure) -> PyResult<PythonExpression> {
+        self.__add__(rhs)
+    }
+
+    /// Subtract `other` from this expression, returning the result.
+    pub fn __sub__(&self, rhs: ArithmeticStructure) -> PyResult<PythonExpression> {
+        let rhs = rhs.to_expression()?.__neg__()?;
+        self.__add__(ArithmeticStructure::Expression(rhs))
+    }
+
+    /// Subtract this expression from `other`, returning the result.
+    pub fn __rsub__(&self, rhs: ArithmeticStructure) -> PyResult<PythonExpression> {
+        let s = self.to_expression()?.__neg__()?.expr;
+
+        let r = rhs.to_expression()?.expr;
+        Ok((r + s).into())
+    }
+
+    /// Add this expression to `other`, returning the result.
+    pub fn __mul__(&self, rhs: ArithmeticStructure) -> PyResult<PythonExpression> {
+        let rhs = rhs.to_expression()?;
+        Ok((self.to_expression()?.expr.as_ref() * rhs.expr.as_ref()).into())
+    }
+
+    /// Add this expression to `other`, returning the result.
+    pub fn __rmul__(&self, rhs: ArithmeticStructure) -> PyResult<PythonExpression> {
+        self.__mul__(rhs)
+    }
+
+    /// Take `self` to power `exp`, returning the result.
+    pub fn __pow__(
+        &self,
+        rhs: ArithmeticStructure,
+        number: Option<i64>,
+    ) -> PyResult<PythonExpression> {
+        if number.is_some() {
+            return Err(exceptions::PyValueError::new_err(
+                "Optional number argument not supported",
+            ));
+        }
+
+        let rhs = rhs.to_expression()?;
+        Ok(self.to_expression()?.exp().pow(&rhs.expr).into())
     }
 }
 
@@ -540,6 +627,164 @@ impl SpensoStucture {
                 }
             }
         }
+    }
+
+    #[pyo3(signature = (*args, **kwargs))]
+    fn __call__(
+        &self,
+        py: Python<'_>,
+        args: &Bound<'_, PyTuple>,
+        kwargs: Option<&Bound<'_, PyDict>>,
+    ) -> PyResult<Py<PyAny>> {
+        if let Some(kwargs) = kwargs {
+            let mut aind = Vec::new();
+            if let Some(to_atom) = kwargs.get_item("to_atom")? {
+                let to_atom = to_atom.extract::<bool>()?;
+                if to_atom {
+                    for a in args {
+                        if let Ok(s) = a.extract::<isize>() {
+                            aind.push(Atom::new_num(s as i64));
+                        } else if let Ok(arg) = a.extract::<PythonExpression>() {
+                            aind.push(arg.expr);
+                        } else {
+                            return Err(exceptions::PyTypeError::new_err(
+                                "Only integers and symbols can be used",
+                            ));
+                        }
+                    }
+                }
+            }
+
+            let slots = self
+                .structure
+                .external_reps_iter()
+                .zip(aind)
+                .map(|(rep, ind)| rep.to_symbolic([ind]))
+                .collect::<Vec<_>>();
+
+            let mut value_builder = FunctionBuilder::new(
+                self.structure
+                    .name()
+                    .ok_or(PyRuntimeError::new_err("structure has no name"))?,
+            );
+
+            if let Some(args) = self.structure.args() {
+                value_builder = value_builder.add_args(&args);
+            }
+            let expr = PythonExpression::from(value_builder.add_args(&slots).finish());
+            return Ok(expr.into_pyobject(py).map(|a| a.unbind())?.into_any());
+        }
+
+        let mut aind: Vec<AbstractIndex> = Vec::new();
+        for a in args {
+            if let Ok(s) = a.extract::<isize>() {
+                aind.push(s.into());
+            } else if let Ok(arg) = a.extract::<PythonExpression>() {
+                aind.push(
+                    arg.expr
+                        .as_view()
+                        .try_into()
+                        .map_err(|a: AbstractIndexError| PyTypeError::new_err(a.to_string()))?,
+                );
+            } else {
+                return Err(exceptions::PyTypeError::new_err(
+                    "Only integers and symbols can be used",
+                ));
+            }
+        }
+        Ok(SpensoIndices {
+            structure: self.structure.clone().to_indexed(&aind),
+        }
+        .into_pyobject(py)
+        .map(|a| a.unbind())?
+        .into_any())
+    }
+
+    #[staticmethod]
+    pub fn id(rep: SpensoRepresentation) -> Self {
+        ExplicitKey::from_iter(
+            [rep.representation, rep.representation.dual()],
+            ETS.id,
+            None,
+        )
+        .into()
+    }
+
+    #[staticmethod]
+    pub fn metric(rep: SpensoRepresentation) -> Self {
+        ExplicitKey::from_iter([rep.representation, rep.representation], ETS.metric, None).into()
+    }
+
+    #[allow(non_snake_case)]
+    #[staticmethod]
+    //make it optional
+    pub fn gamma4D(namespace: TensorNamespace) -> Self {
+        let name = match namespace {
+            TensorNamespace::Weyl => WEYL.gamma,
+            TensorNamespace::Algebra => AGS.gamma,
+        };
+
+        ExplicitKey::from_iter(
+            [
+                LibraryRep::from(Minkowski {}).rep(4),
+                Bispinor {}.rep(4).cast(),
+                Bispinor {}.rep(4).cast(),
+            ],
+            name,
+            None,
+        )
+        .into()
+    }
+
+    #[allow(non_snake_case)]
+    #[staticmethod]
+    pub fn gammadD(dim: PythonExpression) -> PyResult<Self> {
+        if let AtomView::Var(v) = dim.expr.as_view() {
+            Ok(ExplicitKey::from_iter(
+                [
+                    LibraryRep::from(Minkowski {}).rep(v.get_symbol()),
+                    Bispinor {}.rep(4).cast(),
+                    Bispinor {}.rep(4).cast(),
+                ],
+                AGS.gamma,
+                None,
+            )
+            .into())
+        } else {
+            return Err(exceptions::PyTypeError::new_err(
+                "Only symbols can used as dims",
+            ));
+        }
+    }
+
+    #[staticmethod]
+    pub fn gamma5(namespace: TensorNamespace) -> Self {
+        let name = match namespace {
+            TensorNamespace::Weyl => WEYL.gamma5,
+            TensorNamespace::Algebra => AGS.gamma5,
+        };
+
+        ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], name, None).into()
+    }
+
+    #[staticmethod]
+    pub fn projm(namespace: TensorNamespace) -> Self {
+        let name = match namespace {
+            TensorNamespace::Algebra => AGS.projm,
+            TensorNamespace::Weyl => WEYL.projm,
+        };
+
+        ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], name, None).into()
+    }
+
+    #[staticmethod]
+    pub fn projp(namespace: TensorNamespace) -> Self {
+        let name = match namespace {
+            TensorNamespace::Algebra => AGS.projp,
+            TensorNamespace::Weyl => WEYL.projp,
+        };
+
+        ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], name, None).into()
     }
 }
 

@@ -13,22 +13,150 @@ use symbolica::{
 
 use crate::physics::algebraic_simplification::{metric::MetricSimplifier, rep_symbols::RS};
 
-pub struct GammaSymbols {
+use super::representations::Bispinor;
+
+pub struct GammaLibrary {
     pub gamma: Symbol,
     pub projp: Symbol,
     pub projm: Symbol,
     pub gamma5: Symbol,
+    pub sigma: Symbol,
+}
+
+impl GammaLibrary {
+    pub fn replace_with(&self, rep: &Self) -> Vec<Replacement> {
+        vec![
+            Replacement::new(
+                function!(self.gamma, RS.i__).to_pattern(),
+                function!(rep.gamma, RS.i__),
+            ),
+            Replacement::new(
+                function!(self.projp, RS.i__).to_pattern(),
+                function!(rep.projp, RS.i__),
+            ),
+            Replacement::new(
+                function!(self.projm, RS.i__).to_pattern(),
+                function!(rep.projm, RS.i__),
+            ),
+            Replacement::new(
+                function!(self.gamma5, RS.i__).to_pattern(),
+                function!(rep.gamma5, RS.i__),
+            ),
+            Replacement::new(
+                function!(self.sigma, RS.i__).to_pattern(),
+                function!(rep.sigma, RS.i__),
+            ),
+        ]
+    }
+}
+
+pub struct GammaSymbolsInternal {
     pub gamma_chain: Symbol,
     pub gamma_trace: Symbol,
 }
 
-pub static GS: LazyLock<GammaSymbols> = LazyLock::new(|| GammaSymbols {
+pub struct PolSymbols {
+    pub eps: Symbol,
+    pub ebar: Symbol,
+    pub u: Symbol,
+    pub ubar: Symbol,
+    pub v: Symbol,
+    pub vbar: Symbol,
+}
+
+pub static PS: LazyLock<PolSymbols> = LazyLock::new(|| PolSymbols {
+    eps: symbol!("alg::ϵ"),
+    ebar: symbol!("alg::ϵbar"),
+    u: symbol!("alg::u"),
+    ubar: symbol!("alg::ubar"),
+    v: symbol!("alg::v"),
+    vbar: symbol!("alg::vbar"),
+});
+
+pub fn factor_conj_impl(expression: AtomView) -> Atom {
+    expression
+        .to_owned()
+        .replace(Atom::new_var(Atom::I).to_pattern())
+        .with((-Atom::new_var(Atom::I)).to_pattern())
+}
+pub fn pol_conj_impl(expression: AtomView) -> Atom {
+    let expr = expression.to_owned().expand();
+
+    expr.replace_multiple(&[
+        Replacement::new(
+            function!(PS.ebar, RS.i__).to_pattern(),
+            function!(PS.eps, RS.i__),
+        ),
+        Replacement::new(
+            function!(PS.eps, RS.i__).to_pattern(),
+            function!(PS.ebar, RS.i__),
+        ),
+        Replacement::new(
+            function!(PS.u, RS.i__).to_pattern(),
+            function!(PS.ubar, RS.i__),
+        ),
+        Replacement::new(
+            function!(PS.ubar, RS.i__).to_pattern(),
+            function!(PS.u, RS.i__),
+        ),
+        Replacement::new(
+            function!(PS.v, RS.i__).to_pattern(),
+            function!(PS.vbar, RS.i__),
+        ),
+        Replacement::new(
+            function!(PS.vbar, RS.i__).to_pattern(),
+            function!(PS.v, RS.i__),
+        ),
+    ])
+}
+
+pub fn gamma_conj_impl(expression: AtomView) -> Atom {
+    let expr = expression.to_owned();
+    let bis = Bispinor {};
+
+    expr.replace(
+        function!(
+            AGS.gamma,
+            RS.i_,
+            bis.to_symbolic([RS.d_, RS.a_]),
+            bis.to_symbolic([RS.d_, RS.b_])
+        )
+        .to_pattern(),
+    )
+    .with(-function!(
+        AGS.gamma,
+        RS.i_,
+        bis.to_symbolic([RS.d_, RS.b_]),
+        bis.to_symbolic([RS.d_, RS.a_])
+    ))
+    .replace(
+        function!(
+            AGS.gamma5,
+            bis.to_symbolic([RS.d_, RS.a_]),
+            bis.to_symbolic([RS.d_, RS.b_])
+        )
+        .to_pattern(),
+    )
+    .with(
+        function!(
+            AGS.gamma5,
+            bis.to_symbolic([RS.d_, RS.b_]),
+            bis.to_symbolic([RS.d_, RS.a_])
+        )
+        .to_pattern(),
+    )
+}
+pub static GS: LazyLock<GammaSymbolsInternal> = LazyLock::new(|| GammaSymbolsInternal {
+    gamma_chain: symbol!("alg::gamma_chain"),
+    gamma_trace: symbol!("alg::gamma_trace"),
+});
+
+pub static AGS: LazyLock<GammaLibrary> = LazyLock::new(|| GammaLibrary {
     gamma: symbol!("alg::gamma"),
     projp: symbol!("alg::projp"),
     projm: symbol!("alg::projm"),
     gamma5: symbol!("alg::gamma5"),
-    gamma_chain: symbol!("alg::gamma_chain"),
-    gamma_trace: symbol!("alg::gamma_trace"),
+    sigma: symbol!("alg::sigma"),
 });
 
 pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
@@ -38,18 +166,18 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
 
     let reps: Vec<_> = [
         (
-            function!(GS.projp, RS.a_, RS.b_),
-            (function!(ETS.id, RS.a_, RS.b_) - function!(GS.gamma5, RS.a_, RS.b_)) / 2,
+            function!(AGS.projp, RS.a_, RS.b_),
+            (function!(ETS.id, RS.a_, RS.b_) - function!(AGS.gamma5, RS.a_, RS.b_)) / 2,
         ),
         (
-            function!(GS.projm, RS.a_, RS.b_),
-            (function!(ETS.id, RS.a_, RS.b_) + function!(GS.gamma5, RS.a_, RS.b_)) / 2,
+            function!(AGS.projm, RS.a_, RS.b_),
+            (function!(ETS.id, RS.a_, RS.b_) + function!(AGS.gamma5, RS.a_, RS.b_)) / 2,
         ),
         (
-            function!(GS.gamma, RS.a_, RS.b_, RS.c_) * function!(GS.gamma, RS.d_, RS.c_, RS.e_),
+            function!(AGS.gamma, RS.a_, RS.b_, RS.c_) * function!(AGS.gamma, RS.d_, RS.c_, RS.e_),
             function!(GS.gamma_chain, RS.a_, RS.d_, RS.b_, RS.e_),
         ),
-        (function!(GS.gamma, RS.a_, RS.b_, RS.b_), Atom::Zero),
+        (function!(AGS.gamma, RS.a_, RS.b_, RS.b_), Atom::Zero),
         (
             function!(GS.gamma_chain, RS.a__, RS.a_, RS.b_)
                 * function!(GS.gamma_chain, RS.b__, RS.b_, RS.c_),
@@ -57,11 +185,11 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
         ),
         (
             function!(GS.gamma_chain, RS.a__, RS.a_, RS.b_)
-                * function!(GS.gamma, RS.y_, RS.b_, RS.c_),
+                * function!(AGS.gamma, RS.y_, RS.b_, RS.c_),
             function!(GS.gamma_chain, RS.a__, RS.y_, RS.a_, RS.c_),
         ),
         (
-            function!(GS.gamma, RS.a_, RS.a_, RS.b_)
+            function!(AGS.gamma, RS.a_, RS.a_, RS.b_)
                 * function!(GS.gamma_chain, RS.y__, RS.b_, RS.c_),
             function!(GS.gamma_chain, RS.a_, RS.y__, RS.a_, RS.c_),
         ),
@@ -120,10 +248,7 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
         ),
     ]
     .iter()
-    .map(|(a, b)| {
-        Replacement::new(a.to_pattern(), b.to_pattern())
-        // .with_conditions(symbolica::id::Condition::Yield(()))
-    })
+    .map(|(a, b)| Replacement::new(a.to_pattern(), b.to_pattern()))
     .collect();
 
     while expr.replace_multiple_into(&reps, &mut atom) {
@@ -185,7 +310,7 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
 
     // //Chisholm identity:
     // expr.replace_all_repeat_mut(
-    //     &(function!(GS.gamma, RS.a_, RS.x_, RS.y_) * function!(gamma_trace, RS.a_, RS.a__)).to_pattern(),
+    //     &(function!(AGS.gamma, RS.a_, RS.x_, RS.y_) * function!(gamma_trace, RS.a_, RS.a__)).to_pattern(),
     //     (function!(gamma_chain, RS.a__)).to_pattern(),
     //     None,
     //     None,
@@ -253,7 +378,7 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
 
     expr = expr
         .replace(
-            function!(GS.gamma, mink.to_symbolic([RS.d_, RS.b_]), RS.a__)
+            function!(AGS.gamma, mink.to_symbolic([RS.d_, RS.b_]), RS.a__)
                 .pow(Atom::new_num(2))
                 .to_pattern(),
         )

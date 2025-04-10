@@ -6,25 +6,14 @@ use spenso::{
     complex::Complex,
     data::{SetTensorData, SparseTensor},
     parametric::MixedTensor,
-    structure::{
-        representation::{LibraryRep, Minkowski, RepName},
-        TensorStructure,
-    },
+    structure::TensorStructure,
     tensor_library::{ExplicitKey, TensorLibrary},
 };
-use symbolica::{atom::Symbol, symbol};
+use symbolica::symbol;
 
-use crate::physics::algebraic_simplification::representations::Bispinor;
+use crate::physics::algebraic_simplification::gamma::GammaLibrary;
 
-use super::Spensor;
-
-pub struct GammaLibrary {
-    pub gamma: Symbol,
-    pub projp: Symbol,
-    pub projm: Symbol,
-    pub gamma5: Symbol,
-    pub sigma: Symbol,
-}
+use super::{structure::SpensoStucture, Spensor};
 
 pub static WEYL: LazyLock<GammaLibrary> = LazyLock::new(|| GammaLibrary {
     gamma: symbol!("weyl::gamma"),
@@ -356,34 +345,29 @@ impl SpensorLibrary {
     pub fn weyl() -> Self {
         let mut weyl = SpensorLibrary::new();
 
-        let gamma_key = ExplicitKey::from_iter(
-            [
-                LibraryRep::from(Minkowski {}).rep(4),
-                Bispinor {}.rep(4).cast(),
-                Bispinor {}.rep(4).cast(),
-            ],
-            WEYL.gamma,
-            None,
-        );
+        let gamma_key = SpensoStucture::gamma4D(TensorNamespace::Weyl).structure;
         weyl.library
             .insert_explicit(gamma_data_weyl(gamma_key, 1., 0.).into());
 
-        let gamma5_key =
-            ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], WEYL.gamma5, None);
-
+        let gamma5_key = SpensoStucture::gamma5(TensorNamespace::Weyl).structure;
         weyl.library
             .insert_explicit(gamma5_weyl_data(gamma5_key, 1., 0.).into());
 
-        let projm_key =
-            ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], WEYL.projm, None);
+        let projm_key = SpensoStucture::projm(TensorNamespace::Weyl).structure;
         weyl.library
             .insert_explicit(proj_m_data_weyl(projm_key, 1., 0.).into());
 
-        let projp_key =
-            ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], WEYL.projp, None);
+        let projp_key = SpensoStucture::projp(TensorNamespace::Weyl).structure;
         weyl.library
             .insert_explicit(proj_p_data_weyl(projp_key, 1., 0.).into());
 
         weyl
     }
+}
+
+#[pyclass(eq, eq_int)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum TensorNamespace {
+    Weyl,
+    Algebra,
 }

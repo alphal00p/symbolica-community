@@ -47,7 +47,7 @@ integral = E("""
             * prop(4,edge(1,4),k(3)-k(1),muvsq,1)
             * prop(5,edge(2,4),k(1)-k(2),muvsq,1)
             * prop(6,edge(3,4),k(2)-k(3),muvsq,1)
-)""")
+)""", default_namespace="vk")
 print(f"\nStarting integral:\n{VakintExpression(integral)}")
 
 canonical_integral = vakint.to_canonical(integral, short_form=True)

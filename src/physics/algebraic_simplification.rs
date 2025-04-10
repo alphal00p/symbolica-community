@@ -1,20 +1,63 @@
-use color::{ColorError, ColorSimplifier};
-use gamma::GammaSimplifier;
-use metric::MetricSimplifier;
+use color::{color_conj_impl, ColorError, ColorSimplifier};
+use gamma::{factor_conj_impl, gamma_conj_impl, pol_conj_impl, GammaSimplifier};
+use metric::{list_dangling_impl, wrap_dummies_impl, wrap_indices_impl, MetricSimplifier};
 use pyo3::{
     exceptions::PyRuntimeWarning,
-    ffi::c_str,
-    pyclass, pyfunction, pymethods,
+    pyfunction,
     types::{PyAnyMethods, PyModule, PyModuleMethods},
-    wrap_pyfunction, Bound, IntoPyObject, PyAny, PyRef, PyResult, PyTypeInfo, Python,
+    wrap_pyfunction, Bound, PyResult,
 };
-use symbolica::api::python::PythonExpression;
+use representations::initialize;
+use symbolica::{
+    api::python::PythonExpression,
+    atom::{Atom, AtomView, Symbol},
+};
 
 pub mod color;
 pub mod gamma;
 pub mod metric;
 pub mod rep_symbols;
 pub mod representations;
+
+pub trait IndexTooling {
+    fn wrap_indices(&self, header: Symbol) -> Atom;
+    fn wrap_dummies(&self, header: Symbol) -> Atom;
+    fn conj(&self) -> Atom;
+    fn list_dangling(&self) -> Vec<Atom>;
+}
+
+impl IndexTooling for Atom {
+    fn wrap_indices(&self, header: Symbol) -> Atom {
+        self.as_view().wrap_indices(header)
+    }
+    fn wrap_dummies(&self, header: Symbol) -> Atom {
+        self.as_view().wrap_dummies(header)
+    }
+    fn conj(&self) -> Atom {
+        self.as_view().conj()
+    }
+    fn list_dangling(&self) -> Vec<Atom> {
+        self.as_view().list_dangling()
+    }
+}
+
+impl<'a> IndexTooling for AtomView<'a> {
+    fn conj(&self) -> Atom {
+        factor_conj_impl(
+            pol_conj_impl(gamma_conj_impl(color_conj_impl(*self).as_view()).as_view()).as_view(),
+        )
+    }
+    fn wrap_indices(&self, header: Symbol) -> Atom {
+        wrap_indices_impl(*self, header)
+    }
+    fn wrap_dummies(&self, header: Symbol) -> Atom {
+        wrap_dummies_impl(*self, header)
+    }
+    fn list_dangling(&self) -> Vec<Atom> {
+        list_dangling_impl(*self)
+    }
+}
+
 #[pyfunction]
 pub fn simplify_gamma(self_: &PythonExpression) -> PythonExpression {
     self_.expr.simplify_gamma().into()
@@ -110,15 +153,17 @@ pub fn simplify_color(self_: &PythonExpression) -> PyResult<PythonExpression> {
 //         .set_item("symbolica_community.algebraic_simplification", child_module)
 // }
 pub(crate) fn initialize_alg_simp(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    initialize();
     let child_module = PyModule::new(m.py(), "algebraic_simplification")?;
 
-    let expression_class = m.getattr("Expression")?;
+    // let expression_class = m.getattr("Expression")?;
 
     // Set all the methods on the retrieved class
-    expression_class.setattr("simplify_gamma", wrap_pyfunction!(simplify_gamma, m)?)?;
-    expression_class.setattr("to_dots", wrap_pyfunction!(to_dots, m)?)?;
-    expression_class.setattr("simplify_metrics", wrap_pyfunction!(simplify_metrics, m)?)?;
-    expression_class.setattr("simplify_color", wrap_pyfunction!(simplify_color, m)?)?;
+    child_module.add_function(wrap_pyfunction!(simplify_gamma, m)?)?;
+    child_module.add_function(wrap_pyfunction!(to_dots, m)?)?;
+    child_module.add_function(wrap_pyfunction!(simplify_metrics, m)?)?;
+    child_module.add_function(wrap_pyfunction!(simplify_color, m)?)?;
+
     m.add_submodule(&child_module)?;
     m.py()
         .import("sys")?

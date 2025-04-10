@@ -1,4 +1,7 @@
-use spenso::structure::representation::{Euclidean, Minkowski, RepName};
+use spenso::structure::{
+    abstract_index::AIND_SYMBOLS,
+    representation::{Euclidean, Minkowski, RepName},
+};
 use spenso_macros::SimpleRepresentation;
 use symbolica::atom::Atom;
 
@@ -99,6 +102,7 @@ pub struct Bispinor {}
 pub struct ColorAdjoint {}
 
 pub fn initialize() {
+    let _ = AIND_SYMBOLS.dind;
     let _ = Minkowski {}.to_symbolic([Atom::Zero]);
     let _ = Euclidean {}.to_symbolic([Atom::Zero]);
     let _ = Lorentz {}.to_symbolic([Atom::Zero]);
