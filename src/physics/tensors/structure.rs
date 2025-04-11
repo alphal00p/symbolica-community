@@ -5,6 +5,7 @@ use pyo3::{
     prelude::*,
     pybacked::PyBackedStr,
     types::{PyList, PyTuple},
+    PyTypeInfo,
 };
 use spenso::{
     structure::{
@@ -35,7 +36,7 @@ use super::{
     ModuleInit, SliceOrIntOrExpanded,
 };
 use auto_enums::auto_enum;
-use pyo3_stub_gen::derive::*;
+use pyo3_stub_gen::{derive::*, impl_stub_type, PyStubType};
 
 #[gen_stub_pyclass(module = "symbolica_community.tensors")]
 #[pyclass(name = "TensorIndices", module = "symbolica_community.tensors")]
@@ -69,6 +70,14 @@ pub enum ArithmeticStructure {
     Expression(PythonExpression),
 }
 
+impl PyStubType for ArithmeticStructure {
+    fn type_output() -> pyo3_stub_gen::TypeInfo {
+        ConvertibleToExpression::type_output()
+            | SpensoIndices::type_output()
+            | PythonExpression::type_output()
+    }
+}
+
 impl ArithmeticStructure {
     pub fn to_expression(self) -> PyResult<PythonExpression> {
         match self {
@@ -93,6 +102,7 @@ impl<'a> FromPyObject<'a> for ArithmeticStructure {
     }
 }
 
+#[gen_stub_pymethods]
 #[pymethods]
 impl SpensoIndices {
     #[new]
@@ -262,21 +272,21 @@ impl SpensoIndices {
         self.__mul__(rhs)
     }
 
-    /// Take `self` to power `exp`, returning the result.
-    pub fn __pow__(
-        &self,
-        rhs: ArithmeticStructure,
-        number: Option<i64>,
-    ) -> PyResult<PythonExpression> {
-        if number.is_some() {
-            return Err(exceptions::PyValueError::new_err(
-                "Optional number argument not supported",
-            ));
-        }
+    // /// Take `self` to power `exp`, returning the result.
+    // pub fn __pow__(
+    //     &self,
+    //     rhs: ArithmeticStructure,
+    //     number: Option<isize>,
+    // ) -> PyResult<PythonExpression> {
+    //     if number.is_some() {
+    //         return Err(exceptions::PyValueError::new_err(
+    //             "Optional number argument not supported",
+    //         ));
+    //     }
 
-        let rhs = rhs.to_expression()?;
-        Ok(self.to_expression()?.exp().pow(&rhs.expr).into())
-    }
+    //     let rhs = rhs.to_expression()?;
+    //     Ok(self.to_expression()?.exp().pow(&rhs.expr).into())
+    // }
 }
 
 #[gen_stub_pyclass(module = "symbolica_community.tensors")]
@@ -495,7 +505,7 @@ impl TryFrom<PossiblyIndexed> for ExplicitKey {
 }
 
 #[pymethods]
-// #[gen_stub_pymethods]
+#[gen_stub_pymethods]
 impl SpensoStucture {
     #[new]
     #[pyo3(signature =
@@ -1007,6 +1017,8 @@ impl<'py> FromPyObject<'py> for ConvertibleToAbstractIndex {
     }
 }
 
+impl_stub_type!(ConvertibleToAbstractIndex = isize | Symbol | PyBackedStr);
+
 pub struct ConvertibleToDimension(Dimension);
 
 impl<'py> FromPyObject<'py> for ConvertibleToDimension {
@@ -1044,7 +1056,9 @@ impl<'py> FromPyObject<'py> for ConvertibleToDimension {
     }
 }
 
-// #[gen_stub_pymethods]
+impl_stub_type!(ConvertibleToDimension = usize | PythonExpression | PyBackedStr);
+
+#[gen_stub_pymethods]
 #[pymethods]
 impl SpensoRepresentation {
     #[new]
@@ -1143,7 +1157,7 @@ pub struct SpensoSlot {
     pub slot: Slot<LibraryRep>,
 }
 
-// #[gen_stub_pymethods]
+#[gen_stub_pymethods]
 #[pymethods]
 impl SpensoSlot {
     fn __repr__(&self) -> String {

@@ -32,7 +32,7 @@ use symbolica::{
     poly::Variable,
 };
 
-use pyo3_stub_gen::{define_stub_info_gatherer, derive::*};
+use pyo3_stub_gen::{define_stub_info_gatherer, derive::*, inventory, PyStubType, TypeInfo};
 
 pub mod library;
 pub mod network;
@@ -144,11 +144,22 @@ pub fn dense(structure: Bound<'_, PyAny>, data: Bound<'_, PyAny>) -> PyResult<Sp
     }
 }
 
+// #[gen_stub_pyclass_enum]
 #[derive(FromPyObject)]
 pub enum SliceOrIntOrExpanded<'a> {
     Slice(Bound<'a, PySlice>),
     Int(usize),
     Expanded(Vec<usize>),
+}
+
+impl<'a> PyStubType for SliceOrIntOrExpanded<'a> {
+    fn type_input() -> pyo3_stub_gen::TypeInfo {
+        TypeInfo::builtin("slice") | usize::type_input() | TypeInfo::list_of::<usize>()
+    }
+
+    fn type_output() -> pyo3_stub_gen::TypeInfo {
+        TypeInfo::builtin("slice") | usize::type_input() | TypeInfo::list_of::<usize>()
+    }
 }
 
 #[derive(IntoPyObject)]
@@ -178,7 +189,7 @@ impl From<ConcreteOrParam<RealOrComplex<f64>>> for TensorElements {
     }
 }
 
-// #[gen_stub_pymethods]
+#[gen_stub_pymethods]
 #[pymethods]
 impl Spensor {
     pub fn structure(&self) -> Py<PyAny> {
@@ -436,6 +447,7 @@ pub struct SpensoExpressionEvaluator {
     pub eval: LinearizedEvalTensor<f64, PossiblyIndexed>,
 }
 
+#[gen_stub_pymethods]
 #[pymethods]
 impl SpensoExpressionEvaluator {
     /// Evaluate the expression for multiple inputs and return the results.
@@ -518,6 +530,7 @@ pub struct SpensoCompiledExpressionEvaluator {
     pub eval: CompiledEvalTensor<PossiblyIndexed>,
 }
 
+#[gen_stub_pymethods]
 #[pymethods]
 impl SpensoCompiledExpressionEvaluator {
     /// Evaluate the expression for multiple inputs and return the results.

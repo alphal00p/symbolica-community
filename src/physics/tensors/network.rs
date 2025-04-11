@@ -29,6 +29,7 @@ impl ModuleInit for SpensoNet {
     }
 }
 
+#[gen_stub_pyfunction]
 #[pyfunction(name = "to_net")]
 pub fn python_to_tensor_network(
     a: &Bound<'_, PythonExpression>,
@@ -39,6 +40,7 @@ pub fn python_to_tensor_network(
 
 pub type ParsingNet = TensorNetwork<MixedTensor<f64, ShadowedStructure>, Atom>;
 
+#[gen_stub_pymethods]
 #[pymethods]
 impl SpensoNet {
     #[new]

@@ -10,6 +10,7 @@ use pyo3::{
     types::{PyAnyMethods, PyModule, PyModuleMethods},
     wrap_pyfunction, Bound, PyResult,
 };
+use pyo3_stub_gen::derive::gen_stub_pyfunction;
 use representations::initialize;
 use symbolica::{
     api::python::PythonExpression,
@@ -140,7 +141,7 @@ impl<'a> IndexTooling for AtomView<'a> {
     }
 }
 
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Calculates the physics-aware conjugate of the expression.
 ///
@@ -162,7 +163,7 @@ pub fn conj(self_: &PythonExpression) -> PythonExpression {
     self_.expr.conj().into()
 }
 
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Wraps all abstract indices within the expression using a header symbol.
 ///
@@ -184,7 +185,7 @@ pub fn wrap_indices(self_: &PythonExpression, header: Symbol) -> PythonExpressio
     self_.expr.wrap_indices(header).into()
 }
 
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// "Cooks" indices within function arguments into simplified, unique symbols.
 ///
@@ -201,7 +202,7 @@ pub fn cook_indices(self_: &PythonExpression) -> PythonExpression {
     self_.expr.cook_indices().into()
 }
 
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Converts a single function atom into a flattened variable symbol.
 ///
@@ -227,7 +228,7 @@ pub fn cook_function(self_: &PythonExpression) -> PyResult<PythonExpression> {
         .map(|a| a.into())
 }
 
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Wraps only the dummy (contracted) indices within the expression using a header symbol.
 ///
@@ -250,7 +251,7 @@ pub fn wrap_dummies(self_: &PythonExpression, header: Symbol) -> PythonExpressio
     self_.expr.wrap_dummies(header).into()
 }
 
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Lists the dangling (external, uncontracted) indices present in the expression.
 ///
@@ -273,7 +274,7 @@ pub fn list_dangling(self_: &PythonExpression) -> Vec<PythonExpression> {
         .collect()
 }
 
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Applies Clifford algebra rules and trace identities to simplify gamma matrices.
 ///
@@ -292,7 +293,7 @@ pub fn simplify_gamma(self_: &PythonExpression) -> PythonExpression {
     self_.expr.simplify_gamma().into()
 }
 
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Converts contracted Lorentz/Minkowski indices into dot product notation.
 ///
@@ -309,7 +310,7 @@ pub fn to_dots(self_: &PythonExpression) -> PythonExpression {
     self_.expr.to_dots().into()
 }
 
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Simplifies contractions involving metric tensors and identity tensors.
 ///
@@ -329,7 +330,7 @@ pub fn to_dots(self_: &PythonExpression) -> PythonExpression {
 pub fn simplify_metrics(self_: &PythonExpression) -> PythonExpression {
     self_.expr.simplify_metrics().into()
 }
-// #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Applies SU(N) color algebra rules to simplify color structures.
 ///

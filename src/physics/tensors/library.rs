@@ -1,7 +1,7 @@
 use std::{ops::Neg, sync::LazyLock};
 
 use pyo3::{exceptions::PyTypeError, pyclass, pymethods, PyResult};
-use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum};
+use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum, gen_stub_pymethods};
 use spenso::{
     complex::Complex,
     data::{SetTensorData, SparseTensor},
@@ -319,6 +319,7 @@ pub struct SpensorLibrary {
     pub(crate) library: TensorLibrary<MixedTensor<f64, ExplicitKey>>,
 }
 
+#[gen_stub_pymethods]
 #[pymethods]
 impl SpensorLibrary {
     #[new]
