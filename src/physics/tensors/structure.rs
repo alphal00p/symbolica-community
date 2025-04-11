@@ -4,7 +4,7 @@ use pyo3::{
     exceptions::{self, PyIndexError, PyRuntimeError, PyTypeError, PyValueError},
     prelude::*,
     pybacked::PyBackedStr,
-    types::{PyDict, PyTuple},
+    types::{PyList, PyTuple},
 };
 use spenso::{
     structure::{
@@ -495,6 +495,7 @@ impl TryFrom<PossiblyIndexed> for ExplicitKey {
 }
 
 #[pymethods]
+// #[gen_stub_pymethods]
 impl SpensoStucture {
     #[new]
     #[pyo3(signature =
@@ -633,209 +634,18 @@ impl SpensoStucture {
         }
     }
 
-    #[pyo3(signature = (*args, **kwargs))]
-    /// When a TensorStructure is called with arguments, it produces either a `TensorIndices`
-    /// instance (if the arguments are valid indices) or a symbolic `Expression`.
+    #[pyo3(signature = (*args, extra_args=None))]
+    /// Convenience method. Calls `symbolic(*args, extra_args=extra_args)`.
     ///
-    /// # Args:
-    ///     *args: Positional arguments. Can include indices (int, str, Symbol), expressions,
-    ///            or a single separator character ';'.
-    ///     **kwargs: Optional keyword arguments:
-    ///         cook_indices (bool, optional): If True, attempt to convert non-index arguments
-    ///             (specifically symbol atoms) after the separator into AbstractIndex. Defaults to False.
-    ///         to_atom (bool, optional): If True, always return a symbolic Expression, even if
-    ///             valid indices are provided. Defaults to False.
-    ///
-    /// Behavior:
-    /// 1. Separator ';': If present, arguments *before* ';' are treated as additional non-tensorial
-    ///    arguments. Arguments *after* ';' are treated as potential abstract indices.
-    /// 2. No Separator: All arguments are treated as potential abstract indices.
-    /// 3. `to_atom=False` (Default):
-    ///    - Arguments intended as indices are converted to `AbstractIndex`.
-    ///      If `cook_indices=True`, these same arguments are first cooked (iterated functions are just underscored).
-    ///     - Returns an `Expression` if conversion fails (or `cook_indices=False` and input isn't an index type), representing the tensor structure.
-    ///    - Returns a `TensorIndices` object if the number of resolved indices matches the
-    ///      tensor structure's order, and if all indices are valid
-    ///    - Raises an error if the number of resolved indices does not match the tensor structure's order.
-    /// 4. `to_atom=True`:
-    ///    - Arguments intended as indices are kept as `Atom`s (or converted from index types).
-    ///    - Returns a symbolic `Expression` representing the tensor structure.
-    ///
-    /// Returns:
-    ///     Union[TensorIndices, Expression]: Either the indexed tensor instance or a symbolic expression.
-    ///
-    /// Raises:
-    ///     ValueError: If more than one separator ';' is used.
-    ///     TypeError: If arguments have unexpected types.
-    ///     RuntimeError: If `to_atom=True` and the structure has no name.
+    /// Creates a symbolic `Expression` representing this tensor structure. See the
+    /// `symbolic` method documentation for details on argument handling.
     fn __call__(
         &self,
-        py: Python<'_>,
         args: &Bound<'_, PyTuple>,
-        kwargs: Option<&Bound<'_, PyDict>>,
-    ) -> PyResult<Py<PyAny>> {
-        let mut cook_indices = false;
-        let mut to_atom = false;
-        if let Some(kwargs) = kwargs {
-            if let Some(cook) = kwargs.get_item("cook_indices")? {
-                cook_indices = cook.extract::<bool>()?;
-            }
-
-            if let Some(to_atom_val) = kwargs.get_item("to_atom")? {
-                to_atom = to_atom_val.extract::<bool>()?;
-            }
-        }
-
-        // --- Argument Parsing ---
-        let mut additional_args_call: Vec<Atom> = Vec::new();
-        let mut potential_indices_call: Vec<ConvertibleToAbstractIndex> = Vec::new();
-        let mut seen_separator = false;
-
-        for a in args {
-            let convertible = a.extract::<ConvertibleToAbstractIndex>()?;
-            match convertible {
-                ConvertibleToAbstractIndex::Separator => {
-                    if seen_separator {
-                        return Err(exceptions::PyValueError::new_err(
-                            "Only one separator ';' can be used",
-                        ));
-                    }
-                    seen_separator = true;
-                    // Add items collected *before* separator as additional args
-                    additional_args_call.extend(potential_indices_call.drain(..).map(|item| {
-                        match item {
-                            ConvertibleToAbstractIndex::Aind(idx) => idx.into(),
-                            ConvertibleToAbstractIndex::Atom(expr) => expr.expr,
-                            ConvertibleToAbstractIndex::Separator => unreachable!(),
-                        }
-                    }));
-                }
-                item => {
-                    potential_indices_call.push(item); // Collect everything initially
-                }
-            }
-        }
-
-        // If no separator, all collected items are potential indices; additional_args_call remains empty.
-        // If separator was seen, potential_indices_call now only contains items *after* it.
-        //
-        // Combine base additional args with those from the call (before separator)
-        let mut final_additional_args = self.structure.args().unwrap_or_default();
-        final_additional_args.extend(additional_args_call);
-
-        fn generate_symbolic_expr(
-            py: Python,
-            structure: &ExplicitKey,
-            add_args: &[Atom],
-            potential_indices: &[ConvertibleToAbstractIndex],
-        ) -> PyResult<Py<PyAny>> {
-            let name = structure.name().ok_or_else(|| {
-                PyRuntimeError::new_err("Cannot create symbolic atom: structure has no name")
-            })?;
-
-            // Convert all potential indices to Atoms for the symbolic representation
-            let index_atoms: Vec<Atom> = potential_indices
-                .iter()
-                .map(|item| {
-                    match item {
-                        ConvertibleToAbstractIndex::Aind(idx) => (*idx).into(),
-                        ConvertibleToAbstractIndex::Atom(expr) => expr.expr.clone(),
-                        ConvertibleToAbstractIndex::Separator => unreachable!(), // Should not be in this list
-                    }
-                })
-                .collect();
-
-            if structure.order() != index_atoms.len() {
-                return Err(PyRuntimeError::new_err(
-                    "Number of index atoms does not match structure order",
-                ));
-            }
-
-            let slots = structure
-                .external_reps_iter()
-                .zip(index_atoms) // Zip reps with the collected index atoms
-                .map(|(rep, ind_atom)| rep.to_symbolic([ind_atom]))
-                .collect::<Vec<_>>();
-
-            let value_builder = FunctionBuilder::new(name);
-            let final_expr = value_builder.add_args(add_args).add_args(&slots).finish();
-
-            Ok(PythonExpression::from(final_expr)
-                .into_pyobject(py)?
-                .unbind()
-                .into_any())
-        }
-
-        if to_atom {
-            // --- Mode: Force Symbolic Expression ---
-            return generate_symbolic_expr(
-                py,
-                &self.structure,
-                &final_additional_args,
-                &potential_indices_call,
-            );
-        } else {
-            // --- Mode: Attempt TensorIndices, Fallback to Symbolic ---
-            let mut resolved_indices: Vec<AbstractIndex> = Vec::new();
-            let mut conversion_ok = true;
-
-            for item in &potential_indices_call {
-                // Iterate over refs
-                match item {
-                    ConvertibleToAbstractIndex::Aind(idx) => {
-                        resolved_indices.push(*idx);
-                    }
-                    ConvertibleToAbstractIndex::Atom(expr) => {
-                        let converted_atom = if cook_indices {
-                            expr.expr.cook_indices().as_view().try_into()
-                        } else {
-                            expr.expr.as_view().try_into()
-                        };
-
-                        match converted_atom {
-                            Ok(idx) => resolved_indices.push(idx),
-                            Err(_) => {
-                                // Conversion failed! Mark and break.
-                                conversion_ok = false;
-                                break;
-                            }
-                        }
-                    }
-                    ConvertibleToAbstractIndex::Separator => unreachable!(), // Should have been processed
-                }
-            }
-
-            if conversion_ok {
-                // All potential indices converted successfully. Now try to build TensorIndices.
-                let mut structure_clone = self.structure.clone();
-                structure_clone.additional_args = if final_additional_args.is_empty() {
-                    None
-                } else {
-                    Some(final_additional_args)
-                };
-
-                match structure_clone.to_indexed(&resolved_indices) {
-                    Ok(indexed_structure) => Ok(SpensoIndices {
-                        structure: indexed_structure,
-                    }
-                    .into_pyobject(py)?
-                    .unbind()
-                    .into_any()),
-                    Err(e) => Err(PyValueError::new_err(format!(
-                        "Failed to create TensorIndices: {}",
-                        e
-                    ))),
-                }
-            } else {
-                // Conversion failed for at least one item. Fallback to symbolic expression.
-                generate_symbolic_expr(
-                    py,
-                    &self.structure,
-                    &final_additional_args,
-                    &potential_indices_call,
-                )
-            }
-        }
+        extra_args: Option<&Bound<'_, PyList>>,
+    ) -> PyResult<PythonExpression> {
+        // Directly delegate to symbolic, passing relevant arguments through
+        self.symbolic(args, extra_args)
     }
 
     #[staticmethod]
@@ -924,6 +734,213 @@ impl SpensoStucture {
 
         ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], name, None).into()
     }
+
+    #[pyo3(signature = (*args, extra_args=None))]
+    /// Creates a symbolic `Expression` representing this tensor structure with the given arguments.
+    ///
+    /// # Args:
+    ///     *args (int | str | Symbol | Expression | ';'): Positional arguments. Can include
+    ///         indices, expressions, or the semicolon separator.
+    ///     extra_args (list[Expression], optional): Explicit list of additional non-tensorial args.
+    ///
+    /// Interprets positional arguments (`*args`) as potential indices. Arguments
+    /// before a semicolon separator (`;`) and arguments provided via the `extra_args`
+    /// keyword argument are combined and treated as additional non-tensorial arguments.
+    /// Arguments after the semicolon (or all positional arguments if no separator is used)
+    /// are treated as the symbolic tensor indices.
+    ///
+    ///
+    /// # Returns:
+    ///     Expression: A symbolic expression representing the tensor.
+    ///
+    /// # Raises:
+    ///     ValueError: If index count mismatches or separator is misused.
+    ///     TypeError: If arguments have unexpected types.
+    ///     RuntimeError: If the structure does not have a name.
+    fn symbolic(
+        &self,
+        args: &Bound<'_, PyTuple>,
+        extra_args: Option<&Bound<'_, PyList>>,
+    ) -> PyResult<PythonExpression> {
+        // Use helper to parse arguments
+        let (final_additional_args, potential_indices) =
+            self.parse_args_for_indexing(args, extra_args)?;
+
+        // --- Generate Symbolic Expression ---
+        let name = self.structure.name().ok_or_else(|| {
+            PyRuntimeError::new_err("Cannot create symbolic atom: structure has no name")
+        })?;
+
+        let index_atoms: Vec<Atom> = potential_indices
+            .iter()
+            .map(|item| {
+                match item {
+                    // potential_indices now only contains Aind or Atom
+                    ConvertibleToAbstractIndex::Aind(idx) => (*idx).into(),
+                    ConvertibleToAbstractIndex::Atom(expr) => expr.expr.clone(),
+                    ConvertibleToAbstractIndex::Separator => unreachable!(), // Helper ensures this
+                }
+            })
+            .collect();
+
+        if self.structure.order() != index_atoms.len() {
+            return Err(PyValueError::new_err(format!(
+                "Number of index atoms {} does not match structure order {}",
+                index_atoms.len(),
+                self.structure.order()
+            )));
+        }
+
+        let slots_atoms = self
+            .structure
+            .external_reps_iter()
+            .zip(index_atoms)
+            .map(|(rep, ind_atom)| rep.to_symbolic([ind_atom]))
+            .collect::<Vec<_>>();
+
+        let value_builder = FunctionBuilder::new(name);
+        let final_expr = value_builder
+            .add_args(&final_additional_args)
+            .add_args(&slots_atoms)
+            .finish();
+
+        Ok(PythonExpression::from(final_expr))
+    }
+
+    #[pyo3(signature = (*args, extra_args=None, cook_indices=false))]
+    /// Creates an indexed tensor instance (`TensorIndices`) from this structure.
+    ///
+    /// Interprets positional arguments (`*args`) as potential indices. Arguments
+    /// before a semicolon separator (`;`) and arguments provided via the `extra_args`
+    /// keyword argument are combined and treated as additional non-tensorial arguments.
+    /// Arguments after the semicolon (or all positional arguments if no separator is used)
+    /// are treated as the tensor indices.
+    ///
+    /// # Args:
+    ///     *args: Positional arguments. Can include indices (int, str, Symbol, Expression),
+    ///            or a single semicolon string (`;`).
+    ///     extra_args (list[Expression], optional): An explicit list of additional non-tensorial
+    ///         arguments. Defaults to None.
+    ///     cook_indices (bool, optional): If True, attempt to "cook" non-index arguments
+    ///         intended as tensor indices into valid `AbstractIndex` representations.
+    ///         Defaults to False.
+    ///
+    /// # Returns:
+    ///     TensorIndices: An object representing the tensor structure with concrete indices assigned.
+    ///
+    /// # Raises:
+    ///     ValueError: If index resolution fails, counts mismatch, or separator is misused.
+    ///     TypeError: If arguments have unexpected types.
+    fn index(
+        &self,
+        args: &Bound<'_, PyTuple>,
+        extra_args: Option<&Bound<'_, PyList>>,
+        cook_indices: bool,
+    ) -> PyResult<SpensoIndices> {
+        // Use helper to parse arguments
+        let (final_additional_args, potential_indices) =
+            self.parse_args_for_indexing(args, extra_args)?;
+
+        // --- Resolve Indices (No change in this logic) ---
+        let mut resolved_indices: Vec<AbstractIndex> = Vec::new();
+        for item in potential_indices {
+            // potential_indices now only contains Aind or Atom
+            match item {
+                ConvertibleToAbstractIndex::Aind(idx) => {
+                    resolved_indices.push(idx);
+                }
+                ConvertibleToAbstractIndex::Atom(expr) => {
+                    let converted_atom: Result<AbstractIndex, _> = if cook_indices {
+                        expr.expr.cook_indices().as_view().try_into()
+                    } else {
+                        expr.expr.as_view().try_into()
+                    };
+                    match converted_atom {
+                        Ok(idx) => resolved_indices.push(idx),
+                        Err(e) => {
+                            let cook_msg = if cook_indices {
+                                ""
+                            } else {
+                                " Try setting cook_indices=True."
+                            };
+                            return Err(exceptions::PyValueError::new_err(format!(
+                                   "Cannot convert argument '{}' to an AbstractIndex: {}. Ensure it's a valid index type or cookable.{}",
+                                   expr.expr, e, cook_msg
+                               )));
+                        }
+                    }
+                }
+                ConvertibleToAbstractIndex::Separator => unreachable!(), // Helper ensures this
+            }
+        }
+
+        let mut structure_clone = self.structure.clone();
+        structure_clone.additional_args = if final_additional_args.is_empty() {
+            None
+        } else {
+            Some(final_additional_args)
+        };
+        match structure_clone.to_indexed(&resolved_indices) {
+            Ok(indexed_structure) => Ok(SpensoIndices {
+                structure: indexed_structure,
+            }),
+            Err(e) => Err(PyValueError::new_err(format!(
+                "Failed to create TensorIndices: {}",
+                e
+            ))),
+        }
+    }
+}
+
+impl SpensoStucture {
+    fn parse_args_for_indexing(
+        &self,
+        args: &Bound<'_, PyTuple>,
+        extra_args_opt: Option<&Bound<'_, PyList>>,
+    ) -> PyResult<(Vec<Atom>, Vec<ConvertibleToAbstractIndex>)> {
+        let mut pre_separator_args: Vec<ConvertibleToAbstractIndex> = Vec::new();
+        let mut post_separator_args: Vec<ConvertibleToAbstractIndex> = Vec::new();
+        let mut separator_found = false;
+
+        for arg_bound in args.iter() {
+            let convertible = arg_bound.extract::<ConvertibleToAbstractIndex>()?;
+
+            match convertible {
+                ConvertibleToAbstractIndex::Separator => {
+                    if separator_found {
+                        return Err(exceptions::PyValueError::new_err(
+                            "Separator token ';' used more than once.",
+                        ));
+                    }
+
+                    separator_found = true;
+                    pre_separator_args.extend(post_separator_args.drain(..));
+                }
+                item => {
+                    post_separator_args.push(item);
+                }
+            }
+        }
+
+        let mut final_additional_args = self.structure.args().unwrap_or_default();
+        for item in pre_separator_args {
+            match item {
+                ConvertibleToAbstractIndex::Aind(idx) => final_additional_args.push(idx.into()),
+                ConvertibleToAbstractIndex::Atom(expr) => {
+                    final_additional_args.push(expr.expr.clone())
+                }
+                ConvertibleToAbstractIndex::Separator => unreachable!(),
+            }
+        }
+        if let Some(extra_args_list) = extra_args_opt {
+            for item_bound in extra_args_list.iter() {
+                let expr = item_bound.extract::<PythonExpression>()?;
+                final_additional_args.push(expr.expr);
+            }
+        }
+
+        Ok((final_additional_args, post_separator_args))
+    }
 }
 
 #[gen_stub_pyclass(module = "symbolica_community.tensors")]
@@ -982,7 +999,7 @@ impl<'py> FromPyObject<'py> for ConvertibleToAbstractIndex {
             ConvertibleToAbstractIndex::Aind(AbstractIndex::Symbol(id.into()))
         } else {
             return Err(PyTypeError::new_err(
-                "abstract index cannot be created from this type",
+                "Argument must be convertible to an index (int, str, Symbol), an Expression,, or the separator ';'",
             ));
         };
 

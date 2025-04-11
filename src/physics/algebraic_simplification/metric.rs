@@ -501,8 +501,29 @@ pub fn to_dots_impl(expr: AtomView) -> Atom {
     expr
 }
 
+/// Trait for simplifying expressions involving metric tensors and converting
+/// index contractions to dot product notation.
+///
+/// Provides methods for contracting indices with metric tensors (`g(mu, nu)`) or
+/// identity tensors (`id(mu, nu)`), and for replacing contracted index patterns
+/// (like `p(mu)*q(mu)`) with dot products (`dot(p, q)`).
 pub trait MetricSimplifier {
+    /// Simplifies contractions involving metric tensors (`g` or `metric`) and identity tensors (`id` or `𝟙`).
+    ///
+    /// Applies rules like `g(mu, nu) * p(nu) -> p(mu)`, `g(mu, mu) -> D`, etc.
+    ///
+    /// # Returns
+    /// An [`Atom`] representing the expression after metric simplification.
     fn simplify_metrics(&self) -> Atom;
+
+    /// Converts contracted index patterns into dot product notation `dot(...)`.
+    ///
+    /// Replaces expressions like `p(mu) * q(mu)` or `p(mu) * M(mu, nu) * q(nu)` (implicitly via metric rules)
+    /// with `dot(p, q)`. Assumes standard representations for vectors and tensors involved
+    /// in the contractions.
+    ///
+    /// # Returns
+    /// An [`Atom`] where contractions have been replaced by `dot` functions where possible.
     fn to_dots(&self) -> Atom;
 }
 

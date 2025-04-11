@@ -1,7 +1,7 @@
 use std::{ops::Neg, sync::LazyLock};
 
 use pyo3::{exceptions::PyTypeError, pyclass, pymethods, PyResult};
-use pyo3_stub_gen::derive::gen_stub_pyclass;
+use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum};
 use spenso::{
     complex::Complex,
     data::{SetTensorData, SparseTensor},
@@ -365,6 +365,7 @@ impl SpensorLibrary {
     }
 }
 
+#[gen_stub_pyclass_enum(module = "symbolica_community.tensors")]
 #[pyclass(eq, eq_int)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum TensorNamespace {

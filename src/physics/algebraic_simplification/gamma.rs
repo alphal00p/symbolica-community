@@ -388,8 +388,19 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
 
     expr
 }
-
+/// Trait for simplifying expressions involving Dirac gamma matrices using Clifford algebra.
+///
+/// Implementors provide a method to apply gamma matrix identities, such as
+/// anticommutation relations and trace evaluations.
 pub trait GammaSimplifier {
+    /// Simplifies gamma matrix structures within the expression.
+    ///
+    /// Uses the Clifford algebra relation `{gamma^mu, gamma^nu} = 2 * g^{mu nu}`
+    /// and evaluates traces of products of gamma matrices. It handles intermediate
+    /// simplification steps involving metric tensors.
+    ///
+    /// # Returns
+    /// An [`Atom`] representing the expression after gamma matrix simplification.
     fn simplify_gamma(&self) -> Atom;
 }
 

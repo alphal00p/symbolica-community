@@ -292,10 +292,24 @@ pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
         Err(ColorError::NotFully(expression))
     }
 }
+/// Trait for applying SU(N) color algebra simplification rules to a symbolic expression.
+///
+/// Implementors provide a method to simplify expressions containing color factors
+/// like structure constants (`f_abc`), generators (`T^a`), traces (`TR`), and the
+/// number of colors (`Nc`).
 pub trait ColorSimplifier {
+    /// Attempts to simplify the color structure of the expression.
+    ///
+    /// Applies various identities of SU(N) algebra, including Fierz identities,
+    /// Casimir relations, and contractions involving `f_abc` and `T^a`.
+    ///
+    /// # Returns
+    /// - `Ok(Atom)`: The simplified expression, ideally with only color-scalar factors remaining.
+    /// - `Err(ColorError::NotFully(Atom))`: If the simplification could not fully remove all
+    ///   explicit color index structures (like `cof(...)`, `coad(...)`). The partially
+    ///   simplified `Atom` is included in the error.
     fn simplify_color(&self) -> Result<Atom, ColorError>;
 }
-
 impl ColorSimplifier for Atom {
     fn simplify_color(&self) -> Result<Atom, ColorError> {
         color_simplify_impl(self.as_atom_view())
