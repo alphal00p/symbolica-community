@@ -57,25 +57,18 @@ def curate(expr: Expression) -> Expression:
 graph_one = E_sp(input[0]['expression'])
 graph_one = curate(graph_one)
 print("INPUT EXPR: ", graph_one)
-# print(simplify_color(curate(graph_one))
-# expr = curate(E_sp("vbar(1,bis(4,1))*u(0,bis(4,0))*ϵbar(2,mink(4,2))*ϵbar(3,mink(4,3))"))
 expr = graph_one
 
 
+mink = Representation.mink(dim);
 Q = TensorStructure(mink,name=S("spenso::Q"))
 
 def q(i,j):
-    return Q(i,';',j,to_atom=True)
+    return Q(i,';',j)
 
-gammastr = TensorStructure.gammadD(dim)
-def gamma(mu,i,j):
-    return gammastr(';',mu,i,j,to_atom=True)
+gamma = TensorStructure.gammadD(dim)
+g = TensorStructure.metric(mink);
 
-mink = Representation.mink(dim);
-gmink = TensorStructure.metric(mink);
-
-def g(a,b):
-    return gmink(';',a,b,to_atom=True)
 
 bis = Representation.bis(4);
 u, ubar,v,vbar,eps,epsbar = S("alg::u","alg::ubar","alg::v","alg::vbar","alg::ϵ","alg::ϵbar")
@@ -84,13 +77,11 @@ dummy = S("dummy")
 left = S("l");
 right = S("r");
 def square_sum(expr:Expression)->Expression:
-
     lefta = wrap_dummies(expr,left)
     righta = conj(wrap_dummies(expr,right))
     square = (lefta*righta).expand()
     square = square.replace(eps(i_,mink(left(a_)))*epsbar(i_,mink(right(a_))),-g(left(a_),right(a_)),repeat=True)
     square = square.replace(eps(i_,mink(right(a_)))*epsbar(i_,mink(left(a_))),-g(left(a_),right(a_)),repeat=True)
-
     square = square.replace(vbar(i_,bis(left(a_)))*v(i_,bis(right(a_))),-gamma(dummy(i_,a_),left(a_) ,right(a_))*q(i_,dummy(i_,a_)),repeat=True)
     square = square.replace(vbar(i_,bis(right(a_)))*v(j_,bis(left(a_))),-gamma(dummy(i_,a_),left(a_) ,right(a_))*q(i_,dummy(i_,a_)),repeat=True)
     square = square.replace(ubar(i_,bis(left(a_)))*u(j_,bis(right(a_))),gamma(dummy(i_,a_),right(a_) ,left(a_))*q(i_,dummy(i_,a_)),repeat=True)
