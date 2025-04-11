@@ -1,7 +1,7 @@
 use delegate::delegate;
 use itertools::Itertools;
 use pyo3::{
-    exceptions::{self, PyIndexError, PyRuntimeError, PyTypeError},
+    exceptions::{self, PyIndexError, PyRuntimeError, PyTypeError, PyValueError},
     prelude::*,
     pybacked::PyBackedStr,
     types::{PyDict, PyTuple},
@@ -10,7 +10,9 @@ use spenso::{
     structure::{
         abstract_index::{AbstractIndex, AbstractIndexError},
         dimension::Dimension,
-        representation::{ExtendibleReps, LibraryRep, Minkowski, RepName, Representation},
+        representation::{
+            Euclidean, ExtendibleReps, LibraryRep, Minkowski, RepName, Representation,
+        },
         slot::{IsAbstractSlot, Slot},
         HasName, IndexLess, NamedStructure, StructureContract, TensorStructure, ToSymbolic,
         VecStructure,
@@ -632,6 +634,7 @@ impl SpensoStucture {
     }
 
     #[pyo3(signature = (*args, **kwargs))]
+    /// When a TensorStructure is called with any number of arguments,it returns two possible values. If all the indices are valid, it returns a TensorStructure, otherwise it returns an atom that has the correct form for simplification. Additionally the structure can hold non tensorial information, as additional information. When calling by default, all arguments are treated as indices. However if one of the arguments passed is a ';', it is treated as a separator between indices and additional information, with the additional information at the start. Additionally, to ensure that the object can be turned into a tensorStructure one can ask to cook_indices, which will attempt to cook the indices into a valid form. If to_atom is true, the object will be returned as an atom, even if it is a valid tensorStructure.
     fn __call__(
         &self,
         py: Python<'_>,
@@ -650,21 +653,32 @@ impl SpensoStucture {
             }
         }
 
+        let mut seen_separator = false;
         if to_atom {
             let mut aind = Vec::new();
+            let mut extra_args = self.structure.args().unwrap_or(vec![]);
             for a in args {
-                if let Ok(s) = a.extract::<isize>() {
-                    aind.push(Atom::new_num(s as i64));
-                } else if let Ok(arg) = a.extract::<PythonExpression>() {
-                    aind.push(if cook_indices {
-                        arg.expr.cook_indices()
-                    } else {
-                        arg.expr
-                    });
-                } else {
-                    return Err(exceptions::PyTypeError::new_err(
-                        "Only integers and symbols can be used",
-                    ));
+                let s = a.extract::<ConvertibleToAbstractIndex>()?;
+                match s {
+                    ConvertibleToAbstractIndex::Separator => {
+                        if seen_separator {
+                            return Err(exceptions::PyValueError::new_err(
+                                "Only one separator can be used",
+                            ));
+                        }
+                        seen_separator = true;
+                        extra_args.extend(aind.drain(..));
+                    }
+                    ConvertibleToAbstractIndex::Aind(ind) => {
+                        aind.push(Atom::from(ind));
+                    }
+                    ConvertibleToAbstractIndex::Atom(arg) => {
+                        if seen_separator {
+                            aind.push(arg.expr);
+                        } else {
+                            extra_args.push(arg.expr);
+                        }
+                    }
                 }
             }
 
@@ -675,41 +689,67 @@ impl SpensoStucture {
                 .map(|(rep, ind)| rep.to_symbolic([ind]))
                 .collect::<Vec<_>>();
 
-            let mut value_builder = FunctionBuilder::new(
+            let value_builder = FunctionBuilder::new(
                 self.structure
                     .name()
                     .ok_or(PyRuntimeError::new_err("structure has no name"))?,
             );
 
-            if let Some(args) = self.structure.args() {
-                value_builder = value_builder.add_args(&args);
-            }
-            let expr = PythonExpression::from(value_builder.add_args(&slots).finish());
+            let expr = PythonExpression::from(
+                value_builder
+                    .add_args(&extra_args)
+                    .add_args(&slots)
+                    .finish(),
+            );
             return Ok(expr.into_pyobject(py).map(|a| a.unbind())?.into_any());
         }
 
+        let mut seen_separator = false;
         let mut aind: Vec<AbstractIndex> = Vec::new();
+        let mut structure = self.structure.clone();
         for a in args {
-            if let Ok(s) = a.extract::<isize>() {
-                aind.push(s.into());
-            } else if let Ok(arg) = a.extract::<PythonExpression>() {
-                let ind = if cook_indices {
-                    arg.expr.cook_indices().as_view().try_into()
-                } else {
-                    arg.expr.as_view().try_into()
-                };
+            let s = a.extract::<ConvertibleToAbstractIndex>()?;
+            match s {
+                ConvertibleToAbstractIndex::Separator => {
+                    if seen_separator {
+                        return Err(exceptions::PyValueError::new_err(
+                            "Only one separator can be used",
+                        ));
+                    }
+                    seen_separator = true;
 
-                aind.push(
-                    ind.map_err(|a: AbstractIndexError| PyTypeError::new_err(a.to_string()))?,
-                );
-            } else {
-                return Err(exceptions::PyTypeError::new_err(
-                    "Only integers and symbols can be used",
-                ));
+                    if let Some(args) = &mut structure.additional_args {
+                        for id in &aind {
+                            args.push(Atom::from(*id));
+                        }
+                    } else {
+                        structure.additional_args =
+                            Some(aind.iter().map(|id| Atom::from(*id)).collect());
+                    }
+                    aind = vec![];
+                }
+                ConvertibleToAbstractIndex::Aind(ind) => aind.push(ind),
+                ConvertibleToAbstractIndex::Atom(arg) => {
+                    let ind = if cook_indices {
+                        arg.expr.cook_indices().as_view().try_into()
+                    } else {
+                        arg.expr.as_view().try_into()
+                    };
+
+                    if let Ok(ind) = ind {
+                        aind.push(ind);
+                    } else {
+                        if let Some(args) = &mut structure.additional_args {
+                            args.push(arg.expr);
+                        } else {
+                            structure.additional_args = Some(vec![arg.expr]);
+                        }
+                    }
+                }
             }
         }
         Ok(SpensoIndices {
-            structure: self.structure.clone().to_indexed(&aind),
+            structure: structure.to_indexed(&aind),
         }
         .into_pyobject(py)
         .map(|a| a.unbind())?
@@ -830,21 +870,48 @@ pub struct SpensoRepresentation {
     pub representation: Representation<LibraryRep>,
 }
 
-// #[gen_stub_pymethods]
-#[pymethods]
-impl SpensoRepresentation {
-    #[new]
-    #[pyo3(signature =
-           (
-           name,dimension,is_self_dual=false))]
-    /// Register a new representation with the given name and dimension. If dual is true, the representation will be dualizable, else it will be self-dual.
-    pub fn register_new(
-        name: Bound<'_, PyAny>,
-        dimension: Bound<'_, PyAny>,
-        is_self_dual: bool,
-    ) -> PyResult<Self> {
-        let name = name.extract::<PyBackedStr>()?;
+pub enum ConvertibleToAbstractIndex {
+    Aind(AbstractIndex),
+    Atom(PythonExpression),
+    Separator,
+}
 
+impl<'py> FromPyObject<'py> for ConvertibleToAbstractIndex {
+    fn extract_bound(aind: &Bound<'py, PyAny>) -> PyResult<Self> {
+        let aind = if let Ok(i) = aind.extract::<char>() {
+            if i == ';' {
+                ConvertibleToAbstractIndex::Separator
+            } else {
+                let mut tmp = [0u8; 4];
+                let name = i.encode_utf8(&mut tmp);
+                ConvertibleToAbstractIndex::Aind(AbstractIndex::Symbol(symbol!(&name).into()))
+            }
+        } else if let Ok(i) = aind.extract::<isize>() {
+            ConvertibleToAbstractIndex::Aind(i.into())
+        } else if let Ok(expr) = aind.extract::<PythonExpression>() {
+            match expr.expr.as_view() {
+                AtomView::Var(v) => {
+                    ConvertibleToAbstractIndex::Aind(AbstractIndex::Symbol(v.get_symbol().into()))
+                }
+                _ => ConvertibleToAbstractIndex::Atom(expr),
+            }
+        } else if let Ok(s) = aind.extract::<PyBackedStr>() {
+            let id = symbol!(&s);
+            ConvertibleToAbstractIndex::Aind(AbstractIndex::Symbol(id.into()))
+        } else {
+            return Err(PyTypeError::new_err(
+                "abstract index cannot be created from this type",
+            ));
+        };
+
+        Ok(aind)
+    }
+}
+
+pub struct ConvertibleToDimension(Dimension);
+
+impl<'py> FromPyObject<'py> for ConvertibleToDimension {
+    fn extract_bound(dimension: &Bound<'py, PyAny>) -> PyResult<Self> {
         let dim = if let Ok(i) = dimension.extract::<usize>() {
             Dimension::from(i)
         } else if let Ok(expr) = dimension.extract::<PythonExpression>() {
@@ -856,7 +923,6 @@ impl SpensoRepresentation {
                     ))
                 }
             };
-
             Dimension::from(id)
         } else if let Ok(s) = dimension.extract::<PyBackedStr>() {
             let ns = "spenso_python";
@@ -875,6 +941,26 @@ impl SpensoRepresentation {
                 "dimension must be an non-zero integer or a symbol",
             ));
         };
+        Ok(ConvertibleToDimension(dim))
+    }
+}
+
+// #[gen_stub_pymethods]
+#[pymethods]
+impl SpensoRepresentation {
+    #[new]
+    #[pyo3(signature =
+           (
+           name,dimension,is_self_dual=false))]
+    /// Register a new representation with the given name and dimension. If dual is true, the representation will be dualizable, else it will be self-dual.
+    pub fn register_new(
+        name: Bound<'_, PyAny>,
+        dimension: ConvertibleToDimension,
+        is_self_dual: bool,
+    ) -> PyResult<Self> {
+        let name = name.extract::<PyBackedStr>()?;
+
+        let dim = dimension.0;
 
         let rep = if is_self_dual {
             LibraryRep::new_self_dual(&name).unwrap().rep(dim)
@@ -887,33 +973,22 @@ impl SpensoRepresentation {
     }
 
     /// Generate a new slot with the given index, from this representation
-    fn __call__(&self, aind: Bound<'_, PyAny>) -> PyResult<SpensoSlot> {
-        if let Ok(i) = aind.extract::<isize>() {
-            Ok(SpensoSlot {
-                slot: self.representation.slot(i),
-            })
-        } else if let Ok(expr) = aind.extract::<PythonExpression>() {
-            let id = match expr.expr.as_view() {
-                AtomView::Var(v) => v.get_symbol(),
-                _ => {
-                    return Err(exceptions::PyTypeError::new_err(
-                        "Only symbols can be abstract indices",
-                    ))
-                }
-            };
-
-            let aind = AbstractIndex::Symbol(id.into());
-            Ok(SpensoSlot {
+    fn __call__(&self, py: Python<'_>, aind: ConvertibleToAbstractIndex) -> PyResult<Py<PyAny>> {
+        match aind {
+            ConvertibleToAbstractIndex::Separator => {
+                Err(PyValueError::new_err("separator cannot be an index"))
+            }
+            ConvertibleToAbstractIndex::Aind(aind) => Ok(SpensoSlot {
                 slot: self.representation.slot(aind),
-            })
-        } else if let Ok(s) = aind.extract::<PyBackedStr>() {
-            let id = symbol!(&s);
+            }
+            .into_pyobject(py)
+            .map(|a| a.unbind())?
+            .into_any()),
+            ConvertibleToAbstractIndex::Atom(a) => {
+                let a: PythonExpression = self.representation.to_symbolic([a.expr]).into();
 
-            Ok(SpensoSlot {
-                slot: self.representation.slot(AbstractIndex::Symbol(id.into())),
-            })
-        } else {
-            Err(PyTypeError::new_err("aind must be an integer or a symbol"))
+                Ok(a.into_pyobject(py).map(|a| a.unbind())?.into_any())
+            }
         }
     }
 
@@ -927,6 +1002,33 @@ impl SpensoRepresentation {
 
     fn to_expression(&self) -> PythonExpression {
         PythonExpression::from(self.representation.to_symbolic([]))
+    }
+
+    #[staticmethod]
+    fn bis(dimension: ConvertibleToDimension) -> Self {
+        let dim = dimension.0;
+        let rep = Bispinor {}.rep(dim).cast();
+        Self {
+            representation: rep,
+        }
+    }
+
+    #[staticmethod]
+    fn euc(dimension: ConvertibleToDimension) -> Self {
+        let dim = dimension.0;
+        let rep = Euclidean {}.rep(dim).cast();
+        Self {
+            representation: rep,
+        }
+    }
+
+    #[staticmethod]
+    fn mink(dimension: ConvertibleToDimension) -> Self {
+        let dim = dimension.0;
+        let rep = Minkowski {}.rep(dim).cast();
+        Self {
+            representation: rep,
+        }
     }
 }
 

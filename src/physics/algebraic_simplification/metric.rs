@@ -32,6 +32,7 @@ pub static MS: LazyLock<MetricSymbols> = LazyLock::new(|| MetricSymbols {
     dummy: symbol!("custom::dummy"),
 });
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
 pub enum CookingError {
     Add,
     Mul,
@@ -41,7 +42,7 @@ pub enum CookingError {
     Float,
 }
 
-pub fn cook_function(view: AtomView) -> Result<Atom, CookingError> {
+pub fn cook_function_view(view: AtomView) -> Result<Atom, CookingError> {
     match view {
         AtomView::Var(_) | AtomView::Num(_) => Ok(view.to_owned()),
         AtomView::Mul(_) => Err(CookingError::Mul),
@@ -121,7 +122,7 @@ pub fn cook_indices_impl(view: AtomView) -> Atom {
         expr = expr.replace_map(|term, ctx, out| {
             if ctx.function_level < 2 && ctx.function_level > 0 {
                 if let Some(c) = term.pattern_match(&ipat, None, &settings).next() {
-                    if let Ok(aind) = cook_function(c[&RS.a_].as_view()) {
+                    if let Ok(aind) = cook_function_view(c[&RS.a_].as_view()) {
                         *out = i.to_symbolic([c[&RS.d_].clone(), aind]);
                         return true;
                     }
@@ -140,7 +141,7 @@ pub fn cook_indices_impl(view: AtomView) -> Atom {
         expr = expr.replace_map(|term, ctx, out| {
             if ctx.function_level < 2 && ctx.function_level > 0 {
                 if let Some(c) = term.pattern_match(&ipat, None, &settings).next() {
-                    if let Ok(aind) = cook_function(c[&RS.a_].as_view()) {
+                    if let Ok(aind) = cook_function_view(c[&RS.a_].as_view()) {
                         *out = i.to_symbolic([c[&RS.d_].clone(), aind]);
                         return true;
                     }
@@ -153,7 +154,7 @@ pub fn cook_indices_impl(view: AtomView) -> Atom {
         expr = expr.replace_map(|term, ctx, out| {
             if ctx.function_level < 2 && ctx.function_level > 0 {
                 if let Some(c) = term.pattern_match(&ipat_dual, None, &settings).next() {
-                    if let Ok(aind) = cook_function(c[&RS.a_].as_view()) {
+                    if let Ok(aind) = cook_function_view(c[&RS.a_].as_view()) {
                         *out = i.to_symbolic([c[&RS.d_].clone(), aind]);
                         return true;
                     }

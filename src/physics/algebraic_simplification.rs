@@ -1,10 +1,11 @@
 use color::{color_conj_impl, ColorError, ColorSimplifier};
 use gamma::{factor_conj_impl, gamma_conj_impl, pol_conj_impl, GammaSimplifier};
 use metric::{
-    cook_indices_impl, list_dangling_impl, wrap_dummies_impl, wrap_indices_impl, MetricSimplifier,
+    cook_function_view, cook_indices_impl, list_dangling_impl, wrap_dummies_impl,
+    wrap_indices_impl, CookingError, MetricSimplifier,
 };
 use pyo3::{
-    exceptions::PyRuntimeWarning,
+    exceptions::{PyRuntimeWarning, PyTypeError},
     pyfunction,
     types::{PyAnyMethods, PyModule, PyModuleMethods},
     wrap_pyfunction, Bound, PyResult,
@@ -25,6 +26,7 @@ pub trait IndexTooling {
     fn wrap_indices(&self, header: Symbol) -> Atom;
     fn wrap_dummies(&self, header: Symbol) -> Atom;
     fn cook_indices(&self) -> Atom;
+    fn cook_function(&self) -> Result<Atom, CookingError>;
     fn conj(&self) -> Atom;
     fn list_dangling(&self) -> Vec<Atom>;
 }
@@ -38,6 +40,10 @@ impl IndexTooling for Atom {
     }
     fn cook_indices(&self) -> Atom {
         self.as_view().cook_indices()
+    }
+
+    fn cook_function(&self) -> Result<Atom, CookingError> {
+        self.as_view().cook_function()
     }
     fn conj(&self) -> Atom {
         self.as_view().conj()
@@ -53,6 +59,10 @@ impl<'a> IndexTooling for AtomView<'a> {
             pol_conj_impl(gamma_conj_impl(color_conj_impl(*self).as_view()).as_view()).as_view(),
         )
     }
+
+    fn cook_function(&self) -> Result<Atom, CookingError> {
+        cook_function_view(*self)
+    }
     fn wrap_indices(&self, header: Symbol) -> Atom {
         wrap_indices_impl(*self, header)
     }
@@ -65,6 +75,45 @@ impl<'a> IndexTooling for AtomView<'a> {
     fn list_dangling(&self) -> Vec<Atom> {
         list_dangling_impl(*self)
     }
+}
+
+#[pyfunction]
+pub fn conj(self_: &PythonExpression) -> PythonExpression {
+    self_.expr.conj().into()
+}
+
+#[pyfunction]
+pub fn wrap_indices(self_: &PythonExpression, header: Symbol) -> PythonExpression {
+    self_.expr.wrap_indices(header).into()
+}
+
+#[pyfunction]
+pub fn cook_indices(self_: &PythonExpression) -> PythonExpression {
+    self_.expr.cook_indices().into()
+}
+
+#[pyfunction]
+pub fn cook_function(self_: &PythonExpression) -> PyResult<PythonExpression> {
+    self_
+        .expr
+        .cook_function()
+        .map_err(|a| PyTypeError::new_err(format!("cannot cook: {a:?}")))
+        .map(|a| a.into())
+}
+
+#[pyfunction]
+pub fn wrap_dummies(self_: &PythonExpression, header: Symbol) -> PythonExpression {
+    self_.expr.wrap_dummies(header).into()
+}
+
+#[pyfunction]
+pub fn list_dangling(self_: &PythonExpression) -> Vec<PythonExpression> {
+    self_
+        .expr
+        .list_dangling()
+        .into_iter()
+        .map(|a| a.into())
+        .collect()
 }
 
 #[pyfunction]
@@ -90,77 +139,7 @@ pub fn simplify_color(self_: &PythonExpression) -> PyResult<PythonExpression> {
         })
     })
 }
-/// Shorthand notation for :func:`Expression.parse`.
-// #[pyfunction(name = "EA", signature = (expr,default_namespace="python"))]
-// fn expression_shorthand(
-//     expr: &str,
-//     default_namespace: &str,
-//     py: Python,
-// ) -> PyResult<(AlgebraicSimplification, PythonExpression)> {
-//     let expr =
-//         PythonExpression::parse(&PythonExpression::type_object(py), expr, default_namespace)?;
-//     Ok((AlgebraicSimplification::default(), expr))
-// }
 
-// #[pyclass(extends=PythonExpression, subclass)]
-// #[derive(Clone, Copy, IntoPyObject, Default)]
-// struct AlgebraicSimplification {
-//     _private: (),
-// }
-
-// #[pymethods]
-// impl AlgebraicSimplification {
-//     #[new]
-//     pub fn new() -> (Self, PythonExpression) {
-//         (Self::default(), PythonExpression::__new__())
-//     }
-
-//     pub fn simplify_gamma(self_: PyRef<'_, Self>) -> (Self, PythonExpression) {
-//         (
-//             AlgebraicSimplification::default(),
-//             self_.as_super().expr.simplify_gamma().into(),
-//         )
-//     }
-
-//     pub fn to_dots(self_: PyRef<'_, Self>) -> (Self, PythonExpression) {
-//         (
-//             AlgebraicSimplification::default(),
-//             self_.as_super().expr.to_dots().into(),
-//         )
-//     }
-
-//     pub fn simplify_metrics(self_: PyRef<'_, Self>) -> (Self, PythonExpression) {
-//         (
-//             AlgebraicSimplification::default(),
-//             self_.as_super().expr.simplify_metrics().into(),
-//         )
-//     }
-
-//     pub fn simplify_color(self_: PyRef<'_, Self>) -> PyResult<(Self, PythonExpression)> {
-//         self_
-//             .as_super()
-//             .expr
-//             .simplify_color()
-//             .map(|a| (Self::default(), a.into()))
-//             .map_err(|a| {
-//                 PyRuntimeWarning::new_err(match a {
-//                     ColorError::NotFully(a) => format!("Not fully simplified: {}", a),
-//                 })
-//             })
-//     }
-// }
-
-// pub(crate) fn initialize_alg_simp(m: &Bound<'_, PyModule>) -> PyResult<()> {
-//     let child_module = PyModule::new(m.py(), "algebraic_simplification")?;
-//     child_module.add_class::<AlgebraicSimplification>()?;
-//     child_module.add_function(wrap_pyfunction!(expression_shorthand, m)?)?;
-//     m.add_submodule(&child_module)?;
-
-//     m.py()
-//         .import("sys")?
-//         .getattr("modules")?
-//         .set_item("symbolica_community.algebraic_simplification", child_module)
-// }
 pub(crate) fn initialize_alg_simp(m: &Bound<'_, PyModule>) -> PyResult<()> {
     initialize();
     let child_module = PyModule::new(m.py(), "algebraic_simplification")?;
@@ -172,6 +151,12 @@ pub(crate) fn initialize_alg_simp(m: &Bound<'_, PyModule>) -> PyResult<()> {
     child_module.add_function(wrap_pyfunction!(to_dots, m)?)?;
     child_module.add_function(wrap_pyfunction!(simplify_metrics, m)?)?;
     child_module.add_function(wrap_pyfunction!(simplify_color, m)?)?;
+    child_module.add_function(wrap_pyfunction!(wrap_indices, m)?)?;
+    child_module.add_function(wrap_pyfunction!(cook_indices, m)?)?;
+    child_module.add_function(wrap_pyfunction!(cook_function, m)?)?;
+    child_module.add_function(wrap_pyfunction!(wrap_dummies, m)?)?;
+    child_module.add_function(wrap_pyfunction!(list_dangling, m)?)?;
+    child_module.add_function(wrap_pyfunction!(conj, m)?)?;
 
     m.add_submodule(&child_module)?;
     m.py()
