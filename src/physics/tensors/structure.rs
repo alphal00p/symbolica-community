@@ -24,7 +24,9 @@ use symbolica::{
 };
 use thiserror::Error;
 
-use crate::physics::algebraic_simplification::{gamma::AGS, representations::Bispinor};
+use crate::physics::algebraic_simplification::{
+    gamma::AGS, representations::Bispinor, IndexTooling,
+};
 
 use super::{
     library::{TensorNamespace, WEYL},
@@ -636,22 +638,33 @@ impl SpensoStucture {
         args: &Bound<'_, PyTuple>,
         kwargs: Option<&Bound<'_, PyDict>>,
     ) -> PyResult<Py<PyAny>> {
+        let mut cook_indices = false;
+        let mut to_atom = false;
         if let Some(kwargs) = kwargs {
+            if let Some(cook) = kwargs.get_item("cook_indices")? {
+                cook_indices = cook.extract::<bool>()?;
+            }
+
+            if let Some(to_atom_val) = kwargs.get_item("to_atom")? {
+                to_atom = to_atom_val.extract::<bool>()?;
+            }
+        }
+
+        if to_atom {
             let mut aind = Vec::new();
-            if let Some(to_atom) = kwargs.get_item("to_atom")? {
-                let to_atom = to_atom.extract::<bool>()?;
-                if to_atom {
-                    for a in args {
-                        if let Ok(s) = a.extract::<isize>() {
-                            aind.push(Atom::new_num(s as i64));
-                        } else if let Ok(arg) = a.extract::<PythonExpression>() {
-                            aind.push(arg.expr);
-                        } else {
-                            return Err(exceptions::PyTypeError::new_err(
-                                "Only integers and symbols can be used",
-                            ));
-                        }
-                    }
+            for a in args {
+                if let Ok(s) = a.extract::<isize>() {
+                    aind.push(Atom::new_num(s as i64));
+                } else if let Ok(arg) = a.extract::<PythonExpression>() {
+                    aind.push(if cook_indices {
+                        arg.expr.cook_indices()
+                    } else {
+                        arg.expr
+                    });
+                } else {
+                    return Err(exceptions::PyTypeError::new_err(
+                        "Only integers and symbols can be used",
+                    ));
                 }
             }
 
@@ -680,11 +693,14 @@ impl SpensoStucture {
             if let Ok(s) = a.extract::<isize>() {
                 aind.push(s.into());
             } else if let Ok(arg) = a.extract::<PythonExpression>() {
+                let ind = if cook_indices {
+                    arg.expr.cook_indices().as_view().try_into()
+                } else {
+                    arg.expr.as_view().try_into()
+                };
+
                 aind.push(
-                    arg.expr
-                        .as_view()
-                        .try_into()
-                        .map_err(|a: AbstractIndexError| PyTypeError::new_err(a.to_string()))?,
+                    ind.map_err(|a: AbstractIndexError| PyTypeError::new_err(a.to_string()))?,
                 );
             } else {
                 return Err(exceptions::PyTypeError::new_err(

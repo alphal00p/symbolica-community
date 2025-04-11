@@ -497,6 +497,10 @@ mod test {
 
         println!("Amplitude left:\n{}", amplitude_left.collect_factors());
 
+        println!(
+            "Amplitude left cooked:\n{}",
+            amplitude_left.collect_factors().cook_indices()
+        );
         let amplitude_right = amplitude.wrap_indices(symbol!("spenso::right"));
 
         println!("Amplitude right:\n{}", amplitude_right.factor());

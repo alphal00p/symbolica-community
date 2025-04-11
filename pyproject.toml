@@ -36,3 +36,7 @@ package-mode = false
 
 [tool.uv]
 package = false
+
+[tool.pyright]
+venvPath = ".devenv/state/"
+venv = ".venv"

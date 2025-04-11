@@ -1,6 +1,8 @@
 use color::{color_conj_impl, ColorError, ColorSimplifier};
 use gamma::{factor_conj_impl, gamma_conj_impl, pol_conj_impl, GammaSimplifier};
-use metric::{list_dangling_impl, wrap_dummies_impl, wrap_indices_impl, MetricSimplifier};
+use metric::{
+    cook_indices_impl, list_dangling_impl, wrap_dummies_impl, wrap_indices_impl, MetricSimplifier,
+};
 use pyo3::{
     exceptions::PyRuntimeWarning,
     pyfunction,
@@ -22,6 +24,7 @@ pub mod representations;
 pub trait IndexTooling {
     fn wrap_indices(&self, header: Symbol) -> Atom;
     fn wrap_dummies(&self, header: Symbol) -> Atom;
+    fn cook_indices(&self) -> Atom;
     fn conj(&self) -> Atom;
     fn list_dangling(&self) -> Vec<Atom>;
 }
@@ -32,6 +35,9 @@ impl IndexTooling for Atom {
     }
     fn wrap_dummies(&self, header: Symbol) -> Atom {
         self.as_view().wrap_dummies(header)
+    }
+    fn cook_indices(&self) -> Atom {
+        self.as_view().cook_indices()
     }
     fn conj(&self) -> Atom {
         self.as_view().conj()
@@ -49,6 +55,9 @@ impl<'a> IndexTooling for AtomView<'a> {
     }
     fn wrap_indices(&self, header: Symbol) -> Atom {
         wrap_indices_impl(*self, header)
+    }
+    fn cook_indices(&self) -> Atom {
+        cook_indices_impl(*self)
     }
     fn wrap_dummies(&self, header: Symbol) -> Atom {
         wrap_dummies_impl(*self, header)
