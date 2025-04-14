@@ -245,7 +245,7 @@ class TensorStructure:
     This has an optional name, and accompanying symbolica expressions that are considered as additional non-indexed arguments.
     The structure is essentially a list of `Representation` that are used to define the structure of the tensor.
     """
-    def from_list(self, additional_args:tuple, name:typing.Optional[Expression]) -> TensorStructure:
+    def __new__(cls, additional_args:tuple, name:typing.Optional[Expression]) -> TensorStructure:
         ...
 
     def __repr__(self) -> builtins.str:
@@ -269,25 +269,25 @@ class TensorStructure:
         """
         ...
 
-    def id(self, rep:Representation) -> TensorStructure:
+    def id(rep:Representation) -> TensorStructure:
         ...
 
-    def metric(self, rep:Representation) -> TensorStructure:
+    def metric(rep:Representation) -> TensorStructure:
         ...
 
-    def gamma4D(self, namespace:TensorNamespace) -> TensorStructure:
+    def gamma4D(namespace:TensorNamespace) -> TensorStructure:
         ...
 
-    def gammadD(self, dim:Expression) -> TensorStructure:
+    def gammadD(dim:Expression) -> TensorStructure:
         ...
 
-    def gamma5(self, namespace:TensorNamespace) -> TensorStructure:
+    def gamma5(namespace:TensorNamespace) -> TensorStructure:
         ...
 
-    def projm(self, namespace:TensorNamespace) -> TensorStructure:
+    def projm(namespace:TensorNamespace) -> TensorStructure:
         ...
 
-    def projp(self, namespace:TensorNamespace) -> TensorStructure:
+    def projp(namespace:TensorNamespace) -> TensorStructure:
         ...
 
     def symbolic(self, args:tuple, extra_args:typing.Optional[list]) -> Expression:

@@ -32,7 +32,7 @@ pub mod representations;
 pub trait IndexTooling {
     /// Wraps all abstract indices within the expression using a specified header symbol.
     ///
-    /// This transforms indices like `idx` into `header(idx)`. Useful for distinguishing
+    /// This transforms indices like `mink(dim,idx)` into `mink(dim,header(idx))`. Useful for distinguishing
     /// between different copies of an expression, e.g., an amplitude and its complex conjugate.
     ///
     /// # Arguments

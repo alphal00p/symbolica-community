@@ -5,7 +5,6 @@ use pyo3::{
     prelude::*,
     pybacked::PyBackedStr,
     types::{PyList, PyTuple},
-    PyTypeInfo,
 };
 use spenso::{
     structure::{

@@ -1,8 +1,8 @@
-from symbolica_community import Expression, S, E
-from symbolica_community.tensors import TensorNetwork, Representation, TensorStructure, TensorIndices, Tensor, Slot
-import symbolica_community
-import symbolica_community.tensors as tensors
-import random
+# from symbolica_community import Expression, S, E
+# from symbolica_community.tensors import TensorNetwork, Representation, TensorStructure, TensorIndices, Tensor, Slot/
+# import symbolica_community
+# import symbolica_community.tensors as tensors
+# import random
 from symbolica_community.algebraic_simplification import *
 
 
@@ -95,7 +95,7 @@ def square_sum(expr:Expression)->Expression:
 square = square_sum(expr)
 print("\n-->\nSQUARED EXPR", square)
 
-expr = simplify_color(square)
+expr = cook_indices(square)
 expr = to_dots(simplify_gamma(expr))
 
 print("\n-->\nGAMMA SIMPLIFIED EXPR", expr.factor())

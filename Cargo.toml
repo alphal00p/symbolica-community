@@ -52,8 +52,8 @@ spenso-macros = {git="https://github.com/alphal00p/spenso",rev="67d8fc8ac621eb8a
 
 # spenso-macros = {path = "../spenso/spenso-macros"}
 [patch.crates-io]
-symbolica={path="../symbolica"}
-# symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "19de6b57fee6fcf217331350981396065693da7f" }
+# symbolica={path="../symbolica"}
+symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "a143355d9a263775f0d393f85cd7a9538024a35a" }
 # spenso = { path = "../spenso/spenso" ,features = ["shadowing"] }
 spenso={git="https://github.com/alphal00p/spenso",rev="67d8fc8ac621eb8afe56da54b24f4ad5d22c686a"}
 # symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}

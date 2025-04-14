@@ -32,7 +32,7 @@ use symbolica::{
     poly::Variable,
 };
 
-use pyo3_stub_gen::{define_stub_info_gatherer, derive::*, inventory, PyStubType, TypeInfo};
+use pyo3_stub_gen::{define_stub_info_gatherer, derive::*, PyStubType, TypeInfo};
 
 pub mod library;
 pub mod network;
