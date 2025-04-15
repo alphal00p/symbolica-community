@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use anyhow::anyhow;
+use library::SpensorLibrary;
 use network::SpensoNet;
 use pyo3::{
     conversion::FromPyObject,
@@ -57,6 +58,7 @@ pub(crate) fn initialize_spenso(m: &Bound<'_, PyModule>) -> PyResult<()> {
     Spensor::append_to_symbolica(m)?;
     SpensoIndices::init(&child_module)?;
     SpensoIndices::append_to_symbolica(m)?;
+    SpensorLibrary::init(&child_module)?;
     m.add_submodule(&child_module)?;
 
     m.py()

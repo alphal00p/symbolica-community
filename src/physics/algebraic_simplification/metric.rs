@@ -356,9 +356,17 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
                     function!(
                         ETS.id,
                         i.to_symbolic([RS.d_, RS.i_]),
-                        i.to_symbolic([RS.d_, RS.i_])
+                        i.to_symbolic([RS.d_, RS.a_])
                     )
                     .pow(Atom::new_num(2)),
+                    Atom::new_var(RS.d_),
+                ),
+                (
+                    function!(
+                        ETS.id,
+                        i.to_symbolic([RS.d_, RS.i_]),
+                        i.to_symbolic([RS.d_, RS.i_])
+                    ),
                     Atom::new_var(RS.d_),
                 ),
             ]
@@ -381,9 +389,8 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
                     function!(
                         ETS.id,
                         i.to_symbolic([RS.d_, RS.i_]),
-                        di.to_symbolic([RS.d_, RS.a_])
-                    )
-                    .pow(Atom::new_num(2)),
+                        di.to_symbolic([RS.d_, RS.i_])
+                    ),
                     Atom::new_var(RS.d_),
                 ),
                 (
@@ -551,7 +558,7 @@ mod test {
 
     use super::*;
 
-    use symbolica::parse_lit;
+    use symbolica::{parse, parse_lit};
 
     #[test]
     fn metric_contract() {
@@ -567,5 +574,15 @@ mod test {
             "got {:#}",
             expr
         );
+    }
+
+    #[test]
+    fn id_trace() {
+        initialize();
+        let expr = parse!("spenso::𝟙(spenso::bis(4,python::l(0)),spenso::bis(4,python::l(0)))")
+            .unwrap()
+            .simplify_metrics();
+
+        assert_eq!(expr, Atom::new_num(4), "got {:#}", expr);
     }
 }

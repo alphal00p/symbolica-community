@@ -13,7 +13,7 @@ use symbolica::symbol;
 
 use crate::physics::algebraic_simplification::gamma::GammaLibrary;
 
-use super::{structure::SpensoStucture, Spensor};
+use super::{structure::SpensoStucture, ModuleInit, Spensor};
 
 pub static WEYL: LazyLock<GammaLibrary> = LazyLock::new(|| GammaLibrary {
     gamma: symbol!("weyl::gamma"),
@@ -318,6 +318,8 @@ where
 pub struct SpensorLibrary {
     pub(crate) library: TensorLibrary<MixedTensor<f64, ExplicitKey>>,
 }
+
+impl ModuleInit for SpensorLibrary {}
 
 #[gen_stub_pymethods]
 #[pymethods]
