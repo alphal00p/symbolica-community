@@ -28,7 +28,7 @@ pub struct MetricSymbols {
 
 pub static MS: LazyLock<MetricSymbols> = LazyLock::new(|| MetricSymbols {
     dim: symbol!("dim"),
-    dot: symbol!("dot"),
+    dot: symbol!("dot";Symmetric, Linear).unwrap(),
     dummy: symbol!("custom::dummy"),
 });
 
@@ -223,26 +223,32 @@ pub fn list_dangling_impl(view: AtomView) -> Vec<Atom> {
         ..Default::default()
     };
     let mut dangling = HashMap::new();
-    if let AtomView::Add(a) = a.as_view() {
-        if let Some(first_term) = a.iter().next() {
-            // println!("First term: {}", first_term);
-            for i in LibraryRep::all_self_duals().chain(LibraryRep::all_inline_metrics()) {
-                let ipat = i.to_symbolic([RS.d_, RS.a_]).to_pattern();
-                for p in first_term.pattern_match(&ipat, None, &settings) {
-                    *dangling.entry(ipat.replace_wildcards(&p)).or_insert(0) += 1;
-                }
-            }
-            for i in LibraryRep::all_dualizables() {
-                let ipat = i.to_symbolic([RS.d_, RS.a_]).to_pattern();
-                let ipat_dual = i.dual().to_symbolic([RS.d_, RS.a_]).to_pattern();
+    let first_term = if let AtomView::Add(a) = a.as_view() {
+        if let Some(ft) = a.iter().next() {
+            ft
+        } else {
+            Atom::Zero.as_view()
+        }
+    } else {
+        a.as_view()
+    };
 
-                for p in first_term.pattern_match(&ipat, None, &settings) {
-                    *dangling.entry(ipat.replace_wildcards(&p)).or_insert(0) += 1;
-                }
-                for p in first_term.pattern_match(&ipat_dual, None, &settings) {
-                    *dangling.entry(ipat.replace_wildcards(&p)).or_insert(0) -= 1;
-                }
-            }
+    // println!("First term: {}", first_term);
+    for i in LibraryRep::all_self_duals().chain(LibraryRep::all_inline_metrics()) {
+        let ipat = i.to_symbolic([RS.d_, RS.a_]).to_pattern();
+        for p in first_term.pattern_match(&ipat, None, &settings) {
+            *dangling.entry(ipat.replace_wildcards(&p)).or_insert(0) += 1;
+        }
+    }
+    for i in LibraryRep::all_dualizables() {
+        let ipat = i.to_symbolic([RS.d_, RS.a_]).to_pattern();
+        let ipat_dual = i.dual().to_symbolic([RS.d_, RS.a_]).to_pattern();
+
+        for p in first_term.pattern_match(&ipat, None, &settings) {
+            *dangling.entry(ipat.replace_wildcards(&p)).or_insert(0) += 1;
+        }
+        for p in first_term.pattern_match(&ipat_dual, None, &settings) {
+            *dangling.entry(ipat.replace_wildcards(&p)).or_insert(0) -= 1;
         }
     }
 
