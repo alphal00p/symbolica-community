@@ -4,11 +4,11 @@ use std::{
 };
 
 use spenso::{
+    network::library::symbolic::ETS,
     structure::{
         abstract_index::AIND_SYMBOLS,
         representation::{LibraryRep, RepName},
     },
-    tensor_library::ETS,
 };
 use symbolica::{
     atom::{representation::FunView, Atom, AtomCore, AtomType, AtomView, Symbol},

@@ -1,8 +1,8 @@
 use std::sync::LazyLock;
 
 use spenso::{
+    network::library::symbolic::ETS,
     structure::representation::{LibraryRep, RepName},
-    tensor_library::ETS,
 };
 use symbolica::{
     atom::{Atom, AtomCore, AtomView, Symbol},

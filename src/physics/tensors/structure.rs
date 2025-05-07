@@ -7,6 +7,10 @@ use pyo3::{
     types::{PyList, PyTuple},
 };
 use spenso::{
+    network::{
+        library::symbolic::{ExplicitKey, ETS},
+        parsing::ShadowedStructure,
+    },
     structure::{
         abstract_index::AbstractIndex,
         dimension::Dimension,
@@ -17,7 +21,6 @@ use spenso::{
         HasName, IndexLess, NamedStructure, StructureContract, TensorStructure, ToSymbolic,
         VecStructure,
     },
-    tensor_library::{ExplicitKey, ShadowedStructure, ETS},
 };
 use symbolica::{
     api::python::{ConvertibleToExpression, PythonExpression},
@@ -45,6 +48,42 @@ use pyo3_stub_gen::{derive::*, impl_stub_type, PyStubType};
 /// The structure is essentially a list of `Slots` that are used to define the structure of the tensor.
 pub struct SpensoIndices {
     pub structure: NamedStructure<Symbol, Vec<Atom>, LibraryRep>,
+}
+
+impl TensorStructure for SpensoIndices {
+    type Slot = Slot<LibraryRep>;
+    type Indexed = SpensoIndices;
+
+    fn reindex(
+        self,
+        indices: &[AbstractIndex],
+    ) -> anyhow::Result<SpensoIndices, spenso::structure::StructureError> {
+        Ok(SpensoIndices {
+            structure: self.structure.reindex(indices)?,
+        })
+    }
+
+    fn dual(self) -> Self {
+        SpensoIndices {
+            structure: self.structure.dual(),
+        }
+    }
+    delegate! {
+        to self.structure{
+            fn external_structure_iter(&self) -> impl Iterator<Item =  Slot<LibraryRep>>;
+            fn external_dims_iter(&self) -> impl Iterator<Item = Dimension>;
+            fn external_reps_iter(
+                &self,
+            ) -> impl Iterator<Item = Representation<LibraryRep>>;
+            fn external_indices_iter(&self) -> impl Iterator<Item = AbstractIndex>;
+            fn get_aind(&self, i: usize) -> Option<AbstractIndex>;
+            fn get_rep(&self, i: usize) -> Option<Representation<LibraryRep>>;
+            fn get_dim(&self, i: usize) -> Option<Dimension>;
+            fn get_slot(&self, i: usize) -> Option<Slot<LibraryRep>>;
+
+            fn order(&self) -> usize;
+        }
+    }
 }
 
 impl From<ShadowedStructure> for SpensoIndices {
@@ -327,7 +366,7 @@ impl<'py> FromPyObject<'py> for PossiblyIndexed {
         } else if let Ok(s) = structure.extract::<Vec<usize>>() {
             Ok(PossiblyIndexed::Unindexed(SpensoStucture {
                 structure: IndexLess::from_iter(
-                    s.into_iter().map(|s| ExtendibleReps::EUCLIDEAN.rep(s)),
+                    s.into_iter().map(|s| ExtendibleReps::EUCLIDEAN.new_rep(s)),
                 )
                 .into(),
             }))
@@ -362,6 +401,21 @@ impl From<ShadowedStructure> for PossiblyIndexed {
 
 impl TensorStructure for PossiblyIndexed {
     type Slot = Slot<LibraryRep>;
+    type Indexed = SpensoIndices;
+
+    fn reindex(
+        self,
+        indices: &[AbstractIndex],
+    ) -> anyhow::Result<SpensoIndices, spenso::structure::StructureError> {
+        match self {
+            PossiblyIndexed::Indexed(i) => Ok(SpensoIndices {
+                structure: i.structure.reindex(indices)?,
+            }),
+            PossiblyIndexed::Unindexed(i) => Ok(SpensoIndices {
+                structure: i.structure.reindex(indices)?,
+            }),
+        }
+    }
 
     fn dual(self) -> Self {
         match self {
@@ -683,9 +737,9 @@ impl SpensoStucture {
 
         ExplicitKey::from_iter(
             [
-                LibraryRep::from(Minkowski {}).rep(4),
-                Bispinor {}.rep(4).cast(),
-                Bispinor {}.rep(4).cast(),
+                LibraryRep::from(Minkowski {}).new_rep(4),
+                Bispinor {}.new_rep(4).cast(),
+                Bispinor {}.new_rep(4).cast(),
             ],
             name,
             None,
@@ -699,9 +753,9 @@ impl SpensoStucture {
         if let AtomView::Var(v) = dim.expr.as_view() {
             Ok(ExplicitKey::from_iter(
                 [
-                    LibraryRep::from(Minkowski {}).rep(v.get_symbol()),
-                    Bispinor {}.rep(4).cast(),
-                    Bispinor {}.rep(4).cast(),
+                    LibraryRep::from(Minkowski {}).new_rep(v.get_symbol()),
+                    Bispinor {}.new_rep(4).cast(),
+                    Bispinor {}.new_rep(4).cast(),
                 ],
                 AGS.gamma,
                 None,
@@ -721,7 +775,7 @@ impl SpensoStucture {
             TensorNamespace::Algebra => AGS.gamma5,
         };
 
-        ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], name, None).into()
+        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
     }
 
     #[staticmethod]
@@ -731,7 +785,7 @@ impl SpensoStucture {
             TensorNamespace::Weyl => WEYL.projm,
         };
 
-        ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], name, None).into()
+        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
     }
 
     #[staticmethod]
@@ -741,7 +795,7 @@ impl SpensoStucture {
             TensorNamespace::Weyl => WEYL.projp,
         };
 
-        ExplicitKey::from_iter([Bispinor {}.rep(4), Bispinor {}.rep(4)], name, None).into()
+        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
     }
 
     #[pyo3(signature = (*args, extra_args=None))]
@@ -1075,9 +1129,9 @@ impl SpensoRepresentation {
         let dim = dimension.0;
 
         let rep = if is_self_dual {
-            LibraryRep::new_self_dual(&name).unwrap().rep(dim)
+            LibraryRep::new_self_dual(&name).unwrap().new_rep(dim)
         } else {
-            LibraryRep::new_dual(&name).unwrap().rep(dim)
+            LibraryRep::new_dual(&name).unwrap().new_rep(dim)
         };
         Ok(SpensoRepresentation {
             representation: rep,
@@ -1119,7 +1173,7 @@ impl SpensoRepresentation {
     #[staticmethod]
     fn bis(dimension: ConvertibleToDimension) -> Self {
         let dim = dimension.0;
-        let rep = Bispinor {}.rep(dim).cast();
+        let rep = Bispinor {}.new_rep(dim).cast();
         Self {
             representation: rep,
         }
@@ -1128,7 +1182,7 @@ impl SpensoRepresentation {
     #[staticmethod]
     fn euc(dimension: ConvertibleToDimension) -> Self {
         let dim = dimension.0;
-        let rep = Euclidean {}.rep(dim).cast();
+        let rep = Euclidean {}.new_rep(dim).cast();
         Self {
             representation: rep,
         }
@@ -1137,7 +1191,7 @@ impl SpensoRepresentation {
     #[staticmethod]
     fn mink(dimension: ConvertibleToDimension) -> Self {
         let dim = dimension.0;
-        let rep = Minkowski {}.rep(dim).cast();
+        let rep = Minkowski {}.new_rep(dim).cast();
         Self {
             representation: rep,
         }
@@ -1181,9 +1235,9 @@ impl SpensoSlot {
     ) -> PyResult<Self> {
         let name = name.extract::<PyBackedStr>()?;
         let rep = if dual {
-            LibraryRep::new_dual(&name).unwrap().rep(dimension)
+            LibraryRep::new_dual(&name).unwrap().new_rep(dimension)
         } else {
-            LibraryRep::new_self_dual(&name).unwrap().rep(dimension)
+            LibraryRep::new_self_dual(&name).unwrap().new_rep(dimension)
         };
         if let Ok(i) = aind.extract::<isize>() {
             Ok(SpensoSlot { slot: rep.slot(i) })

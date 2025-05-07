@@ -13,10 +13,10 @@ version = "0.1.0"
 
 [features]
 
-default = [ "spenso", "algebraic_simplification", "vakint"]
-algebraic_simplification = ["dep:spenso", "dep:spenso-macros"]
-vakint = ["dep:vakint"]
-spenso = ["dep:spenso"]
+default = [ "spenso", "algebraic_simplification"]
+algebraic_simplification = ["dep:spenso", "dep:spenso-macros","dep:linnet"]
+# vakint = ["dep:vakint"]
+spenso = ["dep:spenso","dep:linnet"]
 
 [profile.release]
 codegen-units = 1
@@ -36,11 +36,12 @@ crate-type = ["lib", "cdylib"]
 
 [dependencies]
 symbolica = { version = "0.16.0", features = ["python_no_module"] }
-pyo3 = { version = "0.23.0", features = ["abi3-py37", "anyhow", "num-complex"] }
+pyo3 = { version = "0.24.0", features = ["abi3-py37", "anyhow", "num-complex"] }
 
 anyhow = "*"
-vakint = { git = "https://github.com/alphal00p/vakint", branch = "vk_for_sb_0_16_latest", optional=true }
+# vakint = { git = "https://github.com/alphal00p/vakint", branch = "vk_for_sb_0_16_latest", optional=true }
 spenso = { version = "0.4.1", optional = true, features = ["shadowing"] }
+linnet = {version="0.5.1",optional=true}
 itertools = "0.13.0"
 delegate = "0.13.1"
 auto_enums = "0.8.6"
@@ -48,12 +49,12 @@ thiserror = "1.0.65"
 pyo3-stub-gen = "0.7.0"
 env_logger = "0.11.5"
 
-spenso-macros = {git="https://github.com/alphal00p/spenso",rev="67d8fc8ac621eb8afe56da54b24f4ad5d22c686a",features=["shadowing"],optional=true}
+spenso-macros = {git="https://github.com/alphal00p/spenso",rev="36bde5a98b85b7b46c0a020516c19503a11fc09a",features=["shadowing"],optional=true}
 
 # spenso-macros = {path = "../spenso/spenso-macros"}
 [patch.crates-io]
 # symbolica={path="../symbolica"}
-symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "a143355d9a263775f0d393f85cd7a9538024a35a" }
-# spenso = { path = "../spenso/spenso" ,features = ["shadowing"] }
-spenso={git="https://github.com/alphal00p/spenso",rev="67d8fc8ac621eb8afe56da54b24f4ad5d22c686a"}
+symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "2f306d814359de6397817060ba2deae046351828" }
+spenso = { path = "../spenso/spenso"}
+# spenso={git="https://github.com/alphal00p/spenso",rev="36bde5a98b85b7b46c0a020516c19503a11fc09a"}
 # symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}

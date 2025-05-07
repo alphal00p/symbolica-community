@@ -5,9 +5,9 @@ use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum, gen_stub_py
 use spenso::{
     complex::Complex,
     data::{SetTensorData, SparseTensor},
+    network::library::symbolic::{ExplicitKey, TensorLibrary},
     parametric::MixedTensor,
-    structure::TensorStructure,
-    tensor_library::{ExplicitKey, TensorLibrary},
+    structure::{HasStructure, TensorStructure},
 };
 use symbolica::symbol;
 
@@ -338,7 +338,7 @@ impl SpensorLibrary {
             tensor
                 .tensor
                 .clone()
-                .map_structure_fallible(ExplicitKey::try_from)
+                .map_structure_result(ExplicitKey::try_from)
                 .map_err(|s| PyTypeError::new_err(s.to_string()))?,
         );
         Ok(())

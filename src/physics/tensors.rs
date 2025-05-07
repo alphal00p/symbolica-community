@@ -17,12 +17,12 @@ use spenso::{
         DataTensor, DenseTensor, GetTensorData, SetTensorData, SparseOrDense, SparseTensor,
         StorageTensor,
     },
+    network::parsing::ShadowedStructure,
     parametric::{
         atomcore::TensorAtomOps, CompiledEvalTensor, ConcreteOrParam, LinearizedEvalTensor,
         MixedTensor, ParamOrConcrete, ParamTensor,
     },
     structure::{HasStructure, TensorStructure},
-    tensor_library::ShadowedStructure,
 };
 use structure::{PossiblyIndexed, SpensoIndices};
 use symbolica::{
@@ -226,7 +226,7 @@ impl Spensor {
     }
 
     fn __len__(&self) -> usize {
-        self.tensor.size().unwrap()
+        self.tensor.structure().size().unwrap()
     }
 
     fn __getitem__(&self, item: SliceOrIntOrExpanded) -> PyResult<Py<PyAny>> {
