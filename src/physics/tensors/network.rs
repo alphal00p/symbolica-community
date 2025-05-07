@@ -1,4 +1,7 @@
-use pyo3::{exceptions::PyRuntimeError, prelude::*};
+use pyo3::{
+    exceptions::{self, PyRuntimeError},
+    prelude::*,
+};
 
 use spenso::{
     network::{
@@ -8,10 +11,13 @@ use spenso::{
     parametric::MixedTensor,
     structure::HasStructure,
 };
-use symbolica::{api::python::PythonExpression, atom::Atom};
+use symbolica::{
+    api::python::{ConvertibleToExpression, PythonExpression},
+    atom::Atom,
+};
 
 use super::{library::SpensorLibrary, structure::PossiblyIndexed, ModuleInit, Spensor};
-use pyo3_stub_gen::derive::*;
+use pyo3_stub_gen::{derive::*, PyStubType, TypeInfo};
 
 #[gen_stub_pyclass(module = "symbolica_community.tensors")]
 #[pyclass(name = "TensorNetwork", module = "symbolica_community.tensors")]
@@ -47,11 +53,60 @@ pub fn python_to_tensor_network(
 
 pub type ParsingNet = Network<NetworkStore<MixedTensor<f64, ShadowedStructure>, Atom>, ExplicitKey>;
 
-#[gen_stub_pymethods]
+impl From<ParsingNet> for SpensoNet {
+    fn from(network: ParsingNet) -> Self {
+        SpensoNet { network }
+    }
+}
+
+pub struct ConvertibleToSpensoNet(SpensoNet);
+
+impl ConvertibleToSpensoNet {
+    pub fn to_net(self) -> SpensoNet {
+        self.0
+    }
+}
+
+impl<'a> FromPyObject<'a> for ConvertibleToSpensoNet {
+    fn extract_bound(ob: &Bound<'a, pyo3::PyAny>) -> PyResult<Self> {
+        if let Ok(a) = ob.extract::<SpensoNet>() {
+            Ok(ConvertibleToSpensoNet(a))
+        } else if let Ok(num) = ob.extract::<Spensor>() {
+            Ok(ConvertibleToSpensoNet(SpensoNet {
+                network: Network::from_tensor(num.tensor.map_structure_result(|a| match a {
+                    PossiblyIndexed::Indexed(a) => Ok(a.structure),
+                    _ => Err(PyRuntimeError::new_err(
+                        "Cannot convert an unindexed tensor",
+                    )),
+                })?),
+            }))
+        } else if let Ok(a) = ob.extract::<ConvertibleToExpression>() {
+            Ok(ConvertibleToSpensoNet(SpensoNet {
+                network: ParsingNet::try_from_view(
+                    a.to_expression().expr.as_view(),
+                    &SpensorLibrary::new().library,
+                )
+                .map_err(|a| PyRuntimeError::new_err(a.to_string()))?,
+            }))
+        } else {
+            Err(exceptions::PyTypeError::new_err(
+                "Cannot convert to expression",
+            ))
+        }
+    }
+}
+
+impl PyStubType for ConvertibleToSpensoNet {
+    fn type_output() -> pyo3_stub_gen::TypeInfo {
+        ConvertibleToExpression::type_output() | SpensoNet::type_output() | Spensor::type_output()
+    }
+}
+
+// #[gen_stub_pymethods]
 #[pymethods]
 impl SpensoNet {
     #[new]
-    /// Parses an expression into a
+    /// Parses an expression into a network
     pub fn from_expression(
         expr: &Bound<'_, PythonExpression>,
         library: &SpensorLibrary,
@@ -85,4 +140,50 @@ impl SpensoNet {
             |t| t.to_string(),
         ))
     }
+
+    /// Add this expression to `other`, returning the result.
+    pub fn __add__(&self, rhs: ConvertibleToSpensoNet) -> PyResult<SpensoNet> {
+        let rhs = rhs.to_net();
+        Ok((self.network.clone() + rhs.network).into())
+    }
+
+    /// Add this expression to `other`, returning the result.
+    pub fn __radd__(&self, rhs: ConvertibleToSpensoNet) -> PyResult<SpensoNet> {
+        self.__add__(rhs)
+    }
+
+    /// Subtract `other` from this expression, returning the result.
+    pub fn __sub__(&self, rhs: ConvertibleToSpensoNet) -> PyResult<SpensoNet> {
+        let rhs = rhs.to_net();
+        Ok((self.network.clone() - rhs.network).into())
+    }
+
+    /// Subtract this expression from `other`, returning the result.
+    pub fn __rsub__(&self, rhs: ConvertibleToSpensoNet) -> PyResult<SpensoNet> {
+        let rhs = rhs.to_net();
+        Ok((rhs.network - self.network.clone()).into())
+    }
+
+    /// Add this expression to `other`, returning the result.
+    pub fn __mul__(&self, rhs: ConvertibleToSpensoNet) -> PyResult<SpensoNet> {
+        let rhs = rhs.to_net();
+        Ok((rhs.network * self.network.clone()).into())
+    }
+
+    /// Add this expression to `other`, returning the result.
+    pub fn __rmul__(&self, rhs: ConvertibleToSpensoNet) -> PyResult<SpensoNet> {
+        let rhs = rhs.to_net();
+        Ok((rhs.network * self.network.clone()).into())
+    }
+
+    // pub fn __pow__(&self, rhs: usize, number: Option<i64>) -> PyResult<PythonExpression> {
+    //     if number.is_some() {
+    //         return Err(exceptions::PyValueError::new_err(
+    //             "Optional number argument not supported",
+    //         ));
+    //     }
+
+    //     // let rhs = rhs.to_net();
+    //     Ok(self.network.pow(&rhs).into())
+    // }
 }
