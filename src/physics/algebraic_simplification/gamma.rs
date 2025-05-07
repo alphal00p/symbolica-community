@@ -11,7 +11,9 @@ use symbolica::{
     symbol,
 };
 
-use crate::physics::algebraic_simplification::{metric::MetricSimplifier, rep_symbols::RS};
+use crate::physics::algebraic_simplification::{
+    color::SelectiveExpand, metric::MetricSimplifier, rep_symbols::RS,
+};
 
 use super::representations::Bispinor;
 
@@ -162,7 +164,7 @@ pub static AGS: LazyLock<GammaLibrary> = LazyLock::new(|| GammaLibrary {
 pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
     let mink = Minkowski {};
 
-    let mut expr = expr.expand();
+    let mut expr = expr.expand_mink_bis();
 
     let reps: Vec<_> = [
         (
@@ -206,7 +208,7 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
 
     while expr.replace_multiple_into(&reps, &mut atom) {
         std::mem::swap(&mut expr, &mut atom);
-        expr = expr.expand();
+        expr = expr.expand_mink_bis();
         expr = expr.simplify_metrics();
     }
 

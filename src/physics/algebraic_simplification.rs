@@ -1,4 +1,4 @@
-use color::{color_conj_impl, ColorError, ColorSimplifier};
+use color::{color_conj_impl, ColorError, ColorSimplifier, SelectiveExpand};
 use gamma::{factor_conj_impl, gamma_conj_impl, pol_conj_impl, GammaSimplifier};
 use metric::{
     cook_function_view, cook_indices_impl, list_dangling_impl, wrap_dummies_impl,
@@ -161,6 +161,32 @@ impl<'a> IndexTooling for AtomView<'a> {
 ///     Expression: The conjugated expression.
 pub fn conj(self_: &PythonExpression) -> PythonExpression {
     self_.expr.conj().into()
+}
+
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[pyfunction]
+pub fn expand_mink(self_: &PythonExpression) -> PythonExpression {
+    self_.expr.expand_mink().into()
+}
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[pyfunction]
+pub fn expand_bis(self_: &PythonExpression) -> PythonExpression {
+    self_.expr.expand_bis().into()
+}
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[pyfunction]
+pub fn expand_mink_bis(self_: &PythonExpression) -> PythonExpression {
+    self_.expr.expand_mink_bis().into()
+}
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[pyfunction]
+pub fn expand_color(self_: &PythonExpression) -> PythonExpression {
+    self_.expr.expand_color().into()
+}
+#[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
+#[pyfunction]
+pub fn expand_metrics(self_: &PythonExpression) -> PythonExpression {
+    self_.expr.expand_metrics().into()
 }
 
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
@@ -381,6 +407,11 @@ pub(crate) fn initialize_alg_simp(m: &Bound<'_, PyModule>) -> PyResult<()> {
     child_module.add_function(wrap_pyfunction!(wrap_dummies, m)?)?;
     child_module.add_function(wrap_pyfunction!(list_dangling, m)?)?;
     child_module.add_function(wrap_pyfunction!(conj, m)?)?;
+    child_module.add_function(wrap_pyfunction!(expand_bis, m)?)?;
+    child_module.add_function(wrap_pyfunction!(expand_mink_bis, m)?)?;
+    child_module.add_function(wrap_pyfunction!(expand_mink, m)?)?;
+    child_module.add_function(wrap_pyfunction!(expand_metrics, m)?)?;
+    child_module.add_function(wrap_pyfunction!(expand_color, m)?)?;
 
     m.add_submodule(&child_module)?;
     m.py()

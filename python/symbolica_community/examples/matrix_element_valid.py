@@ -1,6 +1,6 @@
 import symbolica_community
 from symbolica_community import Expression, S, E
-from symbolica_community.tensors import TensorNetwork, Representation, TensorStructure, TensorIndices, Tensor, Slot
+from symbolica_community.tensors import TensorLibrary, TensorNetwork, Representation, TensorStructure, TensorIndices, Tensor, Slot
 import symbolica_community
 import symbolica_community.tensors as tensors
 import random
@@ -125,11 +125,104 @@ print("\n-->\nSQUARED EXPR", square)
 
 # square = cook_indices(square)
 square = simplify_color(square)
-square = simplify_gamma(square)
+# square = simplify_gamma(square)
+# square =simplify_metrics(expand_mink(square))
 print("\n-->\nSQUARED EXPB", square)
 
 # square = to_dots(simplify_gamma(square)).expand()
 # square = simplify_color(square)
 
-square = to_dots(square)
-print("\n-->\nGAMMA SIMPLIFIED EXPR", square.factor())
+# square = to_dots(square)
+lib = TensorLibrary.weyl()
+
+square=square.replace(E("alg::gamma(x_,y_,z_)"),
+                    E("weyl::gamma(x_,y_,z_)"), repeat=True)
+net = TensorNetwork.from_expression(square.factor(),lib)
+
+print(net)
+
+net.execute(lib)
+
+# res = net.result_scalar()
+
+# nu = Slot("mink",4,"nu")
+# nue = nu.to_expression()
+
+
+
+# params = [Expression.I]
+# params += TensorNetwork(Q(0,nue)).result_tensor(lib)
+# params += TensorNetwork(Q(1,nue)).result_tensor(lib)
+# params += TensorNetwork(Q(2,nue)).result_tensor(lib)
+# params += TensorNetwork(Q(3,nue)).result_tensor(lib)
+# constants = {S("alg::G"): E("1"),S("alg::Nc"): E("1"),S("alg::TR"): E("1")}
+
+# # Much like the expressions, tensors have the same evaluation api, just that they return a tensor instead of an expression
+# e=res.evaluator(constants=constants, params=params, funs={})
+# # The evaluator can be compiled to a shared library
+# c = e.compile(function_name="f", filename="test_expression.cpp",
+#               library_name="test_expression.so", inline_asm=False)
+
+
+# e_params = [random.random()+1j*random.random() for i in range(len(params))]
+# eval_res = e.evaluate_complex([e_params])[0]
+
+# print(eval_res)
+
+
+#
+# print("\n-->\nGAMMA SIMPLIFIED EXPR", square.factor())
+
+
+# c1 = E("alg::t(spenso::coad(8,6),spenso::cof(3,5),spenso::dind(spenso::cof(3,4)))")
+
+# c2 = E("alg::t(spenso::coad(8,6),spenso::cof(3,4),spenso::dind(spenso::cof(3,5)))")
+
+# l = E("a+b+c")
+# l2 = E("c+g")
+
+# res = simplify_color(c1*l*c2*l2)
+# print(res)
+
+
+
+
+# def curate_two(expr: Expression) -> Expression:
+#     expr = expr.replace(E_sp("Metric(x_,y_)"), E_sp("g(x_,y_)"), repeat=True)
+#     expr= expr.replace(E_sp("id(cof(x__),y_)"),E_sp("1"),repeat=True)
+#     expr = expr.replace(E_sp("id(x_,y_)"), E_sp("𝟙(x_,y_)"), repeat=True)
+#     expr = expr.replace( E_sp("𝟙(cof(x__),y_)"),E_sp("1"), repeat=True)
+#     expr= expr.replace(E_sp("𝟙(coad(x__),y_)"),E_sp("1"),repeat=True)
+#     expr = expr.replace(E("spenso::γ(x_,y_,z_)"), E(
+#         "weyl::gamma(x_,y_,z_)"), repeat=True)
+#     expr = expr.replace(E("spenso::T(x_,y_,z_)"),
+#                         E("1"), repeat=True)
+#     expr = expr.replace(E("spenso::f(x_,y_,z_)"),
+#                         E("1"), repeat=True)
+#     expr = expr.replace(E("spenso::TR"), E("alg::TR"), repeat=True)
+#     expr = expr.replace(E("spenso::Nc"), E("alg::Nc"), repeat=True)
+#     expr = expr.replace(E("spenso::v(x__)"), E("alg::v(x__)"), repeat=True)
+#     expr = expr.replace(E("spenso::vbar(x__)"),
+#                         E("alg::vbar(x__)"), repeat=True)
+#     expr = expr.replace(E("spenso::u(x__)"), E("alg::u(x__)"), repeat=True)
+#     expr = expr.replace(E("spenso::ubar(x__)"),
+#                         E("alg::ubar(x__)"), repeat=True)
+#     expr = expr.replace(E("spenso::ϵ(x__)"), E("alg::ϵ(x__)"), repeat=True)
+#     expr = expr.replace(E("spenso::ϵbar(x__)"),
+#                         E("alg::ϵbar(x__)"), repeat=True)
+#     # expr = expr.replace(E("spenso::mink(4,x_)"), E(
+#         # "spenso::mink(4,x_)"), repeat=True)
+#     expr = expr.replace(E("spenso::coad(8,x_)"), E(
+#         "spenso::coad(alg::Nc^2-1,x_)"), repeat=True)
+#     expr = expr.replace(E("spenso::cof(3,x_)"), E(
+#         "spenso::cof(alg::Nc,x_)"), repeat=True)
+
+#     return expr
+
+# graph_one = curate_two(E_sp(input[0]['expression'])
+# )
+# print(graph_one)
+# net = TensorNetwork.from_expression(graph_one,lib)
+# print(net)
+
+# net.execute(lib)

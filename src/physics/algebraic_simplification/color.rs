@@ -1,19 +1,23 @@
-use std::sync::LazyLock;
+use std::{
+    collections::{HashMap, HashSet},
+    sync::LazyLock,
+};
 
+use itertools::Itertools;
 use spenso::{
     network::library::symbolic::ETS,
-    structure::representation::{LibraryRep, RepName},
+    structure::representation::{LibraryRep, Minkowski, RepName},
 };
 use symbolica::{
     atom::{Atom, AtomCore, AtomView, Symbol},
     function,
-    id::{MatchSettings, Replacement},
+    id::{MatchSettings, Pattern, Replacement},
     symbol,
 };
 
 use super::{
     metric::MetricSimplifier,
-    representations::{ColorAdjoint, ColorFundamental},
+    representations::{Bispinor, ColorAdjoint, ColorFundamental},
 };
 use super::{rep_symbols::RS, representations::ColorSextet};
 
@@ -68,6 +72,80 @@ pub fn color_conj_impl(expression: AtomView) -> Atom {
             coaf.to_symbolic([RS.a__]),
         ),
     ])
+}
+
+pub trait SelectiveExpand {
+    fn expand_in_patterns(&self, pats: &[Pattern]) -> Atom;
+    fn expand_metrics(&self) -> Atom {
+        let metric_pat = function!(ETS.metric, RS.a__).to_pattern();
+        let id_pat = function!(ETS.id, RS.a__).to_pattern();
+
+        self.expand_in_patterns(&[metric_pat, id_pat])
+    }
+
+    fn expand_color(&self) -> Atom {
+        let cof = ColorFundamental {};
+        let coaf = ColorFundamental {}.dual();
+        let coad = ColorAdjoint {};
+
+        let cof_pat = function!(RS.f_, RS.a___, cof.to_symbolic([RS.b__]), RS.c___).to_pattern();
+        let coaf_pat = function!(RS.f_, RS.a___, coaf.to_symbolic([RS.b__]), RS.c___).to_pattern();
+        let coad_pat = function!(RS.f_, RS.a___, coad.to_symbolic([RS.b__]), RS.c___).to_pattern();
+
+        self.expand_in_patterns(&[cof_pat, coad_pat, coaf_pat])
+    }
+
+    fn expand_bis(&self) -> Atom {
+        let bis = Bispinor {};
+
+        let bis_pat = function!(RS.f_, RS.a___, bis.to_symbolic([RS.b__]), RS.c___).to_pattern();
+
+        self.expand_in_patterns(&[bis_pat])
+    }
+
+    fn expand_mink(&self) -> Atom {
+        let mink = Minkowski {};
+
+        let mink_pat = function!(RS.f_, RS.a___, mink.to_symbolic([RS.b__]), RS.c___).to_pattern();
+
+        self.expand_in_patterns(&[mink_pat])
+    }
+
+    fn expand_mink_bis(&self) -> Atom {
+        let mink = Minkowski {};
+
+        let mink_pat = function!(RS.f_, RS.a___, mink.to_symbolic([RS.b__]), RS.c___).to_pattern();
+
+        let bis = Bispinor {};
+
+        let bis_pat = function!(RS.f_, RS.a___, bis.to_symbolic([RS.b__]), RS.c___).to_pattern();
+
+        self.expand_in_patterns(&[mink_pat, bis_pat])
+    }
+}
+impl SelectiveExpand for Atom {
+    fn expand_in_patterns(&self, pats: &[Pattern]) -> Atom {
+        self.as_view().expand_in_patterns(pats)
+    }
+}
+
+impl<'a> SelectiveExpand for AtomView<'a> {
+    fn expand_in_patterns(&self, pats: &[Pattern]) -> Atom {
+        let mut coefs = HashSet::new();
+
+        for p in pats {
+            for m in self.pattern_match(&p, None, None) {
+                coefs.insert(p.replace_wildcards(&m));
+            }
+        }
+
+        let coefs = coefs.into_iter().collect_vec();
+
+        self.coefficient_list::<i8>(&coefs)
+            .into_iter()
+            .map(|(a, b)| a * b)
+            .fold(Atom::Zero, |acc, b| acc + b)
+    }
 }
 
 pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
@@ -269,6 +347,7 @@ pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
         };
         first = false;
         expression = expression.replace_multiple(&frep);
+        expression = expression.expand_color();
         expression = expression.simplify_metrics();
     }
 
@@ -374,54 +453,63 @@ mod test {
             )
             .unwrap(),
             parse_lit!(
-                -4 * alg::Nc * alg::TR
-                    ^ 2 * spenso::G
-                    ^ 4 * (alg::Nc - 1) * (alg::Nc + 1) * (spenso::D - 2)
-                    ^ -2 * (-2 * dot(spenso::Q(0), spenso::Q(1)) * dot(spenso::Q(2), spenso::Q(2))
-                        + dot(spenso::Q(0), spenso::Q(1)) * dot(spenso::Q(2), spenso::Q(3))
-                        - 3 * dot(spenso::Q(0), spenso::Q(1)) * dot(spenso::Q(2), spenso::Q(4))
-                        - 2 * dot(spenso::Q(0), spenso::Q(1)) * dot(spenso::Q(3), spenso::Q(3))
-                        - 3 * dot(spenso::Q(0), spenso::Q(1)) * dot(spenso::Q(3), spenso::Q(4))
-                        - 3 * dot(spenso::Q(0), spenso::Q(1)) * dot(spenso::Q(4), spenso::Q(4))
-                        + 2 * dot(spenso::Q(0), spenso::Q(2)) * dot(spenso::Q(1), spenso::Q(2))
-                        - dot(spenso::Q(0), spenso::Q(2)) * dot(spenso::Q(1), spenso::Q(3))
-                        + dot(spenso::Q(0), spenso::Q(2)) * dot(spenso::Q(1), spenso::Q(4))
-                        - dot(spenso::Q(0), spenso::Q(3)) * dot(spenso::Q(1), spenso::Q(2))
-                        + 2 * dot(spenso::Q(0), spenso::Q(3)) * dot(spenso::Q(1), spenso::Q(3))
-                        + dot(spenso::Q(0), spenso::Q(3)) * dot(spenso::Q(1), spenso::Q(4))
-                        + dot(spenso::Q(0), spenso::Q(4)) * dot(spenso::Q(1), spenso::Q(2))
-                        + dot(spenso::Q(0), spenso::Q(4)) * dot(spenso::Q(1), spenso::Q(3))
-                        + 2 * dot(spenso::Q(0), spenso::Q(4)) * dot(spenso::Q(1), spenso::Q(4))
-                        + spenso::D
-                            * dot(spenso::Q(0), spenso::Q(1))
-                            * dot(spenso::Q(2), spenso::Q(2))
-                        - spenso::D
-                            * dot(spenso::Q(0), spenso::Q(1))
-                            * dot(spenso::Q(2), spenso::Q(3))
-                        + spenso::D
-                            * dot(spenso::Q(0), spenso::Q(1))
-                            * dot(spenso::Q(2), spenso::Q(4))
-                        + spenso::D
-                            * dot(spenso::Q(0), spenso::Q(1))
-                            * dot(spenso::Q(3), spenso::Q(3))
-                        + spenso::D
-                            * dot(spenso::Q(0), spenso::Q(1))
-                            * dot(spenso::Q(3), spenso::Q(4))
-                        + spenso::D
-                            * dot(spenso::Q(0), spenso::Q(1))
-                            * dot(spenso::Q(4), spenso::Q(4))
-                        - spenso::D
-                            * dot(spenso::Q(0), spenso::Q(2))
-                            * dot(spenso::Q(1), spenso::Q(2))
-                        + spenso::D
-                            * dot(spenso::Q(0), spenso::Q(2))
-                            * dot(spenso::Q(1), spenso::Q(3))
-                        + spenso::D
-                            * dot(spenso::Q(0), spenso::Q(3))
-                            * dot(spenso::Q(1), spenso::Q(2))
-                        - spenso::D
-                            * dot(spenso::Q(0), spenso::Q(3))
-                            * dot(spenso::Q(1), spenso::Q(3))),
+                -12 * alg::TR
+                    ^ 2 * alg::Nc
+                    ^ -1 * spenso::G
+                    ^ 4 * (spenso::D - 2)
+                    ^ -2 * (-2 * alg::Nc + alg::Nc ^ 3 + 3)
+                        * (-2 * dot(spenso::Q(0), spenso::Q(1)) * dot(spenso::Q(2), spenso::Q(2))
+                            + dot(spenso::Q(0), spenso::Q(1)) * dot(spenso::Q(2), spenso::Q(3))
+                            - 3 * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(2), spenso::Q(4))
+                            - 2 * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(3), spenso::Q(3))
+                            - 3 * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(3), spenso::Q(4))
+                            - 3 * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(4), spenso::Q(4))
+                            + 2 * dot(spenso::Q(0), spenso::Q(2))
+                                * dot(spenso::Q(1), spenso::Q(2))
+                            - dot(spenso::Q(0), spenso::Q(2)) * dot(spenso::Q(1), spenso::Q(3))
+                            + dot(spenso::Q(0), spenso::Q(2)) * dot(spenso::Q(1), spenso::Q(4))
+                            - dot(spenso::Q(0), spenso::Q(3)) * dot(spenso::Q(1), spenso::Q(2))
+                            + 2 * dot(spenso::Q(0), spenso::Q(3))
+                                * dot(spenso::Q(1), spenso::Q(3))
+                            + dot(spenso::Q(0), spenso::Q(3)) * dot(spenso::Q(1), spenso::Q(4))
+                            + dot(spenso::Q(0), spenso::Q(4)) * dot(spenso::Q(1), spenso::Q(2))
+                            + dot(spenso::Q(0), spenso::Q(4)) * dot(spenso::Q(1), spenso::Q(3))
+                            + 2 * dot(spenso::Q(0), spenso::Q(4))
+                                * dot(spenso::Q(1), spenso::Q(4))
+                            + spenso::D
+                                * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(2), spenso::Q(2))
+                            - spenso::D
+                                * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(2), spenso::Q(3))
+                            + spenso::D
+                                * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(2), spenso::Q(4))
+                            + spenso::D
+                                * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(3), spenso::Q(3))
+                            + spenso::D
+                                * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(3), spenso::Q(4))
+                            + spenso::D
+                                * dot(spenso::Q(0), spenso::Q(1))
+                                * dot(spenso::Q(4), spenso::Q(4))
+                            - spenso::D
+                                * dot(spenso::Q(0), spenso::Q(2))
+                                * dot(spenso::Q(1), spenso::Q(2))
+                            + spenso::D
+                                * dot(spenso::Q(0), spenso::Q(2))
+                                * dot(spenso::Q(1), spenso::Q(3))
+                            + spenso::D
+                                * dot(spenso::Q(0), spenso::Q(3))
+                                * dot(spenso::Q(1), spenso::Q(2))
+                            - spenso::D
+                                * dot(spenso::Q(0), spenso::Q(3))
+                                * dot(spenso::Q(1), spenso::Q(3))),
                 "symbolica_community"
             )
             .unwrap(),
@@ -613,8 +701,15 @@ mod test {
 
         println!("Amplitude squared:\n{}", amp_squared.factor());
 
+        let spin_sum_pat = parse!(
+            "alg::gamma(mink(D,1337),bis(D,left(1)),bis(D,right(1)))",
+            "spenso"
+        )
+        .unwrap()
+        .to_pattern();
         amp_squared = amp_squared
-            .expand()
+            .expand_bis()
+            .expand_mink()
             .replace(spin_sum_rule_src.to_pattern())
             .with(spin_sum_rule_trg.to_pattern());
 
@@ -634,7 +729,10 @@ mod test {
             simplified_amp_squared
         );
 
-        simplified_amp_squared = simplified_amp_squared.simplify_gamma();
+        simplified_amp_squared = simplified_amp_squared
+            .simplify_gamma()
+            .expand_mink()
+            .simplify_metrics();
 
         println!(
             "Gamma+color-simplified amplitude squared:\n{}",
@@ -646,7 +744,7 @@ mod test {
         assert_eq!(
             tgt,
             simplified_amp_squared.factor(),
-            "{}\nnot equal to\n{}",
+            "{:#}\nnot equal to\n{:#}",
             tgt,
             simplified_amp_squared.factor()
         );

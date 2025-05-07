@@ -17,6 +17,7 @@ default = [ "spenso", "algebraic_simplification"]
 algebraic_simplification = ["dep:spenso", "dep:spenso-macros","dep:linnet"]
 # vakint = ["dep:vakint"]
 spenso = ["dep:spenso","dep:linnet"]
+bincode = ["dep:bincode", "dep:bincode-trait-derive"]
 
 [profile.release]
 codegen-units = 1
@@ -48,6 +49,8 @@ auto_enums = "0.8.6"
 thiserror = "1.0.65"
 pyo3-stub-gen = "0.7.0"
 env_logger = "0.11.5"
+bincode = {version = "2.0", optional = true}
+bincode-trait-derive = {git = "https://github.com/alphal00p/bincode-trait-derive.git", optional = true,rev="c092cba7f80c867fd5646cf68312e1f4f9010658"}
 
 spenso-macros = {git="https://github.com/alphal00p/spenso",rev="6684d4c84dbf1523c97b741746821aa6c2eb037c",features=["shadowing"],optional=true}
 

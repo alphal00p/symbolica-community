@@ -325,8 +325,6 @@ pub fn wrap_dummies_impl(view: AtomView, header: Symbol) -> Atom {
 }
 
 pub fn simplify_metrics_impl(view: AtomView) -> Atom {
-    let mut expr = view.expand();
-
     let mut reps = vec![];
     for i in LibraryRep::all_self_duals().chain(LibraryRep::all_inline_metrics()) {
         reps.extend(
@@ -440,10 +438,11 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
     }
 
     let mut atom = Atom::new();
+    let mut expr = view.to_owned();
 
     while expr.replace_multiple_into(&reps, &mut atom) {
         std::mem::swap(&mut expr, &mut atom);
-        expr = expr.expand();
+        // expr = expr.expand();
     }
 
     expr
