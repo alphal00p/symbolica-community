@@ -49,12 +49,12 @@ thiserror = "1.0.65"
 pyo3-stub-gen = "0.7.0"
 env_logger = "0.11.5"
 
-spenso-macros = {git="https://github.com/alphal00p/spenso",rev="36bde5a98b85b7b46c0a020516c19503a11fc09a",features=["shadowing"],optional=true}
+spenso-macros = {git="https://github.com/alphal00p/spenso",rev="6684d4c84dbf1523c97b741746821aa6c2eb037c",features=["shadowing"],optional=true}
 
 # spenso-macros = {path = "../spenso/spenso-macros"}
 [patch.crates-io]
 # symbolica={path="../symbolica"}
 symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "2f306d814359de6397817060ba2deae046351828" }
-spenso = { path = "../spenso/spenso"}
-# spenso={git="https://github.com/alphal00p/spenso",rev="36bde5a98b85b7b46c0a020516c19503a11fc09a"}
+# spenso = { path = "../spenso/spenso"}
+spenso={git="https://github.com/alphal00p/spenso",rev="6684d4c84dbf1523c97b741746821aa6c2eb037c"}
 # symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}

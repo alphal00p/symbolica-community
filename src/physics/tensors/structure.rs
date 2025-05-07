@@ -1117,7 +1117,7 @@ impl SpensoRepresentation {
     #[new]
     #[pyo3(signature =
            (
-           name,dimension,is_self_dual=false))]
+           name,dimension,is_self_dual=true))]
     /// Register a new representation with the given name and dimension. If dual is true, the representation will be dualizable, else it will be self-dual.
     pub fn register_new(
         name: Bound<'_, PyAny>,

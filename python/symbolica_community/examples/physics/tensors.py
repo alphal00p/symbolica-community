@@ -1,5 +1,5 @@
 from symbolica_community import Expression, S,E
-from symbolica_community.tensors import TensorNetwork,Representation,TensorStructure,TensorIndices,Tensor,Slot
+from symbolica_community.tensors import TensorNetwork,Representation,TensorStructure,TensorIndices,Tensor,Slot,TensorLibrary
 import symbolica_community
 import symbolica_community.tensors as tensors
 import random
@@ -11,7 +11,7 @@ import random
 # Representations are defined by their name and dimension. They can be self-dual or not.
 mink = Representation("mink",4)
 bis = Representation("bis",4)
-lor = Representation("lor",4,dual=True)
+lor = Representation("lor",4,is_self_dual=False)
 
 # Slots are created from a representation and an index
 mu = mink("mu")
@@ -51,16 +51,17 @@ print(g_muik[[2,2,2]])
 
 # Spenso can then turn an expression that uses these slots into a tensor network
 x = g_muik.to_expression()*(p(2,nue)*gamma(nue,ke,je)+mq*id(ke,je))*w(1,ie)*w(3,mue)
-tn = TensorNetwork(x)
+lib =TensorLibrary.weyl()
+tn = TensorNetwork.from_expression(x,lib)
 # prints the rich graph associated to the network
 print(tn)
 # As you can see when parsed, the network isn't contracted yet, so it's just a graph of the expression
 # To contract it, you can call the contract method
-tn.contract()
+tn.execute(lib)
 # The graph is now a single node (or at least has no internal edges)
 print(tn)
 # We can now extract the resulting tensor:
-t = tn.result()
+t = tn.result_tensor(lib)
 # The tensor is a tensor object
 print(t)
 # It has a structure
@@ -71,9 +72,9 @@ print(t.structure())
 # You may have noticed that the resulting tensor is a set of expressions with certain functions that label the 'concrete' values of the tensor. What if we want to evaluate the tensor for a given set of parameters?
 
 params = [Expression.I]
-params += TensorNetwork(w(1,ie)).result()# tensors implement the sequence protocol, so can be treated just like lists
-params += TensorNetwork(w(3,mue)).result()
-params += TensorNetwork(p(2,nue)).result()
+params += TensorNetwork(w(1,ie)).result_tensor(lib)# tensors implement the sequence protocol, so can be treated just like lists
+params += TensorNetwork(w(3,mue)).result_tensor(lib)
+params += TensorNetwork(p(2,nue)).result_tensor(lib)
 constants = {mq: E("173")}
 
 # Much like the expressions, tensors have the same evaluation api, just that they return a tensor instead of an expression

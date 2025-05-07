@@ -1732,6 +1732,7 @@ dependencies = [
 [[package]]
 name = "spenso"
 version = "0.4.1"
+source = "git+https://github.com/alphal00p/spenso?rev=6684d4c84dbf1523c97b741746821aa6c2eb037c#6684d4c84dbf1523c97b741746821aa6c2eb037c"
 dependencies = [
  "ahash",
  "anyhow",
@@ -1760,7 +1761,7 @@ dependencies = [
  "serde",
  "serde_json",
  "slotmap",
- "spenso-macros 0.1.0",
+ "spenso-macros",
  "symbolica",
  "thiserror 1.0.69",
 ]
@@ -1768,18 +1769,7 @@ dependencies = [
 [[package]]
 name = "spenso-macros"
 version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "serde",
- "symbolica",
- "syn 2.0.100",
-]
-
-[[package]]
-name = "spenso-macros"
-version = "0.1.0"
-source = "git+https://github.com/alphal00p/spenso?rev=36bde5a98b85b7b46c0a020516c19503a11fc09a#36bde5a98b85b7b46c0a020516c19503a11fc09a"
+source = "git+https://github.com/alphal00p/spenso?rev=6684d4c84dbf1523c97b741746821aa6c2eb037c#6684d4c84dbf1523c97b741746821aa6c2eb037c"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1837,7 +1827,7 @@ dependencies = [
  "pyo3",
  "pyo3-stub-gen",
  "spenso",
- "spenso-macros 0.1.0 (git+https://github.com/alphal00p/spenso?rev=36bde5a98b85b7b46c0a020516c19503a11fc09a)",
+ "spenso-macros",
  "symbolica",
  "thiserror 1.0.69",
 ]

@@ -9,7 +9,7 @@ use spenso::{
         Sequential, SmallestDegree,
     },
     parametric::MixedTensor,
-    structure::HasStructure,
+    structure::{HasName, HasStructure},
 };
 use symbolica::{
     api::python::{ConvertibleToExpression, PythonExpression},
@@ -107,6 +107,34 @@ impl PyStubType for ConvertibleToSpensoNet {
 impl SpensoNet {
     #[new]
     /// Parses an expression into a network
+    pub fn from_expression_without_lib(
+        expr: &Bound<'_, PythonExpression>,
+        // library: &SpensorLibrary,
+    ) -> anyhow::Result<SpensoNet> {
+        Ok(SpensoNet {
+            network: ParsingNet::try_from_view(
+                expr.borrow().expr.as_view(),
+                &SpensorLibrary::new().library,
+            )?,
+        })
+    }
+
+    #[staticmethod]
+    pub fn one() -> SpensoNet {
+        SpensoNet {
+            network: Network::one(),
+        }
+    }
+
+    #[staticmethod]
+    pub fn zero() -> SpensoNet {
+        SpensoNet {
+            network: Network::zero(),
+        }
+    }
+
+    #[staticmethod]
+    /// Parses an expression into a network
     pub fn from_expression(
         expr: &Bound<'_, PythonExpression>,
         library: &SpensorLibrary,
@@ -137,7 +165,11 @@ impl SpensoNet {
         Ok(self.network.dot_display_impl(
             |a| a.to_plain_string(),
             |l| Some(l.global_name?.to_string()),
-            |t| t.to_string(),
+            |t| {
+                t.name()
+                    .map(|a| a.to_string())
+                    .unwrap_or("unnamed".to_owned())
+            },
         ))
     }
 
