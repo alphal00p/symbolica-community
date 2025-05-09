@@ -18,8 +18,8 @@ use spenso::{
             Euclidean, ExtendibleReps, LibraryRep, Minkowski, RepName, Representation,
         },
         slot::{IsAbstractSlot, Slot},
-        HasName, IndexLess, NamedStructure, StructureContract, TensorStructure, ToSymbolic,
-        VecStructure,
+        HasName, IndexLess, NamedStructure, ScalarStructure, StructureContract, TensorStructure,
+        ToSymbolic, VecStructure,
     },
 };
 use symbolica::{
@@ -347,6 +347,14 @@ impl From<ExplicitKey> for SpensoStucture {
 pub enum PossiblyIndexed {
     Unindexed(SpensoStucture),
     Indexed(SpensoIndices),
+}
+
+impl ScalarStructure for PossiblyIndexed {
+    fn scalar_structure() -> Self {
+        PossiblyIndexed::Indexed(SpensoIndices {
+            structure: NamedStructure::scalar_structure(),
+        })
+    }
 }
 
 impl<'py> FromPyObject<'py> for PossiblyIndexed {

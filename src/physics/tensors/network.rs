@@ -5,8 +5,8 @@ use pyo3::{
 
 use spenso::{
     network::{
-        library::symbolic::ExplicitKey, parsing::ShadowedStructure, store::NetworkStore, Network,
-        Sequential, SmallestDegree,
+        library::symbolic::ExplicitKey, parsing::ShadowedStructure, store::NetworkStore,
+        ExecutionResult, Network, Sequential, SmallestDegree,
     },
     parametric::MixedTensor,
     structure::{HasName, HasStructure},
@@ -151,14 +151,19 @@ impl SpensoNet {
     }
 
     fn result_tensor(&self, library: &SpensorLibrary) -> PyResult<Spensor> {
-        Ok(Spensor {
-            tensor: self
+        Ok(
+            match self
                 .network
                 .result_tensor(&library.library)
                 .map_err(|s| PyRuntimeError::new_err(s.to_string()))?
-                .into_owned()
-                .map_structure(PossiblyIndexed::from),
-        })
+            {
+                ExecutionResult::One => Spensor::one(),
+                ExecutionResult::Zero => Spensor::zero(),
+                ExecutionResult::Val(v) => Spensor {
+                    tensor: v.into_owned().map_structure(PossiblyIndexed::from),
+                },
+            },
+        )
     }
 
     fn __str__(&self) -> PyResult<String> {

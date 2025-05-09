@@ -888,8 +888,7 @@ checksum = "0717cef1bc8b636c6e1c1bbdefc09e6322da8a9321966e8928ef80d20f7f770f"
 [[package]]
 name = "linnet"
 version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "862dee2762b5ee8db0b63c974ec7391a5dcadfe2f685ae682aca62035d202896"
+source = "git+https://github.com/alphal00p/linnet?rev=d8636fbfed7f924ea240fcb73783f1845a10ba91#d8636fbfed7f924ea240fcb73783f1845a10ba91"
 dependencies = [
  "ahash",
  "bincode",
@@ -1743,13 +1742,14 @@ dependencies = [
 [[package]]
 name = "spenso"
 version = "0.4.1"
-source = "git+https://github.com/alphal00p/spenso?rev=6684d4c84dbf1523c97b741746821aa6c2eb037c#6684d4c84dbf1523c97b741746821aa6c2eb037c"
+source = "git+https://github.com/alphal00p/spenso?rev=d3520aa9f49b89597ef8c2dc9ab6af534afaabbb#d3520aa9f49b89597ef8c2dc9ab6af534afaabbb"
 dependencies = [
  "ahash",
  "anyhow",
  "append-only-vec",
  "approx",
  "bincode",
+ "bincode-trait-derive",
  "bitvec",
  "constcat",
  "delegate 0.12.0",
@@ -1780,7 +1780,7 @@ dependencies = [
 [[package]]
 name = "spenso-macros"
 version = "0.1.0"
-source = "git+https://github.com/alphal00p/spenso?rev=6684d4c84dbf1523c97b741746821aa6c2eb037c#6684d4c84dbf1523c97b741746821aa6c2eb037c"
+source = "git+https://github.com/alphal00p/spenso?rev=d3520aa9f49b89597ef8c2dc9ab6af534afaabbb#d3520aa9f49b89597ef8c2dc9ab6af534afaabbb"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1798,11 +1798,12 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 [[package]]
 name = "symbolica"
 version = "0.16.0"
-source = "git+https://github.com/alphal00p/symbolica?rev=2f306d814359de6397817060ba2deae046351828#2f306d814359de6397817060ba2deae046351828"
+source = "git+https://github.com/alphal00p/symbolica?rev=8ec5f90129ef74809b48de85354f02347c522f5e#8ec5f90129ef74809b48de85354f02347c522f5e"
 dependencies = [
  "ahash",
  "append-only-vec",
  "bincode",
+ "bincode-trait-derive",
  "brotli",
  "byteorder",
  "bytes",

@@ -22,7 +22,7 @@ use spenso::{
         atomcore::TensorAtomOps, CompiledEvalTensor, ConcreteOrParam, LinearizedEvalTensor,
         MixedTensor, ParamOrConcrete, ParamTensor,
     },
-    structure::{HasStructure, TensorStructure},
+    structure::{HasStructure, ScalarTensor, TensorStructure},
 };
 use structure::{PossiblyIndexed, SpensoIndices};
 use symbolica::{
@@ -204,6 +204,20 @@ impl Spensor {
                 Python::with_gil(|py| a.clone().into_pyobject(py).map(|a| a.into_any().unbind()))
                     .unwrap()
             }
+        }
+    }
+
+    #[staticmethod]
+    pub fn one() -> Spensor {
+        Spensor {
+            tensor: ParamOrConcrete::new_scalar(ConcreteOrParam::Concrete(RealOrComplex::Real(1.))),
+        }
+    }
+
+    #[staticmethod]
+    pub fn zero() -> Spensor {
+        Spensor {
+            tensor: ParamOrConcrete::new_scalar(ConcreteOrParam::Concrete(RealOrComplex::Real(2.))),
         }
     }
 
