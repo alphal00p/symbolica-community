@@ -26,7 +26,7 @@ use spenso::{
 };
 use symbolica::{
     atom::{Atom, AtomView, FunctionBuilder, NamespacedSymbol, Symbol},
-    symbol,
+    namespace, symbol,
 };
 
 #[cfg(feature = "python")]
@@ -585,6 +585,82 @@ impl TryFrom<PossiblyIndexed> for ExplicitKey {
     }
 }
 
+impl SpensoStucture {
+    pub fn id_impl(rep: SpensoRepresentation) -> Self {
+        ExplicitKey::from_iter(
+            [rep.representation, rep.representation.dual()],
+            ETS.id,
+            None,
+        )
+        .into()
+    }
+
+    pub fn metric(rep: SpensoRepresentation) -> Self {
+        ExplicitKey::from_iter([rep.representation, rep.representation], ETS.metric, None).into()
+    }
+
+    #[allow(non_snake_case)]
+    //make it optional
+    pub fn gamma4D_impl(namespace: TensorNamespace) -> Self {
+        let name = match namespace {
+            TensorNamespace::Weyl => WEYL.gamma,
+            TensorNamespace::Algebra => AGS.gamma,
+        };
+
+        ExplicitKey::from_iter(
+            [
+                LibraryRep::from(Minkowski {}).new_rep(4),
+                Bispinor {}.new_rep(4).cast(),
+                Bispinor {}.new_rep(4).cast(),
+            ],
+            name,
+            None,
+        )
+        .into()
+    }
+
+    #[allow(non_snake_case)]
+    pub fn gammadD_impl(dim: Symbol) -> Self {
+        ExplicitKey::from_iter(
+            [
+                LibraryRep::from(Minkowski {}).new_rep(dim),
+                Bispinor {}.new_rep(4).cast(),
+                Bispinor {}.new_rep(4).cast(),
+            ],
+            AGS.gamma,
+            None,
+        )
+        .into()
+    }
+
+    pub fn gamma5_impl(namespace: TensorNamespace) -> Self {
+        let name = match namespace {
+            TensorNamespace::Weyl => WEYL.gamma5,
+            TensorNamespace::Algebra => AGS.gamma5,
+        };
+
+        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
+    }
+
+    pub fn projm_impl(namespace: TensorNamespace) -> Self {
+        let name = match namespace {
+            TensorNamespace::Algebra => AGS.projm,
+            TensorNamespace::Weyl => WEYL.projm,
+        };
+
+        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
+    }
+
+    pub fn projp_impl(namespace: TensorNamespace) -> Self {
+        let name = match namespace {
+            TensorNamespace::Algebra => AGS.projp,
+            TensorNamespace::Weyl => WEYL.projp,
+        };
+
+        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
+    }
+}
+
 #[cfg(feature = "python")]
 #[pymethods]
 #[gen_stub_pymethods]
@@ -759,37 +835,14 @@ impl SpensoStucture {
     #[staticmethod]
     //make it optional
     pub fn gamma4D(namespace: TensorNamespace) -> Self {
-        let name = match namespace {
-            TensorNamespace::Weyl => WEYL.gamma,
-            TensorNamespace::Algebra => AGS.gamma,
-        };
-
-        ExplicitKey::from_iter(
-            [
-                LibraryRep::from(Minkowski {}).new_rep(4),
-                Bispinor {}.new_rep(4).cast(),
-                Bispinor {}.new_rep(4).cast(),
-            ],
-            name,
-            None,
-        )
-        .into()
+        Self::gamma4D_impl(namespace)
     }
 
     #[allow(non_snake_case)]
     #[staticmethod]
     pub fn gammadD(dim: PythonExpression) -> PyResult<Self> {
         if let AtomView::Var(v) = dim.expr.as_view() {
-            Ok(ExplicitKey::from_iter(
-                [
-                    LibraryRep::from(Minkowski {}).new_rep(v.get_symbol()),
-                    Bispinor {}.new_rep(4).cast(),
-                    Bispinor {}.new_rep(4).cast(),
-                ],
-                AGS.gamma,
-                None,
-            )
-            .into())
+            Ok(Self::gammaD_impl(v.get_symbol()))
         } else {
             return Err(exceptions::PyTypeError::new_err(
                 "Only symbols can used as dims",
@@ -799,32 +852,17 @@ impl SpensoStucture {
 
     #[staticmethod]
     pub fn gamma5(namespace: TensorNamespace) -> Self {
-        let name = match namespace {
-            TensorNamespace::Weyl => WEYL.gamma5,
-            TensorNamespace::Algebra => AGS.gamma5,
-        };
-
-        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
+        Self::gamma5_impl(namespace)
     }
 
     #[staticmethod]
     pub fn projm(namespace: TensorNamespace) -> Self {
-        let name = match namespace {
-            TensorNamespace::Algebra => AGS.projm,
-            TensorNamespace::Weyl => WEYL.projm,
-        };
-
-        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
+        Self::projm_impl(namespace)
     }
 
     #[staticmethod]
     pub fn projp(namespace: TensorNamespace) -> Self {
-        let name = match namespace {
-            TensorNamespace::Algebra => AGS.projp,
-            TensorNamespace::Weyl => WEYL.projp,
-        };
-
-        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
+        Self::projp_impl(namespace)
     }
 
     #[pyo3(signature = (*args, extra_args=None))]
