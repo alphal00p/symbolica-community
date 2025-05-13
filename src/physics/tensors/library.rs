@@ -1,6 +1,9 @@
 use std::{ops::Neg, sync::LazyLock};
 
+#[cfg(feature = "python")]
 use pyo3::{exceptions::PyTypeError, pyclass, pymethods, PyResult};
+
+#[cfg(feature = "python")]
 use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum, gen_stub_pymethods};
 use spenso::{
     complex::Complex,
@@ -13,7 +16,10 @@ use symbolica::symbol;
 
 use crate::physics::algebraic_simplification::gamma::GammaLibrary;
 
-use super::{structure::SpensoStucture, ModuleInit, Spensor};
+use super::{structure::SpensoStucture, Spensor};
+
+#[cfg(feature = "python")]
+use super::ModuleInit;
 
 pub static WEYL: LazyLock<GammaLibrary> = LazyLock::new(|| GammaLibrary {
     gamma: symbol!("weyl::gamma"),
@@ -312,15 +318,20 @@ where
     sigma
 }
 
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(name = "TensorLibrary", module = "symbolica_community.tensors")]
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(name = "TensorLibrary", module = "symbolica_community.tensors")
+)]
 // #[derive(Clone)]
 pub struct SpensorLibrary {
     pub(crate) library: TensorLibrary<MixedTensor<f64, ExplicitKey>>,
 }
 
+#[cfg(feature = "python")]
 impl ModuleInit for SpensorLibrary {}
 
+#[cfg(feature = "python")]
 #[gen_stub_pymethods]
 #[pymethods]
 impl SpensorLibrary {
@@ -368,8 +379,11 @@ impl SpensorLibrary {
     }
 }
 
-#[gen_stub_pyclass_enum(module = "symbolica_community.tensors")]
-#[pyclass(eq, eq_int)]
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(eq, eq_int)
+)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum TensorNamespace {
     Weyl,

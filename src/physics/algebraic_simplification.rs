@@ -4,18 +4,22 @@ use metric::{
     cook_function_view, cook_indices_impl, list_dangling_impl, wrap_dummies_impl,
     wrap_indices_impl, CookingError, MetricSimplifier,
 };
+
+#[cfg(feature = "python")]
 use pyo3::{
     exceptions::{PyRuntimeWarning, PyTypeError},
     pyfunction,
     types::{PyAnyMethods, PyModule, PyModuleMethods},
     wrap_pyfunction, Bound, PyResult,
 };
+
+#[cfg(feature = "python")]
 use pyo3_stub_gen::derive::gen_stub_pyfunction;
 use representations::initialize;
-use symbolica::{
-    api::python::PythonExpression,
-    atom::{Atom, AtomView, Symbol},
-};
+use symbolica::atom::{Atom, AtomView, Symbol};
+
+#[cfg(feature = "python")]
+use symbolica::api::python::PythonExpression;
 
 pub mod color;
 pub mod gamma;
@@ -141,6 +145,7 @@ impl<'a> IndexTooling for AtomView<'a> {
     }
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Calculates the physics-aware conjugate of the expression.
@@ -163,32 +168,38 @@ pub fn conj(self_: &PythonExpression) -> PythonExpression {
     self_.expr.conj().into()
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_mink(self_: &PythonExpression) -> PythonExpression {
     self_.expr.expand_mink().into()
 }
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_bis(self_: &PythonExpression) -> PythonExpression {
     self_.expr.expand_bis().into()
 }
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_mink_bis(self_: &PythonExpression) -> PythonExpression {
     self_.expr.expand_mink_bis().into()
 }
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_color(self_: &PythonExpression) -> PythonExpression {
     self_.expr.expand_color().into()
 }
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_metrics(self_: &PythonExpression) -> PythonExpression {
     self_.expr.expand_metrics().into()
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Wraps all abstract indices within the expression using a header symbol.
@@ -211,6 +222,7 @@ pub fn wrap_indices(self_: &PythonExpression, header: Symbol) -> PythonExpressio
     self_.expr.wrap_indices(header).into()
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// "Cooks" indices within function arguments into simplified, unique symbols.
@@ -228,6 +240,7 @@ pub fn cook_indices(self_: &PythonExpression) -> PythonExpression {
     self_.expr.cook_indices().into()
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Converts a single function atom into a flattened variable symbol.
@@ -254,6 +267,7 @@ pub fn cook_function(self_: &PythonExpression) -> PyResult<PythonExpression> {
         .map(|a| a.into())
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Wraps only the dummy (contracted) indices within the expression using a header symbol.
@@ -277,6 +291,7 @@ pub fn wrap_dummies(self_: &PythonExpression, header: Symbol) -> PythonExpressio
     self_.expr.wrap_dummies(header).into()
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Lists the dangling (external, uncontracted) indices present in the expression.
@@ -300,6 +315,7 @@ pub fn list_dangling(self_: &PythonExpression) -> Vec<PythonExpression> {
         .collect()
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Applies Clifford algebra rules and trace identities to simplify gamma matrices.
@@ -319,6 +335,7 @@ pub fn simplify_gamma(self_: &PythonExpression) -> PythonExpression {
     self_.expr.simplify_gamma().into()
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Converts contracted Lorentz/Minkowski indices into dot product notation.
@@ -336,6 +353,7 @@ pub fn to_dots(self_: &PythonExpression) -> PythonExpression {
     self_.expr.to_dots().into()
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Simplifies contractions involving metric tensors and identity tensors.
@@ -356,6 +374,8 @@ pub fn to_dots(self_: &PythonExpression) -> PythonExpression {
 pub fn simplify_metrics(self_: &PythonExpression) -> PythonExpression {
     self_.expr.simplify_metrics().into()
 }
+
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 /// Applies SU(N) color algebra rules to simplify color structures.
@@ -390,6 +410,7 @@ pub fn simplify_color(self_: &PythonExpression) -> PyResult<PythonExpression> {
     })
 }
 
+#[cfg(feature = "python")]
 pub(crate) fn initialize_alg_simp(m: &Bound<'_, PyModule>) -> PyResult<()> {
     initialize();
     let child_module = PyModule::new(m.py(), "algebraic_simplification")?;

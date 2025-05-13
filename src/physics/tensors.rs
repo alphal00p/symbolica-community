@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use anyhow::anyhow;
 use library::SpensorLibrary;
 use network::SpensoNet;
+
+#[cfg(feature = "python")]
 use pyo3::{
     conversion::FromPyObject,
     exceptions::{self, PyIndexError, PyOverflowError, PyRuntimeError, PyTypeError},
@@ -26,19 +28,23 @@ use spenso::{
 };
 use structure::{PossiblyIndexed, SpensoIndices};
 use symbolica::{
-    api::python::PythonExpression,
     atom::Atom,
     domains::float::Complex,
     evaluate::{CompileOptions, FunctionMap, InlineASM, OptimizationSettings},
     poly::Variable,
 };
 
+#[cfg(feature = "python")]
+use symbolica::api::python::PythonExpression;
+
+#[cfg(feature = "python")]
 use pyo3_stub_gen::{define_stub_info_gatherer, derive::*, PyStubType, TypeInfo};
 
 pub mod library;
 pub mod network;
 pub mod structure;
 
+#[cfg(feature = "python")]
 trait ModuleInit: PyClass {
     fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.add_class::<Self>()
@@ -49,6 +55,7 @@ trait ModuleInit: PyClass {
     }
 }
 
+#[cfg(feature = "python")]
 pub(crate) fn initialize_spenso(m: &Bound<'_, PyModule>) -> PyResult<()> {
     let child_module = PyModule::new(m.py(), "tensors")?;
 
@@ -70,13 +77,17 @@ pub(crate) fn initialize_spenso(m: &Bound<'_, PyModule>) -> PyResult<()> {
 /// A tensor class that can be either dense or sparse.
 /// The data is either float or complex or a symbolica expression
 /// It can be instantiated with data using the `sparse_empty` or `dense` module functions.
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(name = "Tensor", module = "symbolica_community.tensors")]
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(name = "Tensor", module = "symbolica_community.tensors")
+)]
 #[derive(Clone)]
 pub struct Spensor {
     tensor: MixedTensor<f64, PossiblyIndexed>,
 }
 
+#[cfg(feature = "python")]
 impl ModuleInit for Spensor {
     fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.add_class::<Self>()?;
@@ -93,6 +104,8 @@ impl ModuleInit for Spensor {
 ///
 /// The type is either a float or a symbolica expression.
 ///
+
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.tensors")]
 #[pyfunction]
 pub fn sparse_empty(
@@ -122,6 +135,8 @@ pub fn sparse_empty(
 /// The structure can also be a proper `TensorIndices` object or `TensorStructure` object.
 ///
 /// The data is either a list of floats or a list of symbolica expressions, of length equal to the number of elements in the structure, in row-major order.
+///
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.tensors")]
 #[pyfunction]
 pub fn dense(structure: Bound<'_, PyAny>, data: Bound<'_, PyAny>) -> PyResult<Spensor> {
@@ -147,6 +162,7 @@ pub fn dense(structure: Bound<'_, PyAny>, data: Bound<'_, PyAny>) -> PyResult<Sp
 }
 
 // #[gen_stub_pyclass_enum]
+#[cfg(feature = "python")]
 #[derive(FromPyObject)]
 pub enum SliceOrIntOrExpanded<'a> {
     Slice(Bound<'a, PySlice>),
@@ -154,6 +170,7 @@ pub enum SliceOrIntOrExpanded<'a> {
     Expanded(Vec<usize>),
 }
 
+#[cfg(feature = "python")]
 impl<'a> PyStubType for SliceOrIntOrExpanded<'a> {
     fn type_input() -> pyo3_stub_gen::TypeInfo {
         TypeInfo::builtin("slice") | usize::type_input() | TypeInfo::list_of::<usize>()
@@ -165,12 +182,14 @@ impl<'a> PyStubType for SliceOrIntOrExpanded<'a> {
 }
 
 #[derive(IntoPyObject)]
+#[cfg(feature = "python")]
 pub enum TensorElements {
     Real(Py<PyFloat>),
     Complex(Py<PyComplex>),
     Symbolica(PythonExpression),
 }
 
+#[cfg(feature = "python")]
 impl From<ConcreteOrParam<RealOrComplex<f64>>> for TensorElements {
     fn from(value: ConcreteOrParam<RealOrComplex<f64>>) -> Self {
         match value {
@@ -191,6 +210,7 @@ impl From<ConcreteOrParam<RealOrComplex<f64>>> for TensorElements {
     }
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pymethods]
 #[pymethods]
 impl Spensor {
@@ -456,13 +476,17 @@ impl From<DataTensor<Complex<f64>, PossiblyIndexed>> for Spensor {
 }
 /// An optimized evaluator for tensors.
 ///
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(name = "TensorEvaluator", module = "symbolica_community.tensors")]
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(name = "TensorEvaluator", module = "symbolica_community.tensors")
+)]
 #[derive(Clone)]
 pub struct SpensoExpressionEvaluator {
     pub eval: LinearizedEvalTensor<f64, PossiblyIndexed>,
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pymethods]
 #[pymethods]
 impl SpensoExpressionEvaluator {
@@ -536,10 +560,13 @@ impl SpensoExpressionEvaluator {
 
 /// A compiled and optimized evaluator for tensors.
 ///
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(
-    name = "CompiledTensorEvaluator",
-    module = "symbolica_community.tensors"
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(
+        name = "CompiledTensorEvaluator",
+        module = "symbolica_community.tensors"
+    )
 )]
 #[derive(Clone)]
 pub struct SpensoCompiledExpressionEvaluator {
@@ -548,6 +575,7 @@ pub struct SpensoCompiledExpressionEvaluator {
 
 #[gen_stub_pymethods]
 #[pymethods]
+#[cfg(feature = "python")]
 impl SpensoCompiledExpressionEvaluator {
     /// Evaluate the expression for multiple inputs and return the results.
     fn evaluate(&mut self, inputs: Vec<Vec<f64>>) -> Vec<Spensor> {
@@ -566,4 +594,5 @@ impl SpensoCompiledExpressionEvaluator {
     }
 }
 
+#[cfg(feature = "python")]
 define_stub_info_gatherer!(stub_info);

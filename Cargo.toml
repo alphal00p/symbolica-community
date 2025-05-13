@@ -18,6 +18,7 @@ algebraic_simplification = ["dep:spenso", "dep:spenso-macros","dep:linnet"]
 # vakint = ["dep:vakint"]
 spenso = ["dep:spenso","dep:linnet"]
 bincode = ["dep:bincode", "dep:bincode-trait-derive"]
+python=["dep:pyo3","dep:pyo3-stub-gen","symbolica/python_no_module"]
 
 [profile.release]
 codegen-units = 1
@@ -30,14 +31,15 @@ opt-level = 3
 [[bin]]
 name = "stub_gen"
 doc = false
+required-features = ["python"]
 
 [lib]
 name = "symbolica_community"
 crate-type = ["lib", "cdylib"]
 
 [dependencies]
-symbolica = { version = "0.16.0", features = ["python_no_module"] }
-pyo3 = { version = "0.24.0", features = ["abi3-py37", "anyhow", "num-complex"] }
+symbolica = { version = "0.16.0", features = [] }
+pyo3 = { version = "0.24.0", features = ["abi3-py37", "anyhow", "num-complex"] ,optional=true}
 
 anyhow = "*"
 # vakint = { git = "https://github.com/alphal00p/vakint", branch = "vk_for_sb_0_16_latest", optional=true }
@@ -47,7 +49,7 @@ itertools = "0.13.0"
 delegate = "0.13.1"
 auto_enums = "0.8.6"
 thiserror = "1.0.65"
-pyo3-stub-gen = "0.7.0"
+pyo3-stub-gen = {version = "0.7.0",optional=true}
 env_logger = "0.11.5"
 bincode = {version = "2.0", optional = true}
 bincode-trait-derive = {git = "https://github.com/alphal00p/bincode-trait-derive.git", optional = true,rev="c092cba7f80c867fd5646cf68312e1f4f9010658"}

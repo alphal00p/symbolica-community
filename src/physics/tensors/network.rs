@@ -1,3 +1,4 @@
+#[cfg(feature = "python")]
 use pyo3::{
     exceptions::{self, PyRuntimeError},
     prelude::*,
@@ -11,16 +12,23 @@ use spenso::{
     parametric::MixedTensor,
     structure::{HasName, HasStructure},
 };
-use symbolica::{
-    api::python::{ConvertibleToExpression, PythonExpression},
-    atom::Atom,
-};
+use symbolica::atom::Atom;
 
-use super::{library::SpensorLibrary, structure::PossiblyIndexed, ModuleInit, Spensor};
+#[cfg(feature = "python")]
+use symbolica::api::python::{ConvertibleToExpression, PythonExpression};
+
+use super::{library::SpensorLibrary, structure::PossiblyIndexed, Spensor};
+
+#[cfg(feature = "python")]
+use super::ModuleInit;
+#[cfg(feature = "python")]
 use pyo3_stub_gen::{derive::*, PyStubType, TypeInfo};
 
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(name = "TensorNetwork", module = "symbolica_community.tensors")]
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(name = "TensorNetwork", module = "symbolica_community.tensors")
+)]
 #[derive(Clone)]
 /// A tensor network.
 ///
@@ -31,6 +39,7 @@ pub struct SpensoNet {
     pub network: Network<NetworkStore<MixedTensor<f64, ShadowedStructure>, Atom>, ExplicitKey>,
 }
 
+#[cfg(feature = "python")]
 impl ModuleInit for SpensoNet {
     fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.add_class::<SpensoNet>()
@@ -42,6 +51,7 @@ impl ModuleInit for SpensoNet {
     }
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pyfunction]
 #[pyfunction(name = "to_net")]
 pub fn python_to_tensor_network(
@@ -67,6 +77,7 @@ impl ConvertibleToSpensoNet {
     }
 }
 
+#[cfg(feature = "python")]
 impl<'a> FromPyObject<'a> for ConvertibleToSpensoNet {
     fn extract_bound(ob: &Bound<'a, pyo3::PyAny>) -> PyResult<Self> {
         if let Ok(a) = ob.extract::<SpensoNet>() {
@@ -96,6 +107,7 @@ impl<'a> FromPyObject<'a> for ConvertibleToSpensoNet {
     }
 }
 
+#[cfg(feature = "python")]
 impl PyStubType for ConvertibleToSpensoNet {
     fn type_output() -> pyo3_stub_gen::TypeInfo {
         ConvertibleToExpression::type_output() | SpensoNet::type_output() | Spensor::type_output()
@@ -103,20 +115,17 @@ impl PyStubType for ConvertibleToSpensoNet {
 }
 
 // #[gen_stub_pymethods]
+
+#[cfg(feature = "python")]
 #[pymethods]
 impl SpensoNet {
     #[new]
     /// Parses an expression into a network
     pub fn from_expression_without_lib(
-        expr: &Bound<'_, PythonExpression>,
+        expr: ConvertibleToSpensoNet,
         // library: &SpensorLibrary,
     ) -> anyhow::Result<SpensoNet> {
-        Ok(SpensoNet {
-            network: ParsingNet::try_from_view(
-                expr.borrow().expr.as_view(),
-                &SpensorLibrary::new().library,
-            )?,
-        })
+        Ok(expr.to_net())
     }
 
     #[staticmethod]

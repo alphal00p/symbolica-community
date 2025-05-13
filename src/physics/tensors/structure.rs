@@ -1,5 +1,7 @@
 use delegate::delegate;
 use itertools::Itertools;
+
+#[cfg(feature = "python")]
 use pyo3::{
     exceptions::{self, PyIndexError, PyRuntimeError, PyTypeError, PyValueError},
     prelude::*,
@@ -23,25 +25,33 @@ use spenso::{
     },
 };
 use symbolica::{
-    api::python::{ConvertibleToExpression, PythonExpression},
     atom::{Atom, AtomView, FunctionBuilder, NamespacedSymbol, Symbol},
     symbol,
 };
+
+#[cfg(feature = "python")]
+use symbolica::api::python::{ConvertibleToExpression, PythonExpression};
+
 use thiserror::Error;
 
 use crate::physics::algebraic_simplification::{
     gamma::AGS, representations::Bispinor, IndexTooling,
 };
 
-use super::{
-    library::{TensorNamespace, WEYL},
-    ModuleInit, SliceOrIntOrExpanded,
-};
+use super::library::{TensorNamespace, WEYL};
+
+#[cfg(feature = "python")]
+use super::{ModuleInit, SliceOrIntOrExpanded};
 use auto_enums::auto_enum;
+
+#[cfg(feature = "python")]
 use pyo3_stub_gen::{derive::*, impl_stub_type, PyStubType};
 
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(name = "TensorIndices", module = "symbolica_community.tensors")]
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(name = "TensorIndices", module = "symbolica_community.tensors")
+)]
 #[derive(Clone)]
 /// A structure that can be used to represent the "shape" of a tensor, along with a list of abstract indices.
 /// This has an optional name, and accompanying symbolica expressions that are considered as additional non-indexed arguments.
@@ -92,6 +102,7 @@ impl From<ShadowedStructure> for SpensoIndices {
     }
 }
 
+#[cfg(feature = "python")]
 impl ModuleInit for SpensoIndices {
     fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.add_class::<SpensoIndices>()?;
@@ -102,12 +113,14 @@ impl ModuleInit for SpensoIndices {
     }
 }
 
+#[cfg(feature = "python")]
 pub enum ArithmeticStructure {
     Convertible(ConvertibleToExpression),
     Structure(SpensoIndices),
     Expression(PythonExpression),
 }
 
+#[cfg(feature = "python")]
 impl PyStubType for ArithmeticStructure {
     fn type_output() -> pyo3_stub_gen::TypeInfo {
         ConvertibleToExpression::type_output()
@@ -116,6 +129,7 @@ impl PyStubType for ArithmeticStructure {
     }
 }
 
+#[cfg(feature = "python")]
 impl ArithmeticStructure {
     pub fn to_expression(self) -> PyResult<PythonExpression> {
         match self {
@@ -126,6 +140,7 @@ impl ArithmeticStructure {
     }
 }
 
+#[cfg(feature = "python")]
 impl<'a> FromPyObject<'a> for ArithmeticStructure {
     fn extract_bound(ob: &Bound<'a, PyAny>) -> PyResult<Self> {
         if let Ok(ob) = ob.extract::<ConvertibleToExpression>() {
@@ -140,6 +155,7 @@ impl<'a> FromPyObject<'a> for ArithmeticStructure {
     }
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pymethods]
 #[pymethods]
 impl SpensoIndices {
@@ -327,8 +343,11 @@ impl SpensoIndices {
     // }
 }
 
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(name = "TensorStructure", module = "symbolica_community.tensors")]
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(name = "TensorStructure", module = "symbolica_community.tensors")
+)]
 #[derive(Clone)]
 /// A structure that can be used to represent the "shape" of a tensor.
 /// This has an optional name, and accompanying symbolica expressions that are considered as additional non-indexed arguments.
@@ -357,6 +376,7 @@ impl ScalarStructure for PossiblyIndexed {
     }
 }
 
+#[cfg(feature = "python")]
 impl<'py> FromPyObject<'py> for PossiblyIndexed {
     fn extract_bound(structure: &Bound<'py, PyAny>) -> PyResult<Self> {
         if let Ok(structure) = structure.extract::<SpensoIndices>() {
@@ -565,6 +585,7 @@ impl TryFrom<PossiblyIndexed> for ExplicitKey {
     }
 }
 
+#[cfg(feature = "python")]
 #[pymethods]
 #[gen_stub_pymethods]
 impl SpensoStucture {
@@ -963,6 +984,7 @@ impl SpensoStucture {
     }
 }
 
+#[cfg(feature = "python")]
 impl SpensoStucture {
     fn parse_args_for_indexing(
         &self,
@@ -1014,8 +1036,11 @@ impl SpensoStucture {
     }
 }
 
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(name = "Representation", module = "symbolica_community.tensors")]
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(name = "Representation", module = "symbolica_community.tensors")
+)]
 #[derive(Clone)]
 /// A representation class in the sense of representation theory. This class is used to represent the representation of a tensor. It is essentially a pair of a name and a dimension.
 /// New representations are registered when constructing.
@@ -1040,12 +1065,14 @@ pub struct SpensoRepresentation {
     pub representation: Representation<LibraryRep>,
 }
 
+#[cfg(feature = "python")]
 pub enum ConvertibleToAbstractIndex {
     Aind(AbstractIndex),
     Atom(PythonExpression),
     Separator,
 }
 
+#[cfg(feature = "python")]
 impl<'py> FromPyObject<'py> for ConvertibleToAbstractIndex {
     fn extract_bound(aind: &Bound<'py, PyAny>) -> PyResult<Self> {
         let aind = if let Ok(i) = aind.extract::<char>() {
@@ -1078,10 +1105,12 @@ impl<'py> FromPyObject<'py> for ConvertibleToAbstractIndex {
     }
 }
 
+#[cfg(feature = "python")]
 impl_stub_type!(ConvertibleToAbstractIndex = isize | Symbol | PyBackedStr);
 
 pub struct ConvertibleToDimension(Dimension);
 
+#[cfg(feature = "python")]
 impl<'py> FromPyObject<'py> for ConvertibleToDimension {
     fn extract_bound(dimension: &Bound<'py, PyAny>) -> PyResult<Self> {
         let dim = if let Ok(i) = dimension.extract::<usize>() {
@@ -1117,8 +1146,10 @@ impl<'py> FromPyObject<'py> for ConvertibleToDimension {
     }
 }
 
+#[cfg(feature = "python")]
 impl_stub_type!(ConvertibleToDimension = usize | PythonExpression | PyBackedStr);
 
+#[cfg(feature = "python")]
 #[gen_stub_pymethods]
 #[pymethods]
 impl SpensoRepresentation {
@@ -1211,13 +1242,17 @@ impl SpensoRepresentation {
 ///
 /// The abstract index id can be either an integer or a symbol.
 /// This is the building block for creating tensor structures that can be contracted.
-#[gen_stub_pyclass(module = "symbolica_community.tensors")]
-#[pyclass(name = "Slot", module = "symbolica_community.tensors")]
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(name = "Slot", module = "symbolica_community.tensors")
+)]
 #[derive(Clone)]
 pub struct SpensoSlot {
     pub slot: Slot<LibraryRep>,
 }
 
+#[cfg(feature = "python")]
 #[gen_stub_pymethods]
 #[pymethods]
 impl SpensoSlot {
