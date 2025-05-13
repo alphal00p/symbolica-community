@@ -887,8 +887,9 @@ checksum = "0717cef1bc8b636c6e1c1bbdefc09e6322da8a9321966e8928ef80d20f7f770f"
 
 [[package]]
 name = "linnet"
-version = "0.5.1"
-source = "git+https://github.com/alphal00p/linnet?rev=d8636fbfed7f924ea240fcb73783f1845a10ba91#d8636fbfed7f924ea240fcb73783f1845a10ba91"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "043cf6f994a1a766f89f1fbf7d9b60c1ef076504b3eeb5fe542cb6da5e0ba648"
 dependencies = [
  "ahash",
  "bincode",
@@ -1742,7 +1743,7 @@ dependencies = [
 [[package]]
 name = "spenso"
 version = "0.4.1"
-source = "git+https://github.com/alphal00p/spenso?rev=d3520aa9f49b89597ef8c2dc9ab6af534afaabbb#d3520aa9f49b89597ef8c2dc9ab6af534afaabbb"
+source = "git+https://github.com/alphal00p/spenso?rev=c77bf47b8a8012d06c354f1755642f36127dcaeb#c77bf47b8a8012d06c354f1755642f36127dcaeb"
 dependencies = [
  "ahash",
  "anyhow",
@@ -1780,7 +1781,7 @@ dependencies = [
 [[package]]
 name = "spenso-macros"
 version = "0.1.0"
-source = "git+https://github.com/alphal00p/spenso?rev=d3520aa9f49b89597ef8c2dc9ab6af534afaabbb#d3520aa9f49b89597ef8c2dc9ab6af534afaabbb"
+source = "git+https://github.com/alphal00p/spenso?rev=c77bf47b8a8012d06c354f1755642f36127dcaeb#c77bf47b8a8012d06c354f1755642f36127dcaeb"
 dependencies = [
  "proc-macro2",
  "quote",
