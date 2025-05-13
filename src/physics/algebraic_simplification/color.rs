@@ -1,7 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet},
-    sync::LazyLock,
-};
+use std::{collections::HashSet, sync::LazyLock};
 
 use itertools::Itertools;
 use spenso::{
@@ -701,7 +698,7 @@ mod test {
 
         println!("Amplitude squared:\n{}", amp_squared.factor());
 
-        let spin_sum_pat = parse!(
+        let _spin_sum_pat = parse!(
             "alg::gamma(mink(D,1337),bis(D,left(1)),bis(D,right(1)))",
             "spenso"
         )

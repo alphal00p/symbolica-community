@@ -386,6 +386,7 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
         )
         .repeat()
         .with(Atom::new_var(RS.d_) * 4)
+        .expand_mink_bis()
         .simplify_metrics();
 
     expr
