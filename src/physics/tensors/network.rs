@@ -9,8 +9,8 @@ use spenso::{
         library::symbolic::ExplicitKey, parsing::ShadowedStructure, store::NetworkStore,
         ExecutionResult, Network, Sequential, SmallestDegree,
     },
-    parametric::MixedTensor,
     structure::{HasName, HasStructure},
+    tensors::parametric::MixedTensor,
 };
 use symbolica::atom::Atom;
 

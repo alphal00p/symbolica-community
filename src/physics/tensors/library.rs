@@ -6,11 +6,13 @@ use pyo3::{exceptions::PyTypeError, pyclass, pymethods, PyResult};
 #[cfg(feature = "python")]
 use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum, gen_stub_pymethods};
 use spenso::{
-    complex::Complex,
-    data::{SetTensorData, SparseTensor},
+    algebra::complex::Complex,
     network::library::symbolic::{ExplicitKey, TensorLibrary},
-    parametric::MixedTensor,
     structure::{HasStructure, TensorStructure},
+    tensors::{
+        data::{SetTensorData, SparseTensor},
+        parametric::MixedTensor,
+    },
 };
 use symbolica::symbol;
 

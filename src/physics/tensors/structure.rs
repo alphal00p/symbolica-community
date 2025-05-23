@@ -1,3 +1,4 @@
+use bitvec::vec::BitVec;
 use delegate::delegate;
 use itertools::Itertools;
 
@@ -20,8 +21,8 @@ use spenso::{
             Euclidean, ExtendibleReps, LibraryRep, Minkowski, RepName, Representation,
         },
         slot::{IsAbstractSlot, Slot},
-        HasName, IndexLess, NamedStructure, ScalarStructure, StructureContract, TensorStructure,
-        ToSymbolic, VecStructure,
+        HasName, IndexLess, MergeInfo, NamedStructure, PermutedStructure, ScalarStructure,
+        StructureContract, StructureError, TensorStructure, ToSymbolic,
     },
 };
 use symbolica::{
@@ -67,9 +68,13 @@ impl TensorStructure for SpensoIndices {
     fn reindex(
         self,
         indices: &[AbstractIndex],
-    ) -> anyhow::Result<SpensoIndices, spenso::structure::StructureError> {
-        Ok(SpensoIndices {
-            structure: self.structure.reindex(indices)?,
+    ) -> anyhow::Result<PermutedStructure<SpensoIndices>, spenso::structure::StructureError> {
+        let res = self.structure.reindex(indices)?;
+        Ok(PermutedStructure {
+            permutation: res.permutation,
+            structure: SpensoIndices {
+                structure: res.structure,
+            },
         })
     }
 
@@ -434,14 +439,18 @@ impl TensorStructure for PossiblyIndexed {
     fn reindex(
         self,
         indices: &[AbstractIndex],
-    ) -> anyhow::Result<SpensoIndices, spenso::structure::StructureError> {
+    ) -> anyhow::Result<PermutedStructure<SpensoIndices>, spenso::structure::StructureError> {
         match self {
-            PossiblyIndexed::Indexed(i) => Ok(SpensoIndices {
-                structure: i.structure.reindex(indices)?,
-            }),
-            PossiblyIndexed::Unindexed(i) => Ok(SpensoIndices {
-                structure: i.structure.reindex(indices)?,
-            }),
+            PossiblyIndexed::Indexed(i) => i.reindex(indices),
+            PossiblyIndexed::Unindexed(i) => {
+                let res = i.structure.reindex(indices)?;
+                Ok(PermutedStructure {
+                    permutation: res.permutation,
+                    structure: SpensoIndices {
+                        structure: res.structure,
+                    },
+                })
+            }
         }
     }
 
@@ -497,11 +506,11 @@ impl HasName for PossiblyIndexed {
 }
 
 impl StructureContract for PossiblyIndexed {
-    fn concat(&mut self, other: &Self) {
+    fn concat(&mut self, other: Self) {
         match self {
             PossiblyIndexed::Indexed(i) => {
                 if let PossiblyIndexed::Indexed(j) = other {
-                    i.structure.concat(&j.structure).into()
+                    i.structure.concat(j.structure).into()
                 } else {
                     panic!("Cannot merge indexed and unindexed structures")
                 }
@@ -511,27 +520,19 @@ impl StructureContract for PossiblyIndexed {
             }
         }
     }
-    #[must_use]
-    fn merge_at(&self, other: &Self, positions: (usize, usize)) -> Self {
-        match self {
-            PossiblyIndexed::Indexed(i) => {
-                if let PossiblyIndexed::Indexed(j) = other {
-                    i.structure.merge_at(&j.structure, positions).into()
-                } else {
-                    panic!("Cannot merge indexed and unindexed structures")
-                }
-            }
-            PossiblyIndexed::Unindexed(_) => {
-                panic!("Cannot merge indexed and unindexed structures")
-            }
-        }
-    }
 
-    fn merge(&mut self, other: &Self) -> Option<usize> {
+    fn merge(&self, other: &Self) -> Result<(Self, BitVec, BitVec, MergeInfo), StructureError> {
         match self {
             PossiblyIndexed::Indexed(i) => {
                 if let PossiblyIndexed::Indexed(j) = other {
-                    i.structure.merge(&j.structure)
+                    let (res, self_pos, other_pos, merge_info) = i.structure.merge(&j.structure)?;
+
+                    Ok((
+                        PossiblyIndexed::Indexed(SpensoIndices { structure: res }),
+                        self_pos,
+                        other_pos,
+                        merge_info,
+                    ))
                 } else {
                     panic!("Cannot merge indexed and unindexed structures")
                 }
@@ -573,14 +574,16 @@ impl TryFrom<PossiblyIndexed> for ExplicitKey {
                 i.structure
                     .args()
                     .map(|a| a.into_iter().map(|a| a.into()).collect()),
-            )),
+            )
+            .structure),
             PossiblyIndexed::Unindexed(i) => Ok(ExplicitKey::from_iter(
                 i.structure.external_reps_iter(),
                 i.structure.name().ok_or(SpensoError::NoName)?.into(),
                 i.structure
                     .args()
                     .map(|a| a.into_iter().map(|a| a.into()).collect()),
-            )),
+            )
+            .structure),
         }
     }
 }
@@ -592,11 +595,14 @@ impl SpensoStucture {
             ETS.id,
             None,
         )
+        .structure
         .into()
     }
 
     pub fn metric(rep: SpensoRepresentation) -> Self {
-        ExplicitKey::from_iter([rep.representation, rep.representation], ETS.metric, None).into()
+        ExplicitKey::from_iter([rep.representation, rep.representation], ETS.metric, None)
+            .structure
+            .into()
     }
 
     #[allow(non_snake_case)]
@@ -616,6 +622,7 @@ impl SpensoStucture {
             name,
             None,
         )
+        .structure
         .into()
     }
 
@@ -630,6 +637,7 @@ impl SpensoStucture {
             AGS.gamma,
             None,
         )
+        .structure
         .into()
     }
 
@@ -639,7 +647,9 @@ impl SpensoStucture {
             TensorNamespace::Algebra => AGS.gamma5,
         };
 
-        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
+        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None)
+            .structure
+            .into()
     }
 
     pub fn projm_impl(namespace: TensorNamespace) -> Self {
@@ -648,7 +658,9 @@ impl SpensoStucture {
             TensorNamespace::Weyl => WEYL.projm,
         };
 
-        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
+        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None)
+            .structure
+            .into()
     }
 
     pub fn projp_impl(namespace: TensorNamespace) -> Self {
@@ -657,7 +669,9 @@ impl SpensoStucture {
             TensorNamespace::Weyl => WEYL.projp,
         };
 
-        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None).into()
+        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None)
+            .structure
+            .into()
     }
 }
 

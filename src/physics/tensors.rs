@@ -14,17 +14,13 @@ use pyo3::{
 };
 
 use spenso::{
-    complex::{RealOrComplex, RealOrComplexTensor},
-    data::{
-        DataTensor, DenseTensor, GetTensorData, SetTensorData, SparseOrDense, SparseTensor,
-        StorageTensor,
-    },
     network::parsing::ShadowedStructure,
-    parametric::{
-        atomcore::TensorAtomOps, CompiledEvalTensor, ConcreteOrParam, LinearizedEvalTensor,
-        MixedTensor, ParamOrConcrete, ParamTensor,
-    },
     structure::{HasStructure, ScalarTensor, TensorStructure},
+    tensors::{
+        complex::RealOrComplexTensor,
+        data::{DataTensor, StorageTensor},
+        parametric::{CompiledEvalTensor, LinearizedEvalTensor, MixedTensor},
+    },
 };
 use structure::{PossiblyIndexed, SpensoIndices};
 use symbolica::{
