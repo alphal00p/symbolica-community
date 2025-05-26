@@ -149,8 +149,8 @@ pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
     let cof = ColorFundamental {};
     let coaf = ColorFundamental {}.dual();
     let coad = ColorAdjoint {};
-    let tr = Atom::new_var(CS.tr);
-    let nc = Atom::new_var(CS.nc);
+    let tr = Atom::var(CS.tr);
+    let nc = Atom::var(CS.nc);
     let reps = vec![
         (
             function!(RS.f_, RS.a___, cof.to_symbolic([RS.b__]), RS.c___)
@@ -219,7 +219,7 @@ pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
                 cof.to_symbolic([RS.b__]),
                 coaf.to_symbolic([RS.b__])
             ),
-            Atom::new_num(0),
+            Atom::num(0),
         ),
         (
             function!(
@@ -242,7 +242,7 @@ pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
                 cof.to_symbolic([RS.c__]),
                 coaf.to_symbolic([RS.e__])
             )
-            .pow(Atom::new_num(2)),
+            .pow(Atom::num(2)),
             &tr * function!(ETS.id, RS.a_, RS.a_),
         ),
         (
@@ -268,7 +268,7 @@ pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
                 coad.to_symbolic([RS.b__]),
                 coad.to_symbolic([RS.c__])
             )
-            .pow(Atom::new_num(2)),
+            .pow(Atom::num(2)),
             &nc * (&nc * &nc - 1),
         ),
     ];
@@ -288,35 +288,35 @@ pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
         (((function!(
             CS.t,
             coad.to_symbolic([RS.d_, RS.a_]),
-            cof.to_symbolic([Atom::new_num(3), function!(i, RS.a_, RS.b_, RS.c_)]),
-            coaf.to_symbolic([Atom::new_num(3), function!(j, RS.a_, RS.b_, RS.c_)])
+            cof.to_symbolic([Atom::num(3), function!(i, RS.a_, RS.b_, RS.c_)]),
+            coaf.to_symbolic([Atom::num(3), function!(j, RS.a_, RS.b_, RS.c_)])
         ) * function!(
             CS.t,
             coad.to_symbolic([RS.d_, RS.b_]),
-            cof.to_symbolic([Atom::new_num(3), function!(j, RS.a_, RS.b_, RS.c_)]),
-            coaf.to_symbolic([Atom::new_num(3), function!(k, RS.a_, RS.b_, RS.c_)])
+            cof.to_symbolic([Atom::num(3), function!(j, RS.a_, RS.b_, RS.c_)]),
+            coaf.to_symbolic([Atom::num(3), function!(k, RS.a_, RS.b_, RS.c_)])
         ) * function!(
             CS.t,
             coad.to_symbolic([RS.d_, RS.c_]),
-            cof.to_symbolic([Atom::new_num(3), function!(k, RS.a_, RS.b_, RS.c_)]),
-            coaf.to_symbolic([Atom::new_num(3), function!(i, RS.a_, RS.b_, RS.c_)])
+            cof.to_symbolic([Atom::num(3), function!(k, RS.a_, RS.b_, RS.c_)]),
+            coaf.to_symbolic([Atom::num(3), function!(i, RS.a_, RS.b_, RS.c_)])
         ) - function!(
             CS.t,
             coad.to_symbolic([RS.d_, RS.a_]),
-            cof.to_symbolic([Atom::new_num(3), function!(i, RS.a_, RS.b_, RS.c_)]),
-            coaf.to_symbolic([Atom::new_num(3), function!(j, RS.a_, RS.b_, RS.c_)])
+            cof.to_symbolic([Atom::num(3), function!(i, RS.a_, RS.b_, RS.c_)]),
+            coaf.to_symbolic([Atom::num(3), function!(j, RS.a_, RS.b_, RS.c_)])
         ) * function!(
             CS.t,
             coad.to_symbolic([RS.d_, RS.c_]),
-            cof.to_symbolic([Atom::new_num(3), function!(j, RS.a_, RS.b_, RS.c_)]),
-            coaf.to_symbolic([Atom::new_num(3), function!(k, RS.a_, RS.b_, RS.c_)])
+            cof.to_symbolic([Atom::num(3), function!(j, RS.a_, RS.b_, RS.c_)]),
+            coaf.to_symbolic([Atom::num(3), function!(k, RS.a_, RS.b_, RS.c_)])
         ) * function!(
             CS.t,
             coad.to_symbolic([RS.d_, RS.b_]),
-            cof.to_symbolic([Atom::new_num(3), function!(k, RS.a_, RS.b_, RS.c_)]),
-            coaf.to_symbolic([Atom::new_num(3), function!(i, RS.a_, RS.b_, RS.c_)])
+            cof.to_symbolic([Atom::num(3), function!(k, RS.a_, RS.b_, RS.c_)]),
+            coaf.to_symbolic([Atom::num(3), function!(i, RS.a_, RS.b_, RS.c_)])
         )) / &tr)
-            * -Atom::new_var(Atom::I))
+            * -Atom::i())
         .to_pattern(),
     )];
 
@@ -331,7 +331,7 @@ pub fn color_simplify_impl(expression: AtomView) -> Result<Atom, ColorError> {
         })
         .collect();
 
-    let mut atom = Atom::new_num(0);
+    let mut atom = Atom::num(0);
     // for r in &replacements {
     //     println!("{r}")
     // }
@@ -410,11 +410,11 @@ mod test {
 
     #[test]
     fn test_color_simplification() {
-        let atom = parse_lit!(alg::f(coad(8, 2), coad(8, 2), coad(8, 1)), "spenso").unwrap();
+        let atom = parse_lit!(alg::f(coad(8, 2), coad(8, 2), coad(8, 1)), "spenso");
         println!("{atom}");
         let simplified = atom.simplify_color().unwrap();
         println!("{simplified}");
-        assert_eq!(simplified, Atom::new_num(0));
+        assert_eq!(simplified, Atom::num(0));
     }
 
     fn colored_matrix_element() -> (Atom, Atom) {
@@ -447,8 +447,7 @@ mod test {
             *alg::ϵbar(2,mink(D,2))
             *alg::ϵbar(3,mink(D,3))",
                 "spenso"
-            )
-            .unwrap(),
+            ),
             parse_lit!(
                 -12 * alg::TR
                     ^ 2 * alg::Nc
@@ -508,8 +507,7 @@ mod test {
                                 * dot(spenso::Q(0), spenso::Q(3))
                                 * dot(spenso::Q(1), spenso::Q(3))),
                 "symbolica_community"
-            )
-            .unwrap(),
+            ),
         )
     }
 
@@ -523,8 +521,7 @@ mod test {
                 * 𝟙(cof(alg::Nc, right(0)), dind(cof(alg::Nc, left(0))))
                 * 𝟙(cof(alg::Nc, left(1)), dind(cof(alg::Nc, right(1))))",
             "spenso"
-        )
-        .unwrap();
+        );
 
         let amplitude_color = parse!(
             "
@@ -536,8 +533,7 @@ mod test {
                 * 𝟙(cof(alg::Nc, 0), dind(cof(alg::Nc, 5)))
                 * 𝟙(cof(alg::Nc, 4), dind(cof(alg::Nc, 1)))",
             "spenso"
-        )
-        .unwrap();
+        );
         let amplitude_color_left = amplitude_color.wrap_indices(symbol!("spenso::left"));
         let amplitude_color_right = amplitude_color
             .conj()
@@ -568,8 +564,7 @@ mod test {
                 * alg::ϵbar(3, mink(D, left(3)))
                 * alg::ϵ(3, mink(D, right(3))),
             "spenso"
-        )
-        .unwrap();
+        );
 
         let spin_sum_rule_trg = parse!(
             "
@@ -587,8 +582,7 @@ mod test {
                     * 𝟙(cof(alg::Nc, left(1)), dind(cof(alg::Nc, right(1))))
                 )",
             "spenso"
-        )
-        .unwrap();
+        );
 
         let (amplitude, tgt) = colored_matrix_element();
 
@@ -667,8 +661,7 @@ mod test {
                 * alg::ϵbar(3, mink(D, left(3)))
                 * alg::ϵ(3, mink(D, right(3))),
             "spenso"
-        )
-        .unwrap();
+        );
 
         let spin_sum_rule_trg = parse!(
             "
@@ -681,8 +674,7 @@ mod test {
                 )
                 ",
             "spenso"
-        )
-        .unwrap();
+        );
 
         let (amplitude, tgt) = colored_matrix_element();
 
@@ -702,7 +694,6 @@ mod test {
             "alg::gamma(mink(D,1337),bis(D,left(1)),bis(D,right(1)))",
             "spenso"
         )
-        .unwrap()
         .to_pattern();
         amp_squared = amp_squared
             .expand_bis()

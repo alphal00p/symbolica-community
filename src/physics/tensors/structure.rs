@@ -21,8 +21,8 @@ use spenso::{
             Euclidean, ExtendibleReps, LibraryRep, Minkowski, RepName, Representation,
         },
         slot::{IsAbstractSlot, Slot},
-        HasName, IndexLess, MergeInfo, NamedStructure, PermutedStructure, ScalarStructure,
-        StructureContract, StructureError, TensorStructure, ToSymbolic,
+        HasName, IndexLess, MergeInfo, NamedStructure, OrderedStructure, PermutedStructure,
+        ScalarStructure, StructureContract, StructureError, TensorStructure, ToSymbolic,
     },
 };
 use symbolica::{
@@ -50,7 +50,7 @@ use pyo3_stub_gen::{derive::*, impl_stub_type, PyStubType};
 
 #[cfg_attr(
     feature = "python",
-    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    gen_stub_pyclass(module = "symbolica_community.tensors"),
     pyclass(name = "TensorIndices", module = "symbolica_community.tensors")
 )]
 #[derive(Clone)]
@@ -198,7 +198,7 @@ impl SpensoIndices {
         };
 
         Ok(SpensoIndices {
-            structure: ShadowedStructure::from_iter(slots, id.into(), args),
+            structure: ShadowedStructure::from_iter(slots, id.into(), args).structure,
         })
     }
 
@@ -350,7 +350,7 @@ impl SpensoIndices {
 
 #[cfg_attr(
     feature = "python",
-    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    gen_stub_pyclass(module = "symbolica_community.tensors"),
     pyclass(name = "TensorStructure", module = "symbolica_community.tensors")
 )]
 #[derive(Clone)]
@@ -390,17 +390,26 @@ impl<'py> FromPyObject<'py> for PossiblyIndexed {
             Ok(PossiblyIndexed::from(structure))
         } else if let Ok(s) = structure.extract::<Vec<SpensoSlot>>() {
             Ok(PossiblyIndexed::Indexed(SpensoIndices {
-                structure: VecStructure::from_iter(s.into_iter().map(|s| s.slot)).into(),
+                structure: PermutedStructure::<OrderedStructure>::from_iter(
+                    s.into_iter().map(|s| s.slot),
+                )
+                .structure
+                .into(),
             }))
         } else if let Ok(s) = structure.extract::<Vec<SpensoRepresentation>>() {
             Ok(PossiblyIndexed::Unindexed(SpensoStucture {
-                structure: IndexLess::from_iter(s.into_iter().map(|s| s.representation)).into(),
+                structure: PermutedStructure::<IndexLess>::from_iter(
+                    s.into_iter().map(|s| s.representation),
+                )
+                .structure
+                .into(),
             }))
         } else if let Ok(s) = structure.extract::<Vec<usize>>() {
             Ok(PossiblyIndexed::Unindexed(SpensoStucture {
-                structure: IndexLess::from_iter(
+                structure: PermutedStructure::<IndexLess>::from_iter(
                     s.into_iter().map(|s| ExtendibleReps::EUCLIDEAN.new_rep(s)),
                 )
+                .structure
                 .into(),
             }))
         } else {
@@ -599,7 +608,7 @@ impl SpensoStucture {
         .into()
     }
 
-    pub fn metric(rep: SpensoRepresentation) -> Self {
+    pub fn metric_impl(rep: SpensoRepresentation) -> Self {
         ExplicitKey::from_iter([rep.representation, rep.representation], ETS.metric, None)
             .structure
             .into()
@@ -627,7 +636,7 @@ impl SpensoStucture {
     }
 
     #[allow(non_snake_case)]
-    pub fn gammadD_impl(dim: Symbol) -> Self {
+    pub fn gammaD_impl(dim: Symbol) -> Self {
         ExplicitKey::from_iter(
             [
                 LibraryRep::from(Minkowski {}).new_rep(dim),
@@ -703,7 +712,9 @@ impl SpensoStucture {
 
         let args = if args.is_empty() { None } else { Some(args) };
 
-        let mut a: ExplicitKey = IndexLess::from_iter(slots).into();
+        let mut a: ExplicitKey = PermutedStructure::<IndexLess>::from_iter(slots)
+            .structure
+            .into();
         if let Some(name) = name {
             match name.expr.as_view() {
                 AtomView::Var(v) => a.set_name(v.get_symbol().into()),
@@ -832,31 +843,26 @@ impl SpensoStucture {
 
     #[staticmethod]
     pub fn id(rep: SpensoRepresentation) -> Self {
-        ExplicitKey::from_iter(
-            [rep.representation, rep.representation.dual()],
-            ETS.id,
-            None,
-        )
-        .into()
+        SpensoStucture::id_impl(rep)
     }
 
     #[staticmethod]
     pub fn metric(rep: SpensoRepresentation) -> Self {
-        ExplicitKey::from_iter([rep.representation, rep.representation], ETS.metric, None).into()
+        SpensoStucture::metric_impl(rep)
     }
 
     #[allow(non_snake_case)]
     #[staticmethod]
     //make it optional
     pub fn gamma4D(namespace: TensorNamespace) -> Self {
-        Self::gamma4D_impl(namespace)
+        SpensoStucture::gamma4D_impl(namespace)
     }
 
     #[allow(non_snake_case)]
     #[staticmethod]
     pub fn gammadD(dim: PythonExpression) -> PyResult<Self> {
         if let AtomView::Var(v) = dim.expr.as_view() {
-            Ok(Self::gammaD_impl(v.get_symbol()))
+            Ok(SpensoStucture::gammaD_impl(v.get_symbol()))
         } else {
             return Err(exceptions::PyTypeError::new_err(
                 "Only symbols can used as dims",
@@ -866,17 +872,17 @@ impl SpensoStucture {
 
     #[staticmethod]
     pub fn gamma5(namespace: TensorNamespace) -> Self {
-        Self::gamma5_impl(namespace)
+        SpensoStucture::gamma5_impl(namespace)
     }
 
     #[staticmethod]
     pub fn projm(namespace: TensorNamespace) -> Self {
-        Self::projm_impl(namespace)
+        SpensoStucture::projm_impl(namespace)
     }
 
     #[staticmethod]
     pub fn projp(namespace: TensorNamespace) -> Self {
-        Self::projp_impl(namespace)
+        SpensoStucture::projp_impl(namespace)
     }
 
     #[pyo3(signature = (*args, extra_args=None))]
@@ -1024,9 +1030,9 @@ impl SpensoStucture {
         } else {
             Some(final_additional_args)
         };
-        match structure_clone.to_indexed(&resolved_indices) {
+        match structure_clone.reindex(&resolved_indices) {
             Ok(indexed_structure) => Ok(SpensoIndices {
-                structure: indexed_structure,
+                structure: indexed_structure.structure,
             }),
             Err(e) => Err(PyValueError::new_err(format!(
                 "Failed to create TensorIndices: {}",
@@ -1090,7 +1096,7 @@ impl SpensoStucture {
 
 #[cfg_attr(
     feature = "python",
-    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    gen_stub_pyclass(module = "symbolica_community.tensors"),
     pyclass(name = "Representation", module = "symbolica_community.tensors")
 )]
 #[derive(Clone)]
@@ -1296,7 +1302,7 @@ impl SpensoRepresentation {
 /// This is the building block for creating tensor structures that can be contracted.
 #[cfg_attr(
     feature = "python",
-    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    gen_stub_pyclass(module = "symbolica_community.tensors"),
     pyclass(name = "Slot", module = "symbolica_community.tensors")
 )]
 #[derive(Clone)]

@@ -13,12 +13,12 @@ version = "0.1.0"
 
 [features]
 
-default = [ "spenso", "algebraic_simplification"]
-algebraic_simplification = ["dep:spenso", "dep:spenso-macros","dep:linnet"]
+default = ["spenso", "algebraic_simplification"]
+algebraic_simplification = ["dep:spenso", "dep:spenso-macros", "dep:linnet"]
 # vakint = ["dep:vakint"]
-spenso = ["dep:spenso","dep:linnet","dep:bitvec"]
+spenso = ["dep:spenso", "dep:linnet", "dep:bitvec"]
 bincode = ["dep:bincode", "dep:bincode-trait-derive"]
-python=["dep:pyo3","dep:pyo3-stub-gen","symbolica/python_no_module"]
+python = ["dep:pyo3", "dep:pyo3-stub-gen", "symbolica/python_no_module"]
 
 [profile.release]
 codegen-units = 1
@@ -39,30 +39,37 @@ crate-type = ["lib", "cdylib"]
 
 [dependencies]
 symbolica = { version = "0.16.0", features = [] }
-pyo3 = { version = "0.24.0", features = ["abi3-py37", "anyhow", "num-complex"] ,optional=true}
+pyo3 = { version = "0.24.0", features = [
+    "abi3-py37",
+    "anyhow",
+    "num-complex",
+], optional = true }
 
 anyhow = "*"
 # vakint = { git = "https://github.com/alphal00p/vakint", branch = "vk_for_sb_0_16_latest", optional=true }
 spenso = { version = "0.4.1", optional = true, features = ["shadowing"] }
-bitvec = { version = "1.0.1", optional=true,features = ["serde"] }
-linnet = {version="0.7.0",optional=true}
+bitvec = { version = "1.0.1", optional = true, features = ["serde"] }
+linnet = { version = "0.7.1", optional = true }
 
 itertools = "0.13.0"
 delegate = "0.13.1"
 auto_enums = "0.8.6"
 thiserror = "1.0.65"
-pyo3-stub-gen = {version = "0.7.0",optional=true}
+pyo3-stub-gen = { version = "0.7.0", optional = true }
 env_logger = "0.11.5"
-bincode = {version = "2.0", optional = true}
-bincode-trait-derive = {git = "https://github.com/alphal00p/bincode-trait-derive.git", optional = true,rev="c092cba7f80c867fd5646cf68312e1f4f9010658"}
+bincode = { version = "2.0", optional = true }
+bincode-trait-derive = { version = "0.1.0", optional = true }
 
-spenso-macros = {git="https://github.com/alphal00p/spenso",rev="a1bb8daff522fc3f108a6f9db53cce6814df5d6a",features=["shadowing"],optional=true}
+spenso-macros = { git = "https://github.com/alphal00p/spenso", rev = "dfef014e701403c3d6dd15e877c81a6b5f773ffe", features = [
+    "shadowing",
+], optional = true }
 
 # spenso-macros = {path = "../spenso/spenso-macros"}
 [patch.crates-io]
 # symbolica={path="../symbolica"}
-symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "9baa73b9fb6ad82af8af7e117e4e221ea8b825b7" }
+symbolica = { git = "https://github.com/benruijl/symbolica", branch = "complex_coeff" }
+
 # linnet = {git ="https://gi?thub.com/alphal00p/linnet", rev = "d8636fbfed7f924ea240fcb73783f1845a10ba91"}
 # spenso = { path = "../spenso/spenso"}
-spenso={git="https://github.com/alphal00p/spenso",rev="a1bb8daff522fc3f108a6f9db53cce6814df5d6a"}
+spenso = { git = "https://github.com/alphal00p/spenso", rev = "dfef014e701403c3d6dd15e877c81a6b5f773ffe" }
 # symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}

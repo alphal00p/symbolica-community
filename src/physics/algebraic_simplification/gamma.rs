@@ -78,8 +78,8 @@ pub static PS: LazyLock<PolSymbols> = LazyLock::new(|| PolSymbols {
 pub fn factor_conj_impl(expression: AtomView) -> Atom {
     expression
         .to_owned()
-        .replace(Atom::new_var(Atom::I).to_pattern())
-        .with((-Atom::new_var(Atom::I)).to_pattern())
+        .replace(Atom::i().to_pattern())
+        .with((-Atom::i()).to_pattern())
 }
 pub fn pol_conj_impl(expression: AtomView) -> Atom {
     let expr = expression.to_owned().expand();
@@ -350,12 +350,12 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
                         } else {
                             panic!("aaaa")
                         }
-                        // Atom::new_num(4)
+                        // Atom::num(4)
                     } else {
                         function!(ETS.metric, args[0], args[i])
                     };
                     if args.len() == 2 {
-                        sum = sum + metric * sign * Atom::new_num(4);
+                        sum = sum + metric * sign * Atom::num(4);
                     } else {
                         sum = sum + metric * gcn.finish() * sign;
                     }
@@ -381,11 +381,11 @@ pub fn gamma_simplify_impl(expr: AtomView) -> Atom {
     expr = expr
         .replace(
             function!(AGS.gamma, mink.to_symbolic([RS.d_, RS.b_]), RS.a__)
-                .pow(Atom::new_num(2))
+                .pow(Atom::num(2))
                 .to_pattern(),
         )
         .repeat()
-        .with(Atom::new_var(RS.d_) * 4)
+        .with(Atom::var(RS.d_) * 4)
         .expand_mink_bis()
         .simplify_metrics();
 
@@ -426,8 +426,8 @@ pub fn id_atom(i: impl Into<Atom>, j: impl Into<Atom>) -> Atom {
 #[macro_export]
 macro_rules! id {
     ($i: expr, $j: expr) => {{
-        let i = symbolica::parse_lit!($i).unwrap();
-        let j = symbolica::parse_lit!($j).unwrap();
+        let i = symbolica::parse_lit!($i);
+        let j = symbolica::parse_lit!($j);
         id_atom(i, j)
     }};
 }
@@ -452,7 +452,6 @@ mod test {
             alg::gamma_chain(mink(4, 0), mink(4, 0), b(1), b(2)),
             "spenso"
         )
-        .unwrap()
         .simplify_gamma();
 
         assert_eq!(expr, id!(spenso::b(1), spenso::b(2)) * 4, "got {:#}", expr);
@@ -470,7 +469,6 @@ mod test {
                 ),
             "spenso"
         )
-        .unwrap()
         .simplify_gamma()
         .expand();
         assert_eq!(
@@ -482,8 +480,7 @@ mod test {
                         + 4 * p(mink(4, nu)) * q(mink(4, mu))
                         - 4 * g(mink(4, mu), mink(4, nu)) * p(mink(4, nu1)) * q(mink(4, nu1)),
                 "spenso"
-            )
-            .unwrap(),
+            ),
             "got {:#}",
             expr
         );
@@ -500,14 +497,8 @@ mod test {
                     - g(mink(dim, 1), mink(dim, 3)) * g(mink(dim, 2), mink(dim, 4))),
             "spenso"
         )
-        .unwrap()
         .simplify_gamma();
-        assert_eq!(
-            expr,
-            parse_lit!(-dim + dim ^ 3, "spenso").unwrap(),
-            "got {}",
-            expr
-        );
+        assert_eq!(expr, parse_lit!(-dim + dim ^ 3, "spenso"), "got {}", expr);
 
         let expr = parse_lit!(
             p(mink(4, nu1))
@@ -522,7 +513,6 @@ mod test {
                 ),
             "spenso"
         )
-        .unwrap()
         .simplify_gamma();
         assert_eq!(
             expr,
@@ -531,8 +521,7 @@ mod test {
                     ^ 2 + 4 * p(mink(4, mu)) * q(mink(4, nu)) - 4 * q(mink(4, mu)) * p(mink(4, nu))
                         + 4 * g(mink(4, mu), mink(4, nu)) * p(mink(4, nu1)) * q(mink(4, nu1)),
                 "spenso"
-            )
-            .unwrap(),
+            ),
             "got {:#}",
             expr
         );
@@ -550,15 +539,13 @@ mod test {
                 ),
             "spenso"
         )
-        .unwrap()
         .simplify_gamma();
         assert_eq!(
             expr,
             parse_lit!(
                 4 * dim * p(mink(dim, nu1)) ^ 2 + 4 * dim * p(mink(dim, nu1)) * q(mink(dim, nu1)),
                 "spenso"
-            )
-            .unwrap(),
+            ),
             "got {:#}",
             expr
         );
@@ -576,7 +563,6 @@ mod test {
                 ),
             "spenso"
         )
-        .unwrap()
         .simplify_gamma();
         assert_eq!(
             expr,
@@ -586,8 +572,7 @@ mod test {
                     ^ 2 + 8 * p(mink(dim, nu1)) * q(mink(dim, nu1))
                         - 4 * dim * p(mink(dim, nu1)) * q(mink(dim, nu1)),
                 "spenso"
-            )
-            .unwrap(),
+            ),
             "got {:#}",
             expr
         );
@@ -607,13 +592,11 @@ mod test {
                 ),
             "spenso"
         )
-        .unwrap()
         .simplify_gamma()
         .to_dots();
         assert_eq!(
             expr,
-            parse_lit!(8 * dot(p, q) ^ 2 - 4 * dot(p, p) * dot(q, q) + 4 * dot(p, q) * dot(q, q))
-                .unwrap(),
+            parse_lit!(8 * dot(p, q) ^ 2 - 4 * dot(p, p) * dot(q, q) + 4 * dot(p, q) * dot(q, q)),
             "got {}",
             expr
         );
@@ -629,15 +612,14 @@ mod test {
             ),
             "spenso"
         )
-        .unwrap()
         .simplify_gamma()
         .to_dots();
 
-        let dim = Atom::new_var(symbol!("spenso::dim"));
+        let dim = Atom::var(symbol!("spenso::dim"));
         assert_eq!(
             expr,
             &dim * id!(spenso::b(1), spenso::b(2)) * 2
-                - dim.pow(Atom::new_num(2)) * id!(spenso::b(1), spenso::b(2)),
+                - dim.pow(Atom::num(2)) * id!(spenso::b(1), spenso::b(2)),
             "got {}",
             expr
         );

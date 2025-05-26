@@ -28,7 +28,7 @@ pub struct MetricSymbols {
 
 pub static MS: LazyLock<MetricSymbols> = LazyLock::new(|| MetricSymbols {
     dim: symbol!("dim"),
-    dot: symbol!("dot";Symmetric, Linear).unwrap(),
+    dot: symbol!("dot";Symmetric, Linear),
     dummy: symbol!("custom::dummy"),
 });
 
@@ -50,7 +50,7 @@ pub fn cook_function_view(view: AtomView) -> Result<Atom, CookingError> {
         AtomView::Pow(_) => Err(CookingError::Pow),
         AtomView::Fun(f) => {
             let s = cook_function_impl(f)?;
-            Ok(Atom::new_var(s))
+            Ok(Atom::var(s))
         }
     }
 }
@@ -69,22 +69,40 @@ pub fn cook_function_impl(fun: FunView) -> Result<Symbol, CookingError> {
                 CoefficientView::FiniteField(_, _) => {
                     return Err(CookingError::FiniteField);
                 }
-                CoefficientView::Natural(n, d) => {
+                CoefficientView::Natural(n, d, imnum, imden) => {
                     name.push_str(&n.to_string());
                     if d != 1 {
                         name.push(':');
                         name.push_str(&d.to_string());
                     }
+                    if imnum != 0 {
+                        name.push('i');
+                        name.push_str(&imnum.to_string());
+                        if d != 1 {
+                            name.push(':');
+                            name.push_str(&d.to_string());
+                        }
+                    }
                 }
-                CoefficientView::Float(_) => {
+                CoefficientView::Float(_, _) => {
                     return Err(CookingError::Float);
                 }
-                CoefficientView::Large(r) => {
+                CoefficientView::Large(r, imr) => {
                     let rat = r.to_rat();
                     name.push_str(&rat.numerator().to_string());
                     if !rat.is_integer() {
                         name.push(':');
                         name.push_str(&rat.denominator().to_string());
+                    }
+
+                    if !imr.is_zero() {
+                        let rat = imr.to_rat();
+                        name.push('i');
+                        name.push_str(&rat.numerator().to_string());
+                        if !rat.is_integer() {
+                            name.push(':');
+                            name.push_str(&rat.denominator().to_string());
+                        }
                     }
                 }
                 CoefficientView::RationalPolynomial(_) => {
@@ -172,7 +190,7 @@ pub fn cook_indices_impl(view: AtomView) -> Atom {
 pub fn wrap_indices_impl(view: AtomView, header: Symbol) -> Atom {
     let mut expr = view.expand();
     let dim = RS.d_;
-    let dima = Atom::new_var(dim);
+    let dima = Atom::var(dim);
     let settings = MatchSettings {
         level_range: (0, Some(1)),
         ..Default::default()
@@ -183,7 +201,7 @@ pub fn wrap_indices_impl(view: AtomView, header: Symbol) -> Atom {
         reps.push(
             Replacement::new(
                 i.to_symbolic([dim, RS.a_]).to_pattern(),
-                i.to_symbolic([dima.clone(), function!(header, Atom::new_var(RS.a_))]),
+                i.to_symbolic([dima.clone(), function!(header, Atom::var(RS.a_))]),
             )
             .with_conditions(num_or_var(RS.a_))
             .with_settings(settings.clone()),
@@ -195,7 +213,7 @@ pub fn wrap_indices_impl(view: AtomView, header: Symbol) -> Atom {
         reps.push(
             Replacement::new(
                 i.to_symbolic([dim, RS.a_]).to_pattern(),
-                i.to_symbolic([dima.clone(), function!(header, Atom::new_var(RS.a_))]),
+                i.to_symbolic([dima.clone(), function!(header, Atom::var(RS.a_))]),
             )
             .with_conditions(num_or_var(RS.a_))
             .with_settings(settings.clone()),
@@ -203,7 +221,7 @@ pub fn wrap_indices_impl(view: AtomView, header: Symbol) -> Atom {
         reps.push(
             Replacement::new(
                 di.to_symbolic([dim, RS.a_]).to_pattern(),
-                di.to_symbolic([dima.clone(), function!(header, Atom::new_var(RS.a_))]),
+                di.to_symbolic([dima.clone(), function!(header, Atom::var(RS.a_))]),
             )
             .with_conditions(num_or_var(RS.a_))
             .with_settings(settings.clone()),
@@ -345,8 +363,8 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
                         i.to_symbolic([RS.d_, RS.i_]),
                         i.to_symbolic([RS.d_, RS.a_])
                     )
-                    .pow(Atom::new_num(2)),
-                    Atom::new_var(RS.d_),
+                    .pow(Atom::num(2)),
+                    Atom::var(RS.d_),
                 ),
                 (
                     function!(
@@ -354,7 +372,7 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
                         i.to_symbolic([RS.d_, RS.i_]),
                         i.to_symbolic([RS.d_, RS.i_])
                     ),
-                    Atom::new_var(RS.d_),
+                    Atom::var(RS.d_),
                 ),
                 (
                     function!(
@@ -362,8 +380,8 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
                         i.to_symbolic([RS.d_, RS.i_]),
                         i.to_symbolic([RS.d_, RS.a_])
                     )
-                    .pow(Atom::new_num(2)),
-                    Atom::new_var(RS.d_),
+                    .pow(Atom::num(2)),
+                    Atom::var(RS.d_),
                 ),
                 (
                     function!(
@@ -371,7 +389,7 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
                         i.to_symbolic([RS.d_, RS.i_]),
                         i.to_symbolic([RS.d_, RS.i_])
                     ),
-                    Atom::new_var(RS.d_),
+                    Atom::var(RS.d_),
                 ),
             ]
             .into_iter()
@@ -395,7 +413,7 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
                         i.to_symbolic([RS.d_, RS.i_]),
                         di.to_symbolic([RS.d_, RS.i_])
                     ),
-                    Atom::new_var(RS.d_),
+                    Atom::var(RS.d_),
                 ),
                 (
                     function!(
@@ -403,7 +421,7 @@ pub fn simplify_metrics_impl(view: AtomView) -> Atom {
                         i.to_symbolic([RS.d_, RS.i_]),
                         di.to_symbolic([RS.d_, RS.i_])
                     ),
-                    Atom::new_var(RS.d_),
+                    Atom::var(RS.d_),
                 ),
                 (
                     function!(ETS.id, di.to_symbolic([RS.a__]), i.to_symbolic([RS.i__]))
@@ -465,7 +483,7 @@ pub fn to_dots_impl(expr: AtomView) -> Atom {
 
         reps.push(
             Replacement::new(
-                (function!(RS.f_, i.to_symbolic([RS.i__])).pow(Atom::new_num(2))).to_pattern(),
+                (function!(RS.f_, i.to_symbolic([RS.i__])).pow(Atom::num(2))).to_pattern(),
                 function!(MS.dot, RS.f_, RS.f_),
             )
             .with_conditions(num_or_var(RS.x_)),
@@ -483,8 +501,7 @@ pub fn to_dots_impl(expr: AtomView) -> Atom {
 
         reps.push(
             Replacement::new(
-                (function!(RS.f_, RS.x_, i.to_symbolic([RS.i__])).pow(Atom::new_num(2)))
-                    .to_pattern(),
+                (function!(RS.f_, RS.x_, i.to_symbolic([RS.i__])).pow(Atom::num(2))).to_pattern(),
                 function!(MS.dot, function!(RS.f_, RS.x_), function!(RS.f_, RS.x_)),
             )
             .with_conditions(num_or_var(RS.x_)),
@@ -588,6 +605,6 @@ mod test {
             .unwrap()
             .simplify_metrics();
 
-        assert_eq!(expr, Atom::new_num(4), "got {:#}", expr);
+        assert_eq!(expr, Atom::num(4), "got {:#}", expr);
     }
 }

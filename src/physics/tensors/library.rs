@@ -322,7 +322,7 @@ where
 
 #[cfg_attr(
     feature = "python",
-    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    gen_stub_pyclass(module = "symbolica_community.tensors"),
     pyclass(name = "TensorLibrary", module = "symbolica_community.tensors")
 )]
 // #[derive(Clone)]

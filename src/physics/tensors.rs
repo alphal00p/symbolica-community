@@ -13,6 +13,15 @@ use pyo3::{
     PyClass,
 };
 
+#[cfg(feature = "python")]
+use spenso::{
+    algebra::complex::RealOrComplex,
+    tensors::{
+        data::{DenseTensor, GetTensorData, SetTensorData, SparseOrDense, SparseTensor},
+        parametric::{atomcore::TensorAtomOps, ConcreteOrParam, ParamOrConcrete, ParamTensor},
+    },
+};
+
 use spenso::{
     network::parsing::ShadowedStructure,
     structure::{HasStructure, ScalarTensor, TensorStructure},
@@ -25,7 +34,7 @@ use spenso::{
 use structure::{PossiblyIndexed, SpensoIndices};
 use symbolica::{
     atom::Atom,
-    domains::float::Complex,
+    domains::{float::Complex, rational::Rational},
     evaluate::{CompileOptions, FunctionMap, InlineASM, OptimizationSettings},
     poly::Variable,
 };
@@ -75,7 +84,7 @@ pub(crate) fn initialize_spenso(m: &Bound<'_, PyModule>) -> PyResult<()> {
 /// It can be instantiated with data using the `sparse_empty` or `dense` module functions.
 #[cfg_attr(
     feature = "python",
-    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    gen_stub_pyclass(module = "symbolica_community.tensors"),
     pyclass(name = "Tensor", module = "symbolica_community.tensors")
 )]
 #[derive(Clone)]
@@ -418,7 +427,11 @@ impl Spensor {
         evaltensor.common_subexpression_elimination();
         let linear = evaltensor.linearize(None);
         Ok(SpensoExpressionEvaluator {
-            eval: linear.map_coeff(&|x| x.to_f64()),
+            eval: None,
+            eval_complex: linear
+                .clone()
+                .map_coeff(&|x| Complex::new(x.re.to_f64(), x.im.to_f64())),
+            eval_rat: linear,
         })
     }
 
@@ -474,12 +487,14 @@ impl From<DataTensor<Complex<f64>, PossiblyIndexed>> for Spensor {
 ///
 #[cfg_attr(
     feature = "python",
-    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    gen_stub_pyclass(module = "symbolica_community.tensors"),
     pyclass(name = "TensorEvaluator", module = "symbolica_community.tensors")
 )]
 #[derive(Clone)]
 pub struct SpensoExpressionEvaluator {
-    pub eval: LinearizedEvalTensor<f64, PossiblyIndexed>,
+    pub eval_rat: LinearizedEvalTensor<Complex<Rational>, PossiblyIndexed>,
+    pub eval: Option<LinearizedEvalTensor<f64, PossiblyIndexed>>,
+    pub eval_complex: LinearizedEvalTensor<Complex<f64>, PossiblyIndexed>,
 }
 
 #[cfg(feature = "python")]
@@ -487,16 +502,17 @@ pub struct SpensoExpressionEvaluator {
 #[pymethods]
 impl SpensoExpressionEvaluator {
     /// Evaluate the expression for multiple inputs and return the results.
-    fn evaluate(&mut self, inputs: Vec<Vec<f64>>) -> Vec<Spensor> {
-        inputs
-            .iter()
-            .map(|s| self.eval.evaluate(s).into())
-            .collect()
+    fn evaluate(&mut self, inputs: Vec<Vec<f64>>) -> PyResult<Vec<Spensor>> {
+        let eval = self.eval.as_mut().ok_or(exceptions::PyValueError::new_err(
+            "Evaluator contains complex coefficients. Use evaluate_complex instead.",
+        ))?;
+
+        Ok(inputs.iter().map(|s| eval.evaluate(s).into()).collect())
     }
 
     /// Evaluate the expression for multiple inputs and return the results.
     fn evaluate_complex(&mut self, inputs: Vec<Vec<Complex<f64>>>) -> Vec<Spensor> {
-        let mut eval = self.eval.clone().map_coeff(&|x| Complex::new(*x, 0.));
+        let mut eval = &mut self.eval_complex;
 
         inputs.iter().map(|s| eval.evaluate(s).into()).collect()
     }
@@ -530,7 +546,7 @@ impl SpensoExpressionEvaluator {
 
         Ok(SpensoCompiledExpressionEvaluator {
             eval: self
-                .eval
+                .eval_complex
                 .export_cpp(
                     filename,
                     function_name,
@@ -558,7 +574,7 @@ impl SpensoExpressionEvaluator {
 ///
 #[cfg_attr(
     feature = "python",
-    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    gen_stub_pyclass(module = "symbolica_community.tensors"),
     pyclass(
         name = "CompiledTensorEvaluator",
         module = "symbolica_community.tensors"
