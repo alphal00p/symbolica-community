@@ -28,7 +28,7 @@ classifiers = [
 tests = ["pytest"]
 [tool.maturin]
 python-source = "python"
-features = ["pyo3/extension-module"]
+features = ["pyo3/extension-module", "python"]
 
 [tool.poetry]
 package-mode = false
