@@ -37,7 +37,7 @@ k = bis(k)
 ke = k.to_expression()
 
 
-gamma,p,w,mq,id = S("γ","P","W","mq","id")
+gamma,p,w,mq,id = S("weyl::gamma","P","W","mq","spenso::𝟙")
 
 # Tensor structures are essentially a list of slots, with a name (symbolica symbol)
 # It can be turned into a symbolica expression
@@ -117,41 +117,3 @@ t = tensors.dense([3,3],[0,0,123,
 t[[1,2]]=3/34
 print(t)
 print(t.structure())
-
-# Registering tensors:
-
-# Initially when we parsed the expression above, we did not need to provide the values for the gamma matrix, and the identity. This is because spenso has some in built tensors with values that it can use.
-# What if you wanted to change the values of these tensors?
-# Or what if you wanted to add new tensors that you want to use in your expressions?
-#
-# You just call `register()` on a named tensor!
-
-g = tensors.dense(TensorStructure(mink,bis,bis,name=gamma),[0,0,0,0,
-                                                        0,0,0,0,
-                                                        0,0,0,0,
-                                                        0,0,0,0,
-
-                                                        0,0,0,0,
-                                                        0,0,0,0,
-                                                        0,0,0,0,
-                                                        0,0,0,0,
-
-                                                        0,0,1,0,
-                                                        0,0,0,0,
-                                                        0,0,0,0,
-                                                        0,0,0,0,
-                                                                                                                                                            0,0,0,0,
-                                                        0,0,0,0,
-                                                        0,0,0,0,
-                                                        0,0,0,0,      ]
-)
-print(g)
-print(g.structure())
-tensors.register(g)
-
-# if we now replay the parsing of the expression, the gamma matrix will be used from the registered tensor:
-tn = TensorNetwork(x)
-tn.contract()
-print(tn.result())
-
-# if you wanted to not override the default gamma matrix, you can just register it with a different name, or with different representations! Then the matching will only happen if the representations match. Try for yourself!

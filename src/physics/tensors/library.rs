@@ -16,7 +16,7 @@ use spenso::{
 };
 use symbolica::symbol;
 
-use crate::physics::algebraic_simplification::gamma::GammaLibrary;
+use idenso::gamma::GammaLibrary;
 
 use super::{structure::SpensoStucture, Spensor};
 

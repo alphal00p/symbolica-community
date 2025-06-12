@@ -35,9 +35,7 @@ use symbolica::api::python::{ConvertibleToExpression, PythonExpression};
 
 use thiserror::Error;
 
-use crate::physics::algebraic_simplification::{
-    gamma::AGS, representations::Bispinor, IndexTooling,
-};
+use idenso::{gamma::AGS, representations::Bispinor, IndexTooling};
 
 use super::library::{TensorNamespace, WEYL};
 
@@ -207,7 +205,7 @@ impl SpensoIndices {
     }
 
     fn __str__(&self) -> String {
-        if let Some(atom) = self.structure.to_symbolic() {
+        if let Some(atom) = self.structure.to_symbolic(None) {
             format!("{}", atom)
         } else {
             let args = self
@@ -223,7 +221,7 @@ impl SpensoIndices {
     fn to_expression(&self) -> PyResult<PythonExpression> {
         Ok(self
             .structure
-            .to_symbolic()
+            .to_symbolic(None)
             .ok_or(PyRuntimeError::new_err("No name"))?
             .into())
     }
@@ -731,7 +729,7 @@ impl SpensoStucture {
     }
 
     fn __repr__(&self) -> String {
-        format!("{}", self.structure.to_symbolic().unwrap())
+        format!("{}", self.structure.to_symbolic(None).unwrap())
     }
 
     fn __str__(&self) -> String {
