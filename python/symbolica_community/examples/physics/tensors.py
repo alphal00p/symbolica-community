@@ -110,8 +110,9 @@ t.to_dense()
 print(t)
 
 d = Representation("newrep",3)
+tname = S("test")
 #  Dense tensors are built from a list of values in row-major order.
-t = tensors.dense(TensorStructure(d,d,name=S("test")),[0,0,123,
+t = tensors.dense(TensorStructure(d,d,name=tname),[0,0,123,
                         11,3,234,
                         234,23,44,])
 # If the structure is just a list of integers, it is assumed to be a list of dimensions, and the representation is assumed to be the default representation: euclidean.
@@ -121,3 +122,13 @@ print(t.structure())
 
 
 lib.register(t)
+
+def new_t(i,j):
+    return TensorIndices(tname,d(i),d(j))
+
+
+x=(new_t(1,2)*new_t(2,3)*new_t(3,1))
+n =  TensorNetwork.from_expression(x,lib)
+n.execute(lib)
+t = n.result_tensor(lib)
+print(t)
