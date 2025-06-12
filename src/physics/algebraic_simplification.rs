@@ -280,11 +280,11 @@ pub fn simplify_metrics(self_: &PythonExpression) -> PythonExpression {
 ///                     color indices, indicating an incomplete simplification. The
 ///                     partially simplified expression is still returned.
 pub fn simplify_color(self_: &PythonExpression) -> PyResult<PythonExpression> {
-    self_.expr.simplify_color().map(|a| a.into()).map_err(|a| {
-        PyRuntimeWarning::new_err(match a {
-            ColorError::NotFully(a) => format!("Not fully simplified: {}", a),
-        })
-    })
+    let a = self_.expr.simplify_color();
+    match a {
+        Ok(a) => Ok(a.into()),
+        Err(ColorError::NotFully(a)) => Ok(a.into()),
+    }
 }
 
 #[cfg(feature = "python")]
