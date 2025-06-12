@@ -740,7 +740,7 @@ dependencies = [
 [[package]]
 name = "idenso"
 version = "0.0.0"
-source = "git+https://github.com/alphal00p/spenso?rev=304f62dc705130c5cac75343b95f3ccb8d628fe8#304f62dc705130c5cac75343b95f3ccb8d628fe8"
+source = "git+https://github.com/alphal00p/spenso?rev=a49aa99049dd607970b1640ef7952c53ebdaea2d#a49aa99049dd607970b1640ef7952c53ebdaea2d"
 dependencies = [
  "itertools 0.14.0",
  "linnet",
@@ -1733,7 +1733,7 @@ dependencies = [
 [[package]]
 name = "spenso"
 version = "0.4.1"
-source = "git+https://github.com/alphal00p/spenso?rev=304f62dc705130c5cac75343b95f3ccb8d628fe8#304f62dc705130c5cac75343b95f3ccb8d628fe8"
+source = "git+https://github.com/alphal00p/spenso?rev=a49aa99049dd607970b1640ef7952c53ebdaea2d#a49aa99049dd607970b1640ef7952c53ebdaea2d"
 dependencies = [
  "ahash",
  "anyhow",
@@ -1771,7 +1771,7 @@ dependencies = [
 [[package]]
 name = "spenso-macros"
 version = "0.1.0"
-source = "git+https://github.com/alphal00p/spenso?rev=304f62dc705130c5cac75343b95f3ccb8d628fe8#304f62dc705130c5cac75343b95f3ccb8d628fe8"
+source = "git+https://github.com/alphal00p/spenso?rev=a49aa99049dd607970b1640ef7952c53ebdaea2d#a49aa99049dd607970b1640ef7952c53ebdaea2d"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1837,6 +1837,7 @@ dependencies = [
  "spenso-macros",
  "symbolica",
  "thiserror 1.0.69",
+ "weyl",
 ]
 
 [[package]]
@@ -2194,6 +2195,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1a05d73b933a847d6cccdda8f838a22ff101ad9bf93e33684f39c1f5f0eece3d"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "weyl"
+version = "0.0.0"
+source = "git+https://github.com/alphal00p/spenso?rev=a49aa99049dd607970b1640ef7952c53ebdaea2d#a49aa99049dd607970b1640ef7952c53ebdaea2d"
+dependencies = [
+ "idenso",
+ "spenso",
+ "spenso-macros",
+ "symbolica",
 ]
 
 [[package]]

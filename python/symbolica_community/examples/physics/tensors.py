@@ -109,11 +109,15 @@ print(t)
 t.to_dense()
 print(t)
 
+d = Representation("newrep",3)
 #  Dense tensors are built from a list of values in row-major order.
-t = tensors.dense([3,3],[0,0,123,
+t = tensors.dense(TensorStructure(d,d,name=S("test")),[0,0,123,
                         11,3,234,
                         234,23,44,])
 # If the structure is just a list of integers, it is assumed to be a list of dimensions, and the representation is assumed to be the default representation: euclidean.
 t[[1,2]]=3/34
 print(t)
 print(t.structure())
+
+
+lib.register(t)

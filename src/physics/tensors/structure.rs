@@ -37,7 +37,8 @@ use thiserror::Error;
 
 use idenso::{gamma::AGS, representations::Bispinor, IndexTooling};
 
-use super::library::{TensorNamespace, WEYL};
+use super::library::TensorNamespace;
+use weyl::WEYL;
 
 #[cfg(feature = "python")]
 use super::{ModuleInit, SliceOrIntOrExpanded};

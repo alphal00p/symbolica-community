@@ -60,10 +60,11 @@ env_logger = "0.11.5"
 bincode = { version = "2.0", optional = true }
 bincode-trait-derive = { version = "0.1.0", optional = true }
 
-spenso-macros = { git = "https://github.com/alphal00p/spenso", rev = "304f62dc705130c5cac75343b95f3ccb8d628fe8", features = [
+spenso-macros = { git = "https://github.com/alphal00p/spenso", rev = "a49aa99049dd607970b1640ef7952c53ebdaea2d", features = [
     "shadowing",
 ], optional = true }
-idenso = { git = "https://github.com/alphal00p/spenso", rev = "304f62dc705130c5cac75343b95f3ccb8d628fe8" }
+idenso = { git = "https://github.com/alphal00p/spenso", rev = "a49aa99049dd607970b1640ef7952c53ebdaea2d" }
+weyl = { git = "https://github.com/alphal00p/spenso", rev = "a49aa99049dd607970b1640ef7952c53ebdaea2d" }
 # spenso-macros = {path = "../spenso/spenso-macros"}
 [patch.crates-io]
 # symbolica={path="../symbolica"}
@@ -71,5 +72,5 @@ symbolica = { git = "https://github.com/benruijl/symbolica", branch = "complex_c
 
 linnet = { git = "https://github.com/alphal00p/linnet", rev = "50d4d036fd2cfdf75c79a3c168c7d8357ec16831" }
 # spenso = { path = "../spenso/spenso"}
-spenso = { git = "https://github.com/alphal00p/spenso", rev = "304f62dc705130c5cac75343b95f3ccb8d628fe8" }
+spenso = { git = "https://github.com/alphal00p/spenso", rev = "a49aa99049dd607970b1640ef7952c53ebdaea2d" }
 # symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}
