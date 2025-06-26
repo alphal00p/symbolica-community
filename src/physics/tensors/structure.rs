@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use bitvec::vec::BitVec;
 use delegate::delegate;
 use itertools::Itertools;
@@ -17,13 +19,16 @@ use spenso::{
     structure::{
         abstract_index::AbstractIndex,
         dimension::Dimension,
+        permuted::{Perm, PermuteTensor},
         representation::{
             Euclidean, ExtendibleReps, LibraryRep, Minkowski, RepName, Representation,
         },
         slot::{IsAbstractSlot, Slot},
-        HasName, IndexLess, MergeInfo, NamedStructure, OrderedStructure, PermutedStructure,
-        ScalarStructure, StructureContract, StructureError, TensorStructure, ToSymbolic,
+        HasName, IndexLess, IndexlessNamedStructure, MergeInfo, NamedStructure, OrderedStructure,
+        PermutedStructure, ScalarStructure, StructureContract, StructureError, TensorStructure,
+        ToSymbolic,
     },
+    tensors::symbolic::SymbolicTensor,
 };
 use symbolica::{
     atom::{Atom, AtomView, FunctionBuilder, NamespacedSymbol, Symbol},
@@ -38,7 +43,7 @@ use thiserror::Error;
 use idenso::{gamma::AGS, representations::Bispinor, IndexTooling};
 
 use super::library::TensorNamespace;
-use weyl::WEYL;
+use spenso_hep_lib::HEP_LIB;
 
 #[cfg(feature = "python")]
 use super::{ModuleInit, SliceOrIntOrExpanded};
@@ -57,52 +62,22 @@ use pyo3_stub_gen::{derive::*, impl_stub_type, PyStubType};
 /// This has an optional name, and accompanying symbolica expressions that are considered as additional non-indexed arguments.
 /// The structure is essentially a list of `Slots` that are used to define the structure of the tensor.
 pub struct SpensoIndices {
-    pub structure: NamedStructure<Symbol, Vec<Atom>, LibraryRep>,
+    pub structure: PermutedStructure<ShadowedStructure>,
 }
 
-impl TensorStructure for SpensoIndices {
-    type Slot = Slot<LibraryRep>;
-    type Indexed = SpensoIndices;
+impl Deref for SpensoIndices {
+    type Target = ShadowedStructure;
 
-    fn reindex(
-        self,
-        indices: &[AbstractIndex],
-    ) -> anyhow::Result<PermutedStructure<SpensoIndices>, spenso::structure::StructureError> {
-        let res = self.structure.reindex(indices)?;
-        Ok(PermutedStructure {
-            permutation: res.permutation,
-            structure: SpensoIndices {
-                structure: res.structure,
-            },
-        })
-    }
-
-    fn dual(self) -> Self {
-        SpensoIndices {
-            structure: self.structure.dual(),
-        }
-    }
-    delegate! {
-        to self.structure{
-            fn external_structure_iter(&self) -> impl Iterator<Item =  Slot<LibraryRep>>;
-            fn external_dims_iter(&self) -> impl Iterator<Item = Dimension>;
-            fn external_reps_iter(
-                &self,
-            ) -> impl Iterator<Item = Representation<LibraryRep>>;
-            fn external_indices_iter(&self) -> impl Iterator<Item = AbstractIndex>;
-            fn get_aind(&self, i: usize) -> Option<AbstractIndex>;
-            fn get_rep(&self, i: usize) -> Option<Representation<LibraryRep>>;
-            fn get_dim(&self, i: usize) -> Option<Dimension>;
-            fn get_slot(&self, i: usize) -> Option<Slot<LibraryRep>>;
-
-            fn order(&self) -> usize;
-        }
+    fn deref(&self) -> &Self::Target {
+        &self.structure.structure
     }
 }
 
 impl From<ShadowedStructure> for SpensoIndices {
     fn from(value: ShadowedStructure) -> Self {
-        SpensoIndices { structure: value }
+        SpensoIndices {
+            structure: PermutedStructure::identity(value),
+        }
     }
 }
 
@@ -111,7 +86,7 @@ impl ModuleInit for SpensoIndices {
     fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.add_class::<SpensoIndices>()?;
         m.add_class::<SpensoSlot>()?;
-        m.add_class::<SpensoStucture>()?;
+        m.add_class::<SpensoStructure>()?;
         m.add_class::<SpensoRepresentation>()?;
         Ok(())
     }
@@ -159,6 +134,35 @@ impl<'a> FromPyObject<'a> for ArithmeticStructure {
     }
 }
 
+pub struct ConvertibleToStructure(pub SpensoIndices);
+
+#[cfg(feature = "python")]
+impl<'py> FromPyObject<'py> for ConvertibleToStructure {
+    fn extract_bound(structure: &Bound<'py, PyAny>) -> PyResult<Self> {
+        if let Ok(structure) = structure.extract::<SpensoIndices>() {
+            Ok(ConvertibleToStructure(structure))
+        } else if let Ok(s) = structure.extract::<Vec<SpensoSlot>>() {
+            Ok(ConvertibleToStructure(SpensoIndices {
+                structure: PermutedStructure::<OrderedStructure>::from_iter(
+                    s.into_iter().map(|s| s.slot),
+                )
+                .map_structure(Into::into),
+            }))
+        } else {
+            Err(PyTypeError::new_err(
+                "Internal tensor structure can only be build from TensorIndices or lists of Slots",
+            ))
+        }
+    }
+}
+
+#[cfg(feature = "python")]
+impl PyStubType for ConvertibleToStructure {
+    fn type_output() -> pyo3_stub_gen::TypeInfo {
+        SpensoIndices::type_output() | <Vec<SpensoSlot>>::type_output()
+    }
+}
+
 #[cfg(feature = "python")]
 #[gen_stub_pymethods]
 #[pymethods]
@@ -197,7 +201,7 @@ impl SpensoIndices {
         };
 
         Ok(SpensoIndices {
-            structure: ShadowedStructure::from_iter(slots, id.into(), args).structure,
+            structure: ShadowedStructure::from_iter(slots, id.into(), args),
         })
     }
 
@@ -206,10 +210,21 @@ impl SpensoIndices {
     }
 
     fn __str__(&self) -> String {
-        if let Some(atom) = self.structure.to_symbolic(None) {
+        if let Some(structure) = SymbolicTensor::from_named(&self.structure.structure) {
+            let atom = PermutedStructure {
+                index_permutation: self.structure.index_permutation.clone(),
+                rep_permutation: self.structure.rep_permutation.clone(),
+                structure,
+            }
+            .permute()
+            .expression;
+
             format!("{}", atom)
         } else {
+            assert!(self.structure.index_permutation.is_identity());
+            assert!(self.structure.rep_permutation.is_identity());
             let args = self
+                .structure
                 .structure
                 .external_structure_iter()
                 .map(|r| r.to_atom())
@@ -220,22 +235,28 @@ impl SpensoIndices {
     }
 
     fn to_expression(&self) -> PyResult<PythonExpression> {
-        Ok(self
-            .structure
-            .to_symbolic(None)
-            .ok_or(PyRuntimeError::new_err("No name"))?
-            .into())
+        let structure = SymbolicTensor::from_named(&self.structure.structure)
+            .ok_or(PyRuntimeError::new_err("No name"))?;
+
+        let atom = PermutedStructure {
+            index_permutation: self.structure.index_permutation.clone(),
+            rep_permutation: self.structure.rep_permutation.clone(),
+            structure,
+        }
+        .permute()
+        .expression;
+
+        Ok(atom.into())
     }
 
     fn __len__(&self) -> usize {
-        self.structure.size().unwrap()
+        self.structure.structure.size().unwrap()
     }
 
     fn __getitem__(&self, item: SliceOrIntOrExpanded) -> PyResult<Py<PyAny>> {
         match item {
             SliceOrIntOrExpanded::Int(i) => {
                 let out: Vec<_> = self
-                    .structure
                     .expanded_index(i.into())
                     .map_err(|s| PyIndexError::new_err(s.to_string()))?
                     .into();
@@ -244,7 +265,6 @@ impl SpensoIndices {
             }
             SliceOrIntOrExpanded::Expanded(idxs) => {
                 let out: usize = self
-                    .structure
                     .flat_index(&idxs)
                     .map_err(|s| PyIndexError::new_err(s.to_string()))?
                     .into();
@@ -252,7 +272,7 @@ impl SpensoIndices {
                 Ok(Python::with_gil(|py| out.into_pyobject(py).map(|a| a.unbind()))?.into_any())
             }
             SliceOrIntOrExpanded::Slice(s) => {
-                let r = s.indices(self.structure.size().unwrap() as isize)?;
+                let r = s.indices(self.size().unwrap() as isize)?;
 
                 let start = if r.start < 0 {
                     (r.slicelength as isize + r.start) as usize
@@ -274,11 +294,7 @@ impl SpensoIndices {
 
                 let slice: Result<Vec<Vec<usize>>, _> = range
                     .step_by(step)
-                    .map(|i| {
-                        self.structure
-                            .expanded_index(i.into())
-                            .map(Vec::<usize>::from)
-                    })
+                    .map(|i| self.expanded_index(i.into()).map(Vec::<usize>::from))
                     .collect();
 
                 match slice {
@@ -356,337 +372,70 @@ impl SpensoIndices {
 /// A structure that can be used to represent the "shape" of a tensor.
 /// This has an optional name, and accompanying symbolica expressions that are considered as additional non-indexed arguments.
 /// The structure is essentially a list of `Representation` that are used to define the structure of the tensor.
-pub struct SpensoStucture {
-    pub structure: ExplicitKey,
+pub struct SpensoStructure {
+    pub structure: PermutedStructure<ExplicitKey>,
 }
 
-impl From<ExplicitKey> for SpensoStucture {
-    fn from(value: ExplicitKey) -> Self {
-        SpensoStucture { structure: value }
+impl Deref for SpensoStructure {
+    type Target = ExplicitKey;
+
+    fn deref(&self) -> &Self::Target {
+        &self.structure.structure
     }
 }
 
-#[derive(Clone)]
-pub enum PossiblyIndexed {
-    Unindexed(SpensoStucture),
-    Indexed(SpensoIndices),
-}
+pub struct ConvertibleToIndexLess(pub SpensoStructure);
 
-impl ScalarStructure for PossiblyIndexed {
-    fn scalar_structure() -> Self {
-        PossiblyIndexed::Indexed(SpensoIndices {
-            structure: NamedStructure::scalar_structure(),
-        })
+impl From<ExplicitKey> for SpensoStructure {
+    fn from(value: ExplicitKey) -> Self {
+        SpensoStructure {
+            structure: PermutedStructure::identity(value),
+        }
     }
 }
 
 #[cfg(feature = "python")]
-impl<'py> FromPyObject<'py> for PossiblyIndexed {
+impl<'py> FromPyObject<'py> for ConvertibleToIndexLess {
     fn extract_bound(structure: &Bound<'py, PyAny>) -> PyResult<Self> {
-        if let Ok(structure) = structure.extract::<SpensoIndices>() {
-            Ok(PossiblyIndexed::from(structure))
-        } else if let Ok(structure) = structure.extract::<SpensoStucture>() {
-            Ok(PossiblyIndexed::from(structure))
-        } else if let Ok(s) = structure.extract::<Vec<SpensoSlot>>() {
-            Ok(PossiblyIndexed::Indexed(SpensoIndices {
-                structure: PermutedStructure::<OrderedStructure>::from_iter(
-                    s.into_iter().map(|s| s.slot),
-                )
-                .structure
-                .into(),
-            }))
+        if let Ok(structure) = structure.extract::<SpensoStructure>() {
+            Ok(ConvertibleToIndexLess(structure))
         } else if let Ok(s) = structure.extract::<Vec<SpensoRepresentation>>() {
-            Ok(PossiblyIndexed::Unindexed(SpensoStucture {
+            Ok(ConvertibleToIndexLess(SpensoStructure {
                 structure: PermutedStructure::<IndexLess>::from_iter(
                     s.into_iter().map(|s| s.representation),
                 )
-                .structure
-                .into(),
+                .map_structure(Into::into),
             }))
         } else if let Ok(s) = structure.extract::<Vec<usize>>() {
-            Ok(PossiblyIndexed::Unindexed(SpensoStucture {
+            Ok(ConvertibleToIndexLess(SpensoStructure {
                 structure: PermutedStructure::<IndexLess>::from_iter(
                     s.into_iter().map(|s| ExtendibleReps::EUCLIDEAN.new_rep(s)),
                 )
-                .structure
-                .into(),
+                .map_structure(Into::into),
             }))
         } else {
-            Err(PyTypeError::new_err("Internal tensor structure can only be build from TensorIndices, TensorStructure, lists of Representations or of Slots"))
+            Err(PyTypeError::new_err("Internal tensor structure can only be build from TensorStructure or lists of Representations or Integers"))
         }
     }
 }
-
-impl From<SpensoIndices> for PossiblyIndexed {
-    fn from(s: SpensoIndices) -> Self {
-        PossiblyIndexed::Indexed(s)
+#[cfg(feature = "python")]
+impl PyStubType for ConvertibleToIndexLess {
+    fn type_output() -> pyo3_stub_gen::TypeInfo {
+        SpensoStructure::type_output()
+            | <Vec<SpensoRepresentation>>::type_output()
+            | <Vec<usize>>::type_output()
     }
 }
-
-impl From<SpensoStucture> for PossiblyIndexed {
-    fn from(s: SpensoStucture) -> Self {
-        PossiblyIndexed::Unindexed(s)
-    }
-}
-impl From<ExplicitKey> for PossiblyIndexed {
-    fn from(s: ExplicitKey) -> Self {
-        PossiblyIndexed::Unindexed(s.into())
-    }
-}
-
-impl From<ShadowedStructure> for PossiblyIndexed {
-    fn from(s: ShadowedStructure) -> Self {
-        PossiblyIndexed::Indexed(s.into())
-    }
-}
-
-impl TensorStructure for PossiblyIndexed {
-    type Slot = Slot<LibraryRep>;
-    type Indexed = SpensoIndices;
-
-    fn reindex(
-        self,
-        indices: &[AbstractIndex],
-    ) -> anyhow::Result<PermutedStructure<SpensoIndices>, spenso::structure::StructureError> {
-        match self {
-            PossiblyIndexed::Indexed(i) => i.reindex(indices),
-            PossiblyIndexed::Unindexed(i) => {
-                let res = i.structure.reindex(indices)?;
-                Ok(PermutedStructure {
-                    permutation: res.permutation,
-                    structure: SpensoIndices {
-                        structure: res.structure,
-                    },
-                })
-            }
-        }
-    }
-
-    fn dual(self) -> Self {
-        match self {
-            Self::Indexed(i) => Self::Indexed(SpensoIndices {
-                structure: i.structure.dual(),
-            }),
-            Self::Unindexed(i) => Self::Unindexed(SpensoStucture {
-                structure: i.structure.dual(),
-            }),
-        }
-    }
-    delegate! {
-        to match self {
-            PossiblyIndexed::Indexed(u) => u.structure,
-            PossiblyIndexed::Unindexed(u) => u.structure,
-        }{
-            #[auto_enum(Iterator)]
-            fn external_structure_iter(&self) -> impl Iterator<Item =  Slot<LibraryRep>>;
-            #[auto_enum(Iterator)]
-            fn external_dims_iter(&self) -> impl Iterator<Item = Dimension>;
-            #[auto_enum(Iterator)]
-            fn external_reps_iter(
-                &self,
-            ) -> impl Iterator<Item = Representation<LibraryRep>>;
-            #[auto_enum(Iterator)]
-            fn external_indices_iter(&self) -> impl Iterator<Item = AbstractIndex>;
-            fn get_aind(&self, i: usize) -> Option<AbstractIndex>;
-            fn get_rep(&self, i: usize) -> Option<Representation<LibraryRep>>;
-            fn get_dim(&self, i: usize) -> Option<Dimension>;
-            fn get_slot(&self, i: usize) -> Option<Slot<LibraryRep>>;
-
-            fn order(&self) -> usize;
-        }
-    }
-}
-
-impl HasName for PossiblyIndexed {
-    type Name = Symbol;
-    type Args = Vec<Atom>;
-
-    delegate! {
-        to match self {
-            PossiblyIndexed::Indexed(i) => i.structure,
-            PossiblyIndexed::Unindexed(u) => u.structure,
-        }{
-            fn name(&self) -> Option<Self::Name>;
-            fn args(&self) -> Option<Self::Args>;
-            fn set_name(&mut self, name: Self::Name);
-        }
-    }
-}
-
-impl StructureContract for PossiblyIndexed {
-    fn concat(&mut self, other: Self) {
-        match self {
-            PossiblyIndexed::Indexed(i) => {
-                if let PossiblyIndexed::Indexed(j) = other {
-                    i.structure.concat(j.structure).into()
-                } else {
-                    panic!("Cannot merge indexed and unindexed structures")
-                }
-            }
-            PossiblyIndexed::Unindexed(_) => {
-                panic!("Cannot concat indexed and unindexed structures")
-            }
-        }
-    }
-
-    fn merge(&self, other: &Self) -> Result<(Self, BitVec, BitVec, MergeInfo), StructureError> {
-        match self {
-            PossiblyIndexed::Indexed(i) => {
-                if let PossiblyIndexed::Indexed(j) = other {
-                    let (res, self_pos, other_pos, merge_info) = i.structure.merge(&j.structure)?;
-
-                    Ok((
-                        PossiblyIndexed::Indexed(SpensoIndices { structure: res }),
-                        self_pos,
-                        other_pos,
-                        merge_info,
-                    ))
-                } else {
-                    panic!("Cannot merge indexed and unindexed structures")
-                }
-            }
-            PossiblyIndexed::Unindexed(_) => {
-                panic!("Cannot merge indexed and unindexed structures")
-            }
-        }
-    }
-
-    fn trace(&mut self, i: usize, j: usize) {
-        match self {
-            PossiblyIndexed::Indexed(s) => s.structure.trace(i, j),
-            PossiblyIndexed::Unindexed(_) => panic!("cannot trace unindexed"),
-        }
-    }
-
-    fn trace_out(&mut self) {
-        match self {
-            PossiblyIndexed::Indexed(s) => s.structure.trace_out(),
-            PossiblyIndexed::Unindexed(_) => panic!("cannot trace uninidexed"),
-        }
-    }
-}
-
 #[derive(Error, Debug)]
 pub enum SpensoError {
     #[error("Must have a name to register")]
     NoName,
 }
 
-impl TryFrom<PossiblyIndexed> for ExplicitKey {
-    type Error = SpensoError;
-    fn try_from(s: PossiblyIndexed) -> Result<Self, Self::Error> {
-        match s {
-            PossiblyIndexed::Indexed(i) => Ok(ExplicitKey::from_iter(
-                i.structure.external_reps_iter(),
-                i.structure.name().ok_or(SpensoError::NoName)?.into(),
-                i.structure
-                    .args()
-                    .map(|a| a.into_iter().map(|a| a.into()).collect()),
-            )
-            .structure),
-            PossiblyIndexed::Unindexed(i) => Ok(ExplicitKey::from_iter(
-                i.structure.external_reps_iter(),
-                i.structure.name().ok_or(SpensoError::NoName)?.into(),
-                i.structure
-                    .args()
-                    .map(|a| a.into_iter().map(|a| a.into()).collect()),
-            )
-            .structure),
-        }
-    }
-}
-
-impl SpensoStucture {
-    pub fn id_impl(rep: SpensoRepresentation) -> Self {
-        ExplicitKey::from_iter(
-            [rep.representation, rep.representation.dual()],
-            ETS.id,
-            None,
-        )
-        .structure
-        .into()
-    }
-
-    pub fn metric_impl(rep: SpensoRepresentation) -> Self {
-        ExplicitKey::from_iter([rep.representation, rep.representation], ETS.metric, None)
-            .structure
-            .into()
-    }
-
-    #[allow(non_snake_case)]
-    //make it optional
-    pub fn gamma4D_impl(namespace: TensorNamespace) -> Self {
-        let name = match namespace {
-            TensorNamespace::Weyl => WEYL.gamma,
-            TensorNamespace::Algebra => AGS.gamma,
-        };
-
-        ExplicitKey::from_iter(
-            [
-                LibraryRep::from(Minkowski {}).new_rep(4),
-                Bispinor {}.new_rep(4).cast(),
-                Bispinor {}.new_rep(4).cast(),
-            ],
-            name,
-            None,
-        )
-        .structure
-        .into()
-    }
-
-    #[allow(non_snake_case)]
-    pub fn gammaD_impl(dim: Symbol) -> Self {
-        ExplicitKey::from_iter(
-            [
-                LibraryRep::from(Minkowski {}).new_rep(dim),
-                Bispinor {}.new_rep(4).cast(),
-                Bispinor {}.new_rep(4).cast(),
-            ],
-            AGS.gamma,
-            None,
-        )
-        .structure
-        .into()
-    }
-
-    pub fn gamma5_impl(namespace: TensorNamespace) -> Self {
-        let name = match namespace {
-            TensorNamespace::Weyl => WEYL.gamma5,
-            TensorNamespace::Algebra => AGS.gamma5,
-        };
-
-        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None)
-            .structure
-            .into()
-    }
-
-    pub fn projm_impl(namespace: TensorNamespace) -> Self {
-        let name = match namespace {
-            TensorNamespace::Algebra => AGS.projm,
-            TensorNamespace::Weyl => WEYL.projm,
-        };
-
-        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None)
-            .structure
-            .into()
-    }
-
-    pub fn projp_impl(namespace: TensorNamespace) -> Self {
-        let name = match namespace {
-            TensorNamespace::Algebra => AGS.projp,
-            TensorNamespace::Weyl => WEYL.projp,
-        };
-
-        ExplicitKey::from_iter([Bispinor {}.new_rep(4), Bispinor {}.new_rep(4)], name, None)
-            .structure
-            .into()
-    }
-}
-
 #[cfg(feature = "python")]
 #[pymethods]
 #[gen_stub_pymethods]
-impl SpensoStucture {
+impl SpensoStructure {
     #[new]
     #[pyo3(signature =
            (
@@ -711,12 +460,11 @@ impl SpensoStucture {
 
         let args = if args.is_empty() { None } else { Some(args) };
 
-        let mut a: ExplicitKey = PermutedStructure::<IndexLess>::from_iter(slots)
-            .structure
-            .into();
+        let mut a: PermutedStructure<ExplicitKey> =
+            PermutedStructure::<IndexLess>::from_iter(slots).map_structure(Into::into);
         if let Some(name) = name {
             match name.expr.as_view() {
-                AtomView::Var(v) => a.set_name(v.get_symbol().into()),
+                AtomView::Var(v) => a.structure.set_name(v.get_symbol().into()),
                 _ => {
                     return Err(exceptions::PyTypeError::new_err(
                         "Only symbols can used as names",
@@ -724,24 +472,27 @@ impl SpensoStucture {
                 }
             }
         };
-        a.additional_args = args;
+        a.structure.additional_args = args;
 
-        Ok(SpensoStucture { structure: a })
+        Ok(SpensoStructure { structure: a })
     }
 
     fn __repr__(&self) -> String {
-        format!("{}", self.structure.to_symbolic(None).unwrap())
+        format!(
+            "{}",
+            self.to_symbolic(Some(self.structure.rep_permutation.clone()))
+                .unwrap()
+        )
     }
 
     fn __str__(&self) -> String {
         let slot = self
-            .structure
             .external_reps()
             .into_iter()
             .map(|r| r.to_symbolic([]))
             .join(",");
 
-        match (self.structure.name(), self.structure.args()) {
+        match (self.name(), self.args()) {
             (Some(name), Some(args)) => {
                 let args = args.iter().join(",");
                 format!("{}({})[{}]", name, args, slot)
@@ -760,14 +511,13 @@ impl SpensoStucture {
     }
 
     fn __len__(&self) -> usize {
-        self.structure.size().unwrap()
+        self.size().unwrap()
     }
 
     fn __getitem__(&self, item: SliceOrIntOrExpanded) -> PyResult<Py<PyAny>> {
         match item {
             SliceOrIntOrExpanded::Int(i) => {
                 let out: Vec<_> = self
-                    .structure
                     .expanded_index(i.into())
                     .map_err(|s| PyIndexError::new_err(s.to_string()))?
                     .into();
@@ -776,7 +526,6 @@ impl SpensoStucture {
             }
             SliceOrIntOrExpanded::Expanded(idxs) => {
                 let out: usize = self
-                    .structure
                     .flat_index(&idxs)
                     .map_err(|s| PyIndexError::new_err(s.to_string()))?
                     .into();
@@ -784,7 +533,7 @@ impl SpensoStucture {
                 Ok(Python::with_gil(|py| out.into_pyobject(py).map(|a| a.unbind()))?.into_any())
             }
             SliceOrIntOrExpanded::Slice(s) => {
-                let r = s.indices(self.structure.size().unwrap() as isize)?;
+                let r = s.indices(self.size().unwrap() as isize)?;
 
                 let start = if r.start < 0 {
                     (r.slicelength as isize + r.start) as usize
@@ -806,11 +555,7 @@ impl SpensoStucture {
 
                 let slice: Result<Vec<Vec<usize>>, _> = range
                     .step_by(step)
-                    .map(|i| {
-                        self.structure
-                            .expanded_index(i.into())
-                            .map(Vec::<usize>::from)
-                    })
+                    .map(|i| self.expanded_index(i.into()).map(Vec::<usize>::from))
                     .collect();
 
                 match slice {
@@ -838,50 +583,6 @@ impl SpensoStucture {
     ) -> PyResult<PythonExpression> {
         // Directly delegate to symbolic, passing relevant arguments through
         self.symbolic(args, extra_args)
-    }
-
-    #[staticmethod]
-    pub fn id(rep: SpensoRepresentation) -> Self {
-        SpensoStucture::id_impl(rep)
-    }
-
-    #[staticmethod]
-    pub fn metric(rep: SpensoRepresentation) -> Self {
-        SpensoStucture::metric_impl(rep)
-    }
-
-    #[allow(non_snake_case)]
-    #[staticmethod]
-    //make it optional
-    pub fn gamma4D(namespace: TensorNamespace) -> Self {
-        SpensoStucture::gamma4D_impl(namespace)
-    }
-
-    #[allow(non_snake_case)]
-    #[staticmethod]
-    pub fn gammadD(dim: PythonExpression) -> PyResult<Self> {
-        if let AtomView::Var(v) = dim.expr.as_view() {
-            Ok(SpensoStucture::gammaD_impl(v.get_symbol()))
-        } else {
-            return Err(exceptions::PyTypeError::new_err(
-                "Only symbols can used as dims",
-            ));
-        }
-    }
-
-    #[staticmethod]
-    pub fn gamma5(namespace: TensorNamespace) -> Self {
-        SpensoStucture::gamma5_impl(namespace)
-    }
-
-    #[staticmethod]
-    pub fn projm(namespace: TensorNamespace) -> Self {
-        SpensoStucture::projm_impl(namespace)
-    }
-
-    #[staticmethod]
-    pub fn projp(namespace: TensorNamespace) -> Self {
-        SpensoStucture::projp_impl(namespace)
     }
 
     #[pyo3(signature = (*args, extra_args=None))]
@@ -916,7 +617,7 @@ impl SpensoStucture {
             self.parse_args_for_indexing(args, extra_args)?;
 
         // --- Generate Symbolic Expression ---
-        let name = self.structure.name().ok_or_else(|| {
+        let name = self.name().ok_or_else(|| {
             PyRuntimeError::new_err("Cannot create symbolic atom: structure has no name")
         })?;
 
@@ -932,16 +633,15 @@ impl SpensoStucture {
             })
             .collect();
 
-        if self.structure.order() != index_atoms.len() {
+        if self.order() != index_atoms.len() {
             return Err(PyValueError::new_err(format!(
                 "Number of index atoms {} does not match structure order {}",
                 index_atoms.len(),
-                self.structure.order()
+                self.order()
             )));
         }
 
         let slots_atoms = self
-            .structure
             .external_reps_iter()
             .zip(index_atoms)
             .map(|(rep, ind_atom)| rep.to_symbolic([ind_atom]))
@@ -1023,7 +723,7 @@ impl SpensoStucture {
             }
         }
 
-        let mut structure_clone = self.structure.clone();
+        let mut structure_clone = self.structure.structure.clone();
         structure_clone.additional_args = if final_additional_args.is_empty() {
             None
         } else {
@@ -1031,7 +731,7 @@ impl SpensoStucture {
         };
         match structure_clone.reindex(&resolved_indices) {
             Ok(indexed_structure) => Ok(SpensoIndices {
-                structure: indexed_structure.structure,
+                structure: indexed_structure,
             }),
             Err(e) => Err(PyValueError::new_err(format!(
                 "Failed to create TensorIndices: {}",
@@ -1042,7 +742,7 @@ impl SpensoStucture {
 }
 
 #[cfg(feature = "python")]
-impl SpensoStucture {
+impl SpensoStructure {
     fn parse_args_for_indexing(
         &self,
         args: &Bound<'_, PyTuple>,
@@ -1072,7 +772,7 @@ impl SpensoStucture {
             }
         }
 
-        let mut final_additional_args = self.structure.args().unwrap_or_default();
+        let mut final_additional_args = self.args().unwrap_or_default();
         for item in pre_separator_args {
             match item {
                 ConvertibleToAbstractIndex::Aind(idx) => final_additional_args.push(idx.into()),

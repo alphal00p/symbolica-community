@@ -14,11 +14,22 @@ version = "0.1.0"
 [features]
 
 default = ["spenso", "algebraic_simplification"]
-algebraic_simplification = ["dep:spenso", "dep:spenso-macros", "dep:linnet"]
+algebraic_simplification = [
+    "dep:spenso",
+    "dep:spenso-macros",
+    "dep:linnet",
+    "dep:idenso",
+
+]
 # vakint = ["dep:vakint"]
-spenso = ["dep:spenso", "dep:linnet", "dep:bitvec"]
+spenso = ["dep:spenso", "dep:linnet", "dep:bitvec", "dep:spenso-hep-lib"]
 bincode = ["dep:bincode", "dep:bincode-trait-derive"]
-python = ["dep:pyo3", "dep:pyo3-stub-gen", "symbolica/python_no_module"]
+python = [
+    "dep:pyo3",
+    "dep:pyo3-stub-gen",
+    "symbolica/python_no_module",
+    "symbolica/python_stubgen",
+]
 
 [profile.release]
 codegen-units = 1
@@ -38,8 +49,8 @@ name = "symbolica_community"
 crate-type = ["lib", "cdylib"]
 
 [dependencies]
-symbolica = { version = "0.16.0", features = [] }
-pyo3 = { version = "0.24.0", features = [
+symbolica = { version = "0.17.0", features = [] }
+pyo3 = { version = "0.25.0", features = [
     "abi3-py37",
     "anyhow",
     "num-complex",
@@ -55,22 +66,18 @@ itertools = "0.13.0"
 delegate = "0.13.1"
 auto_enums = "0.8.6"
 thiserror = "1.0.65"
-pyo3-stub-gen = { version = "0.7.0", optional = true }
+pyo3-stub-gen = { version = "0.9", optional = true }
 env_logger = "0.11.5"
 bincode = { version = "2.0", optional = true }
 bincode-trait-derive = { version = "0.1.0", optional = true }
 
-spenso-macros = { git = "https://github.com/alphal00p/spenso", rev = "a49aa99049dd607970b1640ef7952c53ebdaea2d", features = [
-    "shadowing",
-], optional = true }
-idenso = { git = "https://github.com/alphal00p/spenso", rev = "a49aa99049dd607970b1640ef7952c53ebdaea2d" }
-weyl = { git = "https://github.com/alphal00p/spenso", rev = "a49aa99049dd607970b1640ef7952c53ebdaea2d" }
+spenso-macros = { git = "https://github.com/alphal00p/spenso", rev = "58916c889c5b9344bf2568bb7861e0eb32f452b4", optional = true }
+idenso = { git = "https://github.com/alphal00p/spenso", rev = "58916c889c5b9344bf2568bb7861e0eb32f452b4", optional = true }
+spenso-hep-lib = { git = "https://github.com/alphal00p/spenso", rev = "58916c889c5b9344bf2568bb7861e0eb32f452b4", optional = true }
 # spenso-macros = {path = "../spenso/spenso-macros"}
 [patch.crates-io]
-# symbolica={path="../symbolica"}
-symbolica = { git = "https://github.com/benruijl/symbolica", branch = "complex_coeff" }
 
-linnet = { git = "https://github.com/alphal00p/linnet", rev = "50d4d036fd2cfdf75c79a3c168c7d8357ec16831" }
-# spenso = { path = "../spenso/spenso"}
-spenso = { git = "https://github.com/alphal00p/spenso", rev = "a49aa99049dd607970b1640ef7952c53ebdaea2d" }
+linnet = { git = "https://github.com/alphal00p/linnet", rev = "85c1b8f7bee575a8cc5dc7e5595b3ef7c880204f" }
+# spenso = { path = "../spenso/spenso" }
+spenso = { git = "https://github.com/alphal00p/spenso", rev = "58916c889c5b9344bf2568bb7861e0eb32f452b4" }
 # symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}

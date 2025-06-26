@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, ops::Deref};
 
 use anyhow::anyhow;
 use library::SpensorLibrary;
@@ -24,16 +24,19 @@ use spenso::{
 
 use spenso::{
     network::parsing::ShadowedStructure,
-    structure::{HasStructure, ScalarTensor, TensorStructure},
+    structure::{
+        permuted::Perm, representation::LibraryRep, HasStructure, IndexlessNamedStructure,
+        PermutedStructure, ScalarTensor, TensorStructure,
+    },
     tensors::{
         complex::RealOrComplexTensor,
         data::{DataTensor, StorageTensor},
         parametric::{CompiledEvalTensor, LinearizedEvalTensor, MixedTensor},
     },
 };
-use structure::{PossiblyIndexed, SpensoIndices};
+use structure::{ConvertibleToStructure, SpensoIndices};
 use symbolica::{
-    atom::Atom,
+    atom::{Atom, Symbol},
     domains::{float::Complex, rational::Rational},
     evaluate::{CompileOptions, FunctionMap, InlineASM, OptimizationSettings},
     poly::Variable,
@@ -46,6 +49,7 @@ use symbolica::api::python::PythonExpression;
 use pyo3_stub_gen::{define_stub_info_gatherer, derive::*, PyStubType, TypeInfo};
 
 pub mod library;
+pub mod library_tensor;
 pub mod network;
 pub mod structure;
 
@@ -89,82 +93,19 @@ pub(crate) fn initialize_spenso(m: &Bound<'_, PyModule>) -> PyResult<()> {
 )]
 #[derive(Clone)]
 pub struct Spensor {
-    tensor: MixedTensor<f64, PossiblyIndexed>,
+    tensor: PermutedStructure<MixedTensor<f64, ShadowedStructure>>,
 }
 
-#[cfg(feature = "python")]
-impl ModuleInit for Spensor {
-    fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
-        m.add_class::<Self>()?;
-        m.add_function(wrap_pyfunction!(sparse_empty, m)?)?;
-        m.add_function(wrap_pyfunction!(dense, m)?)
-        // m.add_function(wrap_pyfunction!(register, m)?)
+impl Deref for Spensor {
+    type Target = MixedTensor<f64, ShadowedStructure>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.tensor.structure
     }
 }
 
-/// Create a new sparse empty tensor with the given structure and type.
-/// The structure can be a list of integers, a list of representations, or a list of slots.
-/// In the first two cases, no "indices" are assumed, and thus the tensor is indexless (i.e.) it has a shape but no proper way to contract it.
-/// The structure can also be a proper `TensorIndices` object or `TensorStructure` object.
-///
-/// The type is either a float or a symbolica expression.
-///
-
 #[cfg(feature = "python")]
-#[gen_stub_pyfunction(module = "symbolica_community.tensors")]
-#[pyfunction]
-pub fn sparse_empty(
-    structure: Bound<'_, PyAny>,
-    type_info: Bound<'_, PyType>,
-) -> PyResult<Spensor> {
-    let structure = PossiblyIndexed::extract_bound(&structure)?;
-
-    if type_info.is_subclass_of::<PyFloat>()? {
-        Ok(Spensor {
-            tensor: SparseTensor::<f64, _>::empty(structure).into(),
-        })
-    } else if type_info.is_subclass_of::<PythonExpression>()? {
-        Ok(Spensor {
-            tensor: ParamOrConcrete::Param(ParamTensor::from(SparseTensor::<Atom, _>::empty(
-                structure,
-            ))),
-        })
-    } else {
-        Err(PyTypeError::new_err("Only float type supported"))
-    }
-}
-
-/// Create a new dense tensor with the given structure and data.
-/// The structure can be a list of integers, a list of representations, or a list of slots.
-/// In the first two cases, no "indices" are assumed, and thus the tensor is indexless (i.e.) it has a shape but no proper way to contract it.
-/// The structure can also be a proper `TensorIndices` object or `TensorStructure` object.
-///
-/// The data is either a list of floats or a list of symbolica expressions, of length equal to the number of elements in the structure, in row-major order.
-///
-#[cfg(feature = "python")]
-#[gen_stub_pyfunction(module = "symbolica_community.tensors")]
-#[pyfunction]
-pub fn dense(structure: Bound<'_, PyAny>, data: Bound<'_, PyAny>) -> PyResult<Spensor> {
-    let structure = PossiblyIndexed::extract_bound(&structure)?;
-
-    if let Ok(d) = data.extract::<Vec<f64>>() {
-        Ok(Spensor {
-            tensor: DenseTensor::<f64, _>::from_data(d, structure)
-                .map_err(|e| PyOverflowError::new_err(e.to_string()))?
-                .into(),
-        })
-    } else if let Ok(d) = data.extract::<Vec<PythonExpression>>() {
-        let data = d.into_iter().map(|e| e.expr).collect();
-        Ok(Spensor {
-            tensor: ParamOrConcrete::Param(ParamTensor::from(
-                DenseTensor::<Atom, _>::from_data(data, structure)
-                    .map_err(|e| PyOverflowError::new_err(e.to_string()))?,
-            )),
-        })
-    } else {
-        Err(PyTypeError::new_err("Only float type supported"))
-    }
-}
+impl ModuleInit for Spensor {}
 
 // #[gen_stub_pyclass_enum]
 #[cfg(feature = "python")]
@@ -219,41 +160,101 @@ impl From<ConcreteOrParam<RealOrComplex<f64>>> for TensorElements {
 #[gen_stub_pymethods]
 #[pymethods]
 impl Spensor {
-    pub fn structure(&self) -> Py<PyAny> {
-        match self.tensor.structure() {
-            PossiblyIndexed::Indexed(a) => {
-                Python::with_gil(|py| a.clone().into_pyobject(py).map(|a| a.into_any().unbind()))
-                    .unwrap()
-            }
-            PossiblyIndexed::Unindexed(a) => {
-                Python::with_gil(|py| a.clone().into_pyobject(py).map(|a| a.into_any().unbind()))
-                    .unwrap()
-            }
+    pub fn structure(&self) -> SpensoIndices {
+        SpensoIndices {
+            structure: PermutedStructure {
+                structure: self.tensor.structure.structure().clone(),
+                rep_permutation: self.tensor.rep_permutation.clone(),
+                index_permutation: self.tensor.index_permutation.clone(),
+            },
         }
     }
 
     #[staticmethod]
+    /// Create a new sparse empty tensor with the given structure and type.
+    /// The type is either a float or a symbolica expression.
+    ///
+    pub fn sparse(
+        structure: ConvertibleToStructure,
+        type_info: Bound<'_, PyType>,
+    ) -> PyResult<Spensor> {
+        if type_info.is_subclass_of::<PyFloat>()? {
+            Ok(Spensor {
+                tensor: structure
+                    .0
+                    .structure
+                    .map_structure(|s| SparseTensor::<f64, _>::empty(s).into()),
+            })
+        } else if type_info.is_subclass_of::<PythonExpression>()? {
+            Ok(Spensor {
+                tensor: structure.0.structure.map_structure(|s| {
+                    ParamOrConcrete::Param(ParamTensor::from(SparseTensor::<Atom, _>::empty(s)))
+                }),
+            })
+        } else {
+            Err(PyTypeError::new_err("Only float type supported"))
+        }
+    }
+
+    #[staticmethod]
+    /// Create a new dense tensor with the given structure and data.
+    /// The structure can be a list of integers, a list of representations, or a list of slots.
+    /// In the first two cases, no "indices" are assumed, and thus the tensor is indexless (i.e.) it has a shape but no proper way to contract it.
+    /// The structure can also be a proper `TensorIndices` object or `TensorStructure` object.
+    ///
+    /// The data is either a list of floats or a list of symbolica expressions, of length equal to the number of elements in the structure, in row-major order.
+    ///
+    pub fn dense(structure: ConvertibleToStructure, data: Bound<'_, PyAny>) -> PyResult<Spensor> {
+        let dense = if let Ok(d) = data.extract::<Vec<f64>>() {
+            DenseTensor::<f64, _>::from_data(d, structure.0.structure.structure)
+                .map_err(|e| PyOverflowError::new_err(e.to_string()))?
+                .into()
+        } else if let Ok(d) = data.extract::<Vec<PythonExpression>>() {
+            let data = d.into_iter().map(|e| e.expr).collect();
+            ParamOrConcrete::Param(ParamTensor::from(
+                DenseTensor::<Atom, _>::from_data(data, structure.0.structure.structure)
+                    .map_err(|e| PyOverflowError::new_err(e.to_string()))?,
+            ))
+        } else {
+            return Err(PyTypeError::new_err("Only float type supported"));
+        };
+
+        let dense = PermutedStructure {
+            structure: dense,
+            rep_permutation: structure.0.structure.rep_permutation,
+            index_permutation: structure.0.structure.index_permutation,
+        };
+
+        Ok(Spensor {
+            tensor: dense.permute_wrapped(),
+        })
+    }
+    #[staticmethod]
     pub fn one() -> Spensor {
         Spensor {
-            tensor: ParamOrConcrete::new_scalar(ConcreteOrParam::Concrete(RealOrComplex::Real(1.))),
+            tensor: PermutedStructure::identity(ParamOrConcrete::new_scalar(
+                ConcreteOrParam::Concrete(RealOrComplex::Real(1.)),
+            )),
         }
     }
 
     #[staticmethod]
     pub fn zero() -> Spensor {
         Spensor {
-            tensor: ParamOrConcrete::new_scalar(ConcreteOrParam::Concrete(RealOrComplex::Real(2.))),
+            tensor: PermutedStructure::identity(ParamOrConcrete::new_scalar(
+                ConcreteOrParam::Concrete(RealOrComplex::Real(2.)),
+            )),
         }
     }
 
     #[allow(clippy::wrong_self_convention)]
     fn to_dense(&mut self) {
-        self.tensor = self.tensor.clone().to_dense();
+        self.tensor.structure = self.tensor.structure.clone().to_dense();
     }
 
     #[allow(clippy::wrong_self_convention)]
     fn to_sparse(&mut self) {
-        self.tensor = self.tensor.clone().to_sparse();
+        self.tensor.structure = self.tensor.structure.clone().to_sparse();
     }
 
     fn __repr__(&self) -> String {
@@ -265,21 +266,19 @@ impl Spensor {
     }
 
     fn __len__(&self) -> usize {
-        self.tensor.structure().size().unwrap()
+        self.size().unwrap()
     }
 
     fn __getitem__(&self, item: SliceOrIntOrExpanded) -> PyResult<Py<PyAny>> {
         let out = match item {
             SliceOrIntOrExpanded::Int(i) => self
-                .tensor
                 .get_owned_linear(i.into())
                 .ok_or(PyIndexError::new_err("flat index out of bounds"))?,
             SliceOrIntOrExpanded::Expanded(idxs) => self
-                .tensor
                 .get_owned(&idxs)
                 .map_err(|s| PyIndexError::new_err(s.to_string()))?,
             SliceOrIntOrExpanded::Slice(s) => {
-                let r = s.indices(self.tensor.size().unwrap() as isize)?;
+                let r = s.indices(self.size().unwrap() as isize)?;
 
                 let start = if r.start < 0 {
                     (r.slicelength as isize + r.start) as usize
@@ -301,11 +300,7 @@ impl Spensor {
 
                 let slice: Option<Vec<TensorElements>> = range
                     .step_by(step)
-                    .map(|i| {
-                        self.tensor
-                            .get_owned_linear(i.into())
-                            .map(TensorElements::from)
-                    })
+                    .map(|i| self.get_owned_linear(i.into()).map(TensorElements::from))
                     .collect();
 
                 if let Some(slice) = slice {
@@ -340,9 +335,9 @@ impl Spensor {
         };
 
         if let Ok(flat_index) = item.extract::<usize>() {
-            self.tensor.set_flat(flat_index.into(), value)
+            self.tensor.structure.set_flat(flat_index.into(), value)
         } else if let Ok(expanded_idxs) = item.extract::<Vec<usize>>() {
-            self.tensor.set(&expanded_idxs, value)
+            self.tensor.structure.set(&expanded_idxs, value)
         } else {
             Err(anyhow!("Index must be an integer"))
         }
@@ -410,7 +405,7 @@ impl Spensor {
 
         let params: Vec<_> = params.iter().map(|x| x.expr.clone()).collect();
 
-        let mut evaltensor = match &self.tensor {
+        let mut evaltensor = match &self.tensor.structure {
             ParamOrConcrete::Param(s) => s.to_evaluation_tree(&fn_map, &params).map_err(|e| {
                 exceptions::PyValueError::new_err(format!("Could not create evaluator: {}", e))
             })?,
@@ -436,8 +431,9 @@ impl Spensor {
     }
 
     fn scalar(&self) -> PyResult<PythonExpression> {
-        self.clone()
-            .tensor
+        self.tensor
+            .structure
+            .clone()
             .scalar()
             .map(|r| PythonExpression { expr: r.into() })
             .ok_or_else(|| PyRuntimeError::new_err("No scalar found"))
@@ -447,17 +443,9 @@ impl Spensor {
 impl From<DataTensor<f64, ShadowedStructure>> for Spensor {
     fn from(value: DataTensor<f64, ShadowedStructure>) -> Self {
         Spensor {
-            tensor: MixedTensor::Concrete(RealOrComplexTensor::Real(
-                value.map_structure(PossiblyIndexed::from),
-            )),
-        }
-    }
-}
-
-impl From<DataTensor<f64, PossiblyIndexed>> for Spensor {
-    fn from(value: DataTensor<f64, PossiblyIndexed>) -> Self {
-        Spensor {
-            tensor: MixedTensor::Concrete(RealOrComplexTensor::Real(value)),
+            tensor: PermutedStructure::identity(MixedTensor::Concrete(RealOrComplexTensor::Real(
+                value,
+            ))),
         }
     }
 }
@@ -465,24 +453,20 @@ impl From<DataTensor<f64, PossiblyIndexed>> for Spensor {
 impl From<DataTensor<Complex<f64>, ShadowedStructure>> for Spensor {
     fn from(value: DataTensor<Complex<f64>, ShadowedStructure>) -> Self {
         Spensor {
-            tensor: MixedTensor::Concrete(RealOrComplexTensor::Complex(
-                value
-                    .map_structure(PossiblyIndexed::from)
-                    .map_data(|c| c.into()),
+            tensor: PermutedStructure::identity(MixedTensor::Concrete(
+                RealOrComplexTensor::Complex(value.map_data(|c| c.into())),
             )),
+        }
+    }
+}
+impl From<MixedTensor<f64, ShadowedStructure>> for Spensor {
+    fn from(value: MixedTensor<f64, ShadowedStructure>) -> Self {
+        Spensor {
+            tensor: PermutedStructure::identity(value),
         }
     }
 }
 
-impl From<DataTensor<Complex<f64>, PossiblyIndexed>> for Spensor {
-    fn from(value: DataTensor<Complex<f64>, PossiblyIndexed>) -> Self {
-        Spensor {
-            tensor: MixedTensor::Concrete(RealOrComplexTensor::Complex(
-                value.map_data(|c| c.into()),
-            )),
-        }
-    }
-}
 /// An optimized evaluator for tensors.
 ///
 #[cfg_attr(
@@ -492,9 +476,9 @@ impl From<DataTensor<Complex<f64>, PossiblyIndexed>> for Spensor {
 )]
 #[derive(Clone)]
 pub struct SpensoExpressionEvaluator {
-    pub eval_rat: LinearizedEvalTensor<Complex<Rational>, PossiblyIndexed>,
-    pub eval: Option<LinearizedEvalTensor<f64, PossiblyIndexed>>,
-    pub eval_complex: LinearizedEvalTensor<Complex<f64>, PossiblyIndexed>,
+    pub eval_rat: LinearizedEvalTensor<Complex<Rational>, ShadowedStructure>,
+    pub eval: Option<LinearizedEvalTensor<f64, ShadowedStructure>>,
+    pub eval_complex: LinearizedEvalTensor<Complex<f64>, ShadowedStructure>,
 }
 
 #[cfg(feature = "python")]
@@ -582,7 +566,7 @@ impl SpensoExpressionEvaluator {
 )]
 #[derive(Clone)]
 pub struct SpensoCompiledExpressionEvaluator {
-    pub eval: CompiledEvalTensor<PossiblyIndexed>,
+    pub eval: CompiledEvalTensor<ShadowedStructure>,
 }
 
 #[gen_stub_pymethods]

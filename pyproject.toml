@@ -43,3 +43,8 @@ package = false
 [tool.pyright]
 venvPath = ".devenv/state/"
 venv = ".venv"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.16.2",
+]

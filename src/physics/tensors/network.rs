@@ -17,7 +17,7 @@ use symbolica::atom::Atom;
 #[cfg(feature = "python")]
 use symbolica::api::python::{ConvertibleToExpression, PythonExpression};
 
-use super::{library::SpensorLibrary, structure::PossiblyIndexed, Spensor};
+use super::{library::SpensorLibrary, Spensor};
 
 #[cfg(feature = "python")]
 use super::ModuleInit;
@@ -84,12 +84,7 @@ impl<'a> FromPyObject<'a> for ConvertibleToSpensoNet {
             Ok(ConvertibleToSpensoNet(a))
         } else if let Ok(num) = ob.extract::<Spensor>() {
             Ok(ConvertibleToSpensoNet(SpensoNet {
-                network: Network::from_tensor(num.tensor.map_structure_result(|a| match a {
-                    PossiblyIndexed::Indexed(a) => Ok(a.structure),
-                    _ => Err(PyRuntimeError::new_err(
-                        "Cannot convert an unindexed tensor",
-                    )),
-                })?),
+                network: Network::from_tensor(num.tensor.structure),
             }))
         } else if let Ok(a) = ob.extract::<ConvertibleToExpression>() {
             Ok(ConvertibleToSpensoNet(SpensoNet {
@@ -155,7 +150,7 @@ impl SpensoNet {
 
     fn execute(&mut self, library: &SpensorLibrary) -> PyResult<()> {
         self.network
-            .execute::<Sequential, SmallestDegree, _>(&library.library)
+            .execute::<Sequential, SmallestDegree, _, _>(&library.library)
             .map_err(|a| PyRuntimeError::new_err(a.to_string()))
     }
 
@@ -168,9 +163,7 @@ impl SpensoNet {
             {
                 ExecutionResult::One => Spensor::one(),
                 ExecutionResult::Zero => Spensor::zero(),
-                ExecutionResult::Val(v) => Spensor {
-                    tensor: v.into_owned().map_structure(PossiblyIndexed::from),
-                },
+                ExecutionResult::Val(v) => v.into_owned().into(),
             },
         )
     }
