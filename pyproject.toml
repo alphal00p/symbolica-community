@@ -23,9 +23,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = [
-    "jupyter>=1.1.1",
-]
+
 # dynamic = ["version"]
 [project.optional-dependencies]
 tests = ["pytest"]
@@ -45,6 +43,4 @@ venvPath = ".devenv/state/"
 venv = ".venv"
 
 [dependency-groups]
-dev = [
-    "ipykernel>=6.16.2",
-]
+dev = ["ipykernel>=6.16.2"]

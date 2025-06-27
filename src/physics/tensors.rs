@@ -66,12 +66,17 @@ trait ModuleInit: PyClass {
 
 #[cfg(feature = "python")]
 pub(crate) fn initialize_spenso(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    use library_tensor::LibrarySpensor;
+
     let child_module = PyModule::new(m.py(), "tensors")?;
 
     SpensoNet::init(&child_module)?;
+
     SpensoNet::append_to_symbolica(m)?;
     Spensor::init(&child_module)?;
     Spensor::append_to_symbolica(m)?;
+    LibrarySpensor::init(&child_module)?;
+    LibrarySpensor::append_to_symbolica(m)?;
     SpensoIndices::init(&child_module)?;
     SpensoIndices::append_to_symbolica(m)?;
     SpensorLibrary::init(&child_module)?;

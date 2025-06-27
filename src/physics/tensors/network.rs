@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 #[cfg(feature = "python")]
 use pyo3::{
     exceptions::{self, PyRuntimeError},
@@ -5,13 +7,15 @@ use pyo3::{
 };
 
 use spenso::{
+    contraction::SingleContract,
     network::{
         library::symbolic::ExplicitKey, parsing::ShadowedStructure, store::NetworkStore,
-        ExecutionResult, Network, Sequential, SmallestDegree,
+        ExecutionResult, Network, Sequential, SingleSmallestDegree, SmallestDegree, Steps,
     },
     structure::{HasName, HasStructure},
     tensors::parametric::MixedTensor,
 };
+use spenso_hep_lib::HEP_LIB;
 use symbolica::atom::Atom;
 
 #[cfg(feature = "python")]
@@ -55,8 +59,8 @@ impl ModuleInit for SpensoNet {
 #[gen_stub_pyfunction]
 #[pyfunction(name = "to_net")]
 pub fn python_to_tensor_network(
-    a: &Bound<'_, PythonExpression>,
-    library: &SpensorLibrary,
+    a: ConvertibleToExpression,
+    library: Option<&SpensorLibrary>,
 ) -> anyhow::Result<SpensoNet> {
     SpensoNet::from_expression(a, library)
 }
@@ -116,11 +120,16 @@ impl PyStubType for ConvertibleToSpensoNet {
 impl SpensoNet {
     #[new]
     /// Parses an expression into a network
-    pub fn from_expression_without_lib(
-        expr: ConvertibleToSpensoNet,
-        // library: &SpensorLibrary,
+    #[pyo3(signature = (expr, library=None))]
+    pub fn from_expression(
+        expr: ConvertibleToExpression,
+        library: Option<&SpensorLibrary>,
     ) -> anyhow::Result<SpensoNet> {
-        Ok(expr.to_net())
+        let lib = library.map(|l| &l.library).unwrap_or(HEP_LIB.deref());
+
+        Ok(SpensoNet {
+            network: ParsingNet::try_from_view(expr.to_expression().as_view(), lib)?,
+        })
     }
 
     #[staticmethod]
@@ -137,28 +146,48 @@ impl SpensoNet {
         }
     }
 
-    #[staticmethod]
-    /// Parses an expression into a network
-    pub fn from_expression(
-        expr: &Bound<'_, PythonExpression>,
-        library: &SpensorLibrary,
-    ) -> anyhow::Result<SpensoNet> {
-        Ok(SpensoNet {
-            network: ParsingNet::try_from_view(expr.borrow().expr.as_view(), &library.library)?,
-        })
-    }
+    #[pyo3(signature = (library=None, n_steps=None, single_contract=false))]
+    fn execute(
+        &mut self,
+        library: Option<&SpensorLibrary>,
+        n_steps: Option<usize>,
+        single_contract: bool,
+    ) -> PyResult<()> {
+        let lib = library.map(|l| &l.library).unwrap_or(HEP_LIB.deref());
 
-    fn execute(&mut self, library: &SpensorLibrary) -> PyResult<()> {
-        self.network
-            .execute::<Sequential, SmallestDegree, _, _>(&library.library)
-            .map_err(|a| PyRuntimeError::new_err(a.to_string()))
+        if let Some(n) = n_steps {
+            for _ in 0..n {
+                if single_contract {
+                    self.network
+                        .execute::<Steps<1>, SingleSmallestDegree<false>, _, _>(lib)
+                        .map_err(|a| PyRuntimeError::new_err(a.to_string()))?;
+                } else {
+                    self.network
+                        .execute::<Steps<1>, SmallestDegree, _, _>(lib)
+                        .map_err(|a| PyRuntimeError::new_err(a.to_string()))?;
+                }
+            }
+            Ok(())
+        } else {
+            if single_contract {
+                self.network
+                    .execute::<Sequential, SingleSmallestDegree<false>, _, _>(lib)
+                    .map_err(|a| PyRuntimeError::new_err(a.to_string()))
+            } else {
+                self.network
+                    .execute::<Sequential, SmallestDegree, _, _>(lib)
+                    .map_err(|a| PyRuntimeError::new_err(a.to_string()))
+            }
+        }
     }
+    #[pyo3(signature = (library=None))]
+    fn result_tensor(&self, library: Option<&SpensorLibrary>) -> PyResult<Spensor> {
+        let lib = library.map(|l| &l.library).unwrap_or(HEP_LIB.deref());
 
-    fn result_tensor(&self, library: &SpensorLibrary) -> PyResult<Spensor> {
         Ok(
             match self
                 .network
-                .result_tensor(&library.library)
+                .result_tensor(lib)
                 .map_err(|s| PyRuntimeError::new_err(s.to_string()))?
             {
                 ExecutionResult::One => Spensor::one(),
