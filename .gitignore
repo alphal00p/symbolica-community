@@ -14,7 +14,4 @@ flake.lock
 # Devenv
 #.devenv/
 .devenv*
-devenv.lock
-devenv.nix
-devenv.yaml
 uv.lock
