@@ -6,7 +6,6 @@ use network::SpensoNet;
 
 #[cfg(feature = "python")]
 use pyo3::{
-    conversion::FromPyObject,
     exceptions::{self, PyIndexError, PyOverflowError, PyRuntimeError, PyTypeError},
     prelude::*,
     types::{PyComplex, PyFloat, PySlice, PyType},
@@ -24,10 +23,7 @@ use spenso::{
 
 use spenso::{
     network::parsing::ShadowedStructure,
-    structure::{
-        permuted::Perm, representation::LibraryRep, HasStructure, IndexlessNamedStructure,
-        PermutedStructure, ScalarTensor, TensorStructure,
-    },
+    structure::{permuted::Perm, HasStructure, PermutedStructure, ScalarTensor, TensorStructure},
     tensors::{
         complex::RealOrComplexTensor,
         data::{DataTensor, StorageTensor},
@@ -36,7 +32,7 @@ use spenso::{
 };
 use structure::{ConvertibleToStructure, SpensoIndices};
 use symbolica::{
-    atom::{Atom, Symbol},
+    atom::Atom,
     domains::{float::Complex, rational::Rational},
     evaluate::{CompileOptions, FunctionMap, InlineASM, OptimizationSettings},
     poly::Variable,
@@ -231,7 +227,7 @@ impl Spensor {
         };
 
         Ok(Spensor {
-            tensor: dense.permute_wrapped(),
+            tensor: dense.permute_inds_wrapped(),
         })
     }
     #[staticmethod]
@@ -501,7 +497,7 @@ impl SpensoExpressionEvaluator {
 
     /// Evaluate the expression for multiple inputs and return the results.
     fn evaluate_complex(&mut self, inputs: Vec<Vec<Complex<f64>>>) -> Vec<Spensor> {
-        let mut eval = &mut self.eval_complex;
+        let eval = &mut self.eval_complex;
 
         inputs.iter().map(|s| eval.evaluate(s).into()).collect()
     }

@@ -1,7 +1,5 @@
 use std::ops::Deref;
 
-use bitvec::vec::BitVec;
-use delegate::delegate;
 use itertools::Itertools;
 
 #[cfg(feature = "python")]
@@ -12,27 +10,22 @@ use pyo3::{
     types::{PyList, PyTuple},
 };
 use spenso::{
-    network::{
-        library::symbolic::{ExplicitKey, ETS},
-        parsing::ShadowedStructure,
-    },
+    network::{library::symbolic::ExplicitKey, parsing::ShadowedStructure},
     structure::{
         abstract_index::AbstractIndex,
         dimension::Dimension,
-        permuted::{Perm, PermuteTensor},
+        permuted::Perm,
         representation::{
             Euclidean, ExtendibleReps, LibraryRep, Minkowski, RepName, Representation,
         },
         slot::{IsAbstractSlot, Slot},
-        HasName, IndexLess, IndexlessNamedStructure, MergeInfo, NamedStructure, OrderedStructure,
-        PermutedStructure, ScalarStructure, StructureContract, StructureError, TensorStructure,
-        ToSymbolic,
+        HasName, IndexLess, OrderedStructure, PermutedStructure, TensorStructure, ToSymbolic,
     },
     tensors::symbolic::SymbolicTensor,
 };
 use symbolica::{
     atom::{Atom, AtomView, FunctionBuilder, NamespacedSymbol, Symbol},
-    namespace, symbol,
+    symbol,
 };
 
 #[cfg(feature = "python")]
@@ -40,14 +33,10 @@ use symbolica::api::python::{ConvertibleToExpression, PythonExpression};
 
 use thiserror::Error;
 
-use idenso::{gamma::AGS, representations::Bispinor, IndexTooling};
-
-use super::library::TensorNamespace;
-use spenso_hep_lib::HEP_LIB;
+use idenso::{representations::Bispinor, IndexTooling};
 
 #[cfg(feature = "python")]
 use super::{ModuleInit, SliceOrIntOrExpanded};
-use auto_enums::auto_enum;
 
 #[cfg(feature = "python")]
 use pyo3_stub_gen::{derive::*, impl_stub_type, PyStubType};
@@ -216,7 +205,7 @@ impl SpensoIndices {
                 rep_permutation: self.structure.rep_permutation.clone(),
                 structure,
             }
-            .permute()
+            .permute_inds()
             .expression;
 
             format!("{}", atom)
@@ -243,7 +232,7 @@ impl SpensoIndices {
             rep_permutation: self.structure.rep_permutation.clone(),
             structure,
         }
-        .permute()
+        .permute_inds()
         .expression;
 
         Ok(atom.into())

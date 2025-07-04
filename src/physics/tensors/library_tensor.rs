@@ -1,14 +1,12 @@
-use std::{collections::HashMap, ops::Deref};
+use std::ops::Deref;
 
 use anyhow::anyhow;
 
 #[cfg(feature = "python")]
 use pyo3::{
-    conversion::FromPyObject,
-    exceptions::{self, PyIndexError, PyOverflowError, PyRuntimeError, PyTypeError},
+    exceptions::{PyIndexError, PyOverflowError, PyRuntimeError, PyTypeError},
     prelude::*,
-    types::{PyComplex, PyFloat, PySlice, PyType},
-    PyClass,
+    types::{PyFloat, PyType},
 };
 
 #[cfg(feature = "python")]
@@ -16,38 +14,27 @@ use spenso::{
     algebra::complex::RealOrComplex,
     tensors::{
         data::{DenseTensor, GetTensorData, SetTensorData, SparseOrDense, SparseTensor},
-        parametric::{atomcore::TensorAtomOps, ConcreteOrParam, ParamOrConcrete, ParamTensor},
+        parametric::{ConcreteOrParam, ParamOrConcrete, ParamTensor},
     },
 };
 
-use crate::physics::tensors::{
-    structure::{ConvertibleToStructure, SpensoIndices},
-    SliceOrIntOrExpanded,
-};
+use crate::physics::tensors::SliceOrIntOrExpanded;
 use spenso::{
-    network::{library::symbolic::ExplicitKey, parsing::ShadowedStructure},
-    structure::{
-        permuted::Perm, representation::LibraryRep, HasStructure, IndexlessNamedStructure,
-        PermutedStructure, ScalarTensor, TensorStructure,
-    },
+    network::library::symbolic::ExplicitKey,
+    structure::{permuted::Perm, HasStructure, PermutedStructure, ScalarTensor, TensorStructure},
     tensors::{
         complex::RealOrComplexTensor,
         data::{DataTensor, StorageTensor},
-        parametric::{CompiledEvalTensor, LinearizedEvalTensor, MixedTensor},
+        parametric::MixedTensor,
     },
 };
-use symbolica::{
-    atom::{Atom, Symbol},
-    domains::{float::Complex, rational::Rational},
-    evaluate::{CompileOptions, FunctionMap, InlineASM, OptimizationSettings},
-    poly::Variable,
-};
+use symbolica::{atom::Atom, domains::float::Complex};
 
 #[cfg(feature = "python")]
 use symbolica::api::python::PythonExpression;
 
 #[cfg(feature = "python")]
-use pyo3_stub_gen::{define_stub_info_gatherer, derive::*, PyStubType, TypeInfo};
+use pyo3_stub_gen::{define_stub_info_gatherer, derive::*};
 
 use super::{
     structure::{ConvertibleToIndexLess, SpensoStructure},
@@ -148,7 +135,7 @@ impl LibrarySpensor {
         };
 
         Ok(Self {
-            tensor: dense.permute_wrapped(),
+            tensor: dense.permute_inds_wrapped(),
         })
     }
     #[staticmethod]

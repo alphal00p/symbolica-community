@@ -1,9 +1,7 @@
-use std::{ops::Neg, sync::LazyLock};
-
 use anyhow::anyhow;
-use pyo3::{exceptions, pybacked::PyBackedStr, types::PyAnyMethods, Bound, FromPyObject};
+use pyo3::{exceptions, types::PyAnyMethods, Bound, FromPyObject};
 #[cfg(feature = "python")]
-use pyo3::{exceptions::PyTypeError, pyclass, pymethods, PyResult};
+use pyo3::{pyclass, pymethods, PyResult};
 
 #[cfg(feature = "python")]
 use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum, gen_stub_pymethods};
@@ -13,11 +11,10 @@ use spenso::{
     structure::{HasStructure, PermutedStructure},
     tensors::parametric::MixedTensor,
 };
-use spenso_hep_lib::hep_lib;
 use symbolica::{
     api::python::{ConvertibleToExpression, PythonExpression},
     atom::{AtomView, Symbol},
-    symbol, try_symbol,
+    try_symbol,
 };
 
 use super::{library_tensor::LibrarySpensor, structure::SpensoStructure, Spensor};

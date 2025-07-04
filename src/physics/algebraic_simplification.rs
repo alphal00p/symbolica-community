@@ -1,13 +1,10 @@
-use idenso::color::{color_conj_impl, ColorError, ColorSimplifier, SelectiveExpand};
-use idenso::gamma::{factor_conj_impl, gamma_conj_impl, pol_conj_impl, GammaSimplifier};
-use idenso::metric::{
-    cook_function_view, cook_indices_impl, list_dangling_impl, wrap_dummies_impl,
-    wrap_indices_impl, CookingError, MetricSimplifier,
-};
+use idenso::color::{ColorError, ColorSimplifier, SelectiveExpand};
+use idenso::gamma::GammaSimplifier;
+use idenso::metric::MetricSimplifier;
 
 #[cfg(feature = "python")]
 use pyo3::{
-    exceptions::{PyRuntimeWarning, PyTypeError},
+    exceptions::PyTypeError,
     pyfunction,
     types::{PyAnyMethods, PyModule, PyModuleMethods},
     wrap_pyfunction, Bound, PyResult,
@@ -17,7 +14,7 @@ use idenso::representations::initialize;
 use idenso::IndexTooling;
 #[cfg(feature = "python")]
 use pyo3_stub_gen::derive::gen_stub_pyfunction;
-use symbolica::atom::{Atom, AtomView, Symbol};
+use symbolica::atom::Symbol;
 
 #[cfg(feature = "python")]
 use symbolica::api::python::PythonExpression;

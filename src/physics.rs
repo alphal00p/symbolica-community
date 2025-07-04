@@ -11,10 +11,7 @@ pub mod algebraic_simplification;
 pub mod tensors;
 
 #[cfg(feature = "python")]
-use pyo3::{
-    types::{PyModule, PyModuleMethods},
-    Bound, PyResult,
-};
+use pyo3::{types::PyModule, Bound, PyResult};
 
 #[cfg(feature = "python")]
 pub(crate) fn initialize(m: &Bound<'_, PyModule>) -> PyResult<()> {

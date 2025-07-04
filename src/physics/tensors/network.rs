@@ -7,26 +7,25 @@ use pyo3::{
 };
 
 use spenso::{
-    contraction::SingleContract,
     network::{
         library::symbolic::ExplicitKey, parsing::ShadowedStructure, store::NetworkStore,
         ExecutionResult, Network, Sequential, SingleSmallestDegree, SmallestDegree, Steps,
     },
-    structure::{HasName, HasStructure},
+    structure::HasName,
     tensors::parametric::MixedTensor,
 };
 use spenso_hep_lib::HEP_LIB;
 use symbolica::atom::Atom;
 
 #[cfg(feature = "python")]
-use symbolica::api::python::{ConvertibleToExpression, PythonExpression};
+use symbolica::api::python::ConvertibleToExpression;
 
 use super::{library::SpensorLibrary, Spensor};
 
 #[cfg(feature = "python")]
 use super::ModuleInit;
 #[cfg(feature = "python")]
-use pyo3_stub_gen::{derive::*, PyStubType, TypeInfo};
+use pyo3_stub_gen::{derive::*, PyStubType};
 
 #[cfg_attr(
     feature = "python",

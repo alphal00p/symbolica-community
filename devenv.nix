@@ -1,41 +1,34 @@
-{ pkgs, lib, config, inputs, ... }:
-
 {
-
-
+  pkgs,
+  lib,
+  config,
+  inputs,
+  ...
+}: {
   # https://devenv.sh/packages/
   packages = [
-  pkgs.gnum4
-  pkgs.gmp
-  pkgs.mpfr
-  pkgs.python3
-  pkgs.maturin
-  pkgs.gnumake
-  pkgs.diffutils
-  # pkgs.glibc
+    pkgs.gnum4
+    pkgs.gmp
+    pkgs.mpfr
+    pkgs.python3
+    pkgs.maturin
+    pkgs.gnumake
+    pkgs.diffutils
   ];
 
-  languages.nix={enable=true;
-    # components=["nixd"];
+  languages.nix = {
+    enable = true;
   };
 
-  # https://devenv.sh/languages/
   languages.rust = {
-      enable = true;
-      # https://devenv.sh/reference/options/#languagesrustchannel
-      channel = "stable";
+    enable = true;
+    channel = "stable";
 
-      components = [ "rustc" "cargo" "clippy" "rustfmt" "rust-analyzer" ];
-    };
-  languages.python={
-    enable=true;
+    components = ["rustc" "cargo" "clippy" "rustfmt" "rust-analyzer"];
+  };
+  languages.python = {
+    enable = true;
     uv.enable = true;
   };
   languages.cplusplus.enable = true;
-
-
-  # https://devenv.sh/git-hooks/
-  # git-hooks.hooks.shellcheck.enable = true;
-
-  # See full reference at https://devenv.sh/reference/options/
 }
