@@ -15,12 +15,12 @@ use spenso::{
     tensors::parametric::MixedTensor,
 };
 use spenso_hep_lib::HEP_LIB;
-use symbolica::atom::Atom;
+use symbolica::{api::python::PythonExpression, atom::Atom};
 
 #[cfg(feature = "python")]
 use symbolica::api::python::ConvertibleToExpression;
 
-use super::{library::SpensorLibrary, Spensor};
+use super::{library::SpensorLibrary, structure::ArithmeticStructure, Spensor};
 
 #[cfg(feature = "python")]
 use super::ModuleInit;
@@ -58,7 +58,7 @@ impl ModuleInit for SpensoNet {
 #[gen_stub_pyfunction]
 #[pyfunction(name = "to_net")]
 pub fn python_to_tensor_network(
-    a: ConvertibleToExpression,
+    a: ArithmeticStructure,
     library: Option<&SpensorLibrary>,
 ) -> anyhow::Result<SpensoNet> {
     SpensoNet::from_expression(a, library)
@@ -108,7 +108,7 @@ impl<'a> FromPyObject<'a> for ConvertibleToSpensoNet {
 #[cfg(feature = "python")]
 impl PyStubType for ConvertibleToSpensoNet {
     fn type_output() -> pyo3_stub_gen::TypeInfo {
-        ConvertibleToExpression::type_output() | SpensoNet::type_output() | Spensor::type_output()
+        ArithmeticStructure::type_output() | SpensoNet::type_output() | Spensor::type_output()
     }
 }
 
@@ -121,13 +121,13 @@ impl SpensoNet {
     /// Parses an expression into a network
     #[pyo3(signature = (expr, library=None))]
     pub fn from_expression(
-        expr: ConvertibleToExpression,
+        expr: ArithmeticStructure,
         library: Option<&SpensorLibrary>,
     ) -> anyhow::Result<SpensoNet> {
         let lib = library.map(|l| &l.library).unwrap_or(HEP_LIB.deref());
 
         Ok(SpensoNet {
-            network: ParsingNet::try_from_view(expr.to_expression().as_view(), lib)?,
+            network: ParsingNet::try_from_view(expr.to_expression()?.as_view(), lib)?,
         })
     }
 
@@ -191,6 +191,20 @@ impl SpensoNet {
             {
                 ExecutionResult::One => Spensor::one(),
                 ExecutionResult::Zero => Spensor::zero(),
+                ExecutionResult::Val(v) => v.into_owned().into(),
+            },
+        )
+    }
+
+    fn result_scalar(&self) -> PyResult<PythonExpression> {
+        Ok(
+            match self
+                .network
+                .result_scalar()
+                .map_err(|s| PyRuntimeError::new_err(s.to_string()))?
+            {
+                ExecutionResult::One => Atom::num(1).into(),
+                ExecutionResult::Zero => Atom::Zero.into(),
                 ExecutionResult::Val(v) => v.into_owned().into(),
             },
         )

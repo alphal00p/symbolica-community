@@ -7,13 +7,14 @@
 }: {
   # https://devenv.sh/packages/
   packages = [
+    pkgs.gcc
     pkgs.gnum4
     pkgs.gmp
     pkgs.mpfr
-    pkgs.python3
     pkgs.maturin
     pkgs.gnumake
     pkgs.diffutils
+    pkgs.pyright
   ];
 
   languages.nix = {
@@ -26,9 +27,11 @@
 
     components = ["rustc" "cargo" "clippy" "rustfmt" "rust-analyzer"];
   };
+
   languages.python = {
     enable = true;
     uv.enable = true;
+    uv.sync.enable = true;
   };
   languages.cplusplus.enable = true;
 }

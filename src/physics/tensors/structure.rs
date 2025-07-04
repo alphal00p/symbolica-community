@@ -2,6 +2,7 @@ use std::ops::Deref;
 
 use itertools::Itertools;
 
+use pyo3::types::IntoPyDict;
 #[cfg(feature = "python")]
 use pyo3::{
     exceptions::{self, PyIndexError, PyRuntimeError, PyTypeError, PyValueError},
@@ -10,7 +11,10 @@ use pyo3::{
     types::{PyList, PyTuple},
 };
 use spenso::{
-    network::{library::symbolic::ExplicitKey, parsing::ShadowedStructure},
+    network::{
+        library::symbolic::{ExplicitKey, ETS},
+        parsing::ShadowedStructure,
+    },
     structure::{
         abstract_index::AbstractIndex,
         dimension::Dimension,
@@ -19,13 +23,21 @@ use spenso::{
             Euclidean, ExtendibleReps, LibraryRep, Minkowski, RepName, Representation,
         },
         slot::{IsAbstractSlot, Slot},
-        HasName, IndexLess, OrderedStructure, PermutedStructure, TensorStructure, ToSymbolic,
+        HasName, IndexLess, NamedStructure, OrderedStructure, PermutedStructure, TensorStructure,
+        ToSymbolic,
     },
     tensors::symbolic::SymbolicTensor,
 };
 use symbolica::{
-    atom::{Atom, AtomView, FunctionBuilder, NamespacedSymbol, Symbol},
+    api::python::PythonTransformer,
+    atom::{
+        Atom, AtomView, DefaultNamespace, Fun, FunctionAttribute, FunctionBuilder,
+        NamespacedSymbol, Symbol,
+    },
+    printer::PrintOptions,
+    state::Workspace,
     symbol,
+    transformer::{Transformer, TransformerState},
 };
 
 #[cfg(feature = "python")]
@@ -33,13 +45,297 @@ use symbolica::api::python::{ConvertibleToExpression, PythonExpression};
 
 use thiserror::Error;
 
-use idenso::{representations::Bispinor, IndexTooling};
+use idenso::{
+    color::CS, gamma::AGS, metric::PermuteWithMetric, representations::Bispinor, IndexTooling,
+};
 
 #[cfg(feature = "python")]
 use super::{ModuleInit, SliceOrIntOrExpanded};
 
 #[cfg(feature = "python")]
 use pyo3_stub_gen::{derive::*, impl_stub_type, PyStubType};
+
+pub struct ConvertibleToSpensoName(pub SpensoName);
+#[cfg(feature = "python")]
+impl<'py> FromPyObject<'py> for ConvertibleToSpensoName {
+    fn extract_bound(structure: &Bound<'py, PyAny>) -> PyResult<Self> {
+        if let Ok(structure) = structure.extract::<SpensoName>() {
+            Ok(ConvertibleToSpensoName(structure))
+        } else if let Ok(s) = structure.extract::<String>() {
+            Ok(ConvertibleToSpensoName(
+                SpensoName::symbol_shorthand(s, None, None, None, None, None, None).unwrap(),
+            ))
+        } else if let Ok(s) = structure.extract::<PythonExpression>() {
+            if let AtomView::Var(a) = s.as_view() {
+                Ok(ConvertibleToSpensoName(SpensoName {
+                    name: a.get_symbol(),
+                }))
+            } else {
+                Err(PyTypeError::new_err(
+                    "Tensor name cannot be built from non-variable expressions",
+                ))
+            }
+        } else {
+            Err(PyTypeError::new_err("Invalid input type for tensor name"))
+        }
+    }
+}
+
+#[cfg(feature = "python")]
+impl PyStubType for ConvertibleToSpensoName {
+    fn type_output() -> pyo3_stub_gen::TypeInfo {
+        SpensoIndices::type_output() | <Vec<SpensoSlot>>::type_output()
+    }
+}
+pub enum SpensoSlotOrArgOrRep {
+    Slot(SpensoSlot),
+    Arg(PythonExpression),
+    Rep(SpensoRepresentation),
+}
+#[cfg(feature = "python")]
+impl<'py> FromPyObject<'py> for SpensoSlotOrArgOrRep {
+    fn extract_bound(structure: &Bound<'py, PyAny>) -> PyResult<Self> {
+        if let Ok(structure) = structure.extract::<SpensoSlot>() {
+            Ok(SpensoSlotOrArgOrRep::Slot(structure))
+        } else if let Ok(s) = structure.extract::<SpensoRepresentation>() {
+            Ok(SpensoSlotOrArgOrRep::Rep(s))
+        } else if let Ok(s) = structure.extract::<ConvertibleToExpression>() {
+            Ok(SpensoSlotOrArgOrRep::Arg(s.to_expression()))
+        } else {
+            Err(PyTypeError::new_err(
+                "Invalid input type for tensor slot, representation, or argument",
+            ))
+        }
+    }
+}
+
+#[cfg(feature = "python")]
+impl PyStubType for SpensoSlotOrArgOrRep {
+    fn type_output() -> pyo3_stub_gen::TypeInfo {
+        SpensoIndices::type_output() | <Vec<SpensoSlot>>::type_output()
+    }
+}
+
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass(module = "symbolica_community.tensors"),
+    pyclass(name = "TensorName", module = "symbolica_community.tensors")
+)]
+#[derive(Clone)]
+/// The name of a tensor.
+pub struct SpensoName {
+    pub name: Symbol,
+    // pub args: Vec<Atom>,
+}
+
+#[cfg(feature = "python")]
+#[gen_stub_pymethods]
+#[pymethods]
+impl SpensoName {
+    #[new]
+    #[pyo3(signature = (name,is_symmetric=None,is_antisymmetric=None,is_cyclesymmetric=None,is_linear=None,custom_normalization=None,custom_print=None))]
+    /// Shorthand notation for :func:`Expression.symbol`.
+    fn symbol_shorthand(
+        name: String,
+        is_symmetric: Option<bool>,
+        is_antisymmetric: Option<bool>,
+        is_cyclesymmetric: Option<bool>,
+        is_linear: Option<bool>,
+        custom_normalization: Option<PythonTransformer>,
+        custom_print: Option<PyObject>,
+    ) -> PyResult<Self> {
+        let namespace = DefaultNamespace {
+            namespace: "spenso_python".into(),
+            data: "",
+            file: "".into(),
+            line: 0,
+        };
+        if is_symmetric.is_none()
+            && is_antisymmetric.is_none()
+            && is_cyclesymmetric.is_none()
+            && is_linear.is_none()
+            && custom_normalization.is_none()
+            && custom_print.is_none()
+        {
+            let id = Symbol::new(namespace.attach_namespace(&name))
+                .build()
+                .map_err(|e| exceptions::PyTypeError::new_err(e.to_string()))?;
+
+            return Ok(SpensoName {
+                name: id,
+                // args: vec![],
+            });
+        }
+
+        let count = (is_symmetric == Some(true)) as u8
+            + (is_antisymmetric == Some(true)) as u8
+            + (is_cyclesymmetric == Some(true)) as u8;
+
+        if count > 1 {
+            Err(exceptions::PyValueError::new_err(
+                "Function cannot be both symmetric, antisymmetric or cyclesymmetric",
+            ))?;
+        }
+
+        let mut opts = vec![];
+
+        if let Some(true) = is_symmetric {
+            opts.push(FunctionAttribute::Symmetric);
+        }
+
+        if let Some(true) = is_antisymmetric {
+            opts.push(FunctionAttribute::Antisymmetric);
+        }
+
+        if let Some(true) = is_cyclesymmetric {
+            opts.push(FunctionAttribute::Cyclesymmetric);
+        }
+
+        if let Some(true) = is_linear {
+            opts.push(FunctionAttribute::Linear);
+        }
+
+        let name = namespace.attach_namespace(&name);
+
+        let mut symbol = Symbol::new(name).with_attributes(opts);
+
+        if let Some(f) = custom_normalization {
+            symbol = symbol.with_normalization_function(Box::new(
+                move |input: AtomView<'_>, out: &mut Atom| {
+                    let _ = Workspace::get_local()
+                        .with(|ws| {
+                            Transformer::execute_chain(
+                                input,
+                                &f.chain,
+                                ws,
+                                &TransformerState::default(),
+                                out,
+                            )
+                        })
+                        .unwrap();
+                    true
+                },
+            ))
+        }
+
+        if let Some(f) = custom_print {
+            symbol = symbol.with_print_function(Box::new(
+                move |input: AtomView<'_>, opts: &PrintOptions| {
+                    Python::with_gil(|py| {
+                        let kwargs = opts.into_py_dict(py).unwrap();
+                        f.call(
+                            py,
+                            (PythonExpression::from(input.to_owned()),),
+                            Some(&kwargs),
+                        )
+                        .unwrap()
+                        .extract::<Option<String>>(py)
+                        .unwrap()
+                    })
+                },
+            ))
+        }
+
+        let symbol = symbol
+            .build()
+            .map_err(|e| exceptions::PyTypeError::new_err(e.to_string()))?;
+
+        Ok(SpensoName {
+            name: symbol,
+            // args: vec![],
+        })
+    }
+
+    #[pyo3(signature = (*args))]
+    fn __call__(&self, args: &Bound<'_, PyTuple>) -> PyResult<PossiblyIndexed> {
+        let mut add_args: Vec<Atom> = Vec::new();
+        let mut slots: Vec<_> = Vec::new();
+        let mut reps: Vec<_> = Vec::new();
+
+        for arg_bound in args.iter() {
+            let convertible = arg_bound.extract::<SpensoSlotOrArgOrRep>()?;
+
+            match convertible {
+                SpensoSlotOrArgOrRep::Arg(expr) => add_args.push(expr.expr),
+                SpensoSlotOrArgOrRep::Slot(slot) => slots.push(slot.slot),
+                SpensoSlotOrArgOrRep::Rep(rep) => reps.push(rep.representation),
+            }
+        }
+
+        let add_args = if add_args.is_empty() {
+            None
+        } else {
+            Some(add_args)
+        };
+
+        if slots.is_empty() && reps.is_empty() {
+            Err(exceptions::PyValueError::new_err(
+                "No slots or representations provided",
+            ))
+        } else if reps.is_empty() {
+            Ok(PossiblyIndexed::Indexed(SpensoIndices {
+                structure: ShadowedStructure::from_iter(slots, self.name, add_args),
+            }))
+        } else if slots.is_empty() {
+            Ok(PossiblyIndexed::Unindexed(SpensoStructure {
+                structure: ExplicitKey::from_iter(reps, self.name, add_args),
+            }))
+        } else {
+            Err(exceptions::PyValueError::new_err(
+                "Cannot generate structure with both slots and representations",
+            ))
+        }
+    }
+
+    fn __repr__(&self) -> String {
+        format!("{:?}", self.name)
+    }
+
+    fn __str__(&self) -> String {
+        format!("{}", self.name)
+    }
+
+    fn to_expression(&self) -> PythonExpression {
+        PythonExpression::from(Atom::var(self.name))
+    }
+
+    #[classattr]
+    fn g() -> Self {
+        Self { name: ETS.metric }
+    }
+    #[classattr]
+    fn flat() -> Self {
+        Self { name: ETS.flat }
+    }
+    #[classattr]
+    fn gamma() -> Self {
+        Self { name: AGS.gamma }
+    }
+    #[classattr]
+    fn gamma5() -> Self {
+        Self { name: AGS.gamma5 }
+    }
+    #[classattr]
+    fn projm() -> Self {
+        Self { name: AGS.projm }
+    }
+    #[classattr]
+    fn projp() -> Self {
+        Self { name: AGS.projp }
+    }
+    #[classattr]
+    fn sigma() -> Self {
+        Self { name: AGS.sigma }
+    }
+    #[classattr]
+    fn f() -> Self {
+        Self { name: CS.f }
+    }
+    #[classattr]
+    fn t() -> Self {
+        Self { name: CS.t }
+    }
+}
 
 #[cfg_attr(
     feature = "python",
@@ -74,6 +370,7 @@ impl From<ShadowedStructure> for SpensoIndices {
 impl ModuleInit for SpensoIndices {
     fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.add_class::<SpensoIndices>()?;
+        m.add_class::<SpensoName>()?;
         m.add_class::<SpensoSlot>()?;
         m.add_class::<SpensoStructure>()?;
         m.add_class::<SpensoRepresentation>()?;
@@ -158,11 +455,11 @@ impl PyStubType for ConvertibleToStructure {
 impl SpensoIndices {
     #[new]
     #[pyo3(signature =
-           (name,
-           *additional_args))]
+           (
+           *additional_args,name=None))]
     pub fn from_list(
-        name: PythonExpression,
         additional_args: &Bound<'_, PyTuple>,
+        name: Option<ConvertibleToSpensoName>,
     ) -> PyResult<Self> {
         let mut args = Vec::new();
         let mut slots = Vec::new();
@@ -179,19 +476,25 @@ impl SpensoIndices {
         }
 
         let args = if args.is_empty() { None } else { Some(args) };
-
-        let id = match name.expr.as_view() {
-            AtomView::Var(v) => v.get_symbol(),
-            _ => {
-                return Err(exceptions::PyTypeError::new_err(
-                    "Only symbols can be used as names",
-                ))
-            }
+        let mut a: PermutedStructure<ShadowedStructure> =
+            PermutedStructure::<OrderedStructure>::from_iter(slots).map_structure(Into::into);
+        if let Some(name) = name {
+            a.structure.set_name(name.0.name);
         };
+        a.structure.additional_args = args;
 
-        Ok(SpensoIndices {
-            structure: ShadowedStructure::from_iter(slots, id.into(), args),
-        })
+        Ok(SpensoIndices { structure: a })
+    }
+
+    fn set_name(&mut self, name: ConvertibleToSpensoName) {
+        self.structure.structure.set_name(name.0.name);
+    }
+
+    fn get_name(&self) -> Option<SpensoName> {
+        self.structure
+            .structure
+            .name()
+            .map(|a| SpensoName { name: a })
     }
 
     fn __repr__(&self) -> String {
@@ -224,16 +527,16 @@ impl SpensoIndices {
     }
 
     fn to_expression(&self) -> PyResult<PythonExpression> {
-        let structure = SymbolicTensor::from_named(&self.structure.structure)
-            .ok_or(PyRuntimeError::new_err("No name"))?;
+        if self.structure.structure.name().is_none() {
+            return Err(PyRuntimeError::new_err("No name"));
+        }
 
         let atom = PermutedStructure {
             index_permutation: self.structure.index_permutation.clone(),
             rep_permutation: self.structure.rep_permutation.clone(),
-            structure,
+            structure: self.structure.structure.clone(),
         }
-        .permute_inds()
-        .expression;
+        .permute_with_metric();
 
         Ok(atom.into())
     }
@@ -334,22 +637,6 @@ impl SpensoIndices {
     pub fn __rmul__(&self, rhs: ArithmeticStructure) -> PyResult<PythonExpression> {
         self.__mul__(rhs)
     }
-
-    // /// Take `self` to power `exp`, returning the result.
-    // pub fn __pow__(
-    //     &self,
-    //     rhs: ArithmeticStructure,
-    //     number: Option<isize>,
-    // ) -> PyResult<PythonExpression> {
-    //     if number.is_some() {
-    //         return Err(exceptions::PyValueError::new_err(
-    //             "Optional number argument not supported",
-    //         ));
-    //     }
-
-    //     let rhs = rhs.to_expression()?;
-    //     Ok(self.to_expression()?.exp().pow(&rhs.expr).into())
-    // }
 }
 
 #[cfg_attr(
@@ -431,7 +718,7 @@ impl SpensoStructure {
            *additional_args,name=None))]
     pub fn from_list(
         additional_args: &Bound<'_, PyTuple>,
-        name: Option<PythonExpression>,
+        name: Option<ConvertibleToSpensoName>,
     ) -> PyResult<Self> {
         let mut args = Vec::new();
         let mut slots = Vec::new();
@@ -452,18 +739,22 @@ impl SpensoStructure {
         let mut a: PermutedStructure<ExplicitKey> =
             PermutedStructure::<IndexLess>::from_iter(slots).map_structure(Into::into);
         if let Some(name) = name {
-            match name.expr.as_view() {
-                AtomView::Var(v) => a.structure.set_name(v.get_symbol().into()),
-                _ => {
-                    return Err(exceptions::PyTypeError::new_err(
-                        "Only symbols can used as names",
-                    ))
-                }
-            }
+            a.structure.set_name(name.0.name);
         };
         a.structure.additional_args = args;
 
         Ok(SpensoStructure { structure: a })
+    }
+
+    fn set_name(&mut self, name: ConvertibleToSpensoName) {
+        self.structure.structure.set_name(name.0.name);
+    }
+
+    fn get_name(&self) -> Option<SpensoName> {
+        self.structure
+            .structure
+            .name()
+            .map(|a| SpensoName { name: a })
     }
 
     fn __repr__(&self) -> String {
@@ -781,6 +1072,17 @@ impl SpensoStructure {
         Ok((final_additional_args, post_separator_args))
     }
 }
+#[derive(IntoPyObject)]
+pub enum PossiblyIndexed {
+    Unindexed(SpensoStructure),
+    Indexed(SpensoIndices),
+}
+
+impl PyStubType for PossiblyIndexed {
+    fn type_output() -> pyo3_stub_gen::TypeInfo {
+        SpensoStructure::type_output() | SpensoIndices::type_output()
+    }
+}
 
 #[cfg_attr(
     feature = "python",
@@ -940,6 +1242,63 @@ impl SpensoRepresentation {
 
                 Ok(a.into_pyobject(py).map(|a| a.unbind())?.into_any())
             }
+        }
+    }
+
+    fn g(
+        &self,
+        i: ConvertibleToAbstractIndex,
+        j: ConvertibleToAbstractIndex,
+    ) -> PyResult<SpensoIndices> {
+        match (i, j) {
+            (ConvertibleToAbstractIndex::Aind(i), ConvertibleToAbstractIndex::Aind(j)) => {
+                let structure = ShadowedStructure::from_iter(
+                    [self.representation.slot(i), self.representation.slot(j)],
+                    ETS.metric,
+                    None,
+                );
+
+                Ok(SpensoIndices { structure })
+            }
+            _ => Err(PyValueError::new_err("indices must be abstract indices")),
+        }
+    }
+
+    fn flat(
+        &self,
+        i: ConvertibleToAbstractIndex,
+        j: ConvertibleToAbstractIndex,
+    ) -> PyResult<SpensoIndices> {
+        match (i, j) {
+            (ConvertibleToAbstractIndex::Aind(i), ConvertibleToAbstractIndex::Aind(j)) => {
+                let structure = ShadowedStructure::from_iter(
+                    [self.representation.slot(i), self.representation.slot(j)],
+                    ETS.flat,
+                    None,
+                );
+
+                Ok(SpensoIndices { structure })
+            }
+            _ => Err(PyValueError::new_err("indices must be abstract indices")),
+        }
+    }
+
+    fn id(
+        &self,
+        i: ConvertibleToAbstractIndex,
+        j: ConvertibleToAbstractIndex,
+    ) -> PyResult<SpensoIndices> {
+        match (i, j) {
+            (ConvertibleToAbstractIndex::Aind(i), ConvertibleToAbstractIndex::Aind(j)) => {
+                let structure = ShadowedStructure::from_iter(
+                    [self.representation.slot(i), self.representation.slot(j)],
+                    ETS.metric,
+                    None,
+                );
+
+                Ok(SpensoIndices { structure })
+            }
+            _ => Err(PyValueError::new_err("indices must be abstract indices")),
         }
     }
 

@@ -39,7 +39,7 @@ package-mode = false
 package = false
 
 [tool.pyright]
-venvPath = ".devenv/state/"
+venvPath = ".devenv/state/venv"
 venv = ".venv"
 
 [dependency-groups]
