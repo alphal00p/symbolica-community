@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::{collections::HashMap, ops::Deref};
 
 #[cfg(feature = "python")]
 use pyo3::{
@@ -8,14 +8,23 @@ use pyo3::{
 
 use spenso::{
     network::{
-        library::symbolic::ExplicitKey, parsing::ShadowedStructure, store::NetworkStore,
+        library::symbolic::ExplicitKey,
+        parsing::ShadowedStructure,
+        store::{NetworkStore, TensorScalarStoreMapping},
         ExecutionResult, Network, Sequential, SingleSmallestDegree, SmallestDegree, Steps,
     },
     structure::{abstract_index::AbstractIndex, HasName},
-    tensors::parametric::MixedTensor,
+    tensors::parametric::{atomcore::TensorAtomMaps, MixedTensor, ParamOrConcrete},
 };
 use spenso_hep_lib::HEP_LIB;
-use symbolica::{api::python::PythonExpression, atom::Atom};
+use symbolica::{
+    api::python::{ConvertibleToPatternRestriction, ConvertibleToReplaceWith, PythonExpression},
+    atom::{Atom, AtomCore, AtomView},
+    evaluate::EvaluationFn,
+    id::{MatchSettings, ReplaceWith},
+    poly::Variable,
+    state::RecycledAtom,
+};
 
 #[cfg(feature = "python")]
 use symbolica::api::python::ConvertibleToExpression;
@@ -149,6 +158,154 @@ impl SpensoNet {
         SpensoNet {
             network: Network::zero(),
         }
+    }
+
+    #[pyo3(signature = (pattern, rhs, cond = None, non_greedy_wildcards = None, level_range = None, level_is_tree_depth = None, allow_new_wildcards_on_rhs = None, rhs_cache_size = None, repeat = None))]
+    pub fn replace(
+        &self,
+        pattern: ConvertibleToExpression,
+        rhs: ConvertibleToReplaceWith,
+        cond: Option<ConvertibleToPatternRestriction>,
+        non_greedy_wildcards: Option<Vec<PythonExpression>>,
+        level_range: Option<(usize, Option<usize>)>,
+        level_is_tree_depth: Option<bool>,
+        allow_new_wildcards_on_rhs: Option<bool>,
+        rhs_cache_size: Option<usize>,
+        repeat: Option<bool>,
+    ) -> PyResult<SpensoNet> {
+        let pattern = pattern.to_expression().expr.to_pattern();
+        let ReplaceWith::Pattern(rhs) = &rhs.to_replace_with()? else {
+            return Err(exceptions::PyTypeError::new_err(
+                "Only normal patterns supported",
+            ));
+        };
+
+        let mut settings = MatchSettings::cached();
+
+        if let Some(ngw) = non_greedy_wildcards {
+            settings.non_greedy_wildcards = ngw
+                .iter()
+                .map(|x| match x.expr.as_view() {
+                    AtomView::Var(v) => {
+                        let name = v.get_symbol();
+                        if v.get_wildcard_level() == 0 {
+                            return Err(exceptions::PyTypeError::new_err(
+                                "Only wildcards can be restricted.",
+                            ));
+                        }
+                        Ok(name)
+                    }
+                    _ => Err(exceptions::PyTypeError::new_err(
+                        "Only wildcards can be restricted.",
+                    )),
+                })
+                .collect::<Result<_, _>>()?;
+        }
+        if let Some(level_range) = level_range {
+            settings.level_range = level_range;
+        }
+        if let Some(level_is_tree_depth) = level_is_tree_depth {
+            settings.level_is_tree_depth = level_is_tree_depth;
+        }
+        if let Some(allow_new_wildcards_on_rhs) = allow_new_wildcards_on_rhs {
+            settings.allow_new_wildcards_on_rhs = allow_new_wildcards_on_rhs;
+        }
+        if let Some(rhs_cache_size) = rhs_cache_size {
+            settings.rhs_cache_size = rhs_cache_size;
+        }
+
+        let cond = None;
+
+        Ok(SpensoNet {
+            network: self.network.map_ref(
+                |s| {
+                    let r = s.replace(&pattern);
+                    let r = if let Some(cond) = cond.as_ref() {
+                        r.when(cond)
+                    } else {
+                        r
+                    }
+                    .non_greedy_wildcards(settings.non_greedy_wildcards.clone())
+                    .level_range(settings.level_range)
+                    .level_is_tree_depth(settings.level_is_tree_depth)
+                    .allow_new_wildcards_on_rhs(settings.allow_new_wildcards_on_rhs)
+                    .rhs_cache_size(settings.rhs_cache_size);
+
+                    let r = if let Some(true) = repeat {
+                        r.repeat()
+                    } else {
+                        r
+                    };
+
+                    r.with(rhs.borrow())
+                },
+                |t| match t {
+                    ParamOrConcrete::Param(p) => {
+                        let r = p.replace(&pattern);
+                        let r = if let Some(cond) = cond.as_ref() {
+                            r.when(cond)
+                        } else {
+                            r
+                        }
+                        .non_greedy_wildcards(settings.non_greedy_wildcards.clone())
+                        .level_range(settings.level_range)
+                        .level_is_tree_depth(settings.level_is_tree_depth)
+                        .allow_new_wildcards_on_rhs(settings.allow_new_wildcards_on_rhs)
+                        .rhs_cache_size(settings.rhs_cache_size);
+
+                        let r = if let Some(true) = repeat {
+                            r.repeat()
+                        } else {
+                            r
+                        };
+
+                        ParamOrConcrete::Param(r.with(rhs.borrow()))
+                    }
+                    _ => t.clone(),
+                },
+            ),
+        })
+    }
+
+    pub fn evaluate(
+        &self,
+        constants: HashMap<PythonExpression, f64>,
+        functions: HashMap<Variable, PyObject>,
+    ) -> PyResult<Self> {
+        let constants = constants
+            .iter()
+            .map(|(k, v)| (k.expr.as_view(), *v))
+            .collect();
+
+        let functions = functions
+            .into_iter()
+            .map(|(k, v)| {
+                let id = if let Variable::Symbol(v) = k {
+                    v
+                } else {
+                    Err(exceptions::PyValueError::new_err(format!(
+                        "Expected function name instead of {:?}",
+                        k
+                    )))?
+                };
+
+                Ok((
+                    id,
+                    EvaluationFn::new(Box::new(move |args, _, _, _| {
+                        Python::with_gil(|py| {
+                            v.call(py, (args.to_vec(),), None)
+                                .expect("Bad callback function")
+                                .extract::<f64>(py)
+                                .expect("Function does not return a float")
+                        })
+                    })),
+                ))
+            })
+            .collect::<PyResult<_>>()?;
+
+        let mut network = self.network.clone();
+        network.evaluate_real(|x| x.into(), &constants, &functions);
+        Ok(SpensoNet { network })
     }
 
     #[pyo3(signature = (library=None, n_steps=None, single_contract=false))]
