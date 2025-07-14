@@ -23,7 +23,10 @@ use spenso::{
 
 use spenso::{
     network::parsing::ShadowedStructure,
-    structure::{permuted::Perm, HasStructure, PermutedStructure, ScalarTensor, TensorStructure},
+    structure::{
+        abstract_index::AbstractIndex, permuted::Perm, HasStructure, PermutedStructure,
+        ScalarTensor, TensorStructure,
+    },
     tensors::{
         complex::RealOrComplexTensor,
         data::{DataTensor, StorageTensor},
@@ -94,11 +97,11 @@ pub(crate) fn initialize_spenso(m: &Bound<'_, PyModule>) -> PyResult<()> {
 )]
 #[derive(Clone)]
 pub struct Spensor {
-    tensor: PermutedStructure<MixedTensor<f64, ShadowedStructure>>,
+    tensor: PermutedStructure<MixedTensor<f64, ShadowedStructure<AbstractIndex>>>,
 }
 
 impl Deref for Spensor {
-    type Target = MixedTensor<f64, ShadowedStructure>;
+    type Target = MixedTensor<f64, ShadowedStructure<AbstractIndex>>;
 
     fn deref(&self) -> &Self::Target {
         &self.tensor.structure
@@ -441,8 +444,8 @@ impl Spensor {
     }
 }
 
-impl From<DataTensor<f64, ShadowedStructure>> for Spensor {
-    fn from(value: DataTensor<f64, ShadowedStructure>) -> Self {
+impl From<DataTensor<f64, ShadowedStructure<AbstractIndex>>> for Spensor {
+    fn from(value: DataTensor<f64, ShadowedStructure<AbstractIndex>>) -> Self {
         Spensor {
             tensor: PermutedStructure::identity(MixedTensor::Concrete(RealOrComplexTensor::Real(
                 value,
@@ -451,8 +454,8 @@ impl From<DataTensor<f64, ShadowedStructure>> for Spensor {
     }
 }
 
-impl From<DataTensor<Complex<f64>, ShadowedStructure>> for Spensor {
-    fn from(value: DataTensor<Complex<f64>, ShadowedStructure>) -> Self {
+impl From<DataTensor<Complex<f64>, ShadowedStructure<AbstractIndex>>> for Spensor {
+    fn from(value: DataTensor<Complex<f64>, ShadowedStructure<AbstractIndex>>) -> Self {
         Spensor {
             tensor: PermutedStructure::identity(MixedTensor::Concrete(
                 RealOrComplexTensor::Complex(value.map_data(|c| c.into())),
@@ -460,8 +463,8 @@ impl From<DataTensor<Complex<f64>, ShadowedStructure>> for Spensor {
         }
     }
 }
-impl From<MixedTensor<f64, ShadowedStructure>> for Spensor {
-    fn from(value: MixedTensor<f64, ShadowedStructure>) -> Self {
+impl From<MixedTensor<f64, ShadowedStructure<AbstractIndex>>> for Spensor {
+    fn from(value: MixedTensor<f64, ShadowedStructure<AbstractIndex>>) -> Self {
         Spensor {
             tensor: PermutedStructure::identity(value),
         }
@@ -477,9 +480,9 @@ impl From<MixedTensor<f64, ShadowedStructure>> for Spensor {
 )]
 #[derive(Clone)]
 pub struct SpensoExpressionEvaluator {
-    pub eval_rat: LinearizedEvalTensor<Complex<Rational>, ShadowedStructure>,
-    pub eval: Option<LinearizedEvalTensor<f64, ShadowedStructure>>,
-    pub eval_complex: LinearizedEvalTensor<Complex<f64>, ShadowedStructure>,
+    pub eval_rat: LinearizedEvalTensor<Complex<Rational>, ShadowedStructure<AbstractIndex>>,
+    pub eval: Option<LinearizedEvalTensor<f64, ShadowedStructure<AbstractIndex>>>,
+    pub eval_complex: LinearizedEvalTensor<Complex<f64>, ShadowedStructure<AbstractIndex>>,
 }
 
 #[cfg(feature = "python")]
@@ -567,7 +570,7 @@ impl SpensoExpressionEvaluator {
 )]
 #[derive(Clone)]
 pub struct SpensoCompiledExpressionEvaluator {
-    pub eval: CompiledEvalTensor<ShadowedStructure>,
+    pub eval: CompiledEvalTensor<ShadowedStructure<AbstractIndex>>,
 }
 
 #[gen_stub_pymethods]

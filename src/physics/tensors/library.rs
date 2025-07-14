@@ -8,7 +8,7 @@ use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum, gen_stub_py
 use pyo3_stub_gen::PyStubType;
 use spenso::{
     network::library::symbolic::{ExplicitKey, TensorLibrary},
-    structure::{HasStructure, PermutedStructure},
+    structure::{abstract_index::AbstractIndex, HasStructure, PermutedStructure},
     tensors::parametric::MixedTensor,
 };
 use symbolica::{
@@ -28,7 +28,7 @@ use super::ModuleInit;
     pyclass(name = "TensorLibrary", module = "symbolica_community.tensors")
 )]
 pub struct SpensorLibrary {
-    pub(crate) library: TensorLibrary<MixedTensor<f64, ExplicitKey>>,
+    pub(crate) library: TensorLibrary<MixedTensor<f64, ExplicitKey<AbstractIndex>>, AbstractIndex>,
 }
 
 #[cfg(feature = "python")]

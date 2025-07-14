@@ -21,7 +21,10 @@ use spenso::{
 use crate::physics::tensors::SliceOrIntOrExpanded;
 use spenso::{
     network::library::symbolic::ExplicitKey,
-    structure::{permuted::Perm, HasStructure, PermutedStructure, ScalarTensor, TensorStructure},
+    structure::{
+        abstract_index::AbstractIndex, permuted::Perm, HasStructure, PermutedStructure,
+        ScalarTensor, TensorStructure,
+    },
     tensors::{
         complex::RealOrComplexTensor,
         data::{DataTensor, StorageTensor},
@@ -51,11 +54,11 @@ use super::{
 )]
 #[derive(Clone)]
 pub struct LibrarySpensor {
-    pub tensor: PermutedStructure<MixedTensor<f64, ExplicitKey>>,
+    pub tensor: PermutedStructure<MixedTensor<f64, ExplicitKey<AbstractIndex>>>,
 }
 
 impl Deref for LibrarySpensor {
-    type Target = MixedTensor<f64, ExplicitKey>;
+    type Target = MixedTensor<f64, ExplicitKey<AbstractIndex>>;
 
     fn deref(&self) -> &Self::Target {
         &self.tensor.structure
@@ -262,8 +265,8 @@ impl LibrarySpensor {
     }
 }
 
-impl From<DataTensor<f64, ExplicitKey>> for LibrarySpensor {
-    fn from(value: DataTensor<f64, ExplicitKey>) -> Self {
+impl From<DataTensor<f64, ExplicitKey<AbstractIndex>>> for LibrarySpensor {
+    fn from(value: DataTensor<f64, ExplicitKey<AbstractIndex>>) -> Self {
         LibrarySpensor {
             tensor: PermutedStructure::identity(MixedTensor::Concrete(RealOrComplexTensor::Real(
                 value,
@@ -272,8 +275,8 @@ impl From<DataTensor<f64, ExplicitKey>> for LibrarySpensor {
     }
 }
 
-impl From<DataTensor<Complex<f64>, ExplicitKey>> for LibrarySpensor {
-    fn from(value: DataTensor<Complex<f64>, ExplicitKey>) -> Self {
+impl From<DataTensor<Complex<f64>, ExplicitKey<AbstractIndex>>> for LibrarySpensor {
+    fn from(value: DataTensor<Complex<f64>, ExplicitKey<AbstractIndex>>) -> Self {
         LibrarySpensor {
             tensor: PermutedStructure::identity(MixedTensor::Concrete(
                 RealOrComplexTensor::Complex(value.map_data(|c| c.into())),

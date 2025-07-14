@@ -11,7 +11,7 @@ use spenso::{
         library::symbolic::ExplicitKey, parsing::ShadowedStructure, store::NetworkStore,
         ExecutionResult, Network, Sequential, SingleSmallestDegree, SmallestDegree, Steps,
     },
-    structure::HasName,
+    structure::{abstract_index::AbstractIndex, HasName},
     tensors::parametric::MixedTensor,
 };
 use spenso_hep_lib::HEP_LIB;
@@ -39,7 +39,10 @@ use pyo3_stub_gen::{derive::*, PyStubType};
 /// Such a network is a graph representing the arithmetic operations between tensors.
 /// In the most basic case, edges represent the contraction of indices.
 pub struct SpensoNet {
-    pub network: Network<NetworkStore<MixedTensor<f64, ShadowedStructure>, Atom>, ExplicitKey>,
+    pub network: Network<
+        NetworkStore<MixedTensor<f64, ShadowedStructure<AbstractIndex>>, Atom>,
+        ExplicitKey<AbstractIndex>,
+    >,
 }
 
 #[cfg(feature = "python")]
@@ -64,7 +67,10 @@ pub fn python_to_tensor_network(
     SpensoNet::from_expression(a, library)
 }
 
-pub type ParsingNet = Network<NetworkStore<MixedTensor<f64, ShadowedStructure>, Atom>, ExplicitKey>;
+pub type ParsingNet = Network<
+    NetworkStore<MixedTensor<f64, ShadowedStructure<AbstractIndex>>, Atom>,
+    ExplicitKey<AbstractIndex>,
+>;
 
 impl From<ParsingNet> for SpensoNet {
     fn from(network: ParsingNet) -> Self {

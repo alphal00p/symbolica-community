@@ -274,7 +274,9 @@ impl SpensoName {
             ))
         } else if reps.is_empty() {
             Ok(PossiblyIndexed::Indexed(SpensoIndices {
-                structure: ShadowedStructure::from_iter(slots, self.name, add_args),
+                structure: ShadowedStructure::<AbstractIndex>::from_iter(
+                    slots, self.name, add_args,
+                ),
             }))
         } else if slots.is_empty() {
             Ok(PossiblyIndexed::Unindexed(SpensoStructure {
@@ -347,19 +349,19 @@ impl SpensoName {
 /// This has an optional name, and accompanying symbolica expressions that are considered as additional non-indexed arguments.
 /// The structure is essentially a list of `Slots` that are used to define the structure of the tensor.
 pub struct SpensoIndices {
-    pub structure: PermutedStructure<ShadowedStructure>,
+    pub structure: PermutedStructure<ShadowedStructure<AbstractIndex>>,
 }
 
 impl Deref for SpensoIndices {
-    type Target = ShadowedStructure;
+    type Target = ShadowedStructure<AbstractIndex>;
 
     fn deref(&self) -> &Self::Target {
         &self.structure.structure
     }
 }
 
-impl From<ShadowedStructure> for SpensoIndices {
-    fn from(value: ShadowedStructure) -> Self {
+impl From<ShadowedStructure<AbstractIndex>> for SpensoIndices {
+    fn from(value: ShadowedStructure<AbstractIndex>) -> Self {
         SpensoIndices {
             structure: PermutedStructure::identity(value),
         }
@@ -476,7 +478,7 @@ impl SpensoIndices {
         }
 
         let args = if args.is_empty() { None } else { Some(args) };
-        let mut a: PermutedStructure<ShadowedStructure> =
+        let mut a: PermutedStructure<ShadowedStructure<AbstractIndex>> =
             PermutedStructure::<OrderedStructure>::from_iter(slots).map_structure(Into::into);
         if let Some(name) = name {
             a.structure.set_name(name.0.name);
@@ -649,11 +651,11 @@ impl SpensoIndices {
 /// This has an optional name, and accompanying symbolica expressions that are considered as additional non-indexed arguments.
 /// The structure is essentially a list of `Representation` that are used to define the structure of the tensor.
 pub struct SpensoStructure {
-    pub structure: PermutedStructure<ExplicitKey>,
+    pub structure: PermutedStructure<ExplicitKey<AbstractIndex>>,
 }
 
 impl Deref for SpensoStructure {
-    type Target = ExplicitKey;
+    type Target = ExplicitKey<AbstractIndex>;
 
     fn deref(&self) -> &Self::Target {
         &self.structure.structure
@@ -662,8 +664,8 @@ impl Deref for SpensoStructure {
 
 pub struct ConvertibleToIndexLess(pub SpensoStructure);
 
-impl From<ExplicitKey> for SpensoStructure {
-    fn from(value: ExplicitKey) -> Self {
+impl From<ExplicitKey<AbstractIndex>> for SpensoStructure {
+    fn from(value: ExplicitKey<AbstractIndex>) -> Self {
         SpensoStructure {
             structure: PermutedStructure::identity(value),
         }
@@ -736,7 +738,7 @@ impl SpensoStructure {
 
         let args = if args.is_empty() { None } else { Some(args) };
 
-        let mut a: PermutedStructure<ExplicitKey> =
+        let mut a: PermutedStructure<ExplicitKey<AbstractIndex>> =
             PermutedStructure::<IndexLess>::from_iter(slots).map_structure(Into::into);
         if let Some(name) = name {
             a.structure.set_name(name.0.name);
@@ -1252,7 +1254,7 @@ impl SpensoRepresentation {
     ) -> PyResult<SpensoIndices> {
         match (i, j) {
             (ConvertibleToAbstractIndex::Aind(i), ConvertibleToAbstractIndex::Aind(j)) => {
-                let structure = ShadowedStructure::from_iter(
+                let structure = ShadowedStructure::<AbstractIndex>::from_iter(
                     [self.representation.slot(i), self.representation.slot(j)],
                     ETS.metric,
                     None,
@@ -1271,7 +1273,7 @@ impl SpensoRepresentation {
     ) -> PyResult<SpensoIndices> {
         match (i, j) {
             (ConvertibleToAbstractIndex::Aind(i), ConvertibleToAbstractIndex::Aind(j)) => {
-                let structure = ShadowedStructure::from_iter(
+                let structure = ShadowedStructure::<AbstractIndex>::from_iter(
                     [self.representation.slot(i), self.representation.slot(j)],
                     ETS.flat,
                     None,
@@ -1290,7 +1292,7 @@ impl SpensoRepresentation {
     ) -> PyResult<SpensoIndices> {
         match (i, j) {
             (ConvertibleToAbstractIndex::Aind(i), ConvertibleToAbstractIndex::Aind(j)) => {
-                let structure = ShadowedStructure::from_iter(
+                let structure = ShadowedStructure::<AbstractIndex>::from_iter(
                     [self.representation.slot(i), self.representation.slot(j)],
                     ETS.metric,
                     None,
