@@ -11,7 +11,8 @@ use spenso::{
         library::symbolic::ExplicitKey,
         parsing::ShadowedStructure,
         store::{NetworkStore, TensorScalarStoreMapping},
-        ExecutionResult, Network, Sequential, SingleSmallestDegree, SmallestDegree, Steps,
+        ContractScalars, ExecutionResult, Network, Sequential, SingleSmallestDegree,
+        SmallestDegree, SmallestDegreeIter, Steps,
     },
     structure::{abstract_index::AbstractIndex, HasName},
     tensors::parametric::{atomcore::TensorAtomMaps, MixedTensor, ParamOrConcrete},
@@ -53,6 +54,20 @@ pub struct SpensoNet {
         ExplicitKey<AbstractIndex>,
     >,
 }
+
+#[cfg_attr(
+    feature = "python",
+    gen_stub_pyclass_enum(module = "symbolica_community.tensors"),
+    pyclass(name = "ExecutionMode", module = "symbolica_community.tensors")
+)]
+#[derive(Clone)]
+pub enum ExecutionMode {
+    Single,
+    Scalar,
+    All,
+}
+
+impl ModuleInit for ExecutionMode {}
 
 #[cfg(feature = "python")]
 impl ModuleInit for SpensoNet {
@@ -308,39 +323,55 @@ impl SpensoNet {
         Ok(SpensoNet { network })
     }
 
-    #[pyo3(signature = (library=None, n_steps=None, single_contract=false))]
+    #[pyo3(signature = (library=None, n_steps=None, mode=ExecutionMode::All))]
     fn execute(
         &mut self,
         library: Option<&SpensorLibrary>,
         n_steps: Option<usize>,
-        single_contract: bool,
+        mode: ExecutionMode,
     ) -> PyResult<()> {
         let lib = library.map(|l| &l.library).unwrap_or(HEP_LIB.deref());
 
         if let Some(n) = n_steps {
             for _ in 0..n {
-                if single_contract {
+                match mode {
+                    ExecutionMode::All => {
+                        self.network
+                            .execute::<Steps<1>, SmallestDegree, _, _>(lib)
+                            .map_err(|a| PyRuntimeError::new_err(a.to_string()))?;
+                    }
+                    ExecutionMode::Scalar => {
+                        self.network
+                            .execute::<Steps<1>, ContractScalars, _, _>(lib)
+                            .map_err(|a| PyRuntimeError::new_err(a.to_string()))?;
+                    }
+                    ExecutionMode::Single => {
+                        self.network
+                            .execute::<Steps<1>, SingleSmallestDegree<false>, _, _>(lib)
+                            .map_err(|a| PyRuntimeError::new_err(a.to_string()))?;
+                    }
+                }
+            }
+        } else {
+            match mode {
+                ExecutionMode::All => {
                     self.network
-                        .execute::<Steps<1>, SingleSmallestDegree<false>, _, _>(lib)
+                        .execute::<Sequential, SmallestDegree, _, _>(lib)
                         .map_err(|a| PyRuntimeError::new_err(a.to_string()))?;
-                } else {
+                }
+                ExecutionMode::Scalar => {
                     self.network
-                        .execute::<Steps<1>, SmallestDegree, _, _>(lib)
+                        .execute::<Sequential, ContractScalars, _, _>(lib)
+                        .map_err(|a| PyRuntimeError::new_err(a.to_string()))?;
+                }
+                ExecutionMode::Single => {
+                    self.network
+                        .execute::<Sequential, SingleSmallestDegree<false>, _, _>(lib)
                         .map_err(|a| PyRuntimeError::new_err(a.to_string()))?;
                 }
             }
-            Ok(())
-        } else {
-            if single_contract {
-                self.network
-                    .execute::<Sequential, SingleSmallestDegree<false>, _, _>(lib)
-                    .map_err(|a| PyRuntimeError::new_err(a.to_string()))
-            } else {
-                self.network
-                    .execute::<Sequential, SmallestDegree, _, _>(lib)
-                    .map_err(|a| PyRuntimeError::new_err(a.to_string()))
-            }
         }
+        Ok(())
     }
     #[pyo3(signature = (library=None))]
     fn result_tensor(&self, library: Option<&SpensorLibrary>) -> PyResult<Spensor> {

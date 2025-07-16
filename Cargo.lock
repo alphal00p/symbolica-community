@@ -800,10 +800,10 @@ dependencies = [
 
 [[package]]
 name = "idenso"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3cc249cb5ed166c51f9ebbff0b70cc73c1fb8d2cd070236366456a0b748d964"
+version = "0.2.1"
+source = "git+https://github.com/alphal00p/spenso?rev=9204941ae32bf9db85cf579ef4c039c628399b26#9204941ae32bf9db85cf579ef4c039c628399b26"
 dependencies = [
+ "anyhow",
  "itertools 0.14.0",
  "linnet",
  "spenso",
@@ -1845,9 +1845,9 @@ dependencies = [
 
 [[package]]
 name = "spenso"
-version = "0.5.0"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92649bcb3fc5000673a8d6486242fc129a3fa7e5d500d7a05837cbacf4c2b6c3"
+checksum = "5a27b8399c9896e7b371c91145f360f2fcc0c13c01b6ed4a85750335de87d5a9"
 dependencies = [
  "ahash",
  "anyhow",
@@ -1886,9 +1886,9 @@ dependencies = [
 
 [[package]]
 name = "spenso-hep-lib"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "611a1fa6c445e7b8fe29fce2d05f814c14e941ccefdb8490e785e1ba986ec4bb"
+checksum = "db5e840352bfa2ba7beb987459168352b4b36ce64043ab0fa0e6493951885e9f"
 dependencies = [
  "ahash",
  "idenso",
