@@ -1,7 +1,6 @@
-use idenso::color::{ColorError, ColorSimplifier, SelectiveExpand};
+use idenso::color::{ColorSimplifier, SelectiveExpand};
 use idenso::gamma::GammaSimplifier;
 use idenso::metric::MetricSimplifier;
-
 #[cfg(feature = "python")]
 use pyo3::{
     exceptions::PyTypeError,
@@ -9,6 +8,7 @@ use pyo3::{
     types::{PyAnyMethods, PyModule, PyModuleMethods},
     wrap_pyfunction, Bound, PyResult,
 };
+use symbolica::atom::Atom;
 
 use idenso::representations::initialize;
 use idenso::IndexTooling;
@@ -46,31 +46,56 @@ pub fn conj(self_: &PythonExpression) -> PythonExpression {
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_mink(self_: &PythonExpression) -> PythonExpression {
-    self_.expr.expand_mink().into()
+    self_
+        .expr
+        .expand_mink()
+        .iter()
+        .fold(Atom::Zero, |a, (c, s)| a + c * s)
+        .into()
 }
 #[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_bis(self_: &PythonExpression) -> PythonExpression {
-    self_.expr.expand_bis().into()
+    self_
+        .expr
+        .expand_bis()
+        .iter()
+        .fold(Atom::Zero, |a, (c, s)| a + c * s)
+        .into()
 }
 #[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_mink_bis(self_: &PythonExpression) -> PythonExpression {
-    self_.expr.expand_mink_bis().into()
+    self_
+        .expr
+        .expand_mink_bis()
+        .iter()
+        .fold(Atom::Zero, |a, (c, s)| a + c * s)
+        .into()
 }
 #[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_color(self_: &PythonExpression) -> PythonExpression {
-    self_.expr.expand_color().into()
+    self_
+        .expr
+        .expand_color()
+        .iter()
+        .fold(Atom::Zero, |a, (c, s)| a + c * s)
+        .into()
 }
 #[cfg(feature = "python")]
 #[gen_stub_pyfunction(module = "symbolica_community.algebraic_simplification")]
 #[pyfunction]
 pub fn expand_metrics(self_: &PythonExpression) -> PythonExpression {
-    self_.expr.expand_metrics().into()
+    self_
+        .expr
+        .expand_metrics()
+        .iter()
+        .fold(Atom::Zero, |a, (c, s)| a + c * s)
+        .into()
 }
 
 #[cfg(feature = "python")]
@@ -276,12 +301,8 @@ pub fn simplify_metrics(self_: &PythonExpression) -> PythonExpression {
 ///     RuntimeWarning: If the simplification could not fully eliminate all explicit
 ///                     color indices, indicating an incomplete simplification. The
 ///                     partially simplified expression is still returned.
-pub fn simplify_color(self_: &PythonExpression) -> PyResult<PythonExpression> {
-    let a = self_.expr.simplify_color();
-    match a {
-        Ok(a) => Ok(a.into()),
-        Err(ColorError::NotFully(a)) => Ok(a.into()),
-    }
+pub fn simplify_color(self_: &PythonExpression) -> PythonExpression {
+    self_.expr.simplify_color().into()
 }
 
 #[cfg(feature = "python")]

@@ -801,7 +801,7 @@ dependencies = [
 [[package]]
 name = "idenso"
 version = "0.2.1"
-source = "git+https://github.com/alphal00p/spenso?rev=9204941ae32bf9db85cf579ef4c039c628399b26#9204941ae32bf9db85cf579ef4c039c628399b26"
+source = "git+https://github.com/alphal00p/spenso?rev=db432c3028277818998d571a67836b5741dc1e28#db432c3028277818998d571a67836b5741dc1e28"
 dependencies = [
  "anyhow",
  "itertools 0.14.0",
