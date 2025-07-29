@@ -23,6 +23,9 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
+dependencies = [
+    "pydot>=2.0.0",
+]
 
 # dynamic = ["version"]
 [project.optional-dependencies]
