@@ -7,14 +7,14 @@
 }: {
   # https://devenv.sh/packages/
   packages = [
-    pkgs.gcc
+    # pkgs.gcc
     pkgs.gnum4
-    pkgs.gmp
-    pkgs.mpfr
+    # pkgs.gmp
+    # pkgs.mpfr
     pkgs.maturin
-    pkgs.gnumake
-    pkgs.diffutils
-    pkgs.pyright
+    # pkgs.gnumake
+    # pkgs.diffutils
+    # pkgs.pyright
   ];
 
   languages.nix = {
