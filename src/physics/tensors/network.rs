@@ -12,9 +12,9 @@ use spenso::{
         parsing::ShadowedStructure,
         store::{NetworkStore, TensorScalarStoreMapping},
         ContractScalars, ExecutionResult, Network, Sequential, SingleSmallestDegree,
-        SmallestDegree, SmallestDegreeIter, Steps,
+        SmallestDegree, Steps,
     },
-    structure::{abstract_index::AbstractIndex, HasName},
+    structure::abstract_index::AbstractIndex,
     tensors::parametric::{atomcore::TensorAtomMaps, MixedTensor, ParamOrConcrete},
 };
 use spenso_hep_lib::HEP_LIB;
@@ -24,7 +24,6 @@ use symbolica::{
     evaluate::EvaluationFn,
     id::{MatchSettings, ReplaceWith},
     poly::Variable,
-    state::RecycledAtom,
 };
 
 #[cfg(feature = "python")]
@@ -405,15 +404,7 @@ impl SpensoNet {
     }
 
     fn __str__(&self) -> PyResult<String> {
-        Ok(self.network.dot_display_impl(
-            |a| a.to_plain_string(),
-            |l| Some(l.global_name?.to_string()),
-            |t| {
-                t.name()
-                    .map(|a| a.to_string())
-                    .unwrap_or("unnamed".to_owned())
-            },
-        ))
+        Ok(self.network.dot_pretty())
     }
 
     /// Add this expression to `other`, returning the result.

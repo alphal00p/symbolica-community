@@ -77,10 +77,10 @@ spenso-hep-lib = { version = "0.1.2", optional = true }
 
 [patch.crates-io]
 # idenso = { path = "../spenso/idenso" }
-idenso = { git = "https://github.com/alphal00p/spenso", rev = "3386041d300355cd17203597955542e0c244ba82" }
-spenso-macros = { git = "https://github.com/alphal00p/spenso", rev = "3386041d300355cd17203597955542e0c244ba82" }
-spenso-hep-lib = { git = "https://github.com/alphal00p/spenso", rev = "3386041d300355cd17203597955542e0c244ba82" }
-# linnet = { git = "https://github.com/alphal00p/linnet", rev = "85c1b8f7bee575a8cc5dc7e5595b3ef7c880204f" }
+idenso = { git = "https://github.com/alphal00p/spenso", rev = "dd026330d01a81d3569d6b60ac486c0b1f223669" }
+spenso-macros = { git = "https://github.com/alphal00p/spenso", rev = "dd026330d01a81d3569d6b60ac486c0b1f223669" }
+spenso-hep-lib = { git = "https://github.com/alphal00p/spenso", rev = "dd026330d01a81d3569d6b60ac486c0b1f223669" }
+linnet = { git = "https://github.com/alphal00p/linnet", rev = "6a13c34b2e58021aebec7ed0c78bc70c50c72283" }
 # # spenso = { path = "../spenso/spenso" }
-spenso = { git = "https://github.com/alphal00p/spenso", rev = "3386041d300355cd17203597955542e0c244ba82" }
+spenso = { git = "https://github.com/alphal00p/spenso", rev = "dd026330d01a81d3569d6b60ac486c0b1f223669" }
 # # symbolica={git="https://github.com/alphal00p/symbolica",rev="d1e34cbadce9c7b196063d92602c7a15ca2305b2"}

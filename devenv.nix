@@ -31,7 +31,7 @@
   languages.python = {
     enable = true;
     uv.enable = true;
-    uv.sync.enable = true;
+    # uv.sync.enable = true;
   };
   languages.cplusplus.enable = true;
 }
