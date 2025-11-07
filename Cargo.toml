@@ -37,18 +37,25 @@ symbolica = { version = "0.19", features = ["python_export"] }
 pyo3 = "0.27"
 pyo3-stub-gen = { version = "0.16", optional = true, default-features = false }
 spynso3 = { version = "0.1" }
-vakint = { git = "https://github.com/alphal00p/vakint", rev = "2bf65b038a756fcc8dbb1c7f6708997cfc9cd6d6", features = [
+vakint = { git = "https://github.com/alphal00p/vakint", rev = "f625281aecc2c8d03d0a490f88cd83e2d0ba11f5", features = [
     "symbolica_community_module",
 ] }
 
 [patch.crates-io]
-spynso3 = { git = "https://github.com/alphal00p/spenso", rev = "08c56e08ff3429bd56b6c51c4e1f8b479d7552d5" }
-idenso= {git= "https://github.com/alphal00p/spenso", rev = "08c56e08ff3429bd56b6c51c4e1f8b479d7552d5" }
-spenso= {git= "https://github.com/alphal00p/spenso", rev = "08c56e08ff3429bd56b6c51c4e1f8b479d7552d5" }
-spenso-hep-lib = {git= "https://github.com/alphal00p/spenso", rev = "08c56e08ff3429bd56b6c51c4e1f8b479d7552d5" }
+spynso3 = { git = "https://github.com/alphal00p/spenso", rev = "de509b8545805698c8e5b77a04ca1348331f1436" }
+idenso= {git= "https://github.com/alphal00p/spenso", rev = "de509b8545805698c8e5b77a04ca1348331f1436" }
+spenso= {git= "https://github.com/alphal00p/spenso", rev = "de509b8545805698c8e5b77a04ca1348331f1436" }
+spenso-hep-lib = {git= "https://github.com/alphal00p/spenso", rev = "de509b8545805698c8e5b77a04ca1348331f1436" }
+
+#spynso3 = { path = "/Users/vjhirsch/HEP_programs/spenso/spynso3" }
+#idenso= { path = "https://github.com/alphal00p/spenso/idenso" }
+#spenso= { path = "https://github.com/alphal00p/spenso/spenso" }
+#spenso-hep-lib = { path = "https://github.com/alphal00p/spenso/spenso-hep-lib" }
+
 # vakint = {git }
 # spynso3 = { path = "../spenso/spynso3" }
-symbolica = { git = "https://github.com/benruijl/symbolica", branch = "modules" }
+#symbolica = { git = "https://github.com/benruijl/symbolica", branch = "modules" }
+symbolica = { git = "https://github.com/benruijl/symbolica", rev = "f2eb0c1ddcc61c342f2ff9616c2d129141d433dc" }
 # pyo3-stub-gen = { git = "https://github.com/benruijl/pyo3-stub-gen", branch = "patched" }
 
 [build-dependencies]
