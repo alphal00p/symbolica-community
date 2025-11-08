@@ -2087,7 +2087,7 @@ dependencies = [
 [[package]]
 name = "symbolica"
 version = "0.19.2"
-source = "git+https://github.com/benruijl/symbolica?rev=f2eb0c1ddcc61c342f2ff9616c2d129141d433dc#f2eb0c1ddcc61c342f2ff9616c2d129141d433dc"
+source = "git+https://github.com/benruijl/symbolica?rev=3c0d4f3b78b5c78fe456c48c387cc3a38b2ac337#3c0d4f3b78b5c78fe456c48c387cc3a38b2ac337"
 dependencies = [
  "ahash",
  "append-only-vec",

@@ -55,7 +55,7 @@ spenso-hep-lib = {git= "https://github.com/alphal00p/spenso", rev = "de509b85458
 # vakint = {git }
 # spynso3 = { path = "../spenso/spynso3" }
 #symbolica = { git = "https://github.com/benruijl/symbolica", branch = "modules" }
-symbolica = { git = "https://github.com/benruijl/symbolica", rev = "f2eb0c1ddcc61c342f2ff9616c2d129141d433dc" }
+symbolica = { git = "https://github.com/benruijl/symbolica", rev = "3c0d4f3b78b5c78fe456c48c387cc3a38b2ac337" }
 # pyo3-stub-gen = { git = "https://github.com/benruijl/pyo3-stub-gen", branch = "patched" }
 
 [build-dependencies]
