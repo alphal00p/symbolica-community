@@ -42,10 +42,10 @@ vakint = { git = "https://github.com/alphal00p/vakint", rev = "f625281aecc2c8d03
 ] }
 
 [patch.crates-io]
-spynso3 = { git = "https://github.com/alphal00p/spenso", rev = "de509b8545805698c8e5b77a04ca1348331f1436" }
-idenso= {git= "https://github.com/alphal00p/spenso", rev = "de509b8545805698c8e5b77a04ca1348331f1436" }
-spenso= {git= "https://github.com/alphal00p/spenso", rev = "de509b8545805698c8e5b77a04ca1348331f1436" }
-spenso-hep-lib = {git= "https://github.com/alphal00p/spenso", rev = "de509b8545805698c8e5b77a04ca1348331f1436" }
+spynso3 = { git = "https://github.com/alphal00p/spenso", rev = "ba43c108c99eca3ca39af78549e9cfa994f70b1d" }
+idenso= {git= "https://github.com/alphal00p/spenso", rev = "ba43c108c99eca3ca39af78549e9cfa994f70b1d" }
+spenso= {git= "https://github.com/alphal00p/spenso", rev = "ba43c108c99eca3ca39af78549e9cfa994f70b1d" }
+spenso-hep-lib = {git= "https://github.com/alphal00p/spenso", rev = "ba43c108c99eca3ca39af78549e9cfa994f70b1d" }
 
 #spynso3 = { path = "/Users/vjhirsch/HEP_programs/spenso/spynso3" }
 #idenso= { path = "https://github.com/alphal00p/spenso/idenso" }
@@ -55,7 +55,7 @@ spenso-hep-lib = {git= "https://github.com/alphal00p/spenso", rev = "de509b85458
 # vakint = {git }
 # spynso3 = { path = "../spenso/spynso3" }
 #symbolica = { git = "https://github.com/benruijl/symbolica", branch = "modules" }
-symbolica = { git = "https://github.com/benruijl/symbolica", rev = "3c0d4f3b78b5c78fe456c48c387cc3a38b2ac337" }
+symbolica = { git = "https://github.com/benruijl/symbolica", rev = "af3f1b2043b270401920e4ff76d938217d995fc3" }
 # pyo3-stub-gen = { git = "https://github.com/benruijl/pyo3-stub-gen", branch = "patched" }
 
 [build-dependencies]

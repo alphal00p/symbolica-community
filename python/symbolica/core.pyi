@@ -419,6 +419,25 @@ class Evaluator:
         constants: [5/3]
         ```
         """
+    def merge(self, other: Evaluator, cpe_iterations: typing.Optional[builtins.int] = None) -> None:
+        r"""
+        Merge evaluator `other` into `self`. The parameters must be the same, and
+        the outputs will be concatenated.
+        
+        The optional `cpe_rounds` parameter can be used to limit the number of common
+        pair elimination rounds after the merge.
+        
+        Examples
+        --------
+        
+        >>> from symbolica import *
+        >>> e1 = E('x').evaluator({}, {}, [S('x')])
+        >>> e2 = E('x+1').evaluator({}, {}, [S('x')])
+        >>> e = e1.merge(e2)
+        >>> e.evaluate([2])
+        
+        yields `[2, 3]`.
+        """
     def evaluate(self, inputs: numpy.typing.ArrayLike) -> numpy.typing.NDArray[numpy.float64]:
         r"""
         Evaluate the expression for multiple inputs that are flattened and return the flattened result.
