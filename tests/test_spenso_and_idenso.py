@@ -14,6 +14,7 @@ from symbolica.community.spenso import (
     TensorLibrary,
     TensorNetwork,
     TensorStructure,
+    dot,
 )
 from symbolica.community.spenso import TensorName as N
 
@@ -109,6 +110,84 @@ class TestTensorNames:
         assert w is not None
         assert g is not None
         assert mq is not None
+
+
+class TestDotProducts:
+    """Tests for the public Spenso scalar-product constructor and display."""
+
+    def test_dot_builds_the_canonical_spenso_expression(self):
+        p = N("p_dot_api")
+        mink = Representation.mink(4)
+        actual = dot(p(1, mink), p(2, mink))
+
+        p_expr = p.to_expression()
+        mink_expr = mink.to_expression()
+        expected = S("spenso::dot")(
+            p_expr(1, mink_expr), p_expr(2, mink_expr)
+        )
+
+        assert isinstance(actual, Expression)
+        assert actual.to_canonical_string() == expected.to_canonical_string()
+        assert dot(p(1, mink), p(2, mink)) == dot(p(2, mink), p(1, mink))
+
+        network = TensorNetwork(actual)
+        assert "mink4|d_" in str(network)
+
+    def test_dot_accepts_placeholder_structure_sums(self):
+        p = N("p_dot_sum")
+        mink = Representation.mink(4)
+
+        expr = dot(p(1, mink), p(2, mink) + p(3, mink))
+        p_expr = p.to_expression()
+        mink_expr = mink.to_expression()
+        expected = dot(
+            p_expr(1, mink_expr),
+            p_expr(2, mink_expr) + p_expr(3, mink_expr),
+        )
+
+        assert expr.to_canonical_string() == expected.to_canonical_string()
+        assert expr.to_canonical_string().count("spenso::{symmetric,linear}::dot") == 2
+
+    def test_placeholder_conversion_preserves_representation_order(self):
+        tensor = N("placeholder_order")
+        reps = [
+            Representation.mink(4),
+            Representation.cof(3),
+            Representation.bis(4),
+        ]
+
+        actual = tensor(*reps).to_expression()
+        expected = tensor.to_expression()(*(rep.to_expression() for rep in reps))
+
+        assert actual.to_canonical_string() == expected.to_canonical_string()
+
+    def test_dot_uses_infix_rich_display_for_python_tensor_names(self):
+        p = N("p_dot_display")
+        mink = Representation.mink(4)
+        expr = dot(p(1, mink), p(2, mink))
+
+        formatted = expr.format(
+            color_builtin_symbols=False,
+            bracket_level_colors=None,
+            custom_print_mode={"spenso": 1},
+        )
+        assert formatted == "(p_dot_display(1).p_dot_display(2))"
+
+        with_dimension = expr.format(
+            color_builtin_symbols=False,
+            bracket_level_colors=None,
+            custom_print_mode={"spenso": 5},
+        )
+        assert with_dimension == "(p_dot_display(1,mink(4)).p_dot_display(2,mink(4)))"
+
+        html = expr._repr_html_()
+        assert "dot(" not in html
+        assert "p_dot_display" in html
+        assert "mink" not in html
+
+        latex = expr._repr_latex_()
+        assert r"\cdot " in latex
+        assert "mink" not in latex
 
 
 class TestTensorIndices:

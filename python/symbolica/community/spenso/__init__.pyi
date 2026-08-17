@@ -1048,27 +1048,27 @@ class TensorIndices:
         >>> expr = indices.to_expression()
         """
     def __len__(self) -> builtins.int: ...
-    def __add__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression) -> Expression:
+    def __add__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
         r"""
         Add this expression to `other`, returning the result.
         """
-    def __radd__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression) -> Expression:
+    def __radd__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
         r"""
         Add this expression to `other`, returning the result.
         """
-    def __sub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression) -> Expression:
+    def __sub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
         r"""
         Subtract `other` from this expression, returning the result.
         """
-    def __rsub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression) -> Expression:
+    def __rsub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
         r"""
         Subtract this expression from `other`, returning the result.
         """
-    def __mul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression) -> Expression:
+    def __mul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
         r"""
         Add this expression to `other`, returning the result.
         """
-    def __rmul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression) -> Expression:
+    def __rmul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
         r"""
         Add this expression to `other`, returning the result.
         """
@@ -1467,7 +1467,7 @@ class TensorNetwork:
     >>> network.execute()
     >>> result = network.result_tensor()
     """
-    def __new__(cls, expr: Expression | int | str | float | builtins.complex | TensorIndices | Expression, library: typing.Optional[TensorLibrary] = None) -> TensorNetwork:
+    def __new__(cls, expr: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression, library: typing.Optional[TensorLibrary] = None) -> TensorNetwork:
         r"""
         Create a tensor network by parsing an arithmetic expression.
         
@@ -1661,7 +1661,7 @@ class TensorNetwork:
         Generates a DOT format representation of the computational graph that can be
         visualized using graphviz or similar tools.
         """
-    def __add__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression | TensorNetwork | Tensor) -> TensorNetwork:
+    def __add__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression | TensorNetwork | Tensor) -> TensorNetwork:
         r"""
         Add two tensor networks element-wise.
         
@@ -1681,11 +1681,11 @@ class TensorNetwork:
         >>> net2 = TensorNetwork(expr2)
         >>> sum_net = net1 + net2
         """
-    def __radd__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression | TensorNetwork | Tensor) -> TensorNetwork:
+    def __radd__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression | TensorNetwork | Tensor) -> TensorNetwork:
         r"""
         Add two tensor networks element-wise (right-hand addition).
         """
-    def __sub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression | TensorNetwork | Tensor) -> TensorNetwork:
+    def __sub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression | TensorNetwork | Tensor) -> TensorNetwork:
         r"""
         Subtract one tensor network from another element-wise.
         
@@ -1705,11 +1705,11 @@ class TensorNetwork:
         >>> net2 = TensorNetwork(expr2)
         >>> diff_net = net1 - net2
         """
-    def __rsub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression | TensorNetwork | Tensor) -> TensorNetwork:
+    def __rsub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression | TensorNetwork | Tensor) -> TensorNetwork:
         r"""
         Subtract one tensor network from another (right-hand subtraction).
         """
-    def __mul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression | TensorNetwork | Tensor) -> TensorNetwork:
+    def __mul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression | TensorNetwork | Tensor) -> TensorNetwork:
         r"""
         Multiply two tensor networks.
         
@@ -1729,7 +1729,7 @@ class TensorNetwork:
         >>> net2 = TensorNetwork(expr2)
         >>> product_net = net1 * net2
         """
-    def __rmul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | Expression | TensorNetwork | Tensor) -> TensorNetwork:
+    def __rmul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression | TensorNetwork | Tensor) -> TensorNetwork:
         r"""
         Multiply two tensor networks (right-hand multiplication).
         """
@@ -1766,6 +1766,37 @@ class TensorStructure:
     def get_name(self) -> typing.Optional[TensorName]: ...
     def __repr__(self) -> builtins.str: ...
     def __str__(self) -> builtins.str: ...
+    def to_expression(self) -> Expression:
+        r"""
+        Convert this indexless tensor structure to compact placeholder syntax.
+
+        Each representation becomes a stripped-representation argument, ready
+        for shorthand operations such as `dot` to materialize into slots.
+        """
+    def __add__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
+        r"""
+        Add this structure to another symbolic value.
+        """
+    def __radd__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
+        r"""
+        Add this structure to another symbolic value.
+        """
+    def __sub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
+        r"""
+        Subtract another symbolic value from this structure.
+        """
+    def __rsub__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
+        r"""
+        Subtract this structure from another symbolic value.
+        """
+    def __mul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
+        r"""
+        Multiply this structure by another symbolic value.
+        """
+    def __rmul__(self, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
+        r"""
+        Multiply this structure by another symbolic value.
+        """
     def __len__(self) -> builtins.int: ...
     def __new__(cls, *reps_and_additional_args: TensorIndices | builtins.list[Slot], name: TensorName | builtins.str | Expression | None = None) -> TensorStructure:
         r"""
@@ -1960,5 +1991,21 @@ class TensorNamespace(enum.Enum):
     Weyl = ...
     Algebra = ...
 
-def initialize() -> None: ...
+def dot(lhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression, rhs: Expression | int | str | float | builtins.complex | TensorIndices | TensorStructure | Expression) -> Expression:
+    r"""
+    Build the compact scalar product of two symbolic vectors.
 
+    The returned expression uses Spenso's canonical symmetric, linear `dot`
+    head. Each operand should carry the same stripped self-dual representation
+    as its placeholder slot; tensor-network parsing replaces those placeholders
+    with one shared fresh contracted slot.
+
+    Examples
+    --------
+    >>> from symbolica.community.spenso import Representation, TensorName, dot
+    >>> p = TensorName("p")
+    >>> mink = Representation.mink(4)
+    >>> dot(p(1, mink), p(2, mink))
+    """
+
+def initialize() -> None: ...

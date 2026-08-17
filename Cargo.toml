@@ -8,7 +8,7 @@ license = "MIT"
 name = "symbolica_community"
 readme = "Readme.md"
 repository = "https://github.com/benruijl/symbolica-community"
-rust-version = "1.88"
+rust-version = "1.89"
 version = "1.2.0"
 
 
@@ -34,28 +34,26 @@ python_stubgen = [
 
 [dependencies]
 example_extension = { path = "example_extension" }
-idenso = { version = "0.2.3", features = ["bincode", "python"] }
-symbolica = { version = "1.2", features = ["python_export"] }
-pyo3 = { version = "0.27", features = ["abi3"] }
+idenso = { path = "../gammaloop/main/crates/idenso", features = ["bincode", "python"] }
+symbolica = { version = "2.2", features = ["python_export"] }
+pyo3 = { version = "0.28", features = ["abi3"] }
 pyo3-stub-gen = { version = "0.17", optional = true, default-features = false, features = [
     "numpy",
 ] }
-spynso3 = { version = "0.1" }
-vakint = { git = "https://github.com/alphal00p/vakint", rev = "f7dc9907abb1786306bfc44fde6c32ba30446422", features = [
+spynso3 = { path = "../gammaloop/main/crates/spynso3" }
+vakint = { path = "../gammaloop/main/crates/vakint", features = [
     "symbolica_community_module",
 ] }
 
 [patch.crates-io]
-spynso3 = { git = "https://github.com/alphal00p/spenso", rev = "eb23e344d98d7801b615cdf71100cba201f2fd24" }
-idenso = { git = "https://github.com/alphal00p/spenso", rev = "eb23e344d98d7801b615cdf71100cba201f2fd24" }
-spenso = { git = "https://github.com/alphal00p/spenso", rev = "eb23e344d98d7801b615cdf71100cba201f2fd24" }
-spenso-hep-lib = { git = "https://github.com/alphal00p/spenso", rev = "eb23e344d98d7801b615cdf71100cba201f2fd24" }
 #pyo3-stub-gen = { git = "https://github.com/Jij-Inc/pyo3-stub-gen", rev = "b13f213a748ee09bf22073e0e4d82cb09d797a5c", optional = true, default-features = false, features = [
 #    "numpy",
 #] }
 
+graphica = { git = "https://github.com/symbolica-dev/symbolica", branch = "dev" }
+numerica = { git = "https://github.com/symbolica-dev/symbolica", branch = "dev" }
 symbolica = { git = "https://github.com/symbolica-dev/symbolica", branch = "dev" }
 
 
 [build-dependencies]
-pyo3-build-config = "*"
+pyo3-build-config = "0.28"
