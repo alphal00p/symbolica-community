@@ -55,9 +55,14 @@ idenso = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463c
 spenso = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463cca1f1ec9aa9ee90fe51b56a87f" }
 spenso-hep-lib = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463cca1f1ec9aa9ee90fe51b56a87f" }
 
-symbolica = { git = "https://github.com/symbolica-dev/symbolica", branch = "dev" }
-numerica = { git = "https://github.com/symbolica-dev/symbolica", branch = "dev" }
-graphica = { git = "https://github.com/symbolica-dev/symbolica", branch = "dev" }
+symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
+numerica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
+graphica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
+
+[patch."https://github.com/symbolica-dev/symbolica"]
+symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
+numerica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
+graphica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
 
 [build-dependencies]
 pyo3-build-config = "*"

@@ -3142,10 +3142,11 @@ class Expression:
     @classmethod
     def solve(
         cls,
-        system: typing.Sequence[Expression | int | str | float | builtins.complex],
+        system: typing.Sequence[Expression],
         variables: typing.Sequence[Expression],
         warn_if_underdetermined: builtins.bool = ...,
-    ) -> builtins.list[builtins.dict[Expression, Expression]]:
+        domain: typing.Optional[SolveDomain] = None,
+    ) -> builtins.list[Solution]:
         r"""
         Solve a system exactly in the requested variables.
 
@@ -3154,8 +3155,10 @@ class Expression:
         use a grevlex Gröbner basis, FGLM conversion to lex, and exact algebraic
         roots. Rational powers such as `sqrt(x+3)` are polynomialized using
         auxiliary variables, after which solutions on non-principal branches
-        are filtered out. Rational denominators are cleared and solutions where
-        they vanish are rejected.
+        are filtered out. For positive-dimensional systems, a maximal viable
+        set of requested variables is used as input. Rational denominators are
+        cleared and their nonvanishing requirements are retained as solution
+        conditions.
 
         Examples
         --------
@@ -3173,38 +3176,15 @@ class Expression:
             Variables to solve for, in lexicographic elimination order.
         warn_if_underdetermined: bool
             Whether to warn when a linear system is underdetermined.
-        """
-    @classmethod
-    def solve_linear_system(
-        cls,
-        system: typing.Sequence[Expression | int | str | float | builtins.complex],
-        variables: typing.Sequence[Expression],
-        warn_if_underdetermined: builtins.bool = ...,
-    ) -> builtins.list[Expression]:
-        r"""
-        Solve a linear system in the variables `variables`, where each expression
-        in the system is understood to yield 0.
+        domain: SolveDomain | None
+            Restrict solutions to this domain. The default is `Complexes`.
 
-        If the system is underdetermined, a partial solution is returned
-        where each bound variable is a linear combination of the free
-        variables. The free variables are chosen such that they have the highest index in the `vars` list.
-
-        Examples
-        --------
-        >>> from symbolica import *
-        >>> x, y, c = S('x', 'y', 'c')
-        >>> f = S('f')
-        >>> x_r, y_r = Expression.solve_linear_system([f(c)*x + y/c - 1, y-c/2], [x, y])
-        >>> print('x =', x_r, ', y =', y_r)
-
-        Parameters
-        ----------
-        system: Sequence[Expression]
-            The equations or polynomials that define the system.
-        variables: Sequence[Expression]
-            The variables to solve for, in order.
-        warn_if_underdetermined: bool
-            Whether to warn when the system is underdetermined.
+        Returns
+        -------
+        list[Solution]
+            Exact solution branches. Each branch behaves as a read-only mapping
+            and exposes its free variables, validity conditions, rank, dimension,
+            and requested domain.
         """
     def nsolve(
         self,
@@ -9683,6 +9663,74 @@ class ParseMode(enum.Enum):
     r"""
     Parse using Mathematica notation.
     """
+
+@typing.final
+class SolveDomain(enum.Enum):
+    r"""
+    A domain supported by the exact equation solver.
+    """
+
+    Integers = ...
+    Rationals = ...
+    Reals = ...
+    Complexes = ...
+
+Integers: SolveDomain
+Rationals: SolveDomain
+Reals: SolveDomain
+Complexes: SolveDomain
+
+@typing.final
+class SolutionCondition:
+    r"""
+    A condition under which an exact solution branch is valid.
+    """
+
+    @property
+    def kind(self) -> typing.Literal["nonzero", "domain_membership"]: ...
+    @property
+    def expression(self) -> typing.Optional[Expression]: ...
+    @property
+    def variable(self) -> typing.Optional[Expression]: ...
+    @property
+    def value(self) -> typing.Optional[Expression]: ...
+    @property
+    def domain(self) -> typing.Optional[SolveDomain]: ...
+    def __repr__(self) -> builtins.str: ...
+
+@typing.final
+class Solution:
+    r"""
+    One branch of an exact solution.
+
+    A solution behaves as a read-only mapping from requested variables to
+    exact values and retains free-variable, condition, and domain metadata.
+    """
+
+    def as_dict(self) -> builtins.dict[Expression, Expression]: ...
+    def free_variables(self) -> builtins.list[Expression]: ...
+    def conditions(self) -> builtins.list[SolutionCondition]: ...
+    @property
+    def domain(self) -> SolveDomain: ...
+    def is_indeterminate(self) -> builtins.bool: ...
+    def is_conditional(self) -> builtins.bool: ...
+    def is_parametric(self) -> builtins.bool: ...
+    def is_underdetermined(self) -> builtins.bool: ...
+    def rank(self) -> builtins.int: ...
+    def dimension(self) -> builtins.int: ...
+    def keys(self) -> builtins.list[Expression]: ...
+    def values(self) -> builtins.list[Expression]: ...
+    def items(self) -> builtins.list[tuple[Expression, Expression]]: ...
+    def get(self, variable: Expression) -> typing.Optional[Expression]: ...
+    def __getitem__(self, variable: Expression) -> Expression: ...
+    def __contains__(self, variable: Expression) -> builtins.bool: ...
+    def __len__(self) -> builtins.int: ...
+    def __iter__(self) -> typing.Iterator[Expression]: ...
+    def __repr__(self) -> builtins.str: ...
+    def __str__(self) -> builtins.str: ...
+    def _repr_html_(self) -> builtins.str: ...
+    def _repr_latex_(self) -> builtins.str: ...
+    def _repr_pretty_(self, pretty: typing.Any, cycle: builtins.bool) -> None: ...
 
 @typing.final
 class PrintMode(enum.Enum):

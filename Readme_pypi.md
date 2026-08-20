@@ -68,8 +68,9 @@ from symbolica import *
 
 x, y, c, f = S('x', 'y', 'c', 'f')
 
-x_r, y_r = Expression.solve_linear_system(
-    [f(c)*x + y + c, y + c**2], [x, y])
+x_y_solution = Expression.solve(
+    [f(c)*x + y + c, y + c**2], [x, y])[0]
+x_r, y_r = x_y_solution[x], x_y_solution[y]
 print('x =', x_r, ', y =', y_r)
 ```
 which yields `x = (-c+c^2)*f(c)^-1` and `y = -c^2`.
