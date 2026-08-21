@@ -8,7 +8,7 @@ license = "MIT"
 name = "symbolica_community"
 readme = "Readme.md"
 repository = "https://github.com/benruijl/symbolica-community"
-rust-version = "1.88"
+rust-version = "1.89"
 version = "2.2.0"
 exclude = ["dist"]
 
@@ -55,14 +55,14 @@ idenso = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463c
 spenso = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463cca1f1ec9aa9ee90fe51b56a87f" }
 spenso-hep-lib = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463cca1f1ec9aa9ee90fe51b56a87f" }
 
-symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
-numerica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
-graphica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
+symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "520129d681389ed1cec26e1b0885591c73bc6e9b" }
+numerica = { git = "https://github.com/alphal00p/symbolica", rev = "520129d681389ed1cec26e1b0885591c73bc6e9b" }
+graphica = { git = "https://github.com/alphal00p/symbolica", rev = "520129d681389ed1cec26e1b0885591c73bc6e9b" }
 
 [patch."https://github.com/symbolica-dev/symbolica"]
-symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
-numerica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
-graphica = { git = "https://github.com/alphal00p/symbolica", rev = "63fc4bf82163e25cfe30db0ec1b44b86ee5afed0" }
+symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "520129d681389ed1cec26e1b0885591c73bc6e9b" }
+numerica = { git = "https://github.com/alphal00p/symbolica", rev = "520129d681389ed1cec26e1b0885591c73bc6e9b" }
+graphica = { git = "https://github.com/alphal00p/symbolica", rev = "520129d681389ed1cec26e1b0885591c73bc6e9b" }
 
 [build-dependencies]
 pyo3-build-config = "*"
