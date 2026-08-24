@@ -2801,12 +2801,14 @@ class Expression:
         x: Expression
             The variable with respect to which to integrate.
         """
-    def apart(self, x: typing.Optional[Expression] = None) -> Expression:
+    def apart(self, *variables: Expression) -> Expression:
         r"""
-        Compute the partial fraction decomposition in `x`.
+        Compute a partial fraction decomposition in the specified variables.
 
-        If `None` is passed, the expression will be decomposed in all variables
-        which involves a potentially expensive Groebner basis computation.
+        A single variable uses univariate partial fractioning. Multiple variables
+        use multivariate partial fractioning in the chosen variables. With no
+        arguments, the expression is decomposed in all variables. Multivariate
+        decomposition computes a Groebner basis and may be expensive.
 
 
         Examples
@@ -2823,8 +2825,8 @@ class Expression:
 
         Parameters
         ----------
-        x: Expression | None
-            The variable with respect to which to perform the partial-fraction decomposition.
+        variables: Expression
+            Variables with respect to which to perform the partial-fraction decomposition.
         """
     def together(self) -> Expression:
         r"""
