@@ -42,7 +42,7 @@ pyo3-stub-gen = { version = "0.17", optional = true, default-features = false, f
     "numpy",
 ] }
 spynso3 = { version = "0.1" }
-vakint = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463cca1f1ec9aa9ee90fe51b56a87f", features = [
+vakint = { git = "https://github.com/alphal00p/gammaloop", rev = "581a318f36f1ad27d68342fddd75b8f3a915d219", features = [
     "symbolica_community_module",
 ] }
 mimalloc = { version = "0.1", features = [
@@ -50,19 +50,20 @@ mimalloc = { version = "0.1", features = [
 ] } # prevent TLS allocation errors in conjunction with numpy
 
 [patch.crates-io]
-spynso3 = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463cca1f1ec9aa9ee90fe51b56a87f" }
-idenso = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463cca1f1ec9aa9ee90fe51b56a87f" }
-spenso = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463cca1f1ec9aa9ee90fe51b56a87f" }
-spenso-hep-lib = { git = "https://github.com/alphal00p/gammaloop", rev = "092811c505463cca1f1ec9aa9ee90fe51b56a87f" }
+spynso3 = { git = "https://github.com/alphal00p/gammaloop", rev = "581a318f36f1ad27d68342fddd75b8f3a915d219" }
+idenso = { git = "https://github.com/alphal00p/gammaloop", rev = "581a318f36f1ad27d68342fddd75b8f3a915d219" }
+spenso = { git = "https://github.com/alphal00p/gammaloop", rev = "581a318f36f1ad27d68342fddd75b8f3a915d219" }
+spenso-hep-lib = { git = "https://github.com/alphal00p/gammaloop", rev = "581a318f36f1ad27d68342fddd75b8f3a915d219" }
 
-symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "2e9345b13967cd214b8473f662fa1104d653d5a6" }
-numerica = { git = "https://github.com/alphal00p/symbolica", rev = "2e9345b13967cd214b8473f662fa1104d653d5a6" }
-graphica = { git = "https://github.com/alphal00p/symbolica", rev = "2e9345b13967cd214b8473f662fa1104d653d5a6" }
+symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "217ae31d9feb82bfc0c094b0bbda8cb4e0ddfbf5" }
+numerica = { git = "https://github.com/alphal00p/symbolica", rev = "217ae31d9feb82bfc0c094b0bbda8cb4e0ddfbf5" }
+graphica = { git = "https://github.com/alphal00p/symbolica", rev = "217ae31d9feb82bfc0c094b0bbda8cb4e0ddfbf5" }
+symbolica-integrate = { git = "https://github.com/alphal00p/symbolica-integrate", rev = "f60c7f27da8b4b1edb4a8c987d33d14a5db18e58" }
 
 [patch."https://github.com/symbolica-dev/symbolica"]
-symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "2e9345b13967cd214b8473f662fa1104d653d5a6" }
-numerica = { git = "https://github.com/alphal00p/symbolica", rev = "2e9345b13967cd214b8473f662fa1104d653d5a6" }
-graphica = { git = "https://github.com/alphal00p/symbolica", rev = "2e9345b13967cd214b8473f662fa1104d653d5a6" }
+symbolica = { git = "https://github.com/alphal00p/symbolica", rev = "217ae31d9feb82bfc0c094b0bbda8cb4e0ddfbf5" }
+numerica = { git = "https://github.com/alphal00p/symbolica", rev = "217ae31d9feb82bfc0c094b0bbda8cb4e0ddfbf5" }
+graphica = { git = "https://github.com/alphal00p/symbolica", rev = "217ae31d9feb82bfc0c094b0bbda8cb4e0ddfbf5" }
 
 [build-dependencies]
 pyo3-build-config = "*"
