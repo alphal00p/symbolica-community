@@ -452,7 +452,7 @@ def _(mo):
 
 @app.cell
 def _(diagram):
-    r = diagram.numerator_expression()
+    r = diagram.numerator_expression(in_lmb=True)
     r
     return
 
