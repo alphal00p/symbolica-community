@@ -20,6 +20,10 @@ required-features = ["python_stubgen"]
 name = "symbolica_community"
 crate-type = ["rlib", "cdylib"]
 
+# Reuse optimized Symbolica while keeping the local Feynkit crates quick to rebuild.
+[profile.dev.package.symbolica]
+opt-level = 2
+
 # Optimize browser downloads separately from native release performance.
 [profile.release-small]
 inherits = "release"
