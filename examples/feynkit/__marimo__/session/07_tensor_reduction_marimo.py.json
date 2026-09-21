@@ -1,0 +1,135 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "08e9266122d7447b89ba99f108bc2034",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "19a4d9d867fa6824f22bfd58c0ae3b88",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"tensor-reduction-for-vacuum-graphs\">Tensor reduction for vacuum graphs</h1>\n<span class=\"paragraph\">Tensor vacuum integrals appear after the Taylor expansion used by the\n<marimo-tex class=\"arithmatex\">||(R||)</marimo-tex>-operation. Inside a Lorentz-invariant vacuum integral, covariance\nturns a numerator such as <marimo-tex class=\"arithmatex\">||(k^\\mu k^\\nu||)</marimo-tex> into metric tensors multiplying\nscalar products. FeynKit's native reducer performs that projection in\nsymbolic dimension <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex>, while keeping repeated momenta in symmetry\norbits.</span>\n<span class=\"paragraph\">The input and output use the ecosystem's Spenso notation:</span>\n<ul>\n<li>rank-one tensors end in <code>spenso::mink(D, index)</code>;</li>\n<li>scalar contractions are <code>spenso::dot(vector, vector)</code>;</li>\n<li>residual free-index tensors use <code>spenso::g(slot, slot)</code>.</li>\n</ul>\n<span class=\"paragraph\">All returned values are ordinary Symbolica expressions, so the reduced\nscalar numerators can flow directly into simplification or vacuum-integral\nidentification.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "b84f23663846b8dbca11a589f29baaa7",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "01dc1e34c53bc1163caed146faa3f320",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"rank-two-the-basic-projector\">Rank two: the basic projector</h2>\n<span class=\"paragraph\">We distinguish the integrated momentum by its complete compact Spenso\nform, <code>Momentum(10, mink(D))</code>. This is more precise than selecting every\nmomentum with the same head and is useful for multiloop graphs.</span>\n<span class=\"paragraph\">Contracting the free tensor with <marimo-tex class=\"arithmatex\">||(p_\\mu p_\\nu||)</marimo-tex> gives</span>\n<marimo-tex class=\"arithmatex\">||[\nk^\\mu k^\\nu p_\\mu p_\\nu\n  \\longrightarrow\n  \\frac{(k\\!\\cdot\\!k)(p\\!\\cdot\\!p)}{D}.\n||]</marimo-tex><span class=\"paragraph\">Here the arrow denotes equality after the symmetric vacuum integration;\nit is not an identity of the unintegrated numerator.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "bb1a3d0210e0e797c4ef194691891c13",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "a28bb9c9f07c82b2a756cfb76b545917",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "4851215bbeb86f9dfd0b82acbf65244a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"rank-six-exploit-internal-and-projector-symmetry\">Rank six: exploit internal and projector symmetry</h2>\n<span class=\"paragraph\">Now the integrated tensor contains two copies of <marimo-tex class=\"arithmatex\">||(k||)</marimo-tex> and four copies of\n<marimo-tex class=\"arithmatex\">||(q||)</marimo-tex>, while all six indices meet the same external momentum <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex>. The\nlabeled metric basis has <marimo-tex class=\"arithmatex\">||(5!!=15||)</marimo-tex> elements, but only two internal\ncontraction orbits survive:</span>\n<ol>\n<li><marimo-tex class=\"arithmatex\">||((k\\!\\cdot\\!k)(q\\!\\cdot\\!q)^2||)</marimo-tex>, representing 3 labeled pairings;</li>\n<li><marimo-tex class=\"arithmatex\">||((k\\!\\cdot\\!q)^2(q\\!\\cdot\\!q)||)</marimo-tex>, representing 12 pairings.</li>\n</ol>\n<span class=\"paragraph\">FeynKit groups these before constructing the answer. The same mechanism is\nwhat makes repeated loop momenta and symmetric external projectors cheap.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "2622b1b413b74849257417ef49cb1f49",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "cb3b052356febf2d9134dec71f71a1f0",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "c6d5614d6d7190546091e1c5a3c9c638",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"rank-twenty-a-genuinely-high-rank-projection\">Rank twenty: a genuinely high-rank projection</h2>\n<span class=\"paragraph\">A naive rank-20 projector has <marimo-tex class=\"arithmatex\">||(19!!=654{,}729{,}075||)</marimo-tex> metric pairings.\nOrthogonal Weingarten coefficients depend only on integer-partition (coset)\ntype, so even a completely general coefficient table has only\n<marimo-tex class=\"arithmatex\">||(p(10)=42||)</marimo-tex> entries. Partial symmetry is cheaper still: a fully contracted\nrank-20 projection with multiplicities <code>[2, 18]</code> on both sides has two\ncontraction orbits per side. FeynKit solves the resulting <marimo-tex class=\"arithmatex\">||(2\\!\\times\\!2||)</marimo-tex>\norbit-Gram system instead of enumerating the square of all labeled\npairings.</span>\n<span class=\"paragraph\">The displayed example is maximally symmetric: both sides contain one\nrepeated vector, so its answer remains a single contraction-orbit term.</span>\n<span class=\"paragraph\">The result remains compact and exact in <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex>; no numerical dimension is\nsubstituted.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "466db26fe66bbdc1b2e38ce8f63164bd",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "449c34064efaea4b5e8a3e1b03a3f5fc",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "d6564f10f3bccadd9a83016cee75a3e3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"applying-the-reducer-to-a-feynkit-graph\">Applying the reducer to a FeynKit graph</h2>\n<span class=\"paragraph\">A finalized vacuum diagram exposes the same operation directly. The cell\nbelow generates the two-loop pure-gluon theta vacuum graph from FeynKit's\nnormalized Standard Model. Its two three-gluon vertices give a rank-two\nmomentum numerator. Since the graph has no external legs, every native\n<code>FeynKit::Momentum</code> is an integrated vacuum momentum and the convenience\nreducer is unambiguous.</span>\n<span class=\"paragraph\">The reducer dimension must match the graph's <code>spenso::mink</code> slots; native\ngenerated rules currently carry <code>4</code>, while a vacuum expression prepared\ndirectly in symbolic dimension uses <code>D</code> as above. Use exact\n<code>with_integrated_vector(...)</code> selectors when a numerator also contains\nexternal objects with the <code>FeynKit::Momentum</code> head.</span>\n<span class=\"paragraph\"><code>reduce_tensor_numerator</code> reduces the product of the stored numerator and\nexternal-state projector, returning the compact sum as one Expression. The\nseparately stored scalar numerator prefactor is not part of that tensor\nprojection.</span>\n<span class=\"paragraph\"><code>reduce_tensor_graphs</code> instead returns one native <code>FeynmanDiagram</code> per\nnonzero scalar term, with the projector coefficient absorbed into its\nnumerator. Every contribution retains the scalar numerator prefactor. The\nexternal-state projector has been consumed by the reduction and is reset\nto one, so it cannot be applied twice. Graph splitting requires a fully\ncontracted projection and raises <code>fk.TensorReductionError</code> if Lorentz\nindices remain; use <code>reduce_tensor_numerator</code> when tensor-valued output is\nintentional. The original diagram is not mutated. Its topology,\ndenominators, and topology ID are preserved in every contribution, while\ndeterministic <code>.tensor[index]</code> names distinguish them. From there one can\ncanonicalize scalar products, identify the vacuum topology, and extract\nthe local counterterm required by the <marimo-tex class=\"arithmatex\">||(R||)</marimo-tex>-operation.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "fb06a09dbca27a7e169445fae8bcfbbb",
+      "outputs": [],
+      "console": []
+    }
+  ]
+}

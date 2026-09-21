@@ -1,0 +1,217 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "399d058fbce0057370dcdc4afb740e7a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "d4a4d2d8ae86495676fe9f8a91880011",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"relativistic-kinematics-and-jet-clustering\">Relativistic kinematics and jet clustering</h1>\n<span class=\"paragraph\">FeynKit's Python kinematics use double precision, caller-defined energy units, component order <marimo-tex class=\"arithmatex\">||((E,p_x,p_y,p_z)||)</marimo-tex>, and the mostly-minus metric <marimo-tex class=\"arithmatex\">||((+,-,-,-)||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "f5d17c1f83500a5170babc127dd7ea61",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "2adc9fcf6bdf6b869fd5468993a7b829",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"three-and-four-momenta\">Three- and four-momenta</h2>\n<span class=\"paragraph\">Construct an on-shell four-vector from a spatial momentum and a mass. The invariant mass check below makes the metric convention explicit.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "e37dba3e05e379aab242af8b98e8b3dd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "{\"components\": [\"text/plain+float:13.0\", \"text/plain+float:3.0\", \"text/plain+float:4.0\", \"text/plain+float:0.0\"], \"pT\": \"text/plain+float:5.0\", \"mass_squared\": \"text/plain+float:144.0\", \"mass\": \"text/plain+float:12.0\", \"rapidity\": \"text/plain+float:0.0\"}"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "2f402e37effac1f2993d9b47e304d6b3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "{\"dot_product\": \"text/plain+float:54.0\", \"component_formula\": \"text/plain+float:54.0\"}"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "a06103d7edcd3cd287f9b51fd0e32d01",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"lorentz-transformations\">Lorentz transformations</h2>\n<span class=\"paragraph\">Boosts require a dimensionless three-velocity with norm below one. Rotations and boosts provide explicit inverse operations, which makes invariant checks straightforward.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "0b2a74f0cf49185bbe4429f5ebeb20e5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "{\"rest\": [\"text/plain+float:5.0\", \"text/plain+float:0.0\", \"text/plain+float:0.0\", \"text/plain+float:0.0\"], \"boosted\": [\"text/plain+float:6.25\", \"text/plain+float:3.75\", \"text/plain+float:0.0\", \"text/plain+float:0.0\"], \"recovered\": [\"text/plain+float:5.0\", \"text/plain+float:0.0\", \"text/plain+float:0.0\", \"text/plain+float:0.0\"], \"invariant_mass_squared\": \"text/plain+float:25.0\"}"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "24fdc405b19b15dbde4ca8e74682808c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\vec{p}=\\left(-0,1,0\\right)||)</marimo-tex></span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "9099744f142654ad217e4e26a4efee66",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"angular-distances\">Angular distances</h2>\n<span class=\"paragraph\">Azimuth is wrapped consistently, and <code>delta_r</code> uses rapidity for four-momenta (pseudorapidity for three-momenta).</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "d375b87a2573498b2eebe01c13e9ce5b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "{\"delta_phi\": \"text/plain+float:1.5707963267948966\", \"delta_R\": \"text/plain+float:1.916859426532087\"}"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "7c3cbe2fbeb6a59bb1b76a811f90740a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"generalized-k_t-jets\">Generalized-<marimo-tex class=\"arithmatex\">||(k_T||)</marimo-tex> jets</h2>\n<span class=\"paragraph\">The sequential-recombination algorithms use E-scheme four-vector addition. Results are sorted by decreasing transverse momentum, and constituent indices refer to positions in the input list.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "926fc44c0f17783d23df1663ec0c3956",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "d5d07ce060f62cb80b6d62c6d3ba36fd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "[{\"constituents\": [0, 1], \"pT\": \"text/plain+float:104.93906243725678\", \"rapidity\": \"text/plain+float:0.21190674124139994\", \"phi\": \"text/plain+float:0.11903950743758053\"}, {\"constituents\": [2], \"pT\": \"text/plain+float:35.0\", \"rapidity\": \"text/plain+float:-1.1\", \"phi\": \"text/plain+float:2.4\"}]"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "307aefbadf7fa0b9d23eb0559a264b44",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "{\"kt\": [[0, 1], [2]], \"cambridge_aachen\": [[0, 1], [2]], \"anti_kt\": [[0, 1], [2]]}"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "b363e52b6cba6a3215fdea11303ee9db",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"practical-checklist\">Practical checklist</h2>\n<ul>\n<li>Keep one unit system throughout an event.</li>\n<li>Check <code>mass_squared</code> after constructing or transforming momenta.</li>\n<li>Choose the jet radius and minimum <marimo-tex class=\"arithmatex\">||(p_T||)</marimo-tex> in the context of the analysis.</li>\n<li>Preserve the input ordering when interpreting <code>constituent_indices</code>.</li>\n<li>Catch <code>KinematicsError</code> around user-provided configurations or non-finite event data.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

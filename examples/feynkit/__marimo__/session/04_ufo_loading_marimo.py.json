@@ -1,0 +1,198 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "399d058fbce0057370dcdc4afb740e7a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "67b4df317f48d53b798596fff2309ee6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"loading-a-raw-ufo-model\">Loading a raw UFO model</h1>\n<span class=\"paragraph\">This tutorial crosses FeynKit's optional UFO boundary: a conventional Python UFO package is normalized into the same typed <code>Model</code> used by the core diagram and expression APIs. We use a tiny scalar theory so every diagnostic count is easy to inspect.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "fd529f23286ed93cd77a3d9bc5634a51",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"requirements\">Requirements</h2>\n<span class=\"paragraph\">Raw UFO import requires <strong>Python 3.11 or newer</strong> and <code>ufo-model-loader&gt;=0.1.6</code>. Install the supported extra with:</span>\n<div class=\"language-bash codehilite\"><pre><span></span><code>pip<span class=\"w\"> </span>install<span class=\"w\"> </span><span class=\"s1\">'symbolica[feynkit-ufo]'</span>\n</code></pre></div>\n<span class=\"paragraph\">This is an explicit optional workflow. The normalized JSON tutorials <code>00</code>\u2013<code>03</code> need only the base <code>symbolica</code> package.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "34102233cba0543ab7f8634234ec4052",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "41f9765898ae4589ce34884286da31fd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"normalize-the-ufo-package\">Normalize the UFO package</h2>\n<span class=\"paragraph\"><code>UfoLoader.load</code> returns three typed results together: <code>model</code> for physics operations, <code>parameters</code> for the applied numerical inputs, and <code>diagnostics</code> recording exactly how normalization was requested. <code>restriction_name=\"default\"</code> applies <code>restrict_default.dat</code>.</span>\n<span class=\"paragraph\">The environment variable below belongs to this teaching fixture\u2014not to FeynKit generally. It limits this generated scalar model to two- and three-point interactions, keeping the tutorial fast and deterministic.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "c4ae4bdb7e2c07c1b33f79175ac9b0b9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Loading UFO scalars model with n-point interactions, n=[2|3]\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "Xref",
+      "code_hash": "8db63f788799678800bc3d6704f126ff",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"check-normalization-diagnostics\">Check normalization diagnostics</h2>\n<span class=\"paragraph\">These counts describe the normalized model actually handed to Rust. They are useful provenance when comparing model restrictions or diagnosing an unexpected set of interaction rules.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "512b60e66d3e322db3852ec587041ae1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "{\"counts\": {\"orders\": 2, \"model_parameters\": 6, \"particles\": 3, \"propagators\": 3, \"lorentz_structures\": 2, \"couplings\": 1, \"vertices\": 16, \"functions\": 7, \"form_factors\": 0, \"parameter_values\": 3}, \"source\": \"text/plain:/common/dev/symbolica-community/main/examples/feynkit/data/ufo_scalars\", \"restriction\": \"default\", \"simplified\": true, \"wrapped Lorentz indices\": true}"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "32cf9dda9b08a5eb30c9549cd44267c6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"inspect-the-typed-model-and-restriction-card\">Inspect the typed model and restriction card</h2>\n<span class=\"paragraph\">The loader has now left the Python UFO object model behind. Particle, parameter, coupling, and vertex lookups use FeynKit's typed API. Zero widths in the restriction card become internal zero parameters during simplification, leaving the coupling and two nonzero masses as independent numerical inputs.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "34103dced196e72b88e4ba137bbec0b6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "[{\"name\": \"scalar_0\", \"pdg\": 1000, \"mass_parameter\": \"ZERO\", \"massless\": true}, {\"name\": \"scalar_1\", \"pdg\": 1001, \"mass_parameter\": \"mass_scalar_1\", \"massless\": false}, {\"name\": \"scalar_2\", \"pdg\": 1002, \"mass_parameter\": \"mass_scalar_2\", \"massless\": false}]"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "b0d8684352d969546ec011e8345abcc9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "{\"lam\": [\"text/plain+float:1.0\", \"text/plain+float:0.0\"], \"mass_scalar_1\": [\"text/plain+float:1.0\", \"text/plain+float:0.0\"], \"mass_scalar_2\": [\"text/plain+float:2.0\", \"text/plain+float:0.0\"]}"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "44312a39367fcecee5ba3fe9636b3adf",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"reuse-the-model-in-diagram-generation\">Reuse the model in diagram generation</h2>\n<span class=\"paragraph\">Nothing downstream is UFO-specific. Generate diagrams directly from the\nloaded <code>model</code>; selectors, generation options, graph inspection, CFF\nconstruction, and Symbolica expressions all compose unchanged.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "0aca6e0f0b3c14c2765b0dcd6bc88057",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "{\"diagrams\": 1, \"topologies_considered\": 1, \"first_diagram\": \"FK0\"}"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "dfc400d5563caa7061a67eed05d12fb9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"working-with-your-own-ufo\">Working with your own UFO</h2>\n<span class=\"paragraph\">Point <code>UfoLoader.load</code> at the UFO package directory and choose a\n<code>restriction_name</code> matching <code>restrict_&lt;name&gt;.dat</code>; use <code>None</code> to accept the\npackage's default behavior. Keep <code>simplify_model=True</code> for the usual removal\nof zero contributions. Disable <code>wrap_indices_in_lorentz_structures</code> only\nwhen interoperating with code that specifically expects unwrapped UFO\nsyntax.</span>\n<span class=\"paragraph\">For reproducible production workflows, normalize once with the UFO bridge and serialize the resulting <code>Model</code> to JSON; later sessions can load that JSON without the optional Python dependency.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}
