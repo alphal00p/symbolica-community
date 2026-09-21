@@ -15,6 +15,7 @@ pyo3-stub-gen = { version = "0.17", optional = true, default-features = false }
 
 [features]
 default = ["native"]
-native = ["symbolica/default"]
+# An extension must not select a global allocator for its embedding host.
+native = ["symbolica/tracing_max_level_info", "symbolica/integer-gmp", "symbolica/float-mpfr", "symbolica/native_code_generation"]
 wasm = ["symbolica/wasm"]
 python_stubgen = ["pyo3-stub-gen", "symbolica/python_stubgen"]

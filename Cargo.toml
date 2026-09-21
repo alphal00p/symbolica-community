@@ -35,7 +35,8 @@ strip = "symbols"
 [features]
 default = ["module", "native"]
 module = ["pyo3/abi3", "symbolica/python_abi3"] # incompatible with stub_gen
-native = ["symbolica/default", "idenso/native", "spynso3/native", "feynkit-py/native", "example_extension/native"]
+# Keep the system allocator: mimalloc can crash after Python's importing thread exits.
+native = ["symbolica/tracing_max_level_info", "symbolica/integer-gmp", "symbolica/float-mpfr", "symbolica/native_code_generation", "idenso/native", "spynso3/native", "feynkit-py/native", "example_extension/native"]
 wasm = ["symbolica/wasm", "idenso/wasm", "spynso3/wasm", "feynkit-py/wasm", "example_extension/wasm"]
 python_stubgen = [
     "native",
@@ -62,13 +63,13 @@ pyo3-stub-gen = { version = "0.17", optional = true, default-features = false, f
 ] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# Share the host kernel; OneLOop currently requires native numeric/JIT support.
+oneloop-python = { path = "../../oneloopmaster/python", default-features = false, features = ["community"] }
 # Vakint currently requires native dependencies, including GMP/MPFR.
 vakint = { path = "../../gammaloop/feynkit-rich-display/crates/vakint", features = ["symbolica_community_module"] }
-mimalloc = { version = "0.1", features = [
-    "local_dynamic_tls",
-] } # prevent TLS allocation errors in conjunction with numpy
 
+# Match OneLOop's validated evaluator caches and unify all HEP Atom types.
 [patch.crates-io]
-symbolica = { git = "https://github.com/symbolica-dev/symbolica", branch = "main" }
-numerica = { git = "https://github.com/symbolica-dev/symbolica", branch = "main" }
-graphica = { git = "https://github.com/symbolica-dev/symbolica", branch = "main" }
+symbolica = { git = "https://github.com/symbolica-dev/symbolica", rev = "a19c760dd567c239f30d87e4e924ca2f8b8457ab" }
+numerica = { git = "https://github.com/symbolica-dev/symbolica", rev = "a19c760dd567c239f30d87e4e924ca2f8b8457ab" }
+graphica = { git = "https://github.com/symbolica-dev/symbolica", rev = "a19c760dd567c239f30d87e4e924ca2f8b8457ab" }

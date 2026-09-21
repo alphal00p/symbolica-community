@@ -17,8 +17,10 @@ def _():
         Representation, TensorExpression, TensorName, TensorPattern, dot,
     )
     from symbolica.community.hep import Model, SnailFilterOptions, FeynmanDiagram
+    from symbolica.community.hep.oneloop import A0
 
     return (
+        A0,
         E,
         Expression,
         FeynmanDiagram,
@@ -34,6 +36,12 @@ def _():
         idenso,
         mo,
     )
+
+
+@app.cell
+def _(A0):
+    A0(1., 1.)
+    return
 
 
 @app.cell
@@ -393,6 +401,7 @@ def _(diagrams, mo):
 @app.cell
 def _(diagram_index, diagrams):
     diagram = diagrams[diagram_index.value]
+    diagram
     return (diagram,)
 
 
@@ -419,8 +428,20 @@ def _(diagram, mo):
 
 
 @app.cell
-def _(diagram, highlight_selection, mo):
+def _(diagram, highlight_selection):
+    import linnet as _linnet
+
     _graph = diagram.to_linnet()
+    _graph.render_config = _graph.render_config.overlay(
+        _linnet.RenderConfig(
+            selectors=_linnet.DrawingSelectors(
+                # Capture the factory for rendering after Marimo clears cell-local names.
+                edge=lambda edge, drawing=_linnet.EdgeDrawing: drawing(
+                    label=edge.data.particle_name
+                )
+            )
+        )
+    )
     _kind, _particle = highlight_selection.value
     if _kind == "internal":
         highlighted_subgraph = _graph.filter(
@@ -434,7 +455,7 @@ def _(diagram, highlight_selection, mo):
         )
     else:
         highlighted_subgraph = None
-    mo.Html(diagram.to_html(highlight=highlighted_subgraph))
+    highlighted_subgraph
     return
 
 
@@ -452,8 +473,26 @@ def _(mo):
 
 @app.cell
 def _(diagram):
+    diagram.numerator_expression(in_lmb=True).to_expression()
+    return
+
+
+@app.cell
+def _(diagram):
     r = diagram.numerator_expression(in_lmb=True)
     r
+    return
+
+
+@app.cell
+def _(diagram):
+    diagram.subgraph(nodes=[2, 3])
+    return
+
+
+@app.cell
+def _(diagram, mUV):
+    diagram.uv_counterterm(mUV, subgraph=diagram.subgraph(nodes=[2, 3]))
     return
 
 
@@ -796,6 +835,181 @@ def _(
 def _(E, eps, total_uv_residue):
     total_uv_counterterm = -E('1i') * total_uv_residue / (16 * E('pi')**2 * eps)
     total_uv_counterterm
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## Generated QED cross section
+
+    Generate $e^-e^+\to\mu^-\mu^+$, sum and average the incoming spins,
+    and contract the generated numerator with Idenso. The massive squared
+    matrix element is retained; its massless limit is integrated over two-body
+    phase space below. This reproduces the unpolarized result in the
+    [FeynCalc example](https://feyncalc.github.io/FeynCalcExamples/QED/Tree/ElAel-MuAmu).
+    """)
+    return
+
+
+@app.cell
+def _(E, Model, S, idenso, mo):
+    from symbolica.community import hep as qed_hep
+
+    qed_model = Model(mo.notebook_location() / "hep_sm.json")
+    _process = qed_hep.Process.cross_section([11, -11], [13, -13]).with_loop_count(1, 1)
+    _result = qed_hep.Generator(qed_model).generate(
+        _process,
+        max_vertices=4,
+        maximum_bridges=None,
+        vertex_allow=["V_98", "V_99"],
+        numerator_grouping=None,
+        progress=None,
+    )
+    assert len(_result.diagrams) == 1
+    qed_diagram = _result.diagrams[0]
+    _cut = qed_diagram.cuts[0]
+    _Q, _P, _K = S("gammalooprs::Q", "gammalooprs::P", "gammalooprs::K")
+    qed_p1, qed_p2, qed_k1, qed_k2 = _P(0), _P(1), _K(0), S("qed_example::k2")
+    qed_s = S("qed_example::s", is_positive=True)
+    qed_t, qed_u = S("qed_example::t", "qed_example::u")
+    qed_me, qed_mm, qed_e = S("UFO::Me", "UFO::MM", "UFO::ee")
+    _kin = qed_hep.Kinematics.mandelstam(
+        [qed_p1, qed_p2, qed_k1, qed_k2],
+        [qed_me**2, qed_me**2, qed_mm**2, qed_mm**2],
+        [qed_s, qed_t, qed_u],
+    )
+    _projector = qed_diagram.projector_expression()
+    for _edge in qed_diagram.external_edges:
+        _projector = qed_model.particle_by_pdg(_edge.particle_pdg).sum_spins(
+            _projector,
+            _Q(_edge.id),
+            edge=_edge.id,
+            average=True,
+        )
+    _numerator = qed_model.expand_couplings(
+        qed_diagram.numerator_expression().to_expression() * _projector
+    )
+    _contracted = idenso.to_dots(idenso.simplify_gamma(_numerator.expand()).expand())
+    _contracted = _kin.apply(
+        qed_diagram.loop_momentum_basis.route_expression(_contracted)
+    )
+    _denominator = qed_diagram.denominator_expression(
+        edge_powers={_edge.id: 0 for _edge in _cut.edges},
+        dimension=4,
+        in_lmb=True,
+    ).to_expression()
+    _a, _b, _c, _inverse = S(
+        "qed_example::a_", "qed_example::b_", "qed_example::c_", "qed_example::inverse_"
+    )
+    _denominator = _kin.apply(
+        _denominator.replace(S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse)
+    )
+    qed_squared = (
+        qed_diagram.overall_factor_expression(evaluate=True)
+        * qed_diagram.numerator_prefactor_expression()
+        * _contracted
+        / _denominator
+    ).together()
+    _expected = (
+        2
+        * qed_e**4
+        / qed_s**2
+        * (
+            2 * qed_me**2 * (2 * qed_mm**2 + qed_s - qed_t - qed_u)
+            + 2 * qed_me**4
+            + 2 * qed_mm**4
+            + 2 * qed_mm**2 * (qed_s - qed_t - qed_u)
+            + qed_t**2
+            + qed_u**2
+        )
+    )
+    assert (qed_squared - _expected).replace(
+        qed_u, 2 * qed_me**2 + 2 * qed_mm**2 - qed_s - qed_t
+    ).together() == E("0")
+    mo.vstack(
+        [
+            mo.md("**Generated graph**"),
+            qed_diagram,
+            mo.md("**Massive, spin-averaged squared matrix element**"),
+            qed_squared,
+        ]
+    )
+    return (
+        qed_e,
+        qed_hep,
+        qed_k1,
+        qed_k2,
+        qed_me,
+        qed_mm,
+        qed_p1,
+        qed_p2,
+        qed_s,
+        qed_squared,
+        qed_t,
+        qed_u,
+    )
+
+
+@app.cell
+def _(
+    E,
+    Expression,
+    S,
+    mo,
+    qed_e,
+    qed_hep,
+    qed_k1,
+    qed_k2,
+    qed_me,
+    qed_mm,
+    qed_p1,
+    qed_p2,
+    qed_s,
+    qed_squared,
+    qed_t,
+    qed_u,
+):
+    qed_cos_theta, qed_alpha = S("qed_example::cos_theta", "qed_example::alpha")
+    _pi = Expression.PI
+    _kin = qed_hep.Kinematics.mandelstam(
+        [qed_p1, qed_p2, qed_k1, qed_k2],
+        [E("0")] * 4,
+        [qed_s, qed_t, qed_u],
+    )
+    _angular = (
+        qed_squared.replace(qed_me, E("0"))
+        .replace(qed_mm, E("0"))
+        .replace(qed_t, -qed_s * (1 - qed_cos_theta) / 2)
+        .replace(qed_u, -qed_s * (1 + qed_cos_theta) / 2)
+        .replace(qed_e**4, (4 * _pi * qed_alpha) ** 2)
+    )
+    qed_differential = (
+        _angular * _kin.two_body_phase_space(qed_k1, qed_k2) / _kin.flux(qed_p1, qed_p2)
+    ).expand()
+    _primitive = (
+        qed_differential.to_polynomial().integrate(qed_cos_theta).to_expression()
+    )
+    qed_total = (
+        2
+        * _pi
+        * (
+            _primitive.replace(qed_cos_theta, E("1"))
+            - _primitive.replace(qed_cos_theta, E("-1"))
+        )
+    ).together()
+    assert (
+        qed_differential - qed_alpha**2 * (1 + qed_cos_theta**2) / (4 * qed_s)
+    ).together() == E("0")
+    assert (qed_total - 4 * _pi * qed_alpha**2 / (3 * qed_s)).together() == E("0")
+    mo.vstack(
+        [
+            mo.md(r"**Massless angular distribution** $d\sigma/d\Omega$"),
+            qed_differential,
+            mo.md(r"**Integrated cross section** $\sigma=4\pi\alpha^2/(3s)$"),
+            qed_total,
+        ]
+    )
     return
 
 

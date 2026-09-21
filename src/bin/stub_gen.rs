@@ -8,12 +8,13 @@ fn main() -> Result<()> {
         _ => return Err(std::io::Error::other("Usage: stub_gen [--hep-only]").into()),
     };
     let mut stub = stub_info()?;
-    let feynkit = stub
+    let feynkit = feynkit_py::stub_info()?
         .modules
         .remove("symbolica.community.feynkit")
         .ok_or_else(|| {
             std::io::Error::other("FeynKit did not register its Python stub inventory")
         })?;
+    stub.modules.remove("symbolica.community.feynkit");
     let hep = feynkit
         .to_string()
         .replace("symbolica.community.feynkit", "symbolica.community.hep");
@@ -26,7 +27,7 @@ fn main() -> Result<()> {
     }
     let directory = stub.python_root.join("symbolica/community/hep");
     std::fs::create_dir_all(&directory)?;
-    let source = hep
+    let source = (hep + "\nfrom . import oneloop as oneloop\n")
         .lines()
         .map(str::trim_end)
         .collect::<Vec<_>>()

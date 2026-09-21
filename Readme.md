@@ -46,6 +46,22 @@ from symbolica.community.hep import FeynmanDiagram, Model, Generator, TensorRedu
 
 See the [HEP example](examples/hep/README.md) for a complete one-loop calculation.
 
+Native builds also expose OneLOop in the same Symbolica kernel:
+
+```python
+from symbolica.community.hep import FourMomentum, oneloop
+
+p = FourMomentum(3.0, 1.0, 0.0, 0.0)
+finite, pole, double_pole = oneloop.B0(p.mass_squared, 4.0, 4.0)
+```
+
+The local host uses `../../oneloopmaster/python` and pins Symbolica to the
+revision used by OneLOop's evaluator caches. Run
+`.venv-feynkit/bin/python examples/oneloop_smoke.py` to check numeric evaluation,
+SymJIT, arbitrary precision, and expressions shared with FeynKit. This example
+requires NumPy for Symbolica's expression evaluator. After rebuilding the host,
+restart any running Python or notebook kernel to load the updated extension.
+
 #### Installation 
 
 This package can be installed for Python 3.7 or newer using `pip`:
@@ -74,7 +90,9 @@ build without uploading it to PyPI.
 
 The WebAssembly build uses `--no-default-features --features wasm`, selecting
 Symbolica's Rust numeric backends and disabling native code generation.
-Native builds retain Symbolica's default features, including GMP and MPFR.
+Native builds use GMP, MPFR, and native code generation with the system allocator.
+Symbolica's optional mimalloc allocator is disabled because it can crash when
+Python imports the extension on a worker thread and later uses another thread.
 Native releases and PyEmscripten releases have separate publication jobs.
 
 The `release-small` Cargo profile optimizes for size (`opt-level = "z"`), uses

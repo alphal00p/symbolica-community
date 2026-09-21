@@ -2,6 +2,7 @@
 
 Models, Feynman diagrams, generation, CFFs, tensor reduction, and kinematics
 are available directly in this namespace, for example ``hep.FeynmanDiagram``.
+Native builds also provide one-loop integrals through ``hep.oneloop``.
 """
 
 from ..hep_native import *

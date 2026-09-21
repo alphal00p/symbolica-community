@@ -1,4 +1,4 @@
-//! Expose the complete FeynKit Python API in one community namespace.
+//! Expose FeynKit and native OneLOop evaluation in one community namespace.
 
 use pyo3::{
     Bound, PyResult, Python,
@@ -25,10 +25,15 @@ impl SymbolicaCommunityModule for HepModule {
                 value.setattr("__module__", "symbolica.community.hep")?;
             }
         }
+        #[cfg(not(target_arch = "wasm32"))]
+        oneloop_native::register_hep_module(module)?;
         Ok(())
     }
 
     fn initialize(py: Python<'_>) -> PyResult<()> {
-        feynkit_py::FeynkitModule::initialize(py)
+        feynkit_py::FeynkitModule::initialize(py)?;
+        #[cfg(not(target_arch = "wasm32"))]
+        oneloop_native::CommunityModule::initialize(py)?;
+        Ok(())
     }
 }
