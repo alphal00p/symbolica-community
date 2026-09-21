@@ -392,14 +392,50 @@ def _(diagrams, mo):
 
 @app.cell
 def _(diagram_index, diagrams):
-    diagrams[diagram_index.value]
-    return
+    diagram = diagrams[diagram_index.value]
+    return (diagram,)
+
+
+@app.cell(hide_code=True)
+def _(diagram, mo):
+    _options = {
+        "None": ("none", None),
+        "Internal lines": ("internal", None),
+        "External lines": ("external", None),
+    }
+    _options.update(
+        {
+            f"{name} lines": ("particle", name)
+            for name in sorted({edge.particle_name for edge in diagram.edges})
+        }
+    )
+    highlight_selection = mo.ui.dropdown(
+        options=_options,
+        value="Internal lines",
+        label="Highlight subgraph",
+    )
+    highlight_selection
+    return (highlight_selection,)
 
 
 @app.cell
-def _(diagram_index, diagrams):
-    diagram = diagrams[diagram_index.value]
-    return (diagram,)
+def _(diagram, highlight_selection, mo):
+    _graph = diagram.to_linnet()
+    _kind, _particle = highlight_selection.value
+    if _kind == "internal":
+        highlighted_subgraph = _graph.filter(
+            edge=lambda edge: not edge.data.is_external
+        )
+    elif _kind == "external":
+        highlighted_subgraph = _graph.filter(edge=lambda edge: edge.data.is_external)
+    elif _kind == "particle":
+        highlighted_subgraph = _graph.filter(
+            edge=lambda edge: edge.data.particle_name == _particle
+        )
+    else:
+        highlighted_subgraph = None
+    mo.Html(diagram.to_html(highlight=highlighted_subgraph))
+    return
 
 
 @app.cell(hide_code=True)
