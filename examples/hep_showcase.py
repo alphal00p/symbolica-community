@@ -623,6 +623,26 @@ def _(D, diagram, route_momenta):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The same massive expansion is available directly on a diagram. It retains
+    every UV-divergent order automatically and returns the additive local
+    counterterm in edge momenta with tagged `denom` propagators. Diagram-wide
+    weights and projectors remain separate. Pass `numerator=` for a prepared
+    numerator and `subgraph=diagram.filter(...)` to expand a selected region.
+    This is a single UV limit, before forest subtraction and pole integration.
+    """)
+    return
+
+
+@app.cell
+def _(diagram, mUV):
+    diagram_local_uv_counterterm = diagram.uv_counterterm(mUV)
+    diagram_local_uv_counterterm
+    return
+
+
 @app.cell
 def _(copy, projected_integrand, uv_deform):
     uv_expression_copy = copy(projected_integrand)
