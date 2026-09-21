@@ -46,10 +46,10 @@ python_stubgen = [
 
 [dependencies]
 example_extension = { path = "example_extension", default-features = false }
-idenso = { git = "https://github.com/alphal00p/gammaloop", branch = "feynkit", default-features = false, features = ["bincode", "python"] }
-spynso3 = { git = "https://github.com/alphal00p/gammaloop", branch = "feynkit", default-features = false }
+idenso = { path = "../../gammaloop/feynkit-rich-display/crates/idenso", default-features = false, features = ["bincode", "python"] }
+spynso3 = { path = "../../gammaloop/feynkit-rich-display/crates/spynso3", default-features = false }
 # Aggregates the cff, generator, graph, tensor, model, and kinematics bindings.
-feynkit-py = { git = "https://github.com/alphal00p/gammaloop", branch = "feynkit", default-features = false, features = ["ufo"] }
+feynkit-py = { path = "../../gammaloop/feynkit-rich-display/crates/feynkit-py", default-features = false, features = ["ufo"] }
 symbolica = { version = "3.0", default-features = false, features = ["python_export"] }
 symbolica-integrate = { version = "2.0.1", default-features = false, features = ["compressed-step-metadata"] }
 pyo3 = { version = "0.28" }
@@ -59,7 +59,7 @@ pyo3-stub-gen = { version = "0.17", optional = true, default-features = false, f
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # Vakint currently requires native dependencies, including GMP/MPFR.
-vakint = { git = "https://github.com/alphal00p/gammaloop", branch = "feynkit", features = ["symbolica_community_module"] }
+vakint = { path = "../../gammaloop/feynkit-rich-display/crates/vakint", features = ["symbolica_community_module"] }
 mimalloc = { version = "0.1", features = [
     "local_dynamic_tls",
 ] } # prevent TLS allocation errors in conjunction with numpy

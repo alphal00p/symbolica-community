@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.24.2"
+__generated_with = "0.24.0"
 app = marimo.App(
     width="medium",
     app_title="One-loop gluon propagator and UV expansion",
@@ -457,22 +457,16 @@ def _(mo):
 
 
 @app.cell
-def _(SnailFilterOptions, g, mo, model):
-    with mo.status.spinner(title="Generating diagrams") as status:
-        def report(p):
-            status.update(
-                title=str(p.stage),
-                subtitle=f"{p.completed:,} processed",
-            )
-
-        loops = 1
-        diagrams = model.generate_diagrams(
-            [g], [g], loops=loops,
-            coupling_orders={"QCD": 2*loops, "QED": 0},
-            particle_veto=["c", "t", "s", "u", "d"],
-            zero_snails=SnailFilterOptions(),
-            progress=report,
-        )
+def _(SnailFilterOptions, g, model):
+    loops = 1
+    diagrams = model.generate_diagrams(
+        [g],
+        [g],
+        loops=loops,
+        coupling_orders={"QCD": 2 * loops, "QED": 0},
+        particle_veto=["c", "t", "s", "u", "d"],
+        zero_snails=SnailFilterOptions(),
+    )
     return (diagrams,)
 
 
@@ -502,8 +496,13 @@ def _(diagrams, mo):
 
 @app.cell
 def _(diagram_index, diagrams):
+    diagrams[diagram_index.value]
+    return
+
+
+@app.cell
+def _(diagram_index, diagrams):
     diagram = diagrams[diagram_index.value]
-    diagram
     return (diagram,)
 
 
