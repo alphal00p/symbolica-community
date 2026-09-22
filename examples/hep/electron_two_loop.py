@@ -20,6 +20,7 @@ def _(mo):
     # Two-loop electron self-energy: Feynman gauge
 
     [Browse all notebooks](/) · [Photon self-energy](/?file=hep/photon_self_energy.py) ·
+    [Two-loop photon](/?file=hep/photon_two_loop.py) ·
     [Two-loop $\phi^4$](/?file=hep/ibp_phi4.py)
 
     Generate all three massless QED self-energy diagrams in **$\xi=1$**, apply
@@ -47,7 +48,6 @@ def _(mo):
     forest. Arbitrary $\xi$ and the finite off-shell self-energy remain outside
     this calculation.
     """)
-    return
 
 
 @app.cell
@@ -337,7 +337,6 @@ def _(diagram_integrals, flavor_weights, flavors, mo, result):
             ),
         ]
     )
-    return
 
 
 @app.cell
@@ -364,7 +363,6 @@ def _(bare_basis, family, mo, solution, targets):
             ),
         ]
     )
-    return
 
 
 @app.cell(hide_code=True)
@@ -390,7 +388,6 @@ def _(mo):
     The auxiliary-mass and normalization logarithms cancel against the generated
     bare result.
     """)
-    return
 
 
 @app.cell
@@ -408,7 +405,6 @@ def _(bare_uv, counterterm_uv, mo, zpsi):
             ),
         ]
     )
-    return
 
 
 if __name__ == "__main__":

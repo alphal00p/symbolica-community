@@ -23,6 +23,7 @@ def _(mo):
     # One-loop QED renormalization
 
     [Browse all notebooks](/) · [Electron g−2](/?file=hep/gminus2.py) ·
+    [Two-loop photon](/?file=hep/photon_two_loop.py) ·
     [Two-loop electron](/?file=hep/electron_two_loop.py)
 
     Generate the massive electron self-energy, photon self-energy and
