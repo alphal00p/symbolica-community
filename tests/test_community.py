@@ -1,4 +1,5 @@
 """Tests for the bundled community extensions."""
+
 from symbolica import E
 
 
@@ -9,9 +10,10 @@ def test_example_extension():
 
 
 def test_idenso_metric_trace():
-    from symbolica.community.idenso import simplify_metrics
+    from symbolica.community.spenso import TensorExpression
 
-    assert simplify_metrics(E("g(bis(4,1),bis(4,1))", default_namespace="spenso")) == E("4")
+    metric = TensorExpression(E("g(bis(4,1),bis(4,1))", default_namespace="spenso"))
+    assert metric.simplify_metrics().to_expression() == E("4")
 
 
 def test_spenso_import():

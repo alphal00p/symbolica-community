@@ -1369,16 +1369,12 @@ name = "idenso"
 version = "0.3.0"
 dependencies = [
  "base64",
- "bincode",
- "bincode-trait-derive",
  "blake3",
  "delegate 0.13.5",
  "eyre",
  "itertools 0.14.0",
  "linnet",
  "nu-ansi-term",
- "pyo3",
- "pyo3-stub-gen",
  "spenso",
  "spenso-macros",
  "symbolica",
@@ -1652,6 +1648,7 @@ dependencies = [
  "pyo3",
  "pyo3-build-config",
  "pyo3-stub-gen-derive",
+ "roxmltree",
  "rust-embed",
  "serde",
  "serde_json",
@@ -2614,6 +2611,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "roxmltree"
+version = "0.21.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f1964b10c76125c36f8afe190065a4bf9a87bf324842c05701330bba9f1cacbb"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
 name = "rug"
 version = "1.30.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3231,7 +3237,6 @@ version = "3.0.0"
 dependencies = [
  "example_extension",
  "feynkit-py",
- "idenso",
  "oneloop-python",
  "pyo3",
  "pyo3-stub-gen",

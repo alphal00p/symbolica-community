@@ -471,31 +471,21 @@ class TestIdensoSimplifications:
 
     def test_simplify_metrics_tensor(self):
         """Test metric simplification with tensor"""
-        from symbolica.community.idenso import simplify_metrics
-
-        result = simplify_metrics(self.bis.g(4, 2) * self.gam(2, 3, 1))
+        result = (self.bis.g(4, 2) * self.gam(2, 3, 1)).simplify_metrics()
         assert result is not None
 
     def test_simplify_metrics_bis_trace(self):
         """Test metric simplification with bis trace"""
-        from symbolica.community.idenso import simplify_metrics
-
-        result = simplify_metrics(self.bis.g(1, 1).to_expression())
+        result = self.bis.g(1, 1).simplify_metrics()
         assert result is not None
 
     def test_simplify_metrics_euclidean_trace(self):
         """Test metric simplification with euclidean trace"""
-        from symbolica.community.idenso import simplify_metrics
-
-        result = simplify_metrics(
-            Representation.euc("d").g(1, 1).to_expression()
-        )
+        result = Representation.euc("d").g(1, 1).simplify_metrics()
         assert result is not None
 
     def test_simplify_gamma_chain(self):
         """Test gamma matrix simplification"""
-        from symbolica.community.idenso import simplify_gamma
-
         # Define p function as in the notebook
         def p(i):
             from symbolica import Expression
@@ -509,20 +499,18 @@ class TestIdensoSimplifications:
                 m = minkd(i).to_expression()
             return self.ps(m)
 
-        a = simplify_gamma(
+        a = TensorExpression(
             self.gam(1, 2, 1)
             * self.gam(2, 3, "mu")
             * self.gam(3, 4, 1)
             * self.gam(4, 1, 2)
             * p("mu")
             * p(2)
-        )
+        ).simplify_gamma()
         assert a is not None
 
     def test_to_dots_conversion(self):
         """Test conversion to dots notation"""
-        from symbolica.community.idenso import simplify_gamma, to_dots
-
         # Define p function as in the notebook
         def p(i):
             from symbolica import Expression
@@ -536,23 +524,21 @@ class TestIdensoSimplifications:
                 m = minkd(i).to_expression()
             return self.ps(m)
 
-        a = simplify_gamma(
+        a = TensorExpression(
             self.gam(1, 2, 1)
             * self.gam(2, 3, "mu")
             * self.gam(3, 4, 1)
             * self.gam(4, 1, 2)
             * p("mu")
             * p(2)
-        )
+        ).simplify_gamma()
 
-        dots_result = to_dots(a)
+        dots_result = a.to_dots()
         assert dots_result is not None
 
     def test_simplify_color_structure(self):
         """Test color structure simplification"""
-        from symbolica.community.idenso import simplify_color
-
-        result = simplify_color(self.f_func(1, 2, 3) * self.f_func(3, 2, 1))
+        result = TensorExpression(self.f_func(1, 2, 3) * self.f_func(3, 2, 1)).simplify_color()
         assert result is not None
 
 

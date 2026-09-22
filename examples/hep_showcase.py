@@ -12,15 +12,20 @@ def _():
     import marimo as mo
     from copy import copy
     from symbolica import S, E, Expression
-    from symbolica.community import idenso
     from symbolica.community.spenso import (
-        Representation, TensorExpression, TensorName, TensorPattern, dot,
+        ColorSimplifySettings,
+        Representation,
+        TensorExpression,
+        TensorName,
+        TensorPattern,
+        dot,
     )
     from symbolica.community.hep import Model, SnailFilterOptions, FeynmanDiagram
     from symbolica.community.hep.oneloop import A0
 
     return (
         A0,
+        ColorSimplifySettings,
         E,
         Expression,
         FeynmanDiagram,
@@ -33,14 +38,8 @@ def _():
         TensorPattern,
         copy,
         dot,
-        idenso,
         mo,
     )
-
-
-@app.cell
-def _():
-    return
 
 
 @app.cell
@@ -90,14 +89,14 @@ def _(Representation, S, TensorName, dot):
 
 
 @app.cell
-def _(A0, mUV):
-    A0(mUV, 1.)
+def _(A0):
+    A0(2., 1.)
     return
 
 
 @app.cell
-def _(TensorExpression, idenso):
-    color_settings = idenso.ColorSimplifySettings(
+def _(ColorSimplifySettings, TensorExpression):
+    color_settings = ColorSimplifySettings(
         substitute_cof_dimension_invariants=True,
     )
 
@@ -434,28 +433,16 @@ def _(diagram, mo):
 
 @app.cell
 def _(diagram, highlight_selection):
-    import linnet as _linnet
-
-    _graph = diagram.to_linnet()
-    _graph.render_config = _graph.render_config.overlay(
-        _linnet.RenderConfig(
-            selectors=_linnet.DrawingSelectors(
-                # Capture the factory for rendering after Marimo clears cell-local names.
-                edge=lambda edge, drawing=_linnet.EdgeDrawing: drawing(
-                    label=edge.data.particle_name
-                )
-            )
-        )
-    )
+    # Physics subgraphs retain the parent diagram and its particle drawing styles.
     _kind, _particle = highlight_selection.value
     if _kind == "internal":
-        highlighted_subgraph = _graph.filter(
+        highlighted_subgraph = diagram.filter(
             edge=lambda edge: not edge.data.is_external
         )
     elif _kind == "external":
-        highlighted_subgraph = _graph.filter(edge=lambda edge: edge.data.is_external)
+        highlighted_subgraph = diagram.filter(edge=lambda edge: edge.data.is_external)
     elif _kind == "particle":
-        highlighted_subgraph = _graph.filter(
+        highlighted_subgraph = diagram.filter(
             edge=lambda edge: edge.data.particle_name == _particle
         )
     else:
@@ -495,15 +482,24 @@ def _(diagram):
     return
 
 
+app._unparsable_cell(
+    r"""
+    s = diagram.subgraph(nodes=[2, 3]).
+    s
+    """,
+    name="_"
+)
+
+
 @app.cell
-def _(diagram):
-    diagram.subgraph(nodes=[2, 3])
+def _(s):
+    s.superficial_degree_of_divergence()
     return
 
 
 @app.cell
 def _(diagram, mUV):
-    diagram.uv_counterterm(mUV, subgraph=diagram.subgraph(nodes=[2, 3]))
+    diagram.subgraph(nodes=[2, 3]).uv_counterterm(mUV)
     return
 
 
@@ -680,7 +676,7 @@ def _(mo):
     every UV-divergent order automatically and returns the additive local
     counterterm in edge momenta with tagged `denom` propagators. Diagram-wide
     weights and projectors remain separate. Pass `numerator=` for a prepared
-    numerator and `subgraph=diagram.filter(...)` to expand a selected region.
+    numerator, or call `diagram.filter(...).uv_counterterm(mUV)` to expand a selected region.
     This is a single UV limit, before forest subtraction and pole integration.
     """)
     return
@@ -849,7 +845,7 @@ def _(E, eps, total_uv_residue):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## Generated QED cross section
@@ -864,7 +860,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, Model, S, idenso, mo):
+def _(E, Model, S, TensorExpression, mo):
     from symbolica.community import hep as qed_hep
 
     qed_model = Model(mo.notebook_location() / "hep_sm.json")
@@ -881,7 +877,18 @@ def _(E, Model, S, idenso, mo):
     qed_diagram = _result.diagrams[0]
     _cut = qed_diagram.cuts[0]
     _Q, _P, _K = S("gammalooprs::Q", "gammalooprs::P", "gammalooprs::K")
-    qed_p1, qed_p2, qed_k1, qed_k2 = _P(0), _P(1), _K(0), S("qed_example::k2")
+    qed_p1, qed_p2 = _P(0), _P(1)
+    qed_k1, qed_k2 = S("qed_example::k1", "qed_example::k2")
+    _loop_edge = qed_diagram.loop_momentum_basis.loop_edges[0]
+    _loop_particle = next(
+        _particle.pdg_code
+        for _edge, _particle in zip(_cut.edges, _cut.particles)
+        if _edge.id == _loop_edge
+    )
+    _physical_momentum = qed_k1 if _loop_particle == 13 else qed_k2
+    _index = S("qed_example::index_")
+    qed_loop_pattern = _K(0, _index)
+    qed_loop_replacement = _cut.orientations[_loop_edge] * _physical_momentum(_index)
     qed_s = S("qed_example::s", is_positive=True)
     qed_t, qed_u = S("qed_example::t", "qed_example::u")
     qed_me, qed_mm, qed_e = S("UFO::Me", "UFO::MM", "UFO::ee")
@@ -901,9 +908,17 @@ def _(E, Model, S, idenso, mo):
     _numerator = qed_model.expand_couplings(
         qed_diagram.numerator_expression().to_expression() * _projector
     )
-    _contracted = idenso.to_dots(idenso.simplify_gamma(_numerator.expand()).expand())
+    _contracted = (
+        TensorExpression(_numerator.expand())
+        .simplify_gamma()
+        .expand()
+        .to_dots()
+        .to_expression()
+    )
     _contracted = _kin.apply(
-        qed_diagram.loop_momentum_basis.route_expression(_contracted)
+        qed_diagram.loop_momentum_basis.route_expression(_contracted).replace(
+            qed_loop_pattern, qed_loop_replacement
+        )
     )
     _denominator = qed_diagram.denominator_expression(
         edge_powers={_edge.id: 0 for _edge in _cut.edges},
@@ -947,10 +962,13 @@ def _(E, Model, S, idenso, mo):
         ]
     )
     return (
+        qed_diagram,
         qed_e,
         qed_hep,
         qed_k1,
         qed_k2,
+        qed_loop_pattern,
+        qed_loop_replacement,
         qed_me,
         qed_mm,
         qed_model,
@@ -1025,16 +1043,17 @@ def _(
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Polarized QED currents
+    ## Generated polarized QED cross section
 
     Spenso constructs the chiral projectors and Idenso evaluates their traces.
     The currents below select right-chiral fermion wavefunctions; in the
     massless limit these describe right-handed particles and left-handed
     antiparticles. No initial spin average is taken for specified states.
-    This calculation assembles the physical currents explicitly.
+    Apply the projectors to the generated interaction vertices. Cut particle
+    identities and orientations fix the physical outgoing momenta.
     """)
     return
 
@@ -1043,12 +1062,14 @@ def _(mo):
 def _(
     E,
     S,
-    idenso,
     mo,
+    qed_diagram,
     qed_e,
     qed_hep,
     qed_k1,
     qed_k2,
+    qed_loop_pattern,
+    qed_loop_replacement,
     qed_me,
     qed_mm,
     qed_model,
@@ -1062,30 +1083,6 @@ def _(
     from symbolica.community.spenso import TensorExpression as _Tensor
     from symbolica.community.spenso import chain as _chain
 
-    _i0, _i1, _i2, _i3, _j0, _j1, _j2, _j3, _mu, _nu = S(
-        "chiral::i0",
-        "chiral::i1",
-        "chiral::i2",
-        "chiral::i3",
-        "chiral::j0",
-        "chiral::j1",
-        "chiral::j2",
-        "chiral::j3",
-        "chiral::mu",
-        "chiral::nu",
-    )
-    _incoming = (
-        qed_model.particle_by_pdg(-11).spin_sum(qed_p2, _i0, _i1)
-        * _Tensor.gamma(4)(_i1, _i2, _mu).to_expression()
-        * qed_model.particle_by_pdg(11).spin_sum(qed_p1, _i2, _i3)
-        * _Tensor.gamma(4)(_i3, _i0, _nu).to_expression()
-    )
-    _outgoing = (
-        qed_model.particle_by_pdg(13).spin_sum(qed_k1, _j0, _j1)
-        * _Tensor.gamma(4)(_j1, _j2, _mu).to_expression()
-        * qed_model.particle_by_pdg(-13).spin_sum(qed_k2, _j2, _j3)
-        * _Tensor.gamma(4)(_j3, _j0, _nu).to_expression()
-    )
     _a, _b, _ell = S("chiral::a_", "chiral::b_", "chiral::ell_")
     _pattern = _Tensor.gamma(4)(_a, _b, _ell).to_expression()
     _right_current = _chain(
@@ -1094,30 +1091,128 @@ def _(
         _Tensor.gamma(4)(_a, "middle", _ell),
         _Tensor.projp(4)("middle", _b),
     ).to_expression()
-    _projected = (_incoming * _outgoing).replace(_pattern, _right_current)
-    _traces = idenso.simplify_gamma(_projected.expand()).expand()
-    _contracted = idenso.to_dots(idenso.simplify_epsilon(_traces).expand())
+    _numerator = E("1")
+    for _vertex in qed_diagram.vertices:
+        _numerator *= (
+            _vertex.numerator_expression()
+            .to_expression()
+            .replace(_pattern, _right_current)
+        )
+    for _edge in qed_diagram.internal_edges:
+        _numerator *= _edge.numerator_expression().to_expression()
+    _Q = S("gammalooprs::Q")
+    _projector = qed_diagram.projector_expression()
+    for _edge in qed_diagram.external_edges:
+        _projector = qed_model.particle_by_pdg(_edge.particle_pdg).sum_spins(
+            _projector, _Q(_edge.id), edge=_edge.id
+        )
+    _numerator = qed_model.expand_couplings(_numerator * _projector)
+    _contracted = (
+        _Tensor(_numerator.expand())
+        .simplify_gamma()
+        .expand()
+        .simplify_epsilon()
+        .expand()
+        .to_dots()
+        .to_expression()
+    )
     _kin = qed_hep.Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
         [qed_me**2, qed_me**2, qed_mm**2, qed_mm**2],
         [qed_s, qed_t, qed_u],
     )
-    qed_polarized = (_kin.apply(_contracted) * qed_e**4 / qed_s**2).together()
+    _contracted = _kin.apply(
+        qed_diagram.loop_momentum_basis.route_expression(_contracted).replace(
+            qed_loop_pattern, qed_loop_replacement
+        )
+    )
+    _cut = qed_diagram.cuts[0]
+    _denominator = qed_diagram.denominator_expression(
+        edge_powers={_edge.id: 0 for _edge in _cut.edges}, dimension=4, in_lmb=True
+    ).to_expression()
+    _q, _m, _power, _inverse = S(
+        "chiral::q_", "chiral::m_", "chiral::power_", "chiral::inverse_"
+    )
+    _denominator = _kin.apply(
+        _denominator.replace(
+            S("gammalooprs::denom")(_q, _m, _power, _inverse), _inverse
+        )
+    )
+    qed_polarized = (
+        qed_diagram.overall_factor_expression(evaluate=True)
+        * qed_diagram.numerator_prefactor_expression()
+        * _contracted
+        / _denominator
+    ).replace(qed_t, 2 * qed_me**2 + 2 * qed_mm**2 - qed_s - qed_u).factor()
     assert (
         qed_polarized - 4 * qed_e**4 * (qed_me**2 + qed_mm**2 - qed_u) ** 2 / qed_s**2
-    ).together() == E("0")
+    ).replace(qed_u, 2 * qed_me**2 + 2 * qed_mm**2 - qed_s - qed_t).together() == E("0")
     qed_polarized_massless = qed_polarized.replace(qed_me, E("0")).replace(
         qed_mm, E("0")
     )
-    assert (
-        qed_polarized_massless - 4 * qed_e**4 * qed_u**2 / qed_s**2
+    assert (qed_polarized_massless - 4 * qed_e**4 * qed_u**2 / qed_s**2).replace(
+        qed_u, -qed_s - qed_t
     ).together() == E("0")
     mo.vstack(
         [
-            mo.md("**Massive chiral-projected squared matrix element**"),
+            mo.md("**Generated massive chiral-projected squared matrix element**"),
             qed_polarized,
-            mo.md("**Massless polarized squared matrix element**"),
+            mo.md("**Generated massless polarized squared matrix element**"),
             qed_polarized_massless,
+        ]
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Feynman-parameter polynomials
+
+    For the two-loop denominators $(k+l)^2-m^2$ and $(k-l)\cdot p+\delta$,
+    with $p^2=s$, the quadratic loop matrix is singular. Feynkit still returns
+    its algebraic polynomials $U=0$ and $F=sxy^2$.
+    These polynomials alone do not define an integration formula or establish
+    that the integral vanishes.
+    """)
+    return
+
+
+@app.cell
+def _(E, S, mo):
+    from symbolica.community import hep as _hep
+
+    _k, _l, _p, _s, _m2, _delta, _x, _y = S(
+        "parameters::k",
+        "parameters::l",
+        "parameters::p",
+        "parameters::s",
+        "parameters::m2",
+        "parameters::delta",
+        "parameters::x",
+        "parameters::y",
+    )
+    _kin = _hep.Kinematics(momenta=[_k, _l, _p]).with_scalar_product(_p, _p, _s)
+    parameter_family = _hep.IntegralFamily(
+        [_k, _l],
+        [_p],
+        [
+            _kin.scalar_product(_k + _l, _k + _l) - _m2,
+            _kin.scalar_product(_k - _l, _p) + _delta,
+        ],
+        kinematics=_kin,
+    )
+    parameter_u, parameter_f = parameter_family.symanzik([_x, _y])
+    assert parameter_u == E("0")
+    assert (parameter_f - _s * _x * _y**2).expand() == E("0")
+    mo.vstack(
+        [
+            mo.md("**Integral family**"),
+            parameter_family,
+            mo.md("**First polynomial, U**"),
+            parameter_u,
+            mo.md("**Second polynomial, F**"),
+            parameter_f,
         ]
     )
     return

@@ -78,7 +78,6 @@ fn core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     })
     .map_err(PyRuntimeError::new_err)?;
     create_symbolica_module(m)?;
-    register_module!(m, idenso::python::IdensoModule);
     register_module!(m, example_extension::CommunityModule);
     register_module!(m, spynso3::SpensoModule);
     register_module!(m, hep::HepModule);

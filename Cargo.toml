@@ -36,14 +36,13 @@ strip = "symbols"
 default = ["module", "native"]
 module = ["pyo3/abi3", "symbolica/python_abi3"] # incompatible with stub_gen
 # Keep the system allocator: mimalloc can crash after Python's importing thread exits.
-native = ["symbolica/tracing_max_level_info", "symbolica/integer-gmp", "symbolica/float-mpfr", "symbolica/native_code_generation", "idenso/native", "spynso3/native", "feynkit-py/native", "example_extension/native"]
-wasm = ["symbolica/wasm", "idenso/wasm", "spynso3/wasm", "feynkit-py/wasm", "example_extension/wasm"]
+native = ["symbolica/tracing_max_level_info", "symbolica/integer-gmp", "symbolica/float-mpfr", "symbolica/native_code_generation", "spynso3/native", "feynkit-py/native", "example_extension/native"]
+wasm = ["symbolica/wasm", "spynso3/wasm", "feynkit-py/wasm", "example_extension/wasm"]
 python_stubgen = [
     "native",
     "pyo3-stub-gen",
     "symbolica/python_stubgen",
     "spynso3/python_stubgen",
-    "idenso/python_stubgen",
     "feynkit-py/python_stubgen",
     "vakint/python_stubgen",
     "example_extension/python_stubgen",
@@ -51,7 +50,6 @@ python_stubgen = [
 
 [dependencies]
 example_extension = { path = "example_extension", default-features = false }
-idenso = { path = "../../gammaloop/feynkit-rich-display/crates/idenso", default-features = false, features = ["bincode", "python"] }
 spynso3 = { path = "../../gammaloop/feynkit-rich-display/crates/spynso3", default-features = false }
 # Aggregates the cff, generator, graph, tensor, model, and kinematics bindings.
 feynkit-py = { path = "../../gammaloop/feynkit-rich-display/crates/feynkit-py", default-features = false, features = ["ufo"] }

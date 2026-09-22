@@ -9,11 +9,11 @@ def _():
     import marimo as mo
     from copy import copy
     from symbolica import S, E, N, Expression
-    from symbolica.community import idenso
-    from symbolica.community.spenso import TensorExpression, as_tensor
+    from symbolica.community.spenso import ColorSimplifySettings, TensorExpression, as_tensor
     from symbolica.community.hep import Model, SnailFilterOptions, Particle, FeynmanDiagram, TensorReducer
 
     return (
+        ColorSimplifySettings,
         E,
         Expression,
         FeynmanDiagram,
@@ -23,7 +23,6 @@ def _():
         TensorExpression,
         as_tensor,
         TensorReducer,
-        idenso,
         mo,
     )
 
@@ -72,22 +71,29 @@ def _(D, FeynmanDiagram, TensorExpression, as_tensor, index_, mink):
 
 
 @app.cell
-def _(TensorExpression, as_tensor, idenso, qcd_color_factors):
+def _(ColorSimplifySettings, TensorExpression, as_tensor, qcd_color_factors):
+    color_settings = ColorSimplifySettings(substitute_cof_dimension_invariants=True)
+
     def contract_indices(expression: TensorExpression) -> TensorExpression:
         """Close internal Dirac, color, and Lorentz indices, retaining external ports."""
         raw = expression.to_expression()
         for _ in range(12):
-            simplified = idenso.simplify_metrics(
-                idenso.simplify_color(idenso.simplify_gamma(raw.expand()))
-            ).expand()
-            # This revision mistakes cas(..., coad(8)) for an unresolved tensor
-            # port. Evaluate the SU(3) scalar factors before re-inferring ports.
+            simplified = (
+                TensorExpression(raw.expand())
+                .simplify_gamma()
+                .simplify_color(color_settings)
+                .simplify_metrics()
+                .expand()
+                .to_expression()
+            )
+            # Resolve cas(..., coad(8)) through the settings before tensor reinference.
+            # Keep the final SU(3) substitution for other scalar color factors.
             if simplified == raw:
                 return as_tensor(qcd_color_factors(simplified))
             raw = simplified
         raise RuntimeError('Tensor contractions did not reach a fixed point')
 
-    return (contract_indices,)
+    return color_settings, contract_indices
 
 
 @app.cell
@@ -170,12 +176,16 @@ def _(FeynmanDiagram, K, MOMENTUM, P, TensorExpression, as_tensor, index_, numer
 
 
 @app.cell
-def _(D, P, TensorExpression, as_tensor, contract_indices, dot, idenso, mink, p2):
+def _(D, P, TensorExpression, as_tensor, contract_indices, dot, mink, p2):
     def scalar_products(expression: TensorExpression) -> TensorExpression:
         """Keep compact scalar products inside the structured tensor expression."""
-        return as_tensor(idenso.to_dots(contract_indices(expression).to_expression()).replace(
-            dot(P(mink(D)), P(mink(D))), p2
-        ).expand())
+        return as_tensor(
+            contract_indices(expression)
+            .to_dots()
+            .to_expression()
+            .replace(dot(P(mink(D)), P(mink(D))), p2)
+            .expand()
+        )
 
     return (scalar_products,)
 
@@ -230,14 +240,15 @@ def _(
     P,
     RED_P,
     S,
+    TensorExpression,
     TensorReducer,
     as_tensor,
     apply_projector,
+    color_settings,
     diagram_weight,
     dot,
     ell2,
     external_projector,
-    idenso,
     index_,
     mink,
     p2,
@@ -276,7 +287,13 @@ def _(
         ).replace(P(index_), RED_P(index_)).expand()
         # Sew gamma chains before reduction; retain explicit loop-vector indices.
         for _ in range(12):
-            new = idenso.simplify_gamma(idenso.simplify_color(shifted)).expand()
+            new = (
+                TensorExpression(shifted)
+                .simplify_color(color_settings)
+                .simplify_gamma()
+                .expand()
+                .to_expression()
+            )
             if new == shifted:
                 break
             shifted = new
