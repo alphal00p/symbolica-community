@@ -12,10 +12,9 @@ def _():
         ColorSimplifySettings,
         Representation,
         TensorExpression,
-        TensorName,
     )
 
-    return ColorSimplifySettings, E, Representation, TensorExpression, TensorName, mo
+    return ColorSimplifySettings, E, Representation, TensorExpression, mo
 
 
 @app.cell(hide_code=True)
@@ -40,7 +39,7 @@ def _(mo):
 
 
 @app.cell
-def _(Representation, TensorExpression, TensorName, mo):
+def _(Representation, TensorExpression, mo):
     generator = TensorExpression.t(8, 3)
     fundamental = Representation.cof(3)
     _adjoint = Representation.coad(8)
@@ -53,12 +52,10 @@ def _(Representation, TensorExpression, TensorName, mo):
     )
     fierz_result = mixed_color.simplify_color().to_cof_dimension_invariants()
     # An identity pairs a fundamental slot with a dual slot.
-    _identity = TensorName.g().to_expression()(
-        fundamental("i").to_expression(), fundamental.dual()("j").to_expression()
-    )
+    _identity = TensorExpression.g(fundamental, fundamental.dual())("i", "j")
     _expected = TensorExpression(
         (generator("c", "i", "k") * generator("b", "k", "j")).to_expression() / 2
-        - _identity * _adjoint.g("b", "c").to_expression() / 12
+        - _identity.to_expression() * _adjoint.g("b", "c").to_expression() / 12
     )
     assert fierz_result.to_expression().expand() == (
         _expected.simplify_color().to_expression().expand()

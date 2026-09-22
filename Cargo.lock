@@ -3236,6 +3236,7 @@ dependencies = [
 name = "symbolica-typst-atom-payload"
 version = "0.1.0"
 dependencies = [
+ "blake3",
  "ciborium",
  "symbolica",
 ]
