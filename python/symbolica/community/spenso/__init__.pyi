@@ -2043,7 +2043,7 @@ class TensorExpression(Expression):
 
         Complex-conjugate an expression and transpose tensor slots in `representation`.
         """
-    def dirac_adjoint(self) -> TensorExpression:
+    def dirac_adjoint(self, *, preserve_indices: builtins.bool = False) -> TensorExpression:
         r"""
         Construct the physics-aware Dirac adjoint and re-infer the tensor interface.
 
@@ -2051,6 +2051,11 @@ class TensorExpression(Expression):
 
         Idenso takes the symbolic complex conjugate, reverses compatible open bispinor chains, and
         inserts the registered `gamma0` factors required at dangling bispinor slots.
+        With `preserve_indices=True`, external labels remain attached to the same physical
+        amplitude legs instead of exchanging the two endpoints of each open chain. Use this
+        when summing diagrams with different fermion pairings before squaring an amplitude.
+        The gamma-zero boundary factors still apply. The default matrix-adjoint convention
+        exchanges endpoints and is unchanged.
         The input must use the representation-aware Spenso forms registered on import.
         Raises `DiracAdjointError` when the tensor network does not define a consistent adjoint.
 

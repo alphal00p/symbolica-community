@@ -6892,6 +6892,8 @@ class ParameterType(enum.Enum):
 
 """Native RustRed IBP solving in the host Symbolica kernel."""
 
+from typing import overload
+
 from symbolica import Expression
 
 from . import IntegralFamily
@@ -6931,7 +6933,12 @@ class IBPRule:
     def exceptions(self) -> list[list[Expression]]: ...
     @property
     def sector(self) -> list[bool]: ...
-    def apply(self, powers: list[int]) -> list[tuple[list[int], Expression]]: ...
+    @overload
+    def apply(
+        self, powers: list[int], *, integral: None = None
+    ) -> list[tuple[list[int], Expression]]: ...
+    @overload
+    def apply(self, powers: list[int], *, integral: Expression) -> Expression: ...
 
 class IBPSolution:
     @property
@@ -6940,6 +6947,11 @@ class IBPSolution:
     def residuals(self) -> list[list[int]]: ...
     @property
     def stats(self) -> dict[str, int]: ...
-    def reduce(self, powers: list[int]) -> list[tuple[list[int], Expression]]: ...
+    @overload
+    def reduce(
+        self, powers: list[int], *, integral: None = None
+    ) -> list[tuple[list[int], Expression]]: ...
+    @overload
+    def reduce(self, powers: list[int], *, integral: Expression) -> Expression: ...
 
 from . import oneloop as oneloop
