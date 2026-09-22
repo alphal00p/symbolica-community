@@ -19,7 +19,8 @@ def _(mo):
     mo.md(r"""
     # Massive Higgs decays
 
-    [Browse all notebooks](/) · [Chiral Z decays](/?file=hep/z_decay.py)
+    [Browse all notebooks](/) · [Chiral Z decays](/?file=hep/z_decay.py) ·
+    [Higgs to gluons](/?file=hep/higgs_gluons.py)
 
     Generate $H\to f\bar f$, $H\to W^-W^+$ or $H\to ZZ$ from the Standard
     Model, retaining the final-particle masses. The calculation sums final spins

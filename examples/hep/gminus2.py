@@ -22,7 +22,7 @@ def _(mo):
     # Electron anomalous magnetic moment
 
     [Browse all notebooks](/) · [Unequal-mass bubble](/?file=hep/ibp_bubble.py) ·
-    [Two-loop φ⁴](/?file=hep/ibp_phi4.py)
+    [Two-loop φ⁴](/?file=hep/ibp_phi4.py) · [Higgs to gluons](/?file=hep/higgs_gluons.py)
 
     Generate the QED vertex and extract its Pauli form factor, reproducing
     [FeynCalc's one-loop g−2 example](https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/El-GaEl).
