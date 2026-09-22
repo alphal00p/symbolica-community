@@ -98,7 +98,7 @@ class ColorSimplifySettings:
     @property
     def expand_cross_chain_fierz(self) -> builtins.bool:
         r"""
-        Whether generators on different open chains are expanded with the Fierz identity.
+        Whether generators on different open chains or traces are expanded with the Fierz identity.
         """
     @property
     def substitute_cof_dimension_invariants(self) -> builtins.bool:
