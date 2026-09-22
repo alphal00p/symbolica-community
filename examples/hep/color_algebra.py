@@ -8,9 +8,9 @@ app = marimo.App(width="medium", app_title="Color chains and conjugation")
 def _():
     import marimo as mo
     from symbolica import E, S
-    from symbolica.community.spenso import Representation, TensorExpression
+    from symbolica.community.spenso import AUTO, Representation, TensorExpression, chain
 
-    return E, S, Representation, TensorExpression, mo
+    return AUTO, E, S, Representation, TensorExpression, chain, mo
 
 
 @app.cell(hide_code=True)
@@ -157,6 +157,52 @@ def _(E, S, TensorExpression, color_trace, color_trace_conjugate, mo):
         ]
     )
     return antisymmetric_color_trace, symmetric_color_trace
+
+
+@app.cell
+def _(AUTO, E, S, TensorExpression, chain, fundamental, generator, mo):
+    _z = S("color_weight_z")
+    weighted_color_word = chain(
+        fundamental("i"),
+        fundamental.dual()("j"),
+        _z**2 * generator("a", AUTO, AUTO),
+        generator("b", AUTO, AUTO),
+    )
+    weighted_color_conjugate = weighted_color_word.spenso_conjugate()
+    assert (
+        weighted_color_conjugate.spenso_conjugate().to_expression()
+        == weighted_color_word.to_expression()
+    )
+    _norm = TensorExpression(
+        weighted_color_word.to_expression() * weighted_color_conjugate.to_expression()
+    )
+    _network = (
+        TensorExpression(_norm.to_expression().replace(_z, E("1+2𝑖")))
+        .undo_chain()
+        .to_network()
+    )
+    _network.execute()
+    weighted_numeric_norm = _network.result_scalar()
+    assert abs(complex(weighted_numeric_norm) - 400 / 3) < 1e-12
+    mo.vstack(
+        [
+            mo.md(r"""
+            **Scalar weights inside an ordered color chain**
+
+            `chain(...)` accepts weighted generators with unresolved fundamental
+            ports. Powers, inverse factors and scalar functions conjugate using
+            Symbolica's existing rules; the generator order and endpoints reverse.
+            A scalar symbol is not assumed real.
+
+            Here the word is $z^2(T^aT^b)_{ij}$. At $z=1+2i$, its summed norm is
+            $|z^2|^2\,16/3=400/3$, checked independently with explicit SU(3) matrices.
+            """),
+            weighted_color_word,
+            weighted_color_conjugate,
+            weighted_numeric_norm,
+        ]
+    )
+    return weighted_color_conjugate, weighted_color_word, weighted_numeric_norm
 
 
 if __name__ == "__main__":
