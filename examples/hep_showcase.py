@@ -156,7 +156,7 @@ def _(FeynmanDiagram, K, P, S, TensorExpression, TensorPattern, index_):
         """Route edge momenta through the graph, then name the basis vectors k and p."""
         if diagram.loop_count != 1 or len(diagram.external_edges) != 2:
             raise ValueError('This example requires a one-loop two-point graph')
-        routed = diagram.loop_momentum_basis.route_expression(expression.to_expression())
+        routed = diagram.loop_momentum_basis.route_expression(expression)
         # The wildcard stands for a whole slot or compact representation.
         routed = routed.replace(S('gammalooprs::K')(0, index_), TensorPattern(K, ports=[index_]))
         routed = routed.replace(S('gammalooprs::P')(0, index_), TensorPattern(P, ports=[index_]))
@@ -272,7 +272,7 @@ def _(
     def uv_scalar_invariants(expression: Expression, diagram: FeynmanDiagram) -> TensorExpression:
         """Restore the original loop and external vectors inside scalar dots."""
         loop_edge, = diagram.loop_momentum_basis.loop_edges
-        loop_vector = TensorExpression(MOMENTUM(loop_edge, lorentz.to_expression()))
+        loop_vector = MOMENTUM(loop_edge, lorentz.to_expression())
         reduced = expression.replace(dot(loop_vector, loop_vector), k2)
         reduced = reduced.replace(dot(uv_p, uv_p), p2).expand()
         if reduced.replace(MOMENTUM(loop_edge, index_), 0).replace(TensorPattern(UV_P, ports=[index_]), 0) != reduced:
@@ -472,7 +472,7 @@ def _(mo):
 
 @app.cell
 def _(diagram):
-    diagram.numerator_expression(in_lmb=True).to_expression()
+    diagram.numerator_expression(in_lmb=True)
     return
 
 
@@ -489,13 +489,11 @@ def _(diagram):
     return
 
 
-app._unparsable_cell(
-    r"""
-    s = diagram.subgraph(nodes=[2, 3]).
+@app.cell
+def _(diagram):
+    s = diagram.subgraph(nodes=[2, 3])
     s
-    """,
-    name="_"
-)
+    return (s,)
 
 
 @app.cell
@@ -840,8 +838,8 @@ def _(
             'transverse': uv_expansion_data(_transverse.expand() * _propagators, _d)['residue'],
             'longitudinal': uv_expansion_data(_longitudinal.expand() * _propagators, _d)['residue'],
         })
-    total_uv_residue = TensorExpression(sum((_row['transverse'].to_expression() for _row in _uv_rows), E('0')).expand())
-    longitudinal_uv_residue = TensorExpression(sum((_row['longitudinal'].to_expression() for _row in _uv_rows), E('0')).expand())
+    total_uv_residue = sum((_row['transverse'] for _row in _uv_rows), TensorExpression(0)).expand()
+    longitudinal_uv_residue = sum((_row['longitudinal'] for _row in _uv_rows), TensorExpression(0)).expand()
     assert longitudinal_uv_residue == E('0')
     mo.ui.table([
         {'Loop': _row['loop'],
@@ -927,7 +925,6 @@ def _(E, Model, S, TensorExpression, mo, model_path):
         .simplify_gamma()
         .expand()
         .to_dots()
-        .to_expression()
     )
     _contracted = _kin.apply(
         qed_diagram.loop_momentum_basis.route_expression(_contracted).replace(
@@ -938,7 +935,7 @@ def _(E, Model, S, TensorExpression, mo, model_path):
         edge_powers={_edge.id: 0 for _edge in _cut.edges},
         dimension=4,
         in_lmb=True,
-    ).to_expression()
+    )
     _a, _b, _c, _inverse = S(
         "qed_example::a_", "qed_example::b_", "qed_example::c_", "qed_example::inverse_"
     )
@@ -1098,20 +1095,16 @@ def _(
     from symbolica.community.spenso import chain as _chain
 
     _a, _b, _ell = S("chiral::a_", "chiral::b_", "chiral::ell_")
-    _pattern = _Tensor.gamma(4)(_a, _b, _ell).to_expression()
+    _pattern = _Tensor.gamma(4)(_a, _b, _ell)
     _right_current = _chain(
         _Rep.bis(4)(_a),
         _Rep.bis(4)(_b),
         _Tensor.gamma(4)(_a, "middle", _ell),
         _Tensor.projp(4)("middle", _b),
-    ).to_expression()
+    )
     _numerator = E("1")
     for _vertex in qed_diagram.vertices:
-        _numerator *= (
-            _vertex.numerator_expression()
-            .to_expression()
-            .replace(_pattern, _right_current)
-        )
+        _numerator *= _vertex.numerator_expression().replace(_pattern, _right_current)
     for _edge in qed_diagram.internal_edges:
         _numerator *= _edge.numerator_expression().to_expression()
     _Q = S("gammalooprs::Q")
@@ -1128,7 +1121,6 @@ def _(
         .simplify_epsilon()
         .expand()
         .to_dots()
-        .to_expression()
     )
     _kin = qed_hep.Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
@@ -1143,7 +1135,7 @@ def _(
     _cut = qed_diagram.cuts[0]
     _denominator = qed_diagram.denominator_expression(
         edge_powers={_edge.id: 0 for _edge in _cut.edges}, dimension=4, in_lmb=True
-    ).to_expression()
+    )
     _q, _m, _power, _inverse = S(
         "chiral::q_", "chiral::m_", "chiral::power_", "chiral::inverse_"
     )
@@ -1276,7 +1268,7 @@ def _(E, S, mo, qed_model):
     _amplitude = E("0")
     for _diagram in _result.diagrams:
         _numerator = qed_model.expand_couplings(
-            _diagram.numerator_expression(in_lmb=True).to_expression()
+            _diagram.numerator_expression(in_lmb=True)
         )
         for _edge in _diagram.external_edges:
             _matches = list(
@@ -1292,7 +1284,7 @@ def _(E, S, mo, qed_model):
             )
         _denominator = _diagram.denominator_expression(
             dimension=4, in_lmb=True
-        ).to_expression()
+        )
         _denominator = _kin.apply(
             _denominator.replace(S("gammalooprs::denom")(_a, _b, _c, _inv), _inv)
         )
@@ -1306,7 +1298,7 @@ def _(E, S, mo, qed_model):
     _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0()
     _conj = S("spenso::conj")
     _wrapper = S("conjugate_index")
-    _real_adjoint = _adjoint.to_expression().replace(_conj(_P(_a, _b)), _P(_a, _b))
+    _real_adjoint = _adjoint.replace(_conj(_P(_a, _b)), _P(_a, _b))
     for _real in (_me, _e, _s, _t, _u):
         _real_adjoint = _real_adjoint.replace(_conj(_real), _real)
     _wrapped = _TensorExpression(_real_adjoint).wrap_indices(_wrapper)
@@ -1327,7 +1319,6 @@ def _(E, S, mo, qed_model):
             .simplify_gamma()
             .expand()
             .to_dots()
-            .to_expression()
         )
         .replace(_t, 2 * _me**2 - _s - _u)
         .together()
@@ -1353,7 +1344,7 @@ def _(E, S, mo, qed_model):
             compton_squared.replace(_me, E("0")).together(),
         ]
     )
-    return (compton_squared,)
+    return
 
 
 if __name__ == "__main__":
