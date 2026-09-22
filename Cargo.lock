@@ -1260,7 +1260,6 @@ dependencies = [
 [[package]]
 name = "graphica"
 version = "3.0.0"
-source = "git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab#a19c760dd567c239f30d87e4e924ca2f8b8457ab"
 dependencies = [
  "ahash 0.8.12",
  "dyn-clone",

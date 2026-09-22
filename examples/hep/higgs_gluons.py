@@ -34,7 +34,9 @@ def _(mo):
     # Higgs to gluons: a finite quark triangle
 
     [Browse notebooks](/) · [Tree-level Higgs decays](/?file=hep/higgs_decay.py) ·
-    [Electron anomalous moment](/?file=hep/gminus2.py)
+    [Electron anomalous moment](/?file=hep/gminus2.py) ·
+    [Odd photons](/?file=hep/odd_photons.py) ·
+    [Tadpole mass insertions](/?file=hep/tadpole_mass_insertions.py)
 
     Generate both orientations of the massive top-quark loop in $H\to gg$,
     reduce the open Lorentz tensor and its scalar integrals with native IBP,
