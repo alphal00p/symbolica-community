@@ -39,6 +39,7 @@ def _(mo):
     # One-loop QCD renormalization
 
     [Browse all notebooks](/) · [QED renormalization](/?file=hep/qed_renormalization.py) ·
+    [Ghost–gluon vertex](/?file=hep/qcd_ghost_vertex.py) ·
     [Two-loop electron](/?file=hep/electron_two_loop.py)
 
     Generate the quark, ghost and gluon self-energies and the quark–gluon
