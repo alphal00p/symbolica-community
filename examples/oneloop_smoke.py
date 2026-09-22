@@ -9,7 +9,7 @@ from symbolica.community.hep import oneloop
 
 
 def main():
-    assert oneloop.is_initialized()
+    assert not oneloop.is_initialized()  # Import leaves numerical backends lazy.
     assert oneloop.EXPRESSION_INTEROP
 
     # FeynKit supplies Minkowski kinematics; OneLOop takes squared invariants.
