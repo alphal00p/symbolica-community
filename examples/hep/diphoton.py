@@ -1,0 +1,364 @@
+import marimo
+
+__generated_with = "0.24.0"
+app = marimo.App(
+    width="medium", app_title="Electron–positron annihilation into photons"
+)
+
+
+@app.cell
+def _():
+    import marimo as mo
+    from symbolica import E, S, Symbol
+    from symbolica.community import hep as fk
+    from symbolica.community.spenso import CookSettings, TensorExpression
+
+    return CookSettings, E, S, Symbol, TensorExpression, fk, mo
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    # Electron–positron annihilation into two photons
+
+    [Browse all notebooks](/) · [Compton scattering](/?file=hep/compton.py)
+
+    Generate both diagrams for $e^-e^+\to\gamma\gamma$, retaining the electron
+    mass and their interference. Average the two incoming spins and sum the
+    photon polarizations using shared Feynkit, Spenso and Idenso operations.
+    The result agrees with the
+    [FeynCalc example](https://feyncalc.github.io/FeynCalcExamples/QED/Tree/ElAel-GaGa).
+    The kinematics obey $s+t+u=2m_e^2$.
+    """)
+    return
+
+
+@app.cell
+def _(fk, mo):
+    _location = mo.notebook_location()
+    if _location is None:
+        raise RuntimeError("Cannot locate hep_sm.json beside the notebook directory")
+    model = fk.Model(_location.parent / "hep_sm.json")
+    return (model,)
+
+
+@app.cell
+def _(CookSettings, E, S, TensorExpression, fk, mo, model):
+    P = S("gammalooprs::P")
+    s = S("diphoton::s", is_positive=True)
+    t, u, mass, charge = S("diphoton::t", "diphoton::u", "UFO::Me", "UFO::ee")
+    kin = fk.Kinematics.mandelstam(
+        [P(0), P(1), P(2), P(3)], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
+    )
+    generated = fk.Generator(model).generate(
+        fk.Process.amplitude([11, -11], [22, 22]).with_loop_count(0, 0),
+        max_vertices=2,
+        maximum_bridges=None,
+        vertex_allow=["V_98"],
+        numerator_grouping=None,
+        progress=None,
+    )
+    assert len(generated.diagrams) == 2
+    ports = S(
+        "diphoton::external_0",
+        "diphoton::external_1",
+        "diphoton::external_2",
+        "diphoton::external_3",
+    )
+    a, b, c, inverse, wave, rep, index = S(
+        "a_", "b_", "c_", "inverse_", "wave_", "rep_", "index_"
+    )
+    conjugate, adjoint_index = S("spenso::conj", "diphoton::adjoint_index")
+    amplitude = E("0")
+    denominators = []
+    for diagram in generated.diagrams:
+        numerator = model.expand_couplings(
+            diagram.numerator_expression(in_lmb=True).to_expression()
+        )
+        # Align external tensor ports with the generated wavefunctions, independent
+        # of the two diagrams' internal half-edge numbering.
+        for edge in diagram.external_edges:
+            matches = list(
+                diagram.projector_expression().match(
+                    wave(edge.id, rep(4, index)), max_level=0
+                )
+            )
+            assert len(matches) == 1
+            match = dict(matches[0])
+            numerator = numerator.replace(
+                match[rep](4, match[index]), match[rep](4, ports[edge.external_index])
+            )
+        denominator = kin.apply(
+            diagram.denominator_expression(dimension=4, in_lmb=True)
+            .to_expression()
+            .replace(S("gammalooprs::denom")(a, b, c, inverse), inverse)
+        ).expand()
+        denominators.append(denominator)
+        amplitude += (
+            numerator
+            * diagram.overall_factor_expression(evaluate=True)
+            * diagram.numerator_prefactor_expression()
+            / denominator
+        )
+    assert set(denominators) == {t - mass**2, u - mass**2}
+    operator = TensorExpression(amplitude.expand())
+    assert len(operator.interface) == 4
+    adjoint = operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
+    adjoint = adjoint.replace(conjugate(P(a, b)), P(a, b))
+    # Physical momenta and tree-level parameters are real; keep that assumption explicit.
+    for real in (mass, charge, s, t, u):
+        adjoint = adjoint.replace(conjugate(real), real)
+    adjoint = TensorExpression(adjoint).wrap_indices(adjoint_index)
+    # Dirac adjunction exchanges the open fermion chain's endpoints.
+    spins = model.particle_by_pdg(11).spin_sum(
+        P(0), ports[0], adjoint_index(ports[1]), average=True
+    ) * model.particle_by_pdg(-11).spin_sum(
+        P(1), adjoint_index(ports[0]), ports[1], average=True
+    )
+    spin_summed = (
+        TensorExpression(
+            operator.to_expression() * adjoint * spins,
+            cook_indices=CookSettings.indices(),
+        )
+        .expand()
+        .simplify_gamma()
+        .expand()
+        .simplify_gamma()
+    )
+
+    mo.hstack(generated.diagrams)
+    return P, adjoint_index, charge, kin, mass, ports, s, spin_summed, t, u
+
+
+@app.cell
+def _(mo):
+    gauge = mo.ui.dropdown(
+        ["Covariant", "Other photon", "Incoming electron"],
+        value="Covariant",
+        label="Photon polarization reference",
+    )
+    mo.vstack([gauge])
+    return (gauge,)
+
+
+@app.cell
+def _(
+    CookSettings,
+    E,
+    P,
+    TensorExpression,
+    adjoint_index,
+    charge,
+    gauge,
+    kin,
+    mass,
+    mo,
+    model,
+    ports,
+    s,
+    spin_summed,
+    t,
+    u,
+):
+    _references = {
+        "Covariant": (None, None),
+        "Other photon": (P(3), P(2)),
+        "Incoming electron": (P(0), P(0)),
+    }[gauge.value]
+    _density = E("1")
+    for _position, _reference in zip((2, 3), _references):
+        _density *= model.particle_by_pdg(22).spin_sum(
+            P(_position),
+            ports[_position],
+            adjoint_index(ports[_position]),
+            reference=_reference,
+        )
+    _scalar = (
+        TensorExpression(
+            spin_summed.to_expression() * _density, cook_indices=CookSettings.indices()
+        )
+        .expand()
+        .simplify_metrics()
+        .to_dots()
+    )
+    assert _scalar.is_scalar
+    diphoton_squared = (
+        kin.apply(_scalar.to_expression()).replace(s, 2 * mass**2 - t - u).together()
+    )
+    _x, _y = t - mass**2, u - mass**2
+    _expected = (
+        2
+        * charge**4
+        * (
+            _x / _y
+            + _y / _x
+            + 4 * mass**2 * s / (_x * _y)
+            - 4 * mass**4 * s**2 / (_x**2 * _y**2)
+        )
+    )
+    assert (
+        diphoton_squared - _expected.replace(s, 2 * mass**2 - t - u)
+    ).together() == E("0")
+    mo.vstack(
+        [
+            mo.md(
+                "**Massive, spin-averaged squared matrix element** — all three polarization choices give the same result."
+            ),
+            diphoton_squared,
+        ]
+    )
+    return (diphoton_squared,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Identical photons and angular acceptance
+
+    Let $c=\cos\theta$ and accept events with $|c|<C<1$. The labeled massless
+    angular density is $\alpha^2(1+c^2)/[s(1-c^2)]$. Integrating it over the
+    full sphere counts both photon assignments; the event rate includes $1/2!$.
+    Equivalently, select the forward photon and integrate over $0<c<C$.
+
+    `Kinematics.flux` and `two_body_phase_space` supply the flux and measure.
+    Symbolica integrates the rational angular distribution. The massless result,
+    $\sigma=2\pi\alpha^2[2\operatorname{atanh}C-C]/s$, also matches
+    [DELPHI's Born formula, Eq. (2)](https://arxiv.org/pdf/hep-ex/0409058).
+    For a massive electron, $\beta=\sqrt{1-4m_e^2/s}$ is the incoming CM speed.
+    """)
+    return
+
+
+@app.cell
+def _(E, P, S, Symbol, charge, diphoton_squared, fk, kin, mass, mo, s, t, u):
+    massless = diphoton_squared.replace(mass, E("0"))
+    assert (massless - 2 * charge**4 * (t / u + u / t)).together() == E("0")
+    cos_theta, alpha, cutoff = S(
+        "diphoton::cos_theta", "diphoton::alpha", "diphoton::cutoff"
+    )
+    kin_massless = fk.Kinematics.mandelstam(
+        [P(0), P(1), P(2), P(3)], [E("0")] * 4, [s, t, u]
+    )
+    angular = (
+        massless.replace(t, -s * (1 - cos_theta) / 2)
+        .replace(u, -s * (1 + cos_theta) / 2)
+        .replace(charge**4, (4 * Symbol.PI * alpha) ** 2)
+    )
+    labeled = (
+        angular
+        * kin_massless.two_body_phase_space(P(2), P(3))
+        / kin_massless.flux(P(0), P(1))
+    ).together()
+    assert (
+        labeled - alpha**2 / s * (1 + cos_theta**2) / (1 - cos_theta**2)
+    ).together() == E("0")
+    # The phase-space API excludes identical-particle factors. Count each event
+    # once by selecting its forward photon, or equivalently use 1/2! on the full sphere.
+    primitive = (labeled * s / alpha**2).integrate(cos_theta).together()
+    assert (primitive.derivative(cos_theta) - labeled * s / alpha**2).together() == E(
+        "0"
+    )
+    assert primitive.replace(cos_theta, E("0")) == E("0")
+    event_cross_section = (
+        2 * Symbol.PI * alpha**2 / s * primitive.replace(cos_theta, cutoff)
+    ).together()
+    assert (
+        event_cross_section
+        - 2 * Symbol.PI * alpha**2 / s * (2 * cutoff.atanh() - cutoff)
+    ).together() == E("0")
+    # Retain the electron mass: beta is the incoming CM speed, 0 < beta < 1.
+    beta = S("diphoton::beta", is_positive=True)
+    cm_squared = (
+        diphoton_squared.replace(t, mass**2 - s * (1 - beta * cos_theta) / 2)
+        .replace(u, mass**2 - s * (1 + beta * cos_theta) / 2)
+        .replace(mass, (s * (1 - beta**2) / 4).sqrt())
+    ).together()
+    kernel = (cm_squared / (4 * charge**4)).together()
+    expected_kernel = (1 + beta**2 * cos_theta**2) / (
+        1 - beta**2 * cos_theta**2
+    ) + 2 * beta**2 * (1 - beta**2) * (1 - cos_theta**2) / (
+        1 - beta**2 * cos_theta**2
+    ) ** 2
+    assert (kernel - expected_kernel).together() == E("0")
+    assert kernel.replace(beta, E("0")).together() == E("1")
+    massive_primitive = kernel.integrate(cos_theta).together()
+    assert (massive_primitive.derivative(cos_theta) - kernel).together() == E("0")
+    assert massive_primitive.replace(cos_theta, E("0")).together() == E("0")
+    expected_primitive = (
+        (3 - beta**4) / beta * (beta * cos_theta).atanh()
+        - cos_theta
+        - (1 - beta**2) ** 2 * cos_theta / (1 - beta**2 * cos_theta**2)
+    )
+    assert (massive_primitive - expected_primitive).together() == E("0")
+    # The massive flux contributes 1/beta; the final photons have unit speed.
+    # Select its physical positive branch, s > 0 and beta > 0. The shared
+    # phase-space measure excludes the identical-particle factor.
+    massive_flux = (
+        kin.flux(P(0), P(1)).replace(mass, (s * (1 - beta**2) / 4).sqrt()).expand()
+    )
+    assert (massive_flux**2 - 4 * s**2 * beta**2).together() == E("0")
+    massive_flux = massive_flux.replace((s**2 * beta**2).sqrt(), s * beta)
+    massive_density_factor = (
+        (4 * charge**4 * kin.two_body_phase_space(P(2), P(3)) / massive_flux)
+        .replace(charge**4, (4 * Symbol.PI * alpha) ** 2)
+        .together()
+    )
+    assert (massive_density_factor - alpha**2 / (s * beta)).together() == E("0")
+    massive_cross_section = (
+        2
+        * Symbol.PI
+        * massive_density_factor
+        * massive_primitive.replace(cos_theta, cutoff)
+    )
+    assert (
+        massive_cross_section.replace(beta, E("1")) - event_cross_section
+    ).together() == E("0")
+
+    mo.vstack(
+        [
+            mo.md("**Massless labeled angular density**"),
+            labeled,
+            mo.md("**Massless event cross section with angular cut**"),
+            event_cross_section,
+            mo.md("**Massive event cross section with angular cut**"),
+            massive_cross_section,
+        ]
+    )
+    return alpha, beta, cutoff, massive_cross_section
+
+
+@app.cell
+def _(mo):
+    angular_cut = mo.ui.slider(0.1, 0.95, step=0.05, value=0.8, label="Acceptance C")
+    electron_speed = mo.ui.slider(
+        0.05, 1.0, step=0.05, value=1.0, label="Incoming speed beta"
+    )
+    mo.hstack([angular_cut, electron_speed])
+    return angular_cut, electron_speed
+
+
+@app.cell
+def _(
+    E,
+    Symbol,
+    alpha,
+    angular_cut,
+    beta,
+    cutoff,
+    electron_speed,
+    massive_cross_section,
+    mo,
+    s,
+):
+    _ratio = (massive_cross_section * s / (2 * Symbol.PI * alpha**2)).together()
+    accepted_rate = (
+        _ratio.replace(cutoff, E(str(angular_cut.value)))
+        .replace(beta, E(str(electron_speed.value)))
+        .to_float(16)
+    )
+    mo.md(rf"Accepted event rate: **{accepted_rate}** × $2\pi\alpha^2/s$.")
+    return (accepted_rate,)
+
+
+if __name__ == "__main__":
+    app.run()
