@@ -63,15 +63,24 @@ def _(Representation, TensorExpression, TensorName, mo):
     assert fierz_result.to_expression().expand() == (
         _expected.simplify_color().to_expression().expand()
     )
+    _difference = (mixed_color - _expected).undo_trace().undo_chain().to_network()
+    _difference.execute()
+    _components = _difference.result_tensor()[:]
+    assert len(_components) == 576
+    numeric_fierz_error = max(abs(complex(_value)) for _value in _components)
+    assert numeric_fierz_error < 1e-12
     mo.vstack(
         [
             mo.md("**Generator contracted with a trace**"),
             mixed_color,
             mo.md("**Reduced open chain and identities**"),
             fierz_result,
+            mo.md(
+                f"Independent SU(3) matrix check: maximum component error {numeric_fierz_error:.2e}."
+            ),
         ]
     )
-    return color_trace, fierz_result, mixed_color
+    return color_trace, fierz_result, mixed_color, numeric_fierz_error
 
 
 @app.cell
