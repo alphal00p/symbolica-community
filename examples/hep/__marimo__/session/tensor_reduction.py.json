@@ -1,0 +1,48 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "fa2a41b811a1df97782f7adee152796b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "327c9f74b8356a9125ce3b5181c61d87",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a></span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "d6bfc7a2862d46704fbf93b6d4977ae9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"compact-scalar-products-in-tensor-reduction\">Compact scalar products in tensor reduction</h2>\n<span class=\"paragraph\">A vacuum denominator has no preferred direction. Pass <marimo-tex class=\"arithmatex\">||((k\\cdot p)^2||)</marimo-tex>\ndirectly to <code>TensorReducer.reduce</code>: the angular average is\n<marimo-tex class=\"arithmatex\">||(k^2p^2/D||)</marimo-tex>, while the odd moment vanishes. Compact dots and explicit\nindexed tensors use the same projector.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>p<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,p<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>/D</div></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

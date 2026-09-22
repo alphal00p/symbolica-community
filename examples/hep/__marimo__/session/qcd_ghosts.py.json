@@ -1,0 +1,61 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "0c388ee929de0366ac2e299a013a3d61",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "077b1ae507844d1405b5ebc670ce9675",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "f2ce3b36fb921ab429d9c708c4416fb3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"gluon-ghost-subtraction\">Gluon ghost subtraction</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/qcd_gluons.py\">Physical polarization calculation</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(b\\bar b\\to gg||)</marimo-tex> with the bottom mass retained and use covariant\ngluon polarization sums. These include unphysical states. Generate both\nghost\u2013antighost orderings separately and subtract their squared amplitudes\nto recover the physical result.</span>\n<span class=\"paragraph\">All three gluon diagrams and their interference are included. Shared\n<code>Particle.color_sum</code> and <code>Particle.spin_sum</code> provide the initial averages\nand completeness tensors; Idenso and Spenso perform the algebra.\nGhosts carry color but have no external polarization wavefunctions.</span>\n<span class=\"paragraph\">The checks compare each ghost contribution and the final massive <marimo-tex class=\"arithmatex\">||(SU(N_c)||)</marimo-tex>\nresult with <a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/QQbar-GlGl-2\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc</a>,\nthen verify the massless <marimo-tex class=\"arithmatex\">||(SU(3)||)</marimo-tex> limit and exchange of the two final gluons.\nExternal spins are four-dimensional and <marimo-tex class=\"arithmatex\">||(T_R=1/2||)</marimo-tex>.\nThe symbolic calculation takes a few minutes.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "cf864b7b3336c9b437296a9ae140eb76",
+      "outputs": [],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Finished channel [9000005, -9000005]\nFinished channel [-9000005, 9000005]\nFinished channel [21, 21]\nBoth ghost contributions and massive SU(N) ghost-subtracted gluons passed\nMassless SU(3), Bose symmetry and nonzero ghost correction passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    }
+  ]
+}

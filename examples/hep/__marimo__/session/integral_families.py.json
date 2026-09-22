@@ -1,0 +1,61 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "fa2a41b811a1df97782f7adee152796b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "327c9f74b8356a9125ce3b5181c61d87",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a></span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "dd077ca3c027a4c6765107c566af0efa",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"feynman-parameter-polynomials\">Feynman-parameter polynomials</h2>\n<span class=\"paragraph\">For the two-loop denominators <marimo-tex class=\"arithmatex\">||((k+l)^2-m^2||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||((k-l)\\cdot p+\\delta||)</marimo-tex>,\nwith <marimo-tex class=\"arithmatex\">||(p^2=s||)</marimo-tex>, the quadratic loop matrix is singular. Feynkit still returns\nits algebraic polynomials <marimo-tex class=\"arithmatex\">||(U=0||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(F=sxy^2||)</marimo-tex>.\nThese polynomials alone do not define an integration formula or establish\nthat the integral vanishes.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "1291a33ca3a1a03321d8c0ab822c116b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Integral family</strong></span></span><section class=\"feynkit-integral-family\" style=\"max-width:100%;overflow-x:auto\"><strong>Integral family</strong><div><strong>Loop momenta:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">k</div>, <div style=\"white-space: pre-wrap; margin: 0;\">l</div></div><div><strong>External momenta:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">p</div></div><div><strong>Dimension:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">4</div></div><div>Rank: 2 / 5 &middot; incomplete &middot; independent</div><table style=\"border-collapse:collapse;margin-top:.4rem\"><caption style=\"text-align:left\">Ordered inverse propagators (2)</caption><tbody><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>1</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">-m2<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>2\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,l<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>l<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,l<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>2</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">delta<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,p<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>l<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,p<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>4<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr></tbody></table></section><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>First polynomial, U</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">0</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Second polynomial, F</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">s\u00b7x\u00b7y\u00b2</div></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

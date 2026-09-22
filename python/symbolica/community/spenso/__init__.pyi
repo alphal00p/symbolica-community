@@ -1277,10 +1277,12 @@ class TensorExpression(Expression):
         Custom settings control the index encoding, source filters, and output tags.
         """
     @staticmethod
-    def g(rep: Representation) -> TensorExpression:
+    def g(rep: Representation, other: typing.Optional[Representation] = None) -> TensorExpression:
         r"""
-        Create an unresolved metric tensor for `rep`.
+        Create an unresolved metric with ports in `rep` and `other`.
 
+        `other` defaults to `rep`; it may also be the dual of the same space.
+        For example, `g(fund, fund.dual())("i", "j")` creates a fundamental identity.
         Call the result with two indices to fill its ports in logical order.
         """
     @staticmethod

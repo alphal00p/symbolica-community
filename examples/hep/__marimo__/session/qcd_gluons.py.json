@@ -1,0 +1,61 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "0c388ee929de0366ac2e299a013a3d61",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "3345c09ac7feb0b768fe4fc2368d83a0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "db9bd7658ded8878833b43c5257c4d80",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"quark-annihilation-into-gluons\">Quark annihilation into gluons</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(b\\bar b\\to gg||)</marimo-tex> with the bottom mass retained. The three diagrams\ninclude both quark-exchange channels and the three-gluon vertex. Summing\namplitudes before forming their Dirac adjoint includes all interference.</span>\n<span class=\"paragraph\"><code>Particle.color_sum</code> averages incoming colors and sums outgoing colors.\n<code>Particle.spin_sum</code> supplies fermion completeness and physical gluon\npolarizations. Idenso performs the color and Dirac algebra using Spenso\nrepresentations, with <marimo-tex class=\"arithmatex\">||(T_R=1/2||)</marimo-tex> and four-dimensional external spins.</span>\n<span class=\"paragraph\">Two physical polarization references give the same massive <marimo-tex class=\"arithmatex\">||(SU(N_c)||)</marimo-tex> result:\nthe opposite final gluon and the incoming massive quark. The checks below\ncompare against <a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/QQbar-GlGl\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc</a>\nand verify the massless <marimo-tex class=\"arithmatex\">||(SU(3)||)</marimo-tex> limit and exchange of the final gluons.\nThe symbolic calculation takes a few minutes.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "2b2200f71494e85414dd9d04261c23be",
+      "outputs": [],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Generated massive SU(N) quark annihilation into gluons: references=(gammalooprs::P(3), gammalooprs::P(2)) passed\nGenerated massive SU(N) quark annihilation into gluons: references=(gammalooprs::P(0), gammalooprs::P(0)) passed\nMassive gauge-reference independence, Bose symmetry and massless SU(3) reference passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    }
+  ]
+}

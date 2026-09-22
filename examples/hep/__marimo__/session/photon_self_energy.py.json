@@ -1,0 +1,67 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "d4f8b9d81f90e920c0f8bd041d23cb4b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "6a6d0559dea1d7e64c447ccf972f1743",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "327c9f74b8356a9125ce3b5181c61d87",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a></span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "1377865dd5876c5f1e36b620d3cc9d16",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"photon-vacuum-polarization\">Photon vacuum polarization</h2>\n<span class=\"paragraph\">Generate the electron loop and reduce its numerator in <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex>.\nThe result is transverse: <marimo-tex class=\"arithmatex\">||((p^2g^{\\mu\\nu}-p^\\mu p^\\nu)F(p^2)||)</marimo-tex>.\nKeeping <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex> symbolic until after reduction retains the finite rational term.</span>\n<span class=\"paragraph\">The scalar masters use the shared OneLOop evaluator. The expressions below\nomit the common loop factor <marimo-tex class=\"arithmatex\">||(i/(16\\pi^2)||)</marimo-tex>; the UV coefficient is\n<marimo-tex class=\"arithmatex\">||(-4e^2/3||)</marimo-tex>. Numerical values use <marimo-tex class=\"arithmatex\">||(e=m^2=\\mu^2=1||)</marimo-tex> and show the physical\nimaginary part above the pair-production threshold <marimo-tex class=\"arithmatex\">||(p^2=4m^2||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "83659d7432a68201eafeebd4252142ca",
+      "outputs": [],
+      "console": []
+    }
+  ]
+}

@@ -32,7 +32,6 @@ def _():
         Model,
         Representation,
         S,
-        SnailFilterOptions,
         Symbol,
         TensorExpression,
         TensorName,
@@ -54,7 +53,9 @@ def _(Representation, S, TensorName, dot):
     UV_P = TensorName.vector('hep_gluon::uv_P')
     uv_p = UV_P(lorentz)
     index_ = S('hep_gluon::index_')
-    MOMENTUM = S('gammalooprs::Q')
+    MOMENTUM = TensorName.vector(
+        'gammalooprs::Q', tags=S('gammalooprs::Q').get_tags(),
+    )
     t = S("hep_gluon::t", is_scalar=True) # a scale that can move out of dot products
     mUV = S("hep_gluon::mUV", is_scalar=True)
     uv_probe = S("hep_gluon::uv_probe", is_scalar=True)
@@ -205,7 +206,7 @@ def _(
         for edge in diagram.internal_edges:
             mass = model.particle(edge.particle_name).mass_parameter
             mass_squared = E('0') if mass == 'ZERO' else S('UFO::' + mass)**2
-            momentum = route_momenta(diagram, TensorExpression(MOMENTUM(edge.id, lorentz.to_expression())))
+            momentum = route_momenta(diagram, MOMENTUM(edge.id, lorentz))
             product *= prop(momentum, mass_squared)
         return TensorExpression(product)
 
@@ -265,17 +266,17 @@ def _(
                 mu = S(f'hep_gluon::uv_mu{n}')
                 # Keep distinct explicit contractions: undo_dots currently reuses
                 # dummy indices in powers, and expand_dots requires concrete D.
-                tensor *= MOMENTUM(loop_edge, lorentz(mu).to_expression()) * UV_P(lorentz(mu)).to_expression()
+                tensor *= MOMENTUM(loop_edge, lorentz(mu)).to_expression() * UV_P(lorentz(mu)).to_expression()
             indexed += coefficient * tensor
         return TensorExpression(indexed)
 
     def uv_scalar_invariants(expression: Expression, diagram: FeynmanDiagram) -> TensorExpression:
         """Restore the original loop and external vectors inside scalar dots."""
         loop_edge, = diagram.loop_momentum_basis.loop_edges
-        loop_vector = MOMENTUM(loop_edge, lorentz.to_expression())
+        loop_vector = MOMENTUM(loop_edge, lorentz)
         reduced = expression.replace(dot(loop_vector, loop_vector), k2)
         reduced = reduced.replace(dot(uv_p, uv_p), p2).expand()
-        if reduced.replace(MOMENTUM(loop_edge, index_), 0).replace(TensorPattern(UV_P, ports=[index_]), 0) != reduced:
+        if reduced.replace(TensorPattern(MOMENTUM, args=[loop_edge], ports=[index_]), 0).replace(TensorPattern(UV_P, ports=[index_]), 0) != reduced:
             raise ValueError('Tensor reduction left an indexed momentum')
         return TensorExpression(reduced)
 
@@ -365,7 +366,7 @@ def _(mo):
 
 
 @app.cell
-def _(SnailFilterOptions, g, model):
+def _(g, model):
     loops = 2
     diagrams = model.generate_diagrams(
         [g],
@@ -373,7 +374,7 @@ def _(SnailFilterOptions, g, model):
         loops=loops,
         coupling_orders={"QCD": 2 * loops, "QED": 0},
         particle_veto=["c", "t", "s", "u", "d"],
-        zero_snails=SnailFilterOptions(),
+        #zero_snails=SnailFilterOptions(),
     )
     return (diagrams,)
 
@@ -478,7 +479,7 @@ def _(diagram):
 
 @app.cell
 def _(diagram):
-    r = diagram.numerator_expression(in_lmb=True)
+    r = diagram.numerator_expression(in_lmb=False)
     r
     return
 
@@ -503,8 +504,8 @@ def _(s):
 
 
 @app.cell
-def _(diagram, mUV):
-    diagram.subgraph(nodes=[2, 3]).uv_counterterm(mUV)
+def _(mUV, s):
+    s.uv_counterterm(mUV)
     return
 
 
