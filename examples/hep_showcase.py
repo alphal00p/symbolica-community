@@ -11,7 +11,7 @@ app = marimo.App(
 def _():
     import marimo as mo
     from copy import copy
-    from symbolica import S, E, Expression
+    from symbolica import S, E, Expression, Symbol
     from symbolica.community.spenso import (
         ColorSimplifySettings,
         Representation,
@@ -33,6 +33,7 @@ def _():
         Representation,
         S,
         SnailFilterOptions,
+        Symbol,
         TensorExpression,
         TensorName,
         TensorPattern,
@@ -339,10 +340,14 @@ def _(mo):
 
 @app.cell
 def _(Model, mo):
-    model = Model(mo.notebook_location() / "hep_sm.json")
+    _notebook_dir = mo.notebook_location()
+    if _notebook_dir is None:
+        raise RuntimeError("Cannot locate the notebook directory to load hep_sm.json")
+    model_path = _notebook_dir / "hep_sm.json"
+    model = Model(model_path)
     g = model.particle("g")
     g
-    return g, model
+    return g, model, model_path
 
 
 @app.cell(hide_code=True)
@@ -860,10 +865,10 @@ def _(mo):
 
 
 @app.cell
-def _(E, Model, S, TensorExpression, mo):
+def _(E, Model, S, TensorExpression, mo, model_path):
     from symbolica.community import hep as qed_hep
 
-    qed_model = Model(mo.notebook_location() / "hep_sm.json")
+    qed_model = Model(model_path)
     _process = qed_hep.Process.cross_section([11, -11], [13, -13]).with_loop_count(1, 1)
     _result = qed_hep.Generator(qed_model).generate(
         _process,
@@ -984,8 +989,8 @@ def _(E, Model, S, TensorExpression, mo):
 @app.cell
 def _(
     E,
-    Expression,
     S,
+    Symbol,
     mo,
     qed_e,
     qed_hep,
@@ -1001,7 +1006,7 @@ def _(
     qed_u,
 ):
     qed_cos_theta, qed_alpha = S("qed_example::cos_theta", "qed_example::alpha")
-    _pi = Expression.PI
+    _pi = Symbol.PI
     _kin = qed_hep.Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
         [E("0")] * 4,

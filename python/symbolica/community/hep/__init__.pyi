@@ -3089,6 +3089,39 @@ class IntegralFamily:
         kinematics : Kinematics | None
             External assumptions and dimension; defaults to unconstrained 4D.
         """
+    def __repr__(self) -> builtins.str:
+        r"""
+        Return a compact summary of the family and its scalar-product rank.
+
+        Examples
+        --------
+        >>> print(family)
+        """
+    def _repr_html_(self) -> builtins.str:
+        r"""
+        Display ordered inverse propagators and family metadata in a notebook.
+
+        Expressions use Symbolica's native HTML printer.
+
+        Examples
+        --------
+        Leave ``family`` as the final expression in a notebook cell.
+        """
+    def _repr_pretty_(self, pretty: typing.Any, cycle: builtins.bool) -> None:
+        r"""
+        Write the summary and ordered denominators using Symbolica's text printer.
+
+        Examples
+        --------
+        IPython uses this representation when rich HTML output is unavailable.
+
+        Parameters
+        ----------
+        pretty : object
+            IPython's pretty printer, providing a ``text`` method.
+        cycle : bool
+            Whether this family is part of a recursive formatting cycle.
+        """
     def complete(self) -> IntegralFamily:
         r"""
         Append irreducible scalar products to obtain a complete family.
