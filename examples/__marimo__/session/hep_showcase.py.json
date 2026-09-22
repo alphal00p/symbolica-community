@@ -7,7 +7,7 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": null,
+      "code_hash": "c83fc9754195de204ab9a7926163447d",
       "outputs": [
         {
           "type": "data",
@@ -20,7 +20,7 @@
         {
           "type": "stream",
           "name": "stdout",
-          "text": "2026-09-22T07:25:25.966116Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:25:25.966161Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:25:25.966473Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:25:25.966478Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:25:25.966877Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:25:25.966882Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:25:25.967020Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:25:25.967024Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:25:25.967280Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:25:25.967284Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:25:25.967411Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:25:25.967415Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n",
+          "text": "2026-09-22T07:52:36.886176Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:52:36.886235Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:52:36.886569Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:52:36.886575Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:52:36.886974Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:52:36.886980Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:52:36.887118Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:52:36.887122Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:52:36.887380Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:52:36.887385Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n2026-09-22T07:52:36.887510Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-22T07:52:36.887515Z  WARN symbolica::coefficient: Created indeterminate by raising (0+0i) to the power of \u29de\n",
           "mimetype": "text/plain"
         }
       ]
@@ -32,7 +32,7 @@
         {
           "type": "data",
           "data": {
-            "application/json": "[\"text/plain:(1+0j)\", \"text/plain:(1+0j)\", \"text/plain:0j\"]"
+            "text/plain": ""
           }
         }
       ],
@@ -40,7 +40,7 @@
     },
     {
       "id": "vblA",
-      "code_hash": null,
+      "code_hash": "f8768c8b0d2449bc563eafdd4eed276e",
       "outputs": [
         {
           "type": "data",
@@ -53,20 +53,27 @@
     },
     {
       "id": "bkHC",
-      "code_hash": null,
+      "code_hash": "9a75035004eaad0d6c6a0f5572a230e7",
       "outputs": [
         {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
+          "type": "error",
+          "ename": "exception",
+          "evalue": "numeric Symbolica input must evaluate without free variables: variable mUV is not in a parameter map and does not have an evaluator",
+          "traceback": null
         }
       ],
-      "console": []
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/marimo_1959289/__marimo__cell_bkHC_.py\"</span>, line <span class=\"m\">1</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">A0</span><span class=\"p\">(</span><span class=\"n\">mUV</span><span class=\"p\">,</span> <span class=\"mf\">1.</span><span class=\"p\">)</span>\n<span class=\"gr\">ValueError</span>: <span class=\"n\">numeric Symbolica input must evaluate without free variables: variable mUV is not in a parameter map and does not have an evaluator</span>\n</pre></div>\n</span>",
+          "mimetype": "application/vnd.marimo+traceback"
+        }
+      ]
     },
     {
       "id": "lEQa",
-      "code_hash": null,
+      "code_hash": "66cfb4df0623d5eaeb76fa0512aa9dea",
       "outputs": [
         {
           "type": "data",
@@ -79,7 +86,7 @@
     },
     {
       "id": "PKri",
-      "code_hash": null,
+      "code_hash": "ac1ba4171a16ee713136ca34a5f3f15f",
       "outputs": [
         {
           "type": "data",
@@ -92,7 +99,7 @@
     },
     {
       "id": "Xref",
-      "code_hash": null,
+      "code_hash": "65df6e72f0591015bdbfed246939abda",
       "outputs": [
         {
           "type": "data",
@@ -105,7 +112,7 @@
     },
     {
       "id": "SFPL",
-      "code_hash": null,
+      "code_hash": "bfb58ce7f891c97eac81133ddda36fe4",
       "outputs": [
         {
           "type": "data",
@@ -118,7 +125,7 @@
     },
     {
       "id": "BYtC",
-      "code_hash": null,
+      "code_hash": "818e70b534d8d604fcfd7703426413c5",
       "outputs": [
         {
           "type": "data",
@@ -131,7 +138,7 @@
     },
     {
       "id": "RGSE",
-      "code_hash": null,
+      "code_hash": "8a63e9f7e6c36e8e807c5d429f211205",
       "outputs": [
         {
           "type": "data",
@@ -144,7 +151,7 @@
     },
     {
       "id": "Kclp",
-      "code_hash": null,
+      "code_hash": "0cbdcc38fce634c2fd805a6bcc0b9902",
       "outputs": [
         {
           "type": "data",
@@ -157,7 +164,7 @@
     },
     {
       "id": "emfo",
-      "code_hash": null,
+      "code_hash": "7858d48dfa596af64971cb87cd2e0f32",
       "outputs": [
         {
           "type": "data",
@@ -170,46 +177,7 @@
     },
     {
       "id": "Hstk",
-      "code_hash": null,
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"the-gluon-propagator-at-one-loop\">The gluon propagator at one loop</h1>\n<span class=\"paragraph\">Generate the QCD contributions to the gluon two-point function,\n<marimo-tex class=\"arithmatex\">||(g^* \\to g^*||)</marimo-tex>, and inspect a diagram and its symbolic expressions.\nThe external momentum is off shell.</span></span>"
-          }
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "nWHF",
-      "code_hash": null,
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/html": "<pre class='text-xs'>Particle(name=&#x27;g&#x27;, pdg_code=21)</pre>"
-          }
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "iLit",
-      "code_hash": null,
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"generate-the-diagrams\">Generate the diagrams</h2>\n<span class=\"paragraph\">Keep exactly two powers of the QCD coupling and no QED vertices.\nThe current selection keeps the gluon, ghost, and bottom-quark bubbles.\nThe zero-snail filter removes the massless tadpole.</span></span>"
-          }
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "ZHCJ",
-      "code_hash": null,
+      "code_hash": "8e7b85c437d8ee95aa4f6a5a9adce841",
       "outputs": [
         {
           "type": "data",
@@ -221,8 +189,60 @@
       "console": []
     },
     {
+      "id": "nWHF",
+      "code_hash": "cef1be57e998a7d65c32a2b6f66b6da9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"the-gluon-propagator-at-one-loop\">The gluon propagator at one loop</h1>\n<span class=\"paragraph\">Generate the QCD contributions to the gluon two-point function,\n<marimo-tex class=\"arithmatex\">||(g^* \\to g^*||)</marimo-tex>, and inspect a diagram and its symbolic expressions.\nThe external momentum is off shell.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "92dfff5d9548c4e057ab57a37ae2c472",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<pre class='text-xs'>Particle(name=&#x27;g&#x27;, pdg_code=21)</pre>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "9ca2a819096907e62d49e02906854523",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"generate-the-diagrams\">Generate the diagrams</h2>\n<span class=\"paragraph\">Keep exactly two powers of the QCD coupling and no QED vertices.\nThe current selection keeps the gluon, ghost, and bottom-quark bubbles.\nThe zero-snail filter removes the massless tadpole.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
       "id": "ROlb",
-      "code_hash": null,
+      "code_hash": "e5c7b2880c5530ab4a3a97693ae81824",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "qnkX",
+      "code_hash": "b617042e53dc65354126149320ed2966",
       "outputs": [
         {
           "type": "data",
@@ -234,21 +254,21 @@
       "console": []
     },
     {
-      "id": "qnkX",
-      "code_hash": null,
+      "id": "TqIu",
+      "code_hash": "9bac415003c4a5356a4e343b97da3758",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/html": "<marimo-ui-element object-id='qnkX-0' random-id='e7828f12-dd99-7850-888d-81c5cbc4d8d2'><marimo-dropdown data-initial-value='[&quot;6: g, g, g, g, g&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eParticles in the loop&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;0: ghG, ghG, ghG, g, ghG&quot;,&quot;1: ghG, ghG, ghG, ghG, g&quot;,&quot;2: ghG, ghG, ghG, ghG, g&quot;,&quot;3: ghG, ghG, ghG, g, g&quot;,&quot;4: ghG, ghG, ghG, g, g&quot;,&quot;5: ghG, ghG, g, g, g&quot;,&quot;6: g, g, g, g, g&quot;,&quot;7: g, g, g, g, g&quot;,&quot;8: g, g, g, g&quot;,&quot;9: g, g, g, g&quot;,&quot;10: g, g, g, g&quot;,&quot;11: b, b, g, g, g&quot;,&quot;12: b, b, b, g, g&quot;,&quot;13: b, b, b, g, g&quot;,&quot;14: g, g, g&quot;,&quot;15: b, b, b, b, g&quot;,&quot;16: b, b, b, b, g&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element>"
+            "text/html": "<marimo-ui-element object-id='TqIu-0' random-id='e0698620-04ae-7256-3819-2ca05e06f549'><marimo-dropdown data-initial-value='[&quot;6: g, g, g, g, g&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eParticles in the loop&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;0: ghG, ghG, ghG, g, ghG&quot;,&quot;1: ghG, ghG, ghG, ghG, g&quot;,&quot;2: ghG, ghG, ghG, ghG, g&quot;,&quot;3: ghG, ghG, ghG, g, g&quot;,&quot;4: ghG, ghG, ghG, g, g&quot;,&quot;5: ghG, ghG, g, g, g&quot;,&quot;6: g, g, g, g, g&quot;,&quot;7: g, g, g, g, g&quot;,&quot;8: g, g, g, g&quot;,&quot;9: g, g, g, g&quot;,&quot;10: g, g, g, g&quot;,&quot;11: b, b, g, g, g&quot;,&quot;12: b, b, b, g, g&quot;,&quot;13: b, b, b, g, g&quot;,&quot;14: g, g, g&quot;,&quot;15: b, b, b, b, g&quot;,&quot;16: b, b, b, b, g&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element>"
           }
         }
       ],
       "console": []
     },
     {
-      "id": "TqIu",
-      "code_hash": null,
+      "id": "Vxnm",
+      "code_hash": "7515733f1a73b0f30abfca6f99528f13",
       "outputs": [
         {
           "type": "data",
@@ -260,21 +280,21 @@
       "console": []
     },
     {
-      "id": "Vxnm",
-      "code_hash": null,
+      "id": "DnEU",
+      "code_hash": "f14d57222db5b6ea750a19713368ae2c",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/html": "<marimo-ui-element object-id='Vxnm-0' random-id='bb8b83cb-e0dd-9d92-cdf1-84b56efb42a6'><marimo-dropdown data-initial-value='[&quot;Internal lines&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eHighlight subgraph&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;None&quot;,&quot;Internal lines&quot;,&quot;External lines&quot;,&quot;g lines&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element>"
+            "text/html": "<marimo-ui-element object-id='DnEU-0' random-id='c07584e8-5136-7b88-c07e-ca9cf3dbe801'><marimo-dropdown data-initial-value='[&quot;Internal lines&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eHighlight subgraph&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;None&quot;,&quot;Internal lines&quot;,&quot;External lines&quot;,&quot;g lines&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element>"
           }
         }
       ],
       "console": []
     },
     {
-      "id": "DnEU",
-      "code_hash": null,
+      "id": "ulZA",
+      "code_hash": "29c6385dd3d2f143b4611b20cea58234",
       "outputs": [
         {
           "type": "data",
@@ -286,8 +306,8 @@
       "console": []
     },
     {
-      "id": "ulZA",
-      "code_hash": null,
+      "id": "ecfG",
+      "code_hash": "440b3ed0caf4dba7b14eb759530ef1b9",
       "outputs": [
         {
           "type": "data",
@@ -299,8 +319,8 @@
       "console": []
     },
     {
-      "id": "ecfG",
-      "code_hash": null,
+      "id": "Pvdt",
+      "code_hash": "063d62b8cc6f564a2d81e86859673818",
       "outputs": [
         {
           "type": "data",
@@ -312,8 +332,8 @@
       "console": []
     },
     {
-      "id": "Pvdt",
-      "code_hash": null,
+      "id": "ZBYS",
+      "code_hash": "a5bdf7eb67aeb26f53917846baa2120e",
       "outputs": [
         {
           "type": "data",
@@ -325,8 +345,21 @@
       "console": []
     },
     {
-      "id": "ZBYS",
-      "code_hash": null,
+      "id": "aLJB",
+      "code_hash": "0ba1b54611464f266ec99242d47741a6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "image/svg+xml": "<svg viewBox=\"0 0 201.664487426 259.131999162\" width=\"201.664487426pt\" height=\"259.131999162pt\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:h5=\"http://www.w3.org/1999/xhtml\"><path fill=\"#ffffff\" fill-rule=\"nonzero\" d=\"M 0 0v 259.131999162h 201.664487426v -259.131999162Z \"/><g transform=\"matrix(1 0 0 -1 89.546243713 12.907291339)\"><use xlink:href=\"#g3BC6300649CA32A3B6F5E66435D77781\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/><use xlink:href=\"#g847C1367F56F776850295C49C7BB8E3F\" x=\"5.335\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/><use xlink:href=\"#g8E3C9955A16891CC95B0D7826587A8C6\" x=\"12.342\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/><use xlink:href=\"#g5E817E1F810CF13D8612EFABF8FFB75A\" x=\"17.457\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g><g transform=\"translate(5.669291339 23.907291339)\"><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(146.904273307 171.615084106)\" d=\"M 0 0m 22.903351497 51.34033238c -7.634450499 -17.113444127 -15.268900998 -34.226888253 -22.903351497 -51.34033238\"/><path fill=\"none\" transform=\"translate(178.225904749 206.165403624)\" d=\"M 0 0m 0 0h 5.5v 9.856h -5.5v -9.856Z \"/><g transform=\"translate(178.225904694 206.165403569)\"><g transform=\"matrix(1 0 0 -1 0 7.238)\"><use xlink:href=\"#gEEC20B8710F33D8A6862F31BD530D033\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(110.216460024 6.6)\" d=\"M 0 0m 6.566582908 55.649572954c -2.188860969 -18.549857651 -4.377721939 -37.099715303 -6.566582908 -55.649572954\"/><path fill=\"none\" transform=\"translate(90.428676634 8.467439818)\" d=\"M 0 0m 0 0h 5.5v 9.856h -5.5v -9.856Z \"/><g transform=\"translate(90.428676579 8.467439763)\"><g transform=\"matrix(1 0 0 -1 0 7.238)\"><use xlink:href=\"#gEEC20B8710F33D8A6862F31BD530D033\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(122.055981695 80.544075865)\" d=\"M 0 0c 5.197135048 11.513345992 9.494464364 23.417314953 12.851091092 35.605249142\"/><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(134.907072788 116.149325007)\" d=\"M 0 0m 0 0c 3.355215692 12.182810705 5.757791684 24.603149786 7.188260518 37.148602936\"/><path fill=\"none\" transform=\"translate(146.091123343 105.651558046)\" d=\"M 0 0m 0 0h 5.5v 9.856h -5.5v -9.856Z \"/><g transform=\"translate(146.091123288 105.651557991)\"><g transform=\"matrix(1 0 0 -1 0 7.238)\"><use xlink:href=\"#gEEC20B8710F33D8A6862F31BD530D033\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(76.546673874 72.826649736)\" d=\"M 0 0m 31.774828458 0c -10.950460537 1.583734264 -21.644885734 4.676888143 -31.774828458 9.20341345\"/><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(47.666566515 82.030063186)\" d=\"M 0 0m 28.88010736 0c -10.461356493 4.674616254 -20.184018864 10.816360626 -28.88010736 18.226936523\"/><path fill=\"none\" transform=\"translate(61.436431292 63.326246753)\" d=\"M 0 0m 0 0h 5.5v 9.856h -5.5v -9.856Z \"/><g transform=\"translate(61.436431237 63.326246698)\"><g transform=\"matrix(1 0 0 -1 0 7.238)\"><use xlink:href=\"#gEEC20B8710F33D8A6862F31BD530D033\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(102.267541852 166.944199263)\" d=\"M 0 0m 32.052271038 0c -10.214896027 4.31823809 -21.005423122 7.173630017 -32.052271038 8.467699643\"/><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(68.040547954 174.394781834)\" d=\"M 0 0m 34.226993898 1.017117072c -11.414484022 1.337135913 -22.945931427 0.989442067 -34.226993898 -1.017117072\"/><path fill=\"none\" transform=\"translate(96.303287381 189.977364402)\" d=\"M 0 0h 5.5v 9.856h -5.5v -9.856Z \"/><g transform=\"translate(96.303287326 189.977364347)\"><g transform=\"matrix(1 0 0 -1 0 7.238)\"><use xlink:href=\"#gEEC20B8710F33D8A6862F31BD530D033\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(25.864336092 146.174293805)\" d=\"M 0 0m 23.394800937 24.444961934c -11.207047922 -3.643279672 -20.135256682 -12.692438609 -23.394800937 -24.444961934\"/><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(24.561129319 113.140511201)\" d=\"M 0 0m 1.303206774 33.033782604c -3.263581709 -11.767080659 -0.261634744 -24.135824014 7.483372035 -33.033782604\"/><path fill=\"none\" transform=\"translate(6.6 145.803675608)\" d=\"M 0 0m 0 0h 5.5v 9.856h -5.5v -9.856Z \"/><g transform=\"translate(6.599999945 145.803675553)\"><g transform=\"matrix(1 0 0 -1 0 7.238)\"><use xlink:href=\"#gEEC20B8710F33D8A6862F31BD530D033\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(64.03750774 134.779979033)\" d=\"M 0 0m 0 29.623872962c 4.673011046 -9.029961544 5.867117602 -19.599014125 3.112033185 -29.623872962\"/><path fill=\"none\" stroke=\"#000000\" stroke-width=\"1.1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(49.298617593 110.882055808)\" d=\"M 0 0m 17.850923333 23.897923225c -2.759425222 -10.040653618 -9.20193778 -18.524989041 -17.850923333 -23.897923225\"/><path fill=\"none\" transform=\"translate(76.857921414 125.75064979)\" d=\"M 0 0m 0 0h 5.5v 9.856h -5.5v -9.856Z \"/><g transform=\"translate(76.857921359 125.750649735)\"><g transform=\"matrix(1 0 0 -1 0 7.238)\"><use xlink:href=\"#gEEC20B8710F33D8A6862F31BD530D033\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"#ffffff\" fill-rule=\"nonzero\" stroke=\"#000000\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(108.265769581 62.183099246)\" d=\"M 0 0m 9.64786618 0c -5.323538192 0 -9.64786618 4.324327988 -9.64786618 9.64786618c 0 5.323538192 4.324327988 9.64786618 9.64786618 9.64786618c 5.323538192 0 9.64786618 -4.324327988 9.64786618 -9.64786618c 0 -5.323538192 -4.324327988 -9.64786618 -9.64786618 -9.64786618Z \"/><path fill=\"none\" transform=\"translate(110.79498576 65.318965425)\" d=\"M 0 0m 0 0h 14.2373v 13.024h -14.2373v -13.024Z \"/><g transform=\"translate(110.794985733 65.31896537)\"><g transform=\"matrix(1 0 0 -1 1.32 8.833)\"><use xlink:href=\"#g40312A8C9E1756A6E92487C50DAD2A\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g><g transform=\"matrix(1 0 0 -1 7.92 11.55)\"><use xlink:href=\"#gCFFEDE9C82D78D7703A652B0C82EC869\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"#ffffff\" fill-rule=\"nonzero\" stroke=\"#000000\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(133.398708797 153.25545041)\" d=\"M 0 0m 9.596061839 0c -5.294953386 0 -9.596061839 4.301108453 -9.596061839 9.596061839c 0 5.294953386 4.301108453 9.596061839 9.596061839 9.596061839c 5.294953386 0 9.596061839 -4.301108453 9.596061839 -9.596061839c 0 -5.294953386 -4.301108453 -9.596061839 -9.596061839 -9.596061839Z \"/><path fill=\"none\" transform=\"translate(135.876120636 156.416512249)\" d=\"M 0 0m 0 0h 14.2373v 12.87h -14.2373v -12.87Z \"/><g transform=\"translate(135.876120608 156.416512249)\"><g transform=\"matrix(1 0 0 -1 1.32 8.833)\"><use xlink:href=\"#g40312A8C9E1756A6E92487C50DAD2A\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g><g transform=\"matrix(1 0 0 -1 7.92 11.55)\"><use xlink:href=\"#gBFCC2410A697C41E2DD3187C83DA8F3\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"#ffffff\" fill-rule=\"nonzero\" stroke=\"#000000\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(49.076700975 162.734523907)\" d=\"M 0 0m 9.596061839 0c -5.294953386 0 -9.596061839 4.301108453 -9.596061839 9.596061839c 0 5.294953386 4.301108453 9.596061839 9.596061839 9.596061839c 5.294953386 0 9.596061839 -4.301108453 9.596061839 -9.596061839c 0 -5.294953386 -4.301108453 -9.596061839 -9.596061839 -9.596061839Z \"/><path fill=\"none\" transform=\"translate(51.554112815 165.895585746)\" d=\"M 0 0m 0 0h 14.2373v 12.87h -14.2373v -12.87Z \"/><g transform=\"translate(51.554112787 165.895585746)\"><g transform=\"matrix(1 0 0 -1 1.32 8.833)\"><use xlink:href=\"#g40312A8C9E1756A6E92487C50DAD2A\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g><g transform=\"matrix(1 0 0 -1 7.92 11.55)\"><use xlink:href=\"#g25B224D96CA3F5CCC7E774117FEA026D\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g><path fill=\"#ffffff\" fill-rule=\"nonzero\" stroke=\"#000000\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"4\" transform=\"translate(30.935594261 97.15428539)\" d=\"M 0 0m 9.64786618 0c -5.323538192 0 -9.64786618 4.324327988 -9.64786618 9.64786618c 0 5.323538192 4.324327988 9.64786618 9.64786618 9.64786618c 5.323538192 0 9.64786618 -4.324327988 9.64786618 -9.64786618c 0 -5.323538192 -4.324327988 -9.64786618 -9.64786618 -9.64786618Z \"/><path fill=\"none\" transform=\"translate(33.46481044 100.290151569)\" d=\"M 0 0m 0 0h 14.2373v 13.024h -14.2373v -13.024Z \"/><g transform=\"translate(33.464810413 100.290151514)\"><g transform=\"matrix(1 0 0 -1 1.32 8.833)\"><use xlink:href=\"#g40312A8C9E1756A6E92487C50DAD2A\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g><g transform=\"matrix(1 0 0 -1 7.92 11.55)\"><use xlink:href=\"#g777C235EA19CAB599B58B593B0044621\" x=\"0\" y=\"0\" fill=\"#000000\" fill-rule=\"nonzero\"/></g></g></g><defs><symbol id=\"g3BC6300649CA32A3B6F5E66435D77781\" overflow=\"visible\"><path d=\"M 0 0m 3.113 3.553c 0.935 0 0.968 -0.253 1.001 -0.748c 0.066 -0.066 0.297 -0.066 0.363 0c -0.011 0.275 -0.022 0.594 -0.022 0.968c 0 0.374 0.011 0.66 0.022 0.946c -0.066 0.066 -0.297 0.066 -0.363 0c -0.033 -0.605 -0.066 -0.748 -1.001 -0.748h -1.023v 1.98c 0 0.594 0.132 0.704 0.616 0.704h 0.495c 1.166 0 1.441 -0.44 1.683 -1.199c 0.132 0 0.253 0.022 0.341 0.055c -0.055 0.451 -0.22 1.507 -0.242 1.595c 0 0.022 -0.011 0.033 -0.044 0.033c -0.187 -0.033 -0.242 -0.044 -0.517 -0.044h -2.805c -0.352 0 -0.979 0.011 -1.419 0.022c -0.066 -0.066 -0.066 -0.297 0 -0.363c 0.77 -0.033 0.957 -0.088 0.957 -1.001v -4.411c 0 -0.913 -0.187 -0.968 -0.957 -1.001c -0.066 -0.066 -0.066 -0.297 0 -0.363c 0.385 0.011 0.935 0.022 1.43 0.022c 0.495 0 1.034 -0.011 1.419 -0.022c 0.066 0.066 0.066 0.297 0 0.363c -0.77 0.033 -0.957 0.088 -0.957 1.001v 2.211Z \"/></symbol><symbol id=\"g847C1367F56F776850295C49C7BB8E3F\" overflow=\"visible\"><path d=\"M 0 0m 2.101 1.342v 2.057c 0.374 -0.011 0.693 -0.132 0.913 -0.418l 1.727 -2.178c 0.22 -0.286 0.374 -0.583 0.396 -0.759c 0 -0.033 0.011 -0.066 0.055 -0.066c 0.22 0.011 0.363 0.022 0.594 0.022c 0.374 0 0.748 -0.011 1.111 -0.022c 0.066 0.066 0.066 0.297 0 0.363c -0.319 0.033 -0.627 0.066 -0.968 0.462l -2.409 2.86c -0.088 0.099 -0.143 0.187 -0.143 0.275c 0 0.077 0.011 0.154 0.385 0.539l 1.617 1.661c 0.506 0.539 0.946 0.583 1.386 0.616c 0.066 0.066 0.066 0.297 0 0.363c -0.341 -0.011 -0.693 -0.022 -1.045 -0.022c -0.407 0 -0.836 0.011 -1.243 0.022c -0.066 -0.066 -0.066 -0.297 0 -0.363c 0.396 -0.033 0.77 -0.077 0.308 -0.572l -1.815 -1.936c -0.231 -0.253 -0.484 -0.396 -0.869 -0.429v 1.936c 0 0.913 0.187 0.968 0.957 1.001c 0.066 0.066 0.066 0.297 0 0.363c -0.506 -0.011 -1.023 -0.022 -1.43 -0.022c -0.418 0 -0.924 0.011 -1.419 0.022c -0.066 -0.066 -0.066 -0.297 0 -0.363c 0.77 -0.033 0.957 -0.088 0.957 -1.001v -4.411c 0 -0.913 -0.187 -0.968 -0.957 -1.001c -0.066 -0.066 -0.066 -0.297 0 -0.363c 0.495 0.011 1.001 0.022 1.43 0.022c 0.418 0 0.924 -0.011 1.419 -0.022c 0.066 0.066 0.066 0.297 0 0.363c -0.77 0.033 -0.957 0.088 -0.957 1.001Z \"/></symbol><symbol id=\"g8E3C9955A16891CC95B0D7826587A8C6\" overflow=\"visible\"><path d=\"M 0 0m 2.508 -0.11c 0.847 0 2.134 0.858 2.134 3.443c 0 1.089 -0.264 2.024 -0.748 2.662c -0.286 0.385 -0.748 0.715 -1.342 0.715c -1.089 0 -2.123 -1.298 -2.123 -3.476c 0 -1.177 0.363 -2.277 0.968 -2.882c 0.308 -0.308 0.682 -0.462 1.111 -0.462Z m 0.044 6.435c 0.187 0 0.363 -0.066 0.495 -0.187c 0.341 -0.286 0.638 -1.122 0.638 -2.596c 0 -1.012 -0.033 -1.705 -0.187 -2.266c -0.242 -0.902 -0.781 -1.001 -0.979 -1.001c -1.023 0 -1.133 1.881 -1.133 2.838c 0 2.706 0.671 3.212 1.166 3.212Z \"/></symbol><symbol id=\"g5E817E1F810CF13D8612EFABF8FFB75A\" overflow=\"visible\"><path d=\"M 0 0m 1.584 3.773c 0.297 1.001 1.001 2.112 2.464 2.662c 0 0.132 -0.044 0.231 -0.132 0.286c -1.111 -0.33 -1.793 -0.792 -2.409 -1.507c -0.682 -0.792 -1.023 -1.793 -1.023 -2.662c 0 -2.233 1.265 -2.673 2.112 -2.673c 1.441 0 2.035 1.397 2.035 2.343c 0 0.946 -0.506 1.793 -2.002 1.793c -0.286 0 -0.715 -0.088 -1.045 -0.242Z m -0.099 -0.396c 0.363 0.242 0.726 0.253 0.913 0.253c 1.078 0 1.32 -1.056 1.32 -1.606c 0 -1.21 -0.462 -1.76 -1.001 -1.76c -0.693 0 -1.32 0.374 -1.32 2.255c 0 0.253 0.022 0.539 0.088 0.858Z \"/></symbol><symbol id=\"gEEC20B8710F33D8A6862F31BD530D033\" overflow=\"visible\"><path d=\"M 0 0m 4.884 4.257c 0.209 0 0.407 0.198 0.407 0.418c 0 0.231 -0.209 0.407 -0.506 0.407c -0.286 0 -0.814 -0.187 -1.1 -0.561c -0.132 0.088 -0.495 0.308 -1.144 0.308c -0.979 0 -1.881 -0.66 -1.881 -1.672c 0 -0.594 0.264 -0.935 0.572 -1.232c -0.308 -0.264 -0.484 -0.737 -0.484 -1.111c 0 -0.396 0.22 -0.704 0.506 -0.847c -0.594 -0.352 -0.902 -0.858 -0.902 -1.331c 0 -0.957 0.902 -1.254 1.749 -1.254c 1.485 0 3.091 0.715 3.091 1.903c 0 0.352 -0.165 0.627 -0.484 0.891c -0.429 0.352 -1.199 0.363 -1.606 0.363c -0.198 0 -0.473 -0.022 -0.737 -0.055c -0.165 -0.011 -0.275 -0.022 -0.33 -0.022c -0.319 0 -0.704 0.154 -0.704 0.627c 0 0.22 0.066 0.451 0.198 0.638c 0.264 -0.154 0.572 -0.231 1.001 -0.231c 0.968 0 1.859 0.605 1.859 1.683c 0 0.517 -0.154 0.814 -0.473 1.144c 0.077 0.11 0.297 0.264 0.44 0.264c 0.077 0 0.154 -0.033 0.22 -0.132c 0.044 -0.088 0.187 -0.198 0.308 -0.198Z m -3.432 -4.367c 0.121 -0.033 0.297 -0.055 0.44 -0.055c 0.341 0 0.649 0.033 0.803 0.033c 0.55 0 1.012 -0.011 1.331 -0.187c 0.429 -0.242 0.561 -0.396 0.561 -0.682c 0 -0.792 -1.166 -1.21 -2.156 -1.21c -0.396 0 -1.32 0.319 -1.32 1.067c 0 0.374 0.022 0.649 0.341 1.034Z m 2.057 3.179c 0 -1.023 -0.517 -1.232 -0.924 -1.232c -0.924 0 -1.023 0.781 -1.023 1.485c 0 0.77 0.275 1.166 0.88 1.166c 0.693 0 1.067 -0.506 1.067 -1.419Z \"/></symbol><symbol id=\"g40312A8C9E1756A6E92487C50DAD2A\" overflow=\"visible\"><path d=\"M 0 0m 5.907 1.507c -0.253 -0.869 -0.616 -1.309 -1.067 -1.309c -0.143 0 -0.22 0.11 -0.22 0.319c 0 0.154 0.066 0.407 0.198 0.748c 0.44 1.199 0.66 1.991 0.66 2.398c 0 0.77 -0.517 1.199 -1.287 1.199c -0.649 0 -1.21 -0.286 -1.661 -0.869c -0.088 0.484 -0.473 0.869 -1.034 0.869c -0.616 0 -0.858 -0.572 -1.012 -1.067c -0.11 -0.352 -0.165 -0.561 -0.165 -0.638c 0 -0.099 0.055 -0.154 0.176 -0.154c 0.055 0 0.088 0.011 0.121 0.033c 0.055 0.099 0.088 0.176 0.099 0.253c 0.198 0.836 0.451 1.254 0.748 1.254c 0.198 0 0.297 -0.154 0.297 -0.462c 0 -0.143 -0.055 -0.44 -0.176 -0.891l -0.627 -2.497c -0.033 -0.143 -0.099 -0.429 -0.099 -0.484c 0 -0.22 0.121 -0.33 0.363 -0.33c 0.209 0 0.363 0.11 0.44 0.33c 0.022 0.055 0.088 0.33 0.209 0.803l 0.231 0.979l 0.33 1.254c 0.121 0.253 0.308 0.506 0.539 0.77c 0.319 0.352 0.715 0.528 1.188 0.528c 0.363 0 0.539 -0.242 0.539 -0.715c 0 -0.418 -0.231 -1.254 -0.704 -2.508c -0.077 -0.198 -0.11 -0.363 -0.11 -0.506c 0 -0.539 0.407 -0.935 0.935 -0.935c 0.484 0 0.869 0.275 1.144 0.825c 0.209 0.44 0.319 0.737 0.319 0.88c 0 0.099 -0.055 0.154 -0.176 0.154c -0.033 0 -0.198 -0.099 -0.198 -0.231Z \"/></symbol><symbol id=\"gCFFEDE9C82D78D7703A652B0C82EC869\" overflow=\"visible\"><path d=\"M 0 0m 3.9732 2.4563c 0 0.8701 -0.154 1.5323 -0.4543 1.9866c -0.2464 0.385 -0.7392 0.6699 -1.3321 0.6699c -0.2464 0 -0.4697 -0.0385 -0.6622 -0.1232c -0.847 -0.3542 -1.1242 -1.3398 -1.1242 -2.5333c 0 -0.2618 0.0154 -0.5082 0.0385 -0.7469c 0.1309 -1.0087 0.6006 -1.8634 1.7479 -1.8634c 0.2464 0 0.4697 0.0385 0.6622 0.1232c 0.847 0.3465 1.1242 1.309 1.1242 2.4871Z m -0.8778 1.7094c 0.0847 -0.2849 0.1309 -0.8162 0.1309 -1.6093c 0 -0.7546 -0.0308 -1.2859 -0.1001 -1.6016c -0.0924 -0.4543 -0.4158 -0.8316 -0.9394 -0.8316c -0.1925 0 -0.385 0.0616 -0.5621 0.1925c -0.2387 0.1771 -0.385 0.5236 -0.4466 1.0549c -0.0231 0.1771 -0.0308 0.5698 -0.0308 1.1858c 0 0.7469 0.0385 1.2628 0.1155 1.54c 0.1309 0.4928 0.4389 0.7392 0.924 0.7392c 0.462 0 0.8008 -0.3003 0.9086 -0.6699Z \"/></symbol><symbol id=\"gBFCC2410A697C41E2DD3187C83DA8F3\" overflow=\"visible\"><path d=\"M 0 0m 2.3331 5.1128c -0.3311 -0.3234 -0.8239 -0.4851 -1.4938 -0.4851v -0.3388c 0.4543 0 0.8162 0.0693 1.0934 0.2002v -3.8346c 0 -0.1001 -0.0077 -0.1617 -0.0308 -0.1925c -0.0385 -0.0847 -0.2695 -0.1309 -0.693 -0.1309h -0.3157v -0.3311l 1.3706 0.0308l 1.3783 -0.0308v 0.3311h -0.3157c -0.4235 0 -0.6545 0.0462 -0.7007 0.1309c -0.0154 0.0308 -0.0231 0.0924 -0.0231 0.1925v 4.2119c 0 0.2079 -0.0308 0.2464 -0.2695 0.2464Z \"/></symbol><symbol id=\"g25B224D96CA3F5CCC7E774117FEA026D\" overflow=\"visible\"><path d=\"M 0 0m 0.9163 3.2648c 0.2464 0 0.4312 0.1848 0.4312 0.4312c 0 0.2772 -0.1463 0.4235 -0.4312 0.4312c 0.1694 0.3619 0.5544 0.6545 1.0549 0.6545c 0.6776 0 1.1242 -0.5082 1.1242 -1.1858c 0 -0.3696 -0.1309 -0.7238 -0.4004 -1.0703c -0.1309 -0.1771 -0.231 -0.3003 -0.3003 -0.3696l -1.8249 -1.8095c -0.1001 -0.0924 -0.0847 -0.1155 -0.0847 -0.3465h 3.1724l 0.2387 1.4476h -0.3234c -0.0539 -0.4081 -0.1155 -0.6468 -0.1848 -0.7007c -0.0385 -0.0231 -0.2772 -0.0385 -0.7315 -0.0385h -1.309c 0.5159 0.4543 0.9933 0.8624 1.4476 1.2243c 0.3465 0.2695 0.5929 0.5082 0.7469 0.7161c 0.231 0.3003 0.3465 0.616 0.3465 0.9471c 0 0.4774 -0.1848 0.8547 -0.5621 1.1319c -0.3311 0.2541 -0.7469 0.385 -1.2397 0.385c -0.4235 0 -0.7854 -0.1232 -1.1011 -0.3696c -0.3311 -0.2695 -0.5005 -0.6083 -0.5005 -1.0241c 0 -0.2618 0.1925 -0.4543 0.4312 -0.4543Z \"/></symbol><symbol id=\"g777C235EA19CAB599B58B593B0044621\" overflow=\"visible\"><path d=\"M 0 0m 2.7181 2.7181c 0.5159 0.2079 1.0087 0.6622 1.0087 1.3167c 0 0.3465 -0.1848 0.6237 -0.5467 0.8239c -0.3003 0.1694 -0.6391 0.2541 -1.0164 0.2541c -0.3773 0 -0.7084 -0.077 -0.9933 -0.2387c -0.3465 -0.1925 -0.5236 -0.462 -0.5236 -0.8085c 0 -0.2926 0.1463 -0.4389 0.4312 -0.4389c 0.2387 0 0.4158 0.1848 0.4158 0.4235c 0 0.2387 -0.1232 0.3773 -0.3619 0.4158c 0.2233 0.2387 0.5544 0.3619 1.0087 0.3619c 0.5005 0 0.7854 -0.3003 0.7854 -0.7931c 0 -0.3619 -0.1001 -0.6545 -0.2926 -0.8855c -0.2156 -0.2541 -0.3696 -0.2926 -0.8162 -0.3234c -0.2079 -0.0154 -0.3465 0.0077 -0.3465 -0.1463c 0 -0.0924 0.077 -0.1386 0.2233 -0.1386h 0.4081c 0.6622 0 0.9856 -0.5005 0.9856 -1.1935c 0 -0.6776 -0.308 -1.1935 -0.9548 -1.1935c -0.5621 0 -0.9702 0.154 -1.2243 0.4697c 0.2695 0.0308 0.4081 0.1848 0.4081 0.4543c 0 0.2541 -0.1925 0.4466 -0.4466 0.4466c -0.3003 0 -0.4543 -0.154 -0.4543 -0.4697c 0 -0.3927 0.2002 -0.7084 0.5929 -0.9317c 0.3311 -0.1848 0.7084 -0.2772 1.1396 -0.2772c 0.4697 0 0.8778 0.1309 1.232 0.3927c 0.385 0.2849 0.5775 0.6545 0.5775 1.1088c 0 0.7161 -0.6237 1.2089 -1.2397 1.3706Z \"/></symbol></defs></svg>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nHfw",
+      "code_hash": "e887612dd0ed1481bbb84861906670be",
       "outputs": [
         {
           "type": "data",
@@ -338,8 +371,8 @@
       "console": []
     },
     {
-      "id": "aLJB",
-      "code_hash": null,
+      "id": "xXTn",
+      "code_hash": "c01ac80d891ff2513cc0601a32ae4923",
       "outputs": [
         {
           "type": "data",
@@ -351,8 +384,8 @@
       "console": []
     },
     {
-      "id": "nHfw",
-      "code_hash": null,
+      "id": "AjVT",
+      "code_hash": "6cfd8467336c623e5ceb8b0efa5e86e2",
       "outputs": [
         {
           "type": "data",
@@ -364,8 +397,8 @@
       "console": []
     },
     {
-      "id": "xXTn",
-      "code_hash": null,
+      "id": "pHFh",
+      "code_hash": "6457a959cb20f69229213ba8e46b1681",
       "outputs": [
         {
           "type": "data",
@@ -377,8 +410,8 @@
       "console": []
     },
     {
-      "id": "AjVT",
-      "code_hash": null,
+      "id": "NCOB",
+      "code_hash": "2833d0a6c91b82d658d423a661f857f0",
       "outputs": [
         {
           "type": "data",
@@ -390,8 +423,8 @@
       "console": []
     },
     {
-      "id": "pHFh",
-      "code_hash": null,
+      "id": "aqbW",
+      "code_hash": "764f476941506219675e6001910fcb00",
       "outputs": [
         {
           "type": "data",
@@ -403,8 +436,8 @@
       "console": []
     },
     {
-      "id": "NCOB",
-      "code_hash": null,
+      "id": "TRpd",
+      "code_hash": "c4dda3ee84592d6242a322c8661b5929",
       "outputs": [
         {
           "type": "data",
@@ -416,8 +449,8 @@
       "console": []
     },
     {
-      "id": "aqbW",
-      "code_hash": null,
+      "id": "TXez",
+      "code_hash": "9e274aa0ef07e6ec8b03f4f8f84ea4a8",
       "outputs": [
         {
           "type": "data",
@@ -429,8 +462,8 @@
       "console": []
     },
     {
-      "id": "TRpd",
-      "code_hash": null,
+      "id": "dNNg",
+      "code_hash": "68a2376cf7a8fdd4aab44b2215a099d8",
       "outputs": [
         {
           "type": "error",
@@ -443,14 +476,14 @@
         {
           "type": "stream",
           "name": "stderr",
-          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/marimo_1465714/__marimo__cell_TRpd_.py\"</span>, line <span class=\"m\">1</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">routed_numerator</span> <span class=\"o\">=</span> <span class=\"n\">route_momenta</span><span class=\"p\">(</span><span class=\"n\">diagram</span><span class=\"p\">,</span> <span class=\"n\">contracted_numerator</span><span class=\"p\">)</span>\n<span class=\"w\">                       </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/tmp/marimo_1465714/__marimo__cell_PKri_.py\"</span>, line <span class=\"m\">4</span>, in <span class=\"n\">route_momenta</span>\n<span class=\"w\">    </span><span class=\"k\">raise</span> <span class=\"ne\">ValueError</span><span class=\"p\">(</span><span class=\"s1\">'This example requires a one-loop two-point graph'</span><span class=\"p\">)</span>\n<span class=\"gr\">ValueError</span>: <span class=\"n\">This example requires a one-loop two-point graph</span>\n</pre></div>\n</span>",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/marimo_1959289/__marimo__cell_dNNg_.py\"</span>, line <span class=\"m\">1</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">routed_numerator</span> <span class=\"o\">=</span> <span class=\"n\">route_momenta</span><span class=\"p\">(</span><span class=\"n\">diagram</span><span class=\"p\">,</span> <span class=\"n\">contracted_numerator</span><span class=\"p\">)</span>\n<span class=\"w\">                       </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/tmp/marimo_1959289/__marimo__cell_Xref_.py\"</span>, line <span class=\"m\">4</span>, in <span class=\"n\">route_momenta</span>\n<span class=\"w\">    </span><span class=\"k\">raise</span> <span class=\"ne\">ValueError</span><span class=\"p\">(</span><span class=\"s1\">'This example requires a one-loop two-point graph'</span><span class=\"p\">)</span>\n<span class=\"gr\">ValueError</span>: <span class=\"n\">This example requires a one-loop two-point graph</span>\n</pre></div>\n</span>",
           "mimetype": "application/vnd.marimo+traceback"
         }
       ]
     },
     {
-      "id": "TXez",
-      "code_hash": null,
+      "id": "yCnT",
+      "code_hash": "a502c5756bcb64a0643a429f1aa74643",
       "outputs": [
         {
           "type": "error",
@@ -462,8 +495,8 @@
       "console": []
     },
     {
-      "id": "dNNg",
-      "code_hash": null,
+      "id": "wlCL",
+      "code_hash": "8ff26750bcddb340fb9bb20a90529dff",
       "outputs": [
         {
           "type": "data",
@@ -475,8 +508,8 @@
       "console": []
     },
     {
-      "id": "yCnT",
-      "code_hash": null,
+      "id": "kqZH",
+      "code_hash": "8200009cc623c80f939a9da28246c2f6",
       "outputs": [
         {
           "type": "data",
@@ -488,8 +521,8 @@
       "console": []
     },
     {
-      "id": "wlCL",
-      "code_hash": null,
+      "id": "wAgl",
+      "code_hash": "e1b63e28fa349555343b2567736a4ac8",
       "outputs": [
         {
           "type": "data",
@@ -501,8 +534,8 @@
       "console": []
     },
     {
-      "id": "kqZH",
-      "code_hash": null,
+      "id": "rEll",
+      "code_hash": "a1cd23bc3ceaba7381b45365baa54069",
       "outputs": [
         {
           "type": "data",
@@ -514,8 +547,8 @@
       "console": []
     },
     {
-      "id": "wAgl",
-      "code_hash": null,
+      "id": "dGlV",
+      "code_hash": "25d31717e71e45ae178477f44946853e",
       "outputs": [
         {
           "type": "error",
@@ -527,8 +560,8 @@
       "console": []
     },
     {
-      "id": "rEll",
-      "code_hash": null,
+      "id": "SdmI",
+      "code_hash": "c38c8b778b462e552842671264a3a14a",
       "outputs": [
         {
           "type": "error",
@@ -541,14 +574,14 @@
         {
           "type": "stream",
           "name": "stderr",
-          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/marimo_1465714/__marimo__cell_rEll_.py\"</span>, line <span class=\"m\">1</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">graph_denominator</span> <span class=\"o\">=</span> <span class=\"n\">route_momenta</span><span class=\"p\">(</span><span class=\"n\">diagram</span><span class=\"p\">,</span> <span class=\"n\">diagram</span><span class=\"o\">.</span><span class=\"n\">denominator_expression</span><span class=\"p\">(</span><span class=\"n\">dimension</span><span class=\"o\">=</span><span class=\"n\">D</span><span class=\"p\">))</span>\n<span class=\"w\">                        </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/tmp/marimo_1465714/__marimo__cell_PKri_.py\"</span>, line <span class=\"m\">4</span>, in <span class=\"n\">route_momenta</span>\n<span class=\"w\">    </span><span class=\"k\">raise</span> <span class=\"ne\">ValueError</span><span class=\"p\">(</span><span class=\"s1\">'This example requires a one-loop two-point graph'</span><span class=\"p\">)</span>\n<span class=\"gr\">ValueError</span>: <span class=\"n\">This example requires a one-loop two-point graph</span>\n</pre></div>\n</span>",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/marimo_1959289/__marimo__cell_SdmI_.py\"</span>, line <span class=\"m\">1</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">graph_denominator</span> <span class=\"o\">=</span> <span class=\"n\">route_momenta</span><span class=\"p\">(</span><span class=\"n\">diagram</span><span class=\"p\">,</span> <span class=\"n\">diagram</span><span class=\"o\">.</span><span class=\"n\">denominator_expression</span><span class=\"p\">(</span><span class=\"n\">dimension</span><span class=\"o\">=</span><span class=\"n\">D</span><span class=\"p\">))</span>\n<span class=\"w\">                        </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/tmp/marimo_1959289/__marimo__cell_Xref_.py\"</span>, line <span class=\"m\">4</span>, in <span class=\"n\">route_momenta</span>\n<span class=\"w\">    </span><span class=\"k\">raise</span> <span class=\"ne\">ValueError</span><span class=\"p\">(</span><span class=\"s1\">'This example requires a one-loop two-point graph'</span><span class=\"p\">)</span>\n<span class=\"gr\">ValueError</span>: <span class=\"n\">This example requires a one-loop two-point graph</span>\n</pre></div>\n</span>",
           "mimetype": "application/vnd.marimo+traceback"
         }
       ]
     },
     {
-      "id": "dGlV",
-      "code_hash": null,
+      "id": "lgWD",
+      "code_hash": "2f267a69a09589e58685038835a7775a",
       "outputs": [
         {
           "type": "data",
@@ -560,8 +593,8 @@
       "console": []
     },
     {
-      "id": "SdmI",
-      "code_hash": null,
+      "id": "yOPj",
+      "code_hash": "13bf7df2c0a88b332c56030d29c0834c",
       "outputs": [
         {
           "type": "data",
@@ -573,47 +606,21 @@
       "console": []
     },
     {
-      "id": "lgWD",
-      "code_hash": null,
-      "outputs": [
-        {
-          "type": "error",
-          "ename": "exception",
-          "evalue": "An ancestor raised an exception (ValueError): ",
-          "traceback": null
-        }
-      ],
-      "console": []
-    },
-    {
-      "id": "yOPj",
-      "code_hash": null,
-      "outputs": [
-        {
-          "type": "error",
-          "ename": "exception",
-          "evalue": "An ancestor raised an exception (ValueError): ",
-          "traceback": null
-        }
-      ],
-      "console": []
-    },
-    {
       "id": "fwwy",
-      "code_hash": null,
+      "code_hash": "eb747a9e1cf56b993d160642adb85e32",
       "outputs": [
         {
-          "type": "data",
-          "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"tensor-reduce-the-uv-expansion\">Tensor-reduce the UV expansion</h2>\n<span class=\"paragraph\">Each expanded denominator depends only on <marimo-tex class=\"arithmatex\">||(k^2||)</marimo-tex>.\n<code>diagram.tensor_reduce(D, expression=uv_indexed_series)</code> identifies the\ninternal momentum from the graph and keeps <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex> external.\n<code>uv_tensor_input</code> only restores explicit\nindices for the mixed dots <marimo-tex class=\"arithmatex\">||((k\\cdot p)^n||)</marimo-tex>. FeynKit computes the\ntensor reduction, including the vanishing odd-rank terms.</span></span>"
-          }
+          "type": "error",
+          "ename": "exception",
+          "evalue": "An ancestor raised an exception (ValueError): ",
+          "traceback": null
         }
       ],
       "console": []
     },
     {
       "id": "LJZf",
-      "code_hash": null,
+      "code_hash": "431684e30280d79f740440bc867f2ade",
       "outputs": [
         {
           "type": "error",
@@ -626,20 +633,20 @@
     },
     {
       "id": "urSm",
-      "code_hash": null,
+      "code_hash": "48360c2249335ba1e3e9c057da12ba69",
       "outputs": [
         {
-          "type": "error",
-          "ename": "exception",
-          "evalue": "An ancestor raised an exception (ValueError): ",
-          "traceback": null
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"tensor-reduce-the-uv-expansion\">Tensor-reduce the UV expansion</h2>\n<span class=\"paragraph\">Each expanded denominator depends only on <marimo-tex class=\"arithmatex\">||(k^2||)</marimo-tex>.\n<code>diagram.tensor_reduce(D, expression=uv_indexed_series)</code> identifies the\ninternal momentum from the graph and keeps <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex> external.\n<code>uv_tensor_input</code> only restores explicit\nindices for the mixed dots <marimo-tex class=\"arithmatex\">||((k\\cdot p)^n||)</marimo-tex>. FeynKit computes the\ntensor reduction, including the vanishing odd-rank terms.</span></span>"
+          }
         }
       ],
       "console": []
     },
     {
       "id": "jxvo",
-      "code_hash": null,
+      "code_hash": "56296f8334f85c33ed3e6e9479c1457a",
       "outputs": [
         {
           "type": "error",
@@ -652,20 +659,20 @@
     },
     {
       "id": "mWxS",
-      "code_hash": null,
+      "code_hash": "1026f6a444413833b83e5ce60c6cf021",
       "outputs": [
         {
-          "type": "data",
-          "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"uv-counterterm\">UV counterterm</h2>\n<span class=\"paragraph\">The UV expansion already has massive denominators\n<marimo-tex class=\"arithmatex\">||((k^2-m_{\\rm UV}^2)^n||)</marimo-tex>. Tensor-reduce the series, set <marimo-tex class=\"arithmatex\">||(t=1||)</marimo-tex>, and negate it\nto obtain the angular-averaged counterterm. No mass is inserted afterward.</span>\n<span class=\"paragraph\">The integrated pole is determined by the coefficient of <marimo-tex class=\"arithmatex\">||(1/(k^2)^2||)</marimo-tex>\nin its large-<marimo-tex class=\"arithmatex\">||(k||)</marimo-tex> radial expansion. With <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex> and measure\n<marimo-tex class=\"arithmatex\">||(d^Dk/(2\\pi)^D||)</marimo-tex>, multiply that coefficient by <marimo-tex class=\"arithmatex\">||(i/(16\\pi^2\\epsilon)||)</marimo-tex>.\nThe auxiliary <marimo-tex class=\"arithmatex\">||(m_{\\rm UV}||)</marimo-tex> cancels from this coefficient. Finite parts\nare not evaluated.</span></span>"
-          }
+          "type": "error",
+          "ename": "exception",
+          "evalue": "An ancestor raised an exception (ValueError): ",
+          "traceback": null
         }
       ],
       "console": []
     },
     {
       "id": "CcZR",
-      "code_hash": null,
+      "code_hash": "79fae0b1aff2851d82a6da50ba5b6958",
       "outputs": [
         {
           "type": "error",
@@ -678,7 +685,20 @@
     },
     {
       "id": "YWSi",
-      "code_hash": null,
+      "code_hash": "c08bbc082fb2988259abf989e9b725d4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"uv-counterterm\">UV counterterm</h2>\n<span class=\"paragraph\">The UV expansion already has massive denominators\n<marimo-tex class=\"arithmatex\">||((k^2-m_{\\rm UV}^2)^n||)</marimo-tex>. Tensor-reduce the series, set <marimo-tex class=\"arithmatex\">||(t=1||)</marimo-tex>, and negate it\nto obtain the angular-averaged counterterm. No mass is inserted afterward.</span>\n<span class=\"paragraph\">The integrated pole is determined by the coefficient of <marimo-tex class=\"arithmatex\">||(1/(k^2)^2||)</marimo-tex>\nin its large-<marimo-tex class=\"arithmatex\">||(k||)</marimo-tex> radial expansion. With <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex> and measure\n<marimo-tex class=\"arithmatex\">||(d^Dk/(2\\pi)^D||)</marimo-tex>, multiply that coefficient by <marimo-tex class=\"arithmatex\">||(i/(16\\pi^2\\epsilon)||)</marimo-tex>.\nThe auxiliary <marimo-tex class=\"arithmatex\">||(m_{\\rm UV}||)</marimo-tex> cancels from this coefficient. Finite parts\nare not evaluated.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "zlud",
+      "code_hash": "5f5c2fd77010d69e3d949bfb318890c9",
       "outputs": [
         {
           "type": "error",
@@ -690,8 +710,21 @@
       "console": []
     },
     {
-      "id": "zlud",
-      "code_hash": null,
+      "id": "tZnO",
+      "code_hash": "5af0e041bb865fa817a25c5e84dcffa5",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "An ancestor raised an exception (ValueError): ",
+          "traceback": null
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "xvXZ",
+      "code_hash": "a206e7cae834e3ceb3cd029114337bcc",
       "outputs": [
         {
           "type": "data",
@@ -703,8 +736,8 @@
       "console": []
     },
     {
-      "id": "tZnO",
-      "code_hash": null,
+      "id": "CLip",
+      "code_hash": "cb036548c87b35163b16f7833671a3cf",
       "outputs": [
         {
           "type": "error",
@@ -717,14 +750,14 @@
         {
           "type": "stream",
           "name": "stderr",
-          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/marimo_1465714/__marimo__cell_tZnO_.py\"</span>, line <span class=\"m\">3</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">_propagators</span> <span class=\"o\">=</span> <span class=\"n\">graph_propagators</span><span class=\"p\">(</span><span class=\"n\">_d</span><span class=\"p\">,</span> <span class=\"n\">model</span><span class=\"p\">)</span>\n<span class=\"w\">                   </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/tmp/marimo_1465714/__marimo__cell_SFPL_.py\"</span>, line <span class=\"m\">4</span>, in <span class=\"n\">graph_propagators</span>\n<span class=\"w\">    </span><span class=\"k\">raise</span> <span class=\"ne\">ValueError</span><span class=\"p\">(</span><span class=\"s1\">'This example supports two-propagator bubbles only'</span><span class=\"p\">)</span>\n<span class=\"gr\">ValueError</span>: <span class=\"n\">This example supports two-propagator bubbles only</span>\n</pre></div>\n</span>",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/marimo_1959289/__marimo__cell_CLip_.py\"</span>, line <span class=\"m\">3</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">_propagators</span> <span class=\"o\">=</span> <span class=\"n\">graph_propagators</span><span class=\"p\">(</span><span class=\"n\">_d</span><span class=\"p\">,</span> <span class=\"n\">model</span><span class=\"p\">)</span>\n<span class=\"w\">                   </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/tmp/marimo_1959289/__marimo__cell_BYtC_.py\"</span>, line <span class=\"m\">4</span>, in <span class=\"n\">graph_propagators</span>\n<span class=\"w\">    </span><span class=\"k\">raise</span> <span class=\"ne\">ValueError</span><span class=\"p\">(</span><span class=\"s1\">'This example supports two-propagator bubbles only'</span><span class=\"p\">)</span>\n<span class=\"gr\">ValueError</span>: <span class=\"n\">This example supports two-propagator bubbles only</span>\n</pre></div>\n</span>",
           "mimetype": "application/vnd.marimo+traceback"
         }
       ]
     },
     {
-      "id": "xvXZ",
-      "code_hash": null,
+      "id": "YECM",
+      "code_hash": "7ff6cd4528adb84293ab3951a579ebe3",
       "outputs": [
         {
           "type": "error",
@@ -736,8 +769,8 @@
       "console": []
     },
     {
-      "id": "CLip",
-      "code_hash": null,
+      "id": "cEAS",
+      "code_hash": "7df6dcd7602553525e98f4c7f34d587d",
       "outputs": [
         {
           "type": "data",
@@ -749,8 +782,8 @@
       "console": []
     },
     {
-      "id": "YECM",
-      "code_hash": null,
+      "id": "iXej",
+      "code_hash": "73afb10d51a0f8f78785a62da1f33210",
       "outputs": [
         {
           "type": "data",
@@ -762,8 +795,8 @@
       "console": []
     },
     {
-      "id": "cEAS",
-      "code_hash": null,
+      "id": "EJmg",
+      "code_hash": "1439294bfc97ccf866c7ec99625504b9",
       "outputs": [
         {
           "type": "data",
@@ -775,8 +808,8 @@
       "console": []
     },
     {
-      "id": "iXej",
-      "code_hash": null,
+      "id": "UmEG",
+      "code_hash": "f3c198f97693f49b119591c17191b7f3",
       "outputs": [
         {
           "type": "data",
@@ -788,24 +821,17 @@
       "console": []
     },
     {
-      "id": "EJmg",
-      "code_hash": null,
+      "id": "vEBW",
+      "code_hash": "b1af2c0f8f212f25a49fab2391d02fe5",
       "outputs": [
         {
-          "type": "error",
-          "ename": "exception",
-          "evalue": "This cell raised an exception: AssertionError",
-          "traceback": null
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massive chiral-projected squared matrix element</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">4\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-2\u00b7ee\u2074\u00b7Me\u00b2\u00b7u+2\u00b7ee\u2074\u00b7Me\u00b2\u00b7MM\u00b2+ee\u2074\u00b7Me\u2074-2\u00b7ee\u2074\u00b7MM\u00b2\u00b7u+ee\u2074\u00b7MM\u2074+ee\u2074\u00b7u\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>/s\u00b2</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massless polarized squared matrix element</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">4\u00b7ee\u2074\u00b7u\u00b2/s\u00b2</div></div>"
+          }
         }
       ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stderr",
-          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/marimo_1465714/__marimo__cell_EJmg_.py\"</span>, line <span class=\"m\">46</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"k\">assert</span> <span class=\"p\">(</span>\n<span class=\"w\">           </span><span class=\"pm\">^</span>\n<span class=\"gr\">AssertionError</span>\n</pre></div>\n</span>",
-          "mimetype": "application/vnd.marimo+traceback"
-        }
-      ]
+      "console": []
     }
   ]
 }

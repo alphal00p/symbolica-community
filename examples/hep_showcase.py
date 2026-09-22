@@ -39,8 +39,7 @@ def _():
 
 
 @app.cell
-def _(A0):
-    A0(1., 1.)
+def _():
     return
 
 
@@ -88,6 +87,12 @@ def _(Representation, S, TensorName, dot):
         uv_p,
         uv_probe,
     )
+
+
+@app.cell
+def _(A0, mUV):
+    A0(mUV, 1.)
+    return
 
 
 @app.cell
@@ -481,6 +486,12 @@ def _(diagram):
 def _(diagram):
     r = diagram.numerator_expression(in_lmb=True)
     r
+    return
+
+
+@app.cell
+def _(diagram):
+    diagram.to_linnet()
     return
 
 
@@ -936,13 +947,13 @@ def _(E, Model, S, idenso, mo):
         ]
     )
     return (
-        qed_model,
         qed_e,
         qed_hep,
         qed_k1,
         qed_k2,
         qed_me,
         qed_mm,
+        qed_model,
         qed_p1,
         qed_p2,
         qed_s,
@@ -1012,6 +1023,8 @@ def _(
         ]
     )
     return
+
+
 @app.cell
 def _(mo):
     mo.md(r"""
@@ -1032,15 +1045,15 @@ def _(
     S,
     idenso,
     mo,
-    qed_model,
+    qed_e,
     qed_hep,
-    qed_p1,
-    qed_p2,
     qed_k1,
     qed_k2,
     qed_me,
     qed_mm,
-    qed_e,
+    qed_model,
+    qed_p1,
+    qed_p2,
     qed_s,
     qed_t,
     qed_u,
@@ -1107,7 +1120,7 @@ def _(
             qed_polarized_massless,
         ]
     )
-    return (qed_polarized, qed_polarized_massless)
+    return
 
 
 if __name__ == "__main__":
