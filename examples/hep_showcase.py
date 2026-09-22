@@ -50,8 +50,6 @@ def _(Representation, S, TensorName, dot):
     P = TensorName.vector('hep_gluon::P')
     K = TensorName.vector('hep_gluon::K')
     p, k = P(lorentz), K(lorentz)
-    UV_P = TensorName.vector('hep_gluon::uv_P')
-    uv_p = UV_P(lorentz)
     index_ = S('hep_gluon::index_')
     MOMENTUM = TensorName.vector(
         'gammalooprs::Q', tags=S('gammalooprs::Q').get_tags(),
@@ -64,20 +62,18 @@ def _(Representation, S, TensorName, dot):
     # Rewrite patterns contain wildcards rather than concrete rank-one tensors.
     dot_pattern = S('spenso::dot')
     # Python aliases for actual dot expressions, not substitute scalar symbols.
-    k2, kp, p2 = dot(k, k), dot(k, p), dot(p, p)
+    k2, p2 = dot(k, k), dot(p, p)
     return (
         D,
         K,
         MOMENTUM,
         P,
-        UV_P,
         adjoint,
         dot_pattern,
         eps,
         index_,
         k,
         k2,
-        kp,
         lorentz,
         mUV,
         mass2_,
@@ -85,7 +81,6 @@ def _(Representation, S, TensorName, dot):
         prop,
         q_,
         t,
-        uv_p,
         uv_probe,
     )
 
@@ -233,51 +228,21 @@ def _(Expression, TensorExpression, dot_pattern, k, mUV, mass2_, prop, q_, t):
 
 
 @app.cell
-def _(
-    E,
-    Expression,
-    FeynmanDiagram,
-    MOMENTUM,
-    S,
-    TensorExpression,
-    TensorPattern,
-    UV_P,
-    dot,
-    index_,
-    k2,
-    kp,
-    lorentz,
-    p2,
-    uv_p,
-):
+def _(Expression, FeynmanDiagram, MOMENTUM, TensorExpression, TensorPattern, dot, index_, k, k2, lorentz):
     def uv_tensor_input(expression: Expression, diagram: FeynmanDiagram) -> TensorExpression:
-        """Convert mixed dot powers to the indexed input FeynKit accepts.
-
-        This only changes notation; no angular averaging is performed here.
-        Each contraction receives independent dummy indices.
-        Radial dot(K,K) factors remain scalar coefficients.
-        """
+        """Name the loop vector with its graph edge, retaining compact dot products."""
         loop_edge, = diagram.loop_momentum_basis.loop_edges
-        indexed = E('0')
-        for power, coefficient in expression.expand().coefficient_list(kp):
-            rank = 0 if power == E('1') else power.to_polynomial().degree(kp)
-            tensor = E('1')
-            for n in range(rank):
-                mu = S(f'hep_gluon::uv_mu{n}')
-                # Keep distinct explicit contractions: undo_dots currently reuses
-                # dummy indices in powers, and expand_dots requires concrete D.
-                tensor *= MOMENTUM(loop_edge, lorentz(mu)).to_expression() * UV_P(lorentz(mu)).to_expression()
-            indexed += coefficient * tensor
-        return TensorExpression(indexed)
+        # The reducer handles mixed dot powers and their independent contractions;
+        # radial dot(Q,Q) factors remain scalar coefficients.
+        return TensorExpression(expression.replace(k, MOMENTUM(loop_edge, lorentz)))
 
     def uv_scalar_invariants(expression: Expression, diagram: FeynmanDiagram) -> TensorExpression:
-        """Restore the original loop and external vectors inside scalar dots."""
+        """Restore the notebook's loop square after reduction."""
         loop_edge, = diagram.loop_momentum_basis.loop_edges
         loop_vector = MOMENTUM(loop_edge, lorentz)
-        reduced = expression.replace(dot(loop_vector, loop_vector), k2)
-        reduced = reduced.replace(dot(uv_p, uv_p), p2).expand()
-        if reduced.replace(TensorPattern(MOMENTUM, args=[loop_edge], ports=[index_]), 0).replace(TensorPattern(UV_P, ports=[index_]), 0) != reduced:
-            raise ValueError('Tensor reduction left an indexed momentum')
+        reduced = expression.replace(dot(loop_vector, loop_vector), k2).expand()
+        if reduced.replace(TensorPattern(MOMENTUM, args=[loop_edge], ports=[index_]), 0) != reduced:
+            raise ValueError('Tensor reduction left an unreduced loop momentum')
         return TensorExpression(reduced)
 
     return uv_scalar_invariants, uv_tensor_input
@@ -719,24 +684,24 @@ def _(mo):
     ## Tensor-reduce the UV expansion
 
     Each expanded denominator depends only on $k^2$.
-    `diagram.tensor_reduce(D, expression=uv_indexed_series)` identifies the
+    `diagram.tensor_reduce(D, expression=uv_routed_series)` identifies the
     internal momentum from the graph and keeps $p$ external.
-    `uv_tensor_input` only restores explicit
-    indices for the mixed dots $(k\cdot p)^n$. FeynKit computes the
-    tensor reduction, including the vanishing odd-rank terms.
+    `uv_tensor_input` names $k$ with its graph edge while retaining
+    compact dot products. FeynKit reduces the mixed powers $(k\cdot p)^n$
+    directly, including the vanishing odd-rank terms.
     """)
     return
 
 
 @app.cell
 def _(diagram, uv_measure_factor, uv_series, uv_tensor_input):
-    uv_indexed_series = uv_tensor_input(uv_series.to_expression()/uv_measure_factor, diagram)
-    return (uv_indexed_series,)
+    uv_routed_series = uv_tensor_input(uv_series.to_expression()/uv_measure_factor, diagram)
+    return (uv_routed_series,)
 
 
 @app.cell
-def _(D, diagram, uv_indexed_series):
-    uv_tensor_reduced = diagram.tensor_reduce(D, expression=uv_indexed_series)
+def _(D, diagram, uv_routed_series):
+    uv_tensor_reduced = diagram.tensor_reduce(D, expression=uv_routed_series)
     uv_tensor_reduced
     return (uv_tensor_reduced,)
 
