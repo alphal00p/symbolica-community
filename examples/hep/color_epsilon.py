@@ -1,0 +1,184 @@
+import marimo
+
+__generated_with = "0.24.0"
+app = marimo.App(width="medium", app_title="Antisymmetric UFO color tensors")
+
+
+@app.cell
+def _():
+    import json
+
+    import marimo as mo
+    from symbolica import E, S
+    from symbolica.community import hep as fk
+    from symbolica.community.spenso import TensorExpression
+
+    return E, S, TensorExpression, fk, json, mo
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    # Antisymmetric UFO color tensors
+
+    [Browse all notebooks](/) · [Color algebra](/?file=hep/color_algebra.py) ·
+    [Symmetric color tensor](/?file=hep/symmetric_color_vertex.py)
+
+    The UFO rules `Epsilon(1,2,3)` and `EpsilonBar(1,2,3)` describe the
+    antisymmetric invariants of three SU(3) triplets and antitriplets.
+    This toy model couples three **distinct complex scalar species**,
+    $X_1,X_2,X_3$. Using the same bosonic field three times would make
+    this antisymmetric interaction vanish.
+
+    We reuse scalar parameter and Lorentz records from the stored model,
+    add the three new species, and retain only the two conjugate cubic
+    vertices. These are toy color interactions, not Standard Model processes.
+    The calculation below removes the scalar coupling and compares their
+    color factors; it does not compute a decay rate.
+    """)
+    return
+
+
+@app.cell
+def _(fk, json, mo):
+    _directory = mo.notebook_location()
+    if _directory is None:
+        raise RuntimeError("Cannot locate hep_sm.json")
+    _source = json.loads((_directory.parent / "hep_sm.json").read_text())
+    _source["name"] = "triplet_scalar_epsilon_example"
+    epsilon_base = max(abs(_p["pdg_code"]) for _p in _source["particles"]) + 10
+    _scalar = next(_p for _p in _source["particles"] if _p["pdg_code"] == 251)
+    for _flavor in range(1, 4):
+        for _sign in (1, -1):
+            _name = f"X{_flavor}" + ("~" if _sign < 0 else "")
+            _antiname = f"X{_flavor}" + ("~" if _sign > 0 else "")
+            _source["particles"].append(
+                dict(
+                    _scalar,
+                    name=_name,
+                    antiname=_antiname,
+                    texname=_name,
+                    antitexname=_antiname,
+                    pdg_code=_sign * (epsilon_base + _flavor),
+                    color=_sign * 3,
+                    charge=0.0,
+                )
+            )
+    _vertex = next(_v for _v in _source["vertex_rules"] if _v["name"] == "V_9")
+    _source["vertex_rules"] = [
+        dict(
+            _vertex,
+            name="epsilon" + ("_bar" if _conjugate else ""),
+            particles=[
+                f"X{_flavor}" + ("~" if _conjugate else "") for _flavor in range(1, 4)
+            ],
+            color_structures=[("EpsilonBar" if _conjugate else "Epsilon") + "(1,2,3)"],
+        )
+        for _conjugate in (False, True)
+    ]
+    epsilon_model = fk.Model.from_json(json.dumps(_source))
+    return epsilon_base, epsilon_model
+
+
+@app.cell
+def _(epsilon_base, epsilon_model, fk, mo):
+    epsilon_diagrams = []
+    for _sign in (1, -1):
+        _generated = fk.Generator(epsilon_model).generate(
+            fk.Process.amplitude(
+                [_sign * (epsilon_base + 1)],
+                [-_sign * (epsilon_base + 2), -_sign * (epsilon_base + 3)],
+            ).with_loop_count(0, 0),
+            max_vertices=1,
+            maximum_bridges=None,
+            numerator_grouping=None,
+            progress=None,
+        )
+        assert len(_generated.diagrams) == 1
+        epsilon_diagrams.append(_generated.diagrams[0])
+    mo.vstack(
+        [
+            mo.md("**Generated conjugate cubic vertices**"),
+            mo.hstack(epsilon_diagrams, justify="space-around"),
+        ]
+    )
+    return (epsilon_diagrams,)
+
+
+@app.cell
+def _(E, S, TensorExpression, epsilon_diagrams, mo):
+    epsilon_colors = [
+        TensorExpression(
+            _diagram.numerator_expression()
+            .to_expression()
+            .replace(S("UFO::GC_69"), E("1"))
+        )
+        for _diagram in epsilon_diagrams
+    ]
+    epsilon_norms = []
+    for _color in epsilon_colors:
+        assert len(_color.interface) == 3
+        _conjugate = _color.spenso_conjugate()
+        assert _conjugate.spenso_conjugate().to_expression() == _color.to_expression()
+        # Explicit matching indices contract the tensor with its dual conjugate.
+        _norm = TensorExpression(
+            _color.to_expression() * _conjugate.to_expression()
+        ).simplify_epsilon()
+        assert _norm.is_scalar
+        assert _norm.to_expression() == E("6")
+        epsilon_norms.append(_norm)
+    mo.vstack(
+        [
+            mo.md("**Typed color tensors**"),
+            *epsilon_colors,
+            mo.md(
+                r"Conjugation exchanges triplet and antitriplet ports. Applying it "
+                r"twice restores each tensor. The shared Idenso epsilon contraction "
+                r"gives $\epsilon_{ijk}\bar\epsilon^{ijk}=3!=6$ for both vertices."
+            ),
+            *epsilon_norms,
+        ]
+    )
+    return epsilon_colors, epsilon_norms
+
+
+@app.cell
+def _(E, S, TensorExpression, epsilon_base, epsilon_model, epsilon_norms, mo):
+    averaged_epsilon_norms = []
+    for _sign, _norm in zip((1, -1), epsilon_norms):
+        _particle = epsilon_model.particle_by_pdg(_sign * (epsilon_base + 1))
+        # The trace of the shared completeness tensor counts initial color states.
+        _states = (
+            TensorExpression(_particle.color_sum(S("i"), S("i")))
+            .simplify_metrics()
+            .to_expression()
+        )
+        _averaged_trace = (
+            TensorExpression(_particle.color_sum(S("i"), S("i"), average=True))
+            .simplify_metrics()
+            .to_expression()
+        )
+        assert _states == E("3")
+        assert _averaged_trace == E("1")
+        _averaged_norm = _norm.to_expression() / _states
+        assert _averaged_norm == E("2")
+        averaged_epsilon_norms.append(_averaged_norm)
+    mo.vstack(
+        [
+            mo.md(
+                r"**One incoming color average**"
+                "\n\n"
+                r"`Particle.color_sum` counts three incoming color states, and its "
+                r"averaged identity has unit trace. Summing the two outgoing colors "
+                r"and averaging the incoming color gives $6/3=2$ for either vertex. "
+                r"The outgoing species are distinct, so no identical-particle "
+                r"factor is required."
+            ),
+            *averaged_epsilon_norms,
+        ]
+    )
+    return (averaged_epsilon_norms,)
+
+
+if __name__ == "__main__":
+    app.run()
