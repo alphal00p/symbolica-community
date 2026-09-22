@@ -1,5 +1,6 @@
 """Keep grouped tensor expressions on the notebook's rich display path."""
 
+import sys
 import xml.etree.ElementTree as ET
 
 import pytest
@@ -30,6 +31,36 @@ def test_tensor_sum_factors_render_as_grouped_mathml():
     assert operators.count("+") == 2
     assert "overflow-x: auto" in html
     assert expression.to_expression() == original
+
+
+def test_color_chain_stack_keeps_mathml_without_embedded_fonts():
+    pytest.importorskip("typst")
+    mo = pytest.importorskip("marimo")
+    generator = TensorExpression.t(8, 3)
+    explicit_word = generator("a", "i", "k") * generator("b", "k", "j")
+    color_word = explicit_word.collect_chains(Representation.cof(3))
+    color_conjugate = color_word.spenso_conjugate()
+    expressions = [explicit_word, color_word, color_conjugate]
+    originals = [expression.to_expression() for expression in expressions]
+
+    stack = mo.vstack(
+        [
+            mo.md("**Explicit indexed network**"),
+            explicit_word,
+            mo.md("**Collected chain**"),
+            color_word,
+            mo.md("**Complex conjugate**"),
+            color_conjugate,
+        ]
+    )
+    html = stack.text
+    assert html.count("<math") == 3
+    assert html.count("<div data-spenso-math>") == 3
+    assert "<mi>" in html
+    assert "data:font/" not in html
+    assert "@font-face" not in html
+    assert sys.getsizeof(html) < 100_000
+    assert [expression.to_expression() for expression in expressions] == originals
 
 
 @pytest.mark.parametrize("source", ["(a+b)*(c+d)", "a*(b+c)", "(a+b*(c+d))*(e+f)"])
