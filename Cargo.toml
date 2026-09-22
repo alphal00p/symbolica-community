@@ -73,3 +73,7 @@ vakint = { path = "../../gammaloop/feynkit-rich-display/crates/vakint", features
 symbolica = { git = "https://github.com/symbolica-dev/symbolica", rev = "a19c760dd567c239f30d87e4e924ca2f8b8457ab" }
 numerica = { git = "https://github.com/symbolica-dev/symbolica", rev = "a19c760dd567c239f30d87e4e924ca2f8b8457ab" }
 graphica = { git = "https://github.com/symbolica-dev/symbolica", rev = "a19c760dd567c239f30d87e4e924ca2f8b8457ab" }
+
+# Keep portable tensor rendering aligned with the linked Symbolica export format.
+[patch."https://github.com/symbolica-dev/symbolica-typst-plugin"]
+symbolica-typst-atom-payload = { path = "../../symbolica-typst-plugin/crates/atom-payload" }

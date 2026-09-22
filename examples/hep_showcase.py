@@ -936,6 +936,7 @@ def _(E, Model, S, idenso, mo):
         ]
     )
     return (
+        qed_model,
         qed_e,
         qed_hep,
         qed_k1,
@@ -1011,6 +1012,102 @@ def _(
         ]
     )
     return
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## Polarized QED currents
+
+    Spenso constructs the chiral projectors and Idenso evaluates their traces.
+    The currents below select right-chiral fermion wavefunctions; in the
+    massless limit these describe right-handed particles and left-handed
+    antiparticles. No initial spin average is taken for specified states.
+    This calculation assembles the physical currents explicitly.
+    """)
+    return
+
+
+@app.cell
+def _(
+    E,
+    S,
+    idenso,
+    mo,
+    qed_model,
+    qed_hep,
+    qed_p1,
+    qed_p2,
+    qed_k1,
+    qed_k2,
+    qed_me,
+    qed_mm,
+    qed_e,
+    qed_s,
+    qed_t,
+    qed_u,
+):
+    from symbolica.community.spenso import Representation as _Rep
+    from symbolica.community.spenso import TensorExpression as _Tensor
+    from symbolica.community.spenso import chain as _chain
+
+    _i0, _i1, _i2, _i3, _j0, _j1, _j2, _j3, _mu, _nu = S(
+        "chiral::i0",
+        "chiral::i1",
+        "chiral::i2",
+        "chiral::i3",
+        "chiral::j0",
+        "chiral::j1",
+        "chiral::j2",
+        "chiral::j3",
+        "chiral::mu",
+        "chiral::nu",
+    )
+    _incoming = (
+        qed_model.particle_by_pdg(-11).spin_sum(qed_p2, _i0, _i1)
+        * _Tensor.gamma(4)(_i1, _i2, _mu).to_expression()
+        * qed_model.particle_by_pdg(11).spin_sum(qed_p1, _i2, _i3)
+        * _Tensor.gamma(4)(_i3, _i0, _nu).to_expression()
+    )
+    _outgoing = (
+        qed_model.particle_by_pdg(13).spin_sum(qed_k1, _j0, _j1)
+        * _Tensor.gamma(4)(_j1, _j2, _mu).to_expression()
+        * qed_model.particle_by_pdg(-13).spin_sum(qed_k2, _j2, _j3)
+        * _Tensor.gamma(4)(_j3, _j0, _nu).to_expression()
+    )
+    _a, _b, _ell = S("chiral::a_", "chiral::b_", "chiral::ell_")
+    _pattern = _Tensor.gamma(4)(_a, _b, _ell).to_expression()
+    _right_current = _chain(
+        _Rep.bis(4)(_a),
+        _Rep.bis(4)(_b),
+        _Tensor.gamma(4)(_a, "middle", _ell),
+        _Tensor.projp(4)("middle", _b),
+    ).to_expression()
+    _projected = (_incoming * _outgoing).replace(_pattern, _right_current)
+    _traces = idenso.simplify_gamma(_projected.expand()).expand()
+    _contracted = idenso.to_dots(idenso.simplify_epsilon(_traces).expand())
+    _kin = qed_hep.Kinematics.mandelstam(
+        [qed_p1, qed_p2, qed_k1, qed_k2],
+        [qed_me**2, qed_me**2, qed_mm**2, qed_mm**2],
+        [qed_s, qed_t, qed_u],
+    )
+    qed_polarized = (_kin.apply(_contracted) * qed_e**4 / qed_s**2).together()
+    assert (
+        qed_polarized - 4 * qed_e**4 * (qed_me**2 + qed_mm**2 - qed_u) ** 2 / qed_s**2
+    ).together() == E("0")
+    qed_polarized_massless = qed_polarized.replace(qed_me, E("0")).replace(
+        qed_mm, E("0")
+    )
+    assert (
+        qed_polarized_massless - 4 * qed_e**4 * qed_u**2 / qed_s**2
+    ).together() == E("0")
+    mo.vstack(
+        [
+            mo.md("**Massive chiral-projected squared matrix element**"),
+            qed_polarized,
+            mo.md("**Massless polarized squared matrix element**"),
+            qed_polarized_massless,
+        ]
+    )
+    return (qed_polarized, qed_polarized_massless)
 
 
 if __name__ == "__main__":
