@@ -7,10 +7,10 @@ app = marimo.App(width="medium", app_title="Color chains and conjugation")
 @app.cell
 def _():
     import marimo as mo
-    from symbolica import E
+    from symbolica import E, S
     from symbolica.community.spenso import Representation, TensorExpression
 
-    return E, Representation, TensorExpression, mo
+    return E, S, Representation, TensorExpression, mo
 
 
 @app.cell(hide_code=True)
@@ -112,6 +112,51 @@ def _(fundamental, generator, mo):
         ]
     )
     return color_trace, color_trace_conjugate
+
+
+@app.cell
+def _(E, S, TensorExpression, color_trace, color_trace_conjugate, mo):
+    _cyclic, _sym, _antisym, _factors = S(
+        "spenso::cyclic", "spenso::sym", "spenso::antisym", "factors__"
+    )
+    symmetric_color_trace = TensorExpression(
+        color_trace.to_expression().replace(_cyclic(_factors), _sym(_factors))
+    )
+    antisymmetric_color_trace = TensorExpression(
+        color_trace.to_expression().replace(_cyclic(_factors), _antisym(_factors))
+    )
+    assert (
+        symmetric_color_trace.spenso_conjugate().to_expression()
+        == symmetric_color_trace.to_expression()
+    )
+    assert (
+        antisymmetric_color_trace.spenso_conjugate() + antisymmetric_color_trace
+    ).simplify_color().to_expression() == E("0")
+    assert (
+        symmetric_color_trace.simplify_color().to_expression()
+        == ((color_trace + color_trace_conjugate) / 2).simplify_color().to_expression()
+    )
+    assert (
+        antisymmetric_color_trace.simplify_color().to_expression()
+        == ((color_trace - color_trace_conjugate) / 2).simplify_color().to_expression()
+    )
+    mo.vstack(
+        [
+            mo.md(r"""
+            **Symmetric and antisymmetric generator groups**
+
+            Cyclic invariance reduces the six permutations of three generators
+            to two orientations. Their half-sum is the symmetric, real trace;
+            their half-difference is the antisymmetric, purely imaginary trace.
+            Conjugation preserves the compact projectors, including their signs.
+            """),
+            symmetric_color_trace,
+            antisymmetric_color_trace,
+            mo.md("**Conjugate antisymmetric trace**"),
+            antisymmetric_color_trace.spenso_conjugate(),
+        ]
+    )
+    return antisymmetric_color_trace, symmetric_color_trace
 
 
 if __name__ == "__main__":
