@@ -2784,6 +2784,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustred"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "blake3",
+ "rand 0.9.5",
+ "rayon",
+ "symbolica",
+]
+
+[[package]]
+name = "rustred-feynkit"
+version = "0.1.0"
+dependencies = [
+ "pyo3",
+ "rustred",
+ "symbolica",
+]
+
+[[package]]
 name = "rustversion"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3240,6 +3260,7 @@ dependencies = [
  "oneloop-python",
  "pyo3",
  "pyo3-stub-gen",
+ "rustred-feynkit",
  "spynso3",
  "symbolica",
  "symbolica-integrate",

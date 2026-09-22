@@ -27,6 +27,8 @@ impl SymbolicaCommunityModule for HepModule {
         }
         #[cfg(not(target_arch = "wasm32"))]
         oneloop_native::register_hep_module(module)?;
+        #[cfg(not(target_arch = "wasm32"))]
+        rustred_feynkit::register_hep_module(module)?;
         Ok(())
     }
 

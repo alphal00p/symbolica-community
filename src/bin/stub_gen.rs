@@ -53,7 +53,10 @@ fn main() -> Result<()> {
     }
     let directory = stub.python_root.join("symbolica/community/hep");
     std::fs::create_dir_all(&directory)?;
-    let source = (hep + "\nfrom . import oneloop as oneloop\n")
+    let source = (hep
+        + "\n"
+        + include_str!("../../python/symbolica/community/hep/ibp.pyi")
+        + "\nfrom . import oneloop as oneloop\n")
         .lines()
         .map(str::trim_end)
         .collect::<Vec<_>>()
