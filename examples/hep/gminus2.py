@@ -22,6 +22,7 @@ def _(mo):
     # Electron anomalous magnetic moment
 
     [Browse all notebooks](/) ·
+    [Pauli form factor across threshold](/?file=hep/pauli_form_factor.py) ·
     [Massive electron self-energy](/?file=hep/electron_self_energy.py) ·
     [Unequal-mass bubble](/?file=hep/ibp_bubble.py) ·
     [Two-loop φ⁴](/?file=hep/ibp_phi4.py) · [Higgs to gluons](/?file=hep/higgs_gluons.py)
