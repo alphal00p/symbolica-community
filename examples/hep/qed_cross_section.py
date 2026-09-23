@@ -208,11 +208,28 @@ def _(
         qed_differential - qed_alpha**2 * (1 + qed_cos_theta**2) / (4 * qed_s)
     ).together() == E("0")
     assert (qed_total - 4 * _pi * qed_alpha**2 / (3 * qed_s)).together() == E("0")
+    # The Jacobian d(cos(theta))/dt = 2/s gives the second gallery coordinate.
+    qed_differential_t = (
+        2 * qed_differential.replace(qed_cos_theta, 1 + 2 * qed_t / qed_s) / qed_s
+    ).expand()
+    _expected_t = (
+        qed_alpha**2 * (qed_s**2 + 2 * qed_s * qed_t + 2 * qed_t**2) / qed_s**4
+    )
+    assert (qed_differential_t - _expected_t).together() == 0
+    _primitive_t = qed_differential_t.to_polynomial().integrate(qed_t).to_expression()
+    _total_t = (
+        2 * _pi * (_primitive_t.replace(qed_t, 0) - _primitive_t.replace(qed_t, -qed_s))
+    )
+    assert (_total_t - qed_total).together() == 0
     mo.vstack(
         [
             mo.md(r"**Massless angular distribution** $d\sigma/d\Omega$"),
             qed_differential,
-            mo.md(r"**Integrated cross section** $\sigma=4\pi\alpha^2/(3s)$"),
+            mo.md(r"**Mandelstam distribution** $d\sigma/(dt\,d\varphi)$"),
+            qed_differential_t,
+            mo.md(
+                r"**Both coordinates give the integrated cross section** $\sigma=4\pi\alpha^2/(3s)$"
+            ),
             qed_total,
         ]
     )
