@@ -19,7 +19,7 @@ def _():
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    [Browse all notebooks](/)
+    [Browse all notebooks](/) · [Two-loop topology preparation](/?file=hep/topology_preparation.py)
     """)
     return
 
