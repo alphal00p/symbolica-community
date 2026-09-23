@@ -37,7 +37,7 @@ def _(mo):
     mo.md(r"""
     # Generated two-loop $\phi^4$ renormalization
 
-    [Browse all notebooks](/) · [Unequal-mass bubble IBP](/?file=hep/ibp_bubble.py)
+    [Browse all notebooks](/) · [Unequal-mass bubble IBP](/?file=hep/ibp_bubble.py) · [Two-loop coupling renormalization](/?file=hep/phi4_two_loop_vertex.py)
 
     Start from `Model.phi4()` and reproduce the [FeynCalc two-loop self-energy example](https://feyncalc.github.io/FeynCalcExamples/Phi4/TwoLoops/Renormalization-SS).
     The generator supplies two bare diagrams, three one-loop counterterm diagrams, and two local two-loop counterterms. Their native factors and numerators enter the shared UV expansion, tensor reduction, and IBP solvers.
@@ -162,7 +162,7 @@ def _(
         progress=None,
     )
     assert len(generated.diagrams) == 2
-    K, P, _dim = S("gammalooprs::K", "gammalooprs::P", "gammalooprs::dim")
+    K, P, dim = S("gammalooprs::K", "gammalooprs::P", "gammalooprs::dim")
     model_mass, model_coupling = S("UFO::mass", "UFO::lam")
     index, dimension = S("ibp_phi4::index_", "ibp_phi4::dimension_")
     den, edge_, mom_, mass_, quad_ = S(
@@ -172,7 +172,7 @@ def _(
         "ibp_phi4::mass_",
         "ibp_phi4::quad_",
     )
-    _coordinates = S("ibp_phi4::x1", "ibp_phi4::x2", "ibp_phi4::x3")
+    coordinates = S("ibp_phi4::x1", "ibp_phi4::x2", "ibp_phi4::x3")
     external_kinematics = _kinematics.with_scalar_product(P(0), P(0), p_squared)
     _reducer = (
         hep.TensorReducer(d)
@@ -204,7 +204,7 @@ def _(
             _diagram.uv_expansion(model_mass, numerator=_numerator).to_expression()
         )
         _expanded = (
-            _expanded.replace(_dim, d)
+            _expanded.replace(dim, d)
             .replace(K(0, index), k1(index))
             .replace(K(1, index), k2(index))
             .replace(model_mass**2, mass_squared)
@@ -213,23 +213,23 @@ def _(
             _values = dict(_match)
             _expanded = _expanded.replace(
                 den(_values[edge_], _values[mom_], _values[mass_], _values[quad_]),
-                family.rewrite_numerator(_values[quad_], _coordinates),
+                family.rewrite_numerator(_values[quad_], coordinates),
             )
         _scalar = family.rewrite_numerator(
-            external_kinematics.apply(_reducer.reduce(_expanded)), _coordinates
+            external_kinematics.apply(_reducer.reduce(_expanded)), coordinates
         )
         _scalar = (
             (_scalar * _factor / (Symbol.I * model_coupling**2)).together().expand()
         )
-        for _monomial, _coefficient in _scalar.coefficient_list(*_coordinates):
+        for _monomial, _coefficient in _scalar.coefficient_list(*coordinates):
             _powers = [
                 -int((_monomial.derivative(_x) * _x / _monomial).together())
-                for _x in _coordinates
+                for _x in coordinates
             ]
             assert _monomial == prod(
                 (
                     _x ** (-_power)
-                    for _x, _power in zip(_coordinates, _powers, strict=True)
+                    for _x, _power in zip(coordinates, _powers, strict=True)
                 )
             )
             assert not _coefficient.matches(K(S("ibp_phi4::args___")))
@@ -332,20 +332,20 @@ def _(
         )
         for _powers in laporta.residuals
     }
-    _reference_basis = {(0, 1, 1): tadpole_squared, (1, 1, 1): vacuum_integral}
+    reference_basis = {(0, 1, 1): tadpole_squared, (1, 1, 1): vacuum_integral}
     _raw_reductions = {tuple(_target): laporta.reduce(_target) for _target in _targets}
     reduced = {}
     for _target, _terms in _raw_reductions.items():
         assert all((tuple(_powers) in _canonical for _powers, _coefficient in _terms))
         assert all(
             (
-                _canonical[tuple(_powers)] in _reference_basis
+                _canonical[tuple(_powers)] in reference_basis
                 for _powers, _coefficient in _terms
             )
         )
         reduced[_target] = sum(
             (
-                _coefficient * _reference_basis[_canonical[tuple(_powers)]]
+                _coefficient * reference_basis[_canonical[tuple(_powers)]]
                 for _powers, _coefficient in _terms
             ),
             zero,
@@ -415,14 +415,14 @@ def _(
     zero,
 ):
     tadpole_poles = mass_squared * (1 / eps + 1 - log_mass)
-    _tadpole_squared_poles = mass_squared**2 * (1 / eps**2 + 2 * (1 - log_mass) / eps)
-    _vacuum_poles = mass_squared * (E("3/2") / eps**2 + (E("9/2") - 3 * log_mass) / eps)
+    tadpole_squared_poles = mass_squared**2 * (1 / eps**2 + 2 * (1 - log_mass) / eps)
+    vacuum_poles = mass_squared * (E("3/2") / eps**2 + (E("9/2") - 3 * log_mass) / eps)
     bare_uv = (
         (
             -(1 + 2 * eps * log_4pi)
             * bare_reduced.replace(d, 4 - 2 * eps)
-            .replace(tadpole_squared, _tadpole_squared_poles)
-            .replace(vacuum_integral, _vacuum_poles)
+            .replace(tadpole_squared, tadpole_squared_poles)
+            .replace(vacuum_integral, vacuum_poles)
         )
         .series(eps, 0, -1)
         .to_expression()
@@ -478,13 +478,13 @@ def _(
     zero,
 ):
     _tadpole_kin = hep.Kinematics(d, momenta=[k1])
-    _tadpole_family = hep.IntegralFamily(
+    tadpole_family = hep.IntegralFamily(
         [k1],
         [],
         [_tadpole_kin.scalar_product(k1, k1) - mass_squared],
         kinematics=_tadpole_kin,
     )
-    parametric = hep.IBPFamily(_tadpole_family, name="phi4_tadpole").solve_parametric(
+    parametric = hep.IBPFamily(tadpole_family, name="phi4_tadpole").solve_parametric(
         [True], max_depth=1
     )
     assert parametric.rules
@@ -493,17 +493,18 @@ def _(
     tadpole_coefficient = _tadpole_terms[0][1]
     assert (tadpole_coefficient - (d - 2) / (2 * mass_squared)).together() == zero
     zg1, zm1 = (3 / (2 * eps), 1 / (2 * eps))
-    _h, field1, _mass1, _vertex1, field2, mass2 = S(
+    h, field1, mass1, vertex1, field2, mass2, vertex2 = S(
         "ibp_phi4::h",
         "ibp_phi4::field1",
         "ibp_phi4::mass1",
         "ibp_phi4::vertex1",
         "ibp_phi4::field2",
         "ibp_phi4::mass2",
+        "ibp_phi4::vertex2",
     )
-    _Zfield = 1 + _h * field1 + _h**2 * field2
-    _Zmass = 1 + _h * _mass1 + _h**2 * mass2
-    _Zvertex = 1 + _h * _vertex1
+    _Zfield = 1 + h * field1 + h**2 * field2
+    _Zmass = 1 + h * mass1 + h**2 * mass2
+    _Zvertex = 1 + h * vertex1 + h**2 * vertex2
     _specification = json.loads(model.to_json())
     _specification["orders"].append(
         {"name": "CT", "expansion_order": 2, "hierarchy": 1}
@@ -516,13 +517,13 @@ def _(
         _specification["lorentz_structures"].append(
             {"name": "CT_L_" + _label, "spins": [1] * _valence, "structure": _lorentz}
         )
-        for _order in [1, 2] if _valence == 2 else [1]:
+        for _order in [1, 2]:
             _name = f"CT_{_label}_{_order}"
             _specification["couplings"].append(
                 {
                     "name": _name,
                     "expression": repr(
-                        _bare_factor.expand().coefficient(_h**_order) * _h**_order
+                        _bare_factor.expand().coefficient(h**_order) * h**_order
                     ),
                     "orders": [["SCALAR", 1 if _valence == 4 else 0], ["CT", _order]],
                     "value": None,
@@ -537,12 +538,12 @@ def _(
                     "couplings": [[_name]],
                 }
             )
-    _ct_model = hep.Model.from_json(json.dumps(_specification))
+    ct_model = hep.Model.from_json(json.dumps(_specification))
     ct_diagrams = {}
-    ct_integral, _ct_coordinate = S("ibp_phi4::J", "ibp_phi4::y")
+    ct_integral, ct_coordinate = S("ibp_phi4::J", "ibp_phi4::y")
     ct_input, tree_ct = (zero, zero)
     for _loops, _ct_order in [(1, 1), (0, 2)]:
-        _result = _ct_model.generate_diagrams(
+        _result = ct_model.generate_diagrams(
             [particle.name],
             [particle.name],
             loops=_loops,
@@ -558,7 +559,7 @@ def _(
         assert len(_result.diagrams) == (3 if _loops else 2)
         ct_diagrams[_loops] = _result.diagrams
         for _diagram in _result.diagrams:
-            _numerator = _ct_model.expand_couplings(
+            _numerator = ct_model.expand_couplings(
                 _diagram.numerator_expression().to_expression()
             )
             _numerator = TensorExpression(_numerator.expand()).to_dots().to_expression()
@@ -576,7 +577,7 @@ def _(
                 _values = dict(_match)
                 _numerator = _numerator.replace(
                     den(_values[edge_], _values[mom_], _values[mass_], _values[quad_]),
-                    _tadpole_family.rewrite_numerator(_values[quad_], [_ct_coordinate]),
+                    tadpole_family.rewrite_numerator(_values[quad_], [ct_coordinate]),
                 )
             _factor = (
                 _diagram.overall_factor_expression(evaluate=True)
@@ -586,35 +587,35 @@ def _(
             if _loops:
                 _scalar = (
                     (
-                        _tadpole_family.rewrite_numerator(_numerator, [_ct_coordinate])
-                        / (_h * model_coupling)
+                        tadpole_family.rewrite_numerator(_numerator, [ct_coordinate])
+                        / (h * model_coupling)
                     )
                     .together()
                     .expand()
                 )
-                for _monomial, _coefficient in _scalar.coefficient_list(_ct_coordinate):
+                for _monomial, _coefficient in _scalar.coefficient_list(ct_coordinate):
                     _power = -int(
                         (
-                            _monomial.derivative(_ct_coordinate)
-                            * _ct_coordinate
+                            _monomial.derivative(ct_coordinate)
+                            * ct_coordinate
                             / _monomial
                         ).together()
                     )
-                    assert _monomial == _ct_coordinate ** (-_power)
+                    assert _monomial == ct_coordinate ** (-_power)
                     ct_input += _coefficient * ct_integral(_power)
             else:
-                tree_ct += _numerator / (Symbol.I * _h**2)
+                tree_ct += _numerator / (Symbol.I * h**2)
     assert (
         ct_input
-        - (_vertex1 + field1) * ct_integral(1) / 2
-        - mass_squared * _mass1 * ct_integral(2) / 2
+        - (vertex1 + field1) * ct_integral(1) / 2
+        - mass_squared * mass1 * ct_integral(2) / 2
     ).together() == zero
     assert (
-        tree_ct - p_squared * field2 + mass_squared * (mass2 + field2 + field1 * _mass1)
+        tree_ct - p_squared * field2 + mass_squared * (mass2 + field2 + field1 * mass1)
     ).together() == zero
     ct_reduced = ct_input.replace(ct_integral(2), tadpole_coefficient * ct_integral(1))
     ct_reduced = (
-        ct_reduced.replace(field1, zero).replace(_vertex1, zg1).replace(_mass1, zm1)
+        ct_reduced.replace(field1, zero).replace(vertex1, zg1).replace(mass1, zm1)
     )
     mo.vstack(
         [
@@ -711,16 +712,16 @@ def _(
         ]
     )
     solution = ct_matrix.solve(_rhs)
-    _zphi2, _zm2 = (solution[_row, 0].to_expression().expand() for _row in range(2))
+    zphi2, _zm2 = (solution[_row, 0].to_expression().expand() for _row in range(2))
     assert (
-        loop_uv + _normalized_tree_ct.replace(field2, _zphi2).replace(mass2, _zm2)
+        loop_uv + _normalized_tree_ct.replace(field2, zphi2).replace(mass2, _zm2)
     ).together() == zero
     assert (
-        loop_uv + p_squared * _zphi2 - mass_squared * (_zm2 + _zphi2)
+        loop_uv + p_squared * zphi2 - mass_squared * (_zm2 + zphi2)
     ).together() == zero
-    _loop_coupling = coupling / (16 * pi**2)
-    zphi = (1 + _loop_coupling**2 * _zphi2).expand()
-    zm = (1 + _loop_coupling * zm1 + _loop_coupling**2 * _zm2).expand()
+    loop_coupling = coupling / (16 * pi**2)
+    zphi = (1 + loop_coupling**2 * zphi2).expand()
+    zm = (1 + loop_coupling * zm1 + loop_coupling**2 * _zm2).expand()
     assert (zphi - 1 + coupling**2 / (6144 * pi**4 * eps)).together() == zero
     assert (
         zm
