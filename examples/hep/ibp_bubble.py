@@ -21,7 +21,9 @@ def _(mo):
     # IBP reduction of an unequal-mass bubble
 
     [Browse all notebooks](/) · [Integral families](/?file=hep/integral_families.py) ·
-    [Two-loop φ⁴](/?file=hep/ibp_phi4.py)
+    [Two-loop φ⁴](/?file=hep/ibp_phi4.py) ·
+    [Differential equations](/?file=hep/ibp_differential_equations.py) ·
+    [Massless triangle](/?file=hep/ibp_triangle.py)
 
     Raised propagator powers occur in mass derivatives, counterterm insertions
     and Taylor expansions. Reduce them with the native RustRed solver, keeping
@@ -269,7 +271,6 @@ def _(E, bubble_ibp, integral, mo):
             """),
         ]
     )
-    return
 
 
 if __name__ == "__main__":

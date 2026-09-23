@@ -19,6 +19,19 @@ from symbolica.community.hep import FeynmanDiagram, Model, Generator, TensorRedu
 Class identities and the exception hierarchy are preserved; their Python
 `__module__` and the bundled stubs name `symbolica.community.hep`.
 
+The Marimo directory server (`marimo edit examples/` from the repository root)
+provides separate worked IBP notebooks:
+
+- [Unequal-mass bubble](ibp_bubble.py): raised powers and numerical master evaluation.
+- [Bubble differential equations](ibp_differential_equations.py): compatible equations
+  in the invariant and masses, with numerical transport from a boundary value.
+- [Massless form-factor triangle](ibp_triangle.py): raised powers and infrared poles.
+- [Two-loop phi4 self-energy](ibp_phi4.py) and [vertex](phi4_two_loop_vertex.py):
+  generated diagrams, reductions and counterterms.
+
+They use the shared `IntegralFamily` and `IBPFamily` API, Symbolica algebra,
+and native RustRed reductions. Links inside each notebook stay on the same server.
+
 After installing a community wheel built from this checkout:
 
 ```sh
