@@ -1,0 +1,559 @@
+import marimo
+
+__generated_with = "0.24.0"
+app = marimo.App(width="medium", app_title="Generated phi3 renormalization")
+
+
+@app.cell
+def _():
+    import json
+    import math
+
+    import marimo as mo
+    import numpy as np
+    from symbolica import E, Matrix, Replacement, S, Symbol
+    from symbolica.community import hep
+    from symbolica.community.hep import oneloop
+    from symbolica.community.spenso import TensorExpression
+
+    return (
+        E,
+        Matrix,
+        Replacement,
+        S,
+        Symbol,
+        TensorExpression,
+        hep,
+        json,
+        math,
+        mo,
+        np,
+        oneloop,
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    # One-loop $\phi^3$ renormalization
+    [Browse notebooks](/) · [Quartic scalar renormalization](/?file=hep/phi4_renormalization.py) · [Tadpole mass insertions](/?file=hep/tadpole_mass_insertions.py)
+
+    Generate the bubble, triangle and local counterterms from `Model.phi3()`. The [FeynCalc reference](https://feyncalc.github.io/FeynCalcExamples/Phi3/OneLoop/Renormalization) determines the field, mass-squared and cubic-coupling constants in four dimensions.
+
+    Use $\mathcal L=(\partial\phi)^2/2-m^2\phi^2/2-g\phi^3/3!$, with nonzero $m^2=M$ and dimensionful coupling $g$. This calculation concerns the one-particle-irreducible two- and three-point functions. A one-point tadpole or a choice of vacuum is separate.
+
+    All displayed loop amplitudes have the common $i/(16\pi^2)$ removed. Keeping $M>0$ makes the zero-momentum Taylor coefficients infrared safe.
+    """)
+
+
+@app.cell
+def _(E, S, Symbol, hep, mo):
+    model = hep.Model.phi3()
+    particle = model.particle("phi")
+    mass, coupling = S("UFO::mass", "UFO::g")
+    d, M, p2, mu2, eps, k, coordinate, integral = S(
+        "phi3::d",
+        "phi3::M",
+        "phi3::p2",
+        "phi3::mu2",
+        "phi3::eps",
+        "phi3::k",
+        "phi3::x",
+        "phi3::I",
+    )
+    Q, K, P = S("gammalooprs::Q", "gammalooprs::K", "gammalooprs::P")
+    _index, _external = S("phi3::index_", "phi3::external_")
+    zero, one, pi = (E("0"), E("1"), Symbol.PI)
+    _kinematics = hep.Kinematics(d, momenta=[k])
+    family = hep.IntegralFamily(
+        [k], [], [_kinematics.scalar_product(k, k) - M], kinematics=_kinematics
+    )
+    ibp = hep.IBPFamily(family, name="phi3_tadpole")
+    recurrence = ibp.solve_parametric([True], max_depth=1)
+    assert recurrence.rules
+    options = {
+        "maximum_bridges": 0,
+        "self_energy": None,
+        "tadpoles": None,
+        "zero_snails": None,
+        "numerator_grouping": None,
+        "progress": None,
+    }
+    diagrams, inputs, coefficients = ({}, {}, {})
+    for _label, _incoming, _outgoing, _loops in [
+        ("self_energy", 1, 1, 1),
+        ("vertex", 2, 1, 1),
+        ("tree", 2, 1, 0),
+    ]:
+        _generated = model.generate_diagrams(
+            [particle] * _incoming,
+            [particle] * _outgoing,
+            loops=_loops,
+            max_vertices=_incoming + _outgoing if _loops else 1,
+            **options,
+        )
+        assert len(_generated.diagrams) == 1
+        _diagram = _generated.diagrams[0]
+        diagrams[_label] = _diagram
+        _coefficient = (
+            model.expand_couplings(_diagram.numerator_expression().to_expression())
+            * _diagram.overall_factor_expression(evaluate=True)
+            * _diagram.numerator_prefactor_expression()
+        )
+        coefficients[_label] = _coefficient
+        if not _loops:
+            continue
+        _generated_family = _diagram.integral_family(kinematics=hep.Kinematics(d))
+        _denominators = [
+            _den.replace(P(_external, _index), zero)
+            .replace(K(0, _index), k(_index))
+            .replace(mass**2, M)
+            for _den in _generated_family.denominators
+        ]
+        _powers = len(_denominators)
+        assert _powers == _incoming + _outgoing
+        assert all(
+            family.rewrite_numerator(_den, [coordinate]) == coordinate
+            for _den in _denominators
+        )
+        inputs[_label] = _coefficient * integral(_powers)
+    assert coefficients == {
+        "self_energy": coupling**2 / 2,
+        "vertex": coupling**3,
+        "tree": -Symbol.I * coupling,
+    }
+    mo.vstack(
+        [
+            mo.md("## Generated graphs and their zero-momentum integrals"),
+            mo.hstack([diagrams["self_energy"], diagrams["vertex"]]),
+            family,
+            mo.hstack([inputs["self_energy"], inputs["vertex"]]),
+        ]
+    )
+    return (
+        K,
+        M,
+        P,
+        Q,
+        coefficients,
+        coupling,
+        d,
+        diagrams,
+        eps,
+        ibp,
+        inputs,
+        integral,
+        mass,
+        model,
+        mu2,
+        one,
+        options,
+        p2,
+        particle,
+        pi,
+        recurrence,
+        zero,
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Native IBP and finite terms
+    The parametric recurrence and bounded Laporta reduction agree for $I_2$ and $I_3$, where $I_n=\int_k(k^2-M+i0)^{-n}$ and $I_1=A_0(M)$.
+
+    Expand the dimension-dependent coefficients before removing the master pole. In particular, the factor $D-4$ in $I_3$ multiplies the tadpole's $1/\epsilon$ pole and produces a nonzero finite triangle. The generic-momentum bubble separately checks that the UV pole has no $p^2$ dependence.
+    """)
+
+
+@app.cell
+def _(
+    K,
+    M,
+    P,
+    Q,
+    Replacement,
+    S,
+    coefficients,
+    coupling,
+    d,
+    diagrams,
+    eps,
+    hep,
+    ibp,
+    inputs,
+    integral,
+    mo,
+    mu2,
+    one,
+    oneloop,
+    p2,
+    recurrence,
+    zero,
+):
+    reductions = {1: integral(1)}
+    for _power in (2, 3):
+        _terms = recurrence.reduce([_power], integral=integral)
+        reductions[_power] = _terms.replace(
+            integral(_power - 1), reductions[_power - 1]
+        ).together()
+    assert (reductions[2] / integral(1) - (d - 2) / (2 * M)).together() == zero
+    assert (
+        reductions[3] / integral(1) - (d - 2) * (d - 4) / (8 * M**2)
+    ).together() == zero
+    laporta = ibp.reduce_laporta([[2], [3]], max_depth=2)
+    for _power in (2, 3):
+        assert (
+            laporta.reduce([_power], integral=integral) - reductions[_power]
+        ).together() == zero
+    _master_reduction = oneloop.IntegralFamily([oneloop.Propagator(M)], []).reduce()
+    _master = _master_reduction.terms[0][1].to_oneloopmaster(mu2)
+    _master_pole = oneloop.get_expression(_master, coefficient=-1)
+    assert _master_pole == M
+    _master_finite = oneloop.reduction_coefficients(_master_reduction, mu2)[0]
+    _finite_symbol = S("phi3::Afinite")
+    _reduced, poles, finite = ({}, {}, {})
+    for _label, _power in [("self_energy", 2), ("vertex", 3)]:
+        _reduced[_label] = inputs[_label].replace(integral(_power), reductions[_power])
+        _expanded = (
+            _reduced[_label]
+            .replace(d, 4 - 2 * eps)
+            .replace(integral(1), M / eps + _finite_symbol)
+            .series(eps, 0, 0)
+            .to_expression()
+            .expand()
+        )
+        poles[_label] = _expanded.coefficient(eps ** (-1))
+        finite[_label] = (
+            (_expanded - poles[_label] / eps)
+            .together()
+            .replace(_finite_symbol, _master_finite)
+        )
+    assert poles == {"self_energy": coupling**2 / 2, "vertex": zero}
+    assert (finite["vertex"] + coupling**3 / (2 * M)).together() == zero
+    _self_diagram = diagrams["self_energy"]
+    _basis = _self_diagram.momentum_basis()
+    _routed_kinematics = hep.Kinematics(momenta=[K(0), P(0), P(1)]).with_scalar_product(
+        P(0), P(0), p2
+    )
+    _shifts = []
+    for _edge in _self_diagram.internal_edges:
+        _sign = _basis.edge_signatures[_edge.id].loops[0]
+        assert abs(_sign) == 1
+        _shift = (_basis.route_expression(Q(_edge.id)) / _sign - K(0)).expand()
+        _shifts.append(_shift)
+    _invariant = _routed_kinematics.scalar_product(
+        _shifts[0] - _shifts[1], _shifts[0] - _shifts[1]
+    )
+    assert _invariant == p2
+    _bubble_reduction = oneloop.IntegralFamily(
+        [oneloop.Propagator(M)] * 2, [_invariant]
+    ).reduce()
+    _bubble_master = _bubble_reduction.terms[0][1].to_oneloopmaster(mu2)
+    _bubble_pole = oneloop.select_branch(
+        oneloop.get_expression(_bubble_master, coefficient=-1),
+        [Replacement(M, one), Replacement(p2, one)],
+    )
+    assert _bubble_pole * coefficients["self_energy"] == poles["self_energy"]
+    assert poles["self_energy"].derivative(p2) == zero
+    bubble_finite = (
+        coefficients["self_energy"]
+        * oneloop.reduction_coefficients(_bubble_reduction, mu2)[0]
+    )
+    mo.vstack(
+        [
+            mo.md("**Doubled and tripled tadpoles**"),
+            mo.hstack([reductions[2], reductions[3]]),
+            mo.md("**Self-energy and vertex UV residues**"),
+            mo.hstack([poles["self_energy"], poles["vertex"]]),
+            mo.md("**Finite zero-momentum triangle**"),
+            finite["vertex"],
+        ]
+    )
+    return bubble_finite, finite, poles
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Generated counterterms
+    Expand the bare factors $Z_\phi$, $Z_\phi Z_m$ and $Z_g Z_\phi^{3/2}$. The generated local vertices supply the three-by-three matching system; no renormalization constants are provided as inputs.
+
+    MS subtracts $1/\epsilon$. MS̄ subtracts $\Delta=1/\epsilon+\log(4\pi)-\gamma_E$. The exact checks retain the finite difference between schemes.
+    """)
+
+
+@app.cell
+def _(
+    E,
+    M,
+    Matrix,
+    P,
+    Replacement,
+    S,
+    Symbol,
+    TensorExpression,
+    coupling,
+    eps,
+    hep,
+    json,
+    mass,
+    mo,
+    model,
+    options,
+    p2,
+    particle,
+    pi,
+    poles,
+    zero,
+):
+    _h, _field, _mass_ct, _vertex = S(
+        "phi3::h", "phi3::field", "phi3::mass_ct", "phi3::vertex"
+    )
+    _Zfield, _Zmass, _Zvertex = (1 + _h * _x for _x in (_field, _mass_ct, _vertex))
+    _specification = json.loads(model.to_json())
+    _specification["orders"].append(
+        {"name": "CT", "expansion_order": 1, "hierarchy": 1}
+    )
+    for _label, _valence, _lorentz, _factor in [
+        ("kinetic", 2, "P(dummy(1),1)*P(dummy(1),1)", Symbol.I * (_Zfield - 1)),
+        ("mass", 2, "1", -Symbol.I * mass**2 * (_Zfield * _Zmass - 1)),
+        ("cubic", 3, "1", -Symbol.I * coupling * (_Zvertex * _Zfield ** E("3/2") - 1)),
+    ]:
+        _name = "CT_" + _label
+        _coefficient = _factor.series(_h, 0, 1).to_expression().expand().coefficient(_h)
+        _specification["lorentz_structures"].append(
+            {"name": _name, "spins": [1] * _valence, "structure": _lorentz}
+        )
+        _specification["couplings"].append(
+            {
+                "name": _name,
+                "expression": repr(_h * _coefficient),
+                "orders": [["SCALAR", int(_valence == 3)], ["CT", 1]],
+                "value": None,
+            }
+        )
+        _specification["vertex_rules"].append(
+            {
+                "name": _name,
+                "particles": [particle.name] * _valence,
+                "color_structures": ["1"],
+                "lorentz_structures": [_name],
+                "couplings": [[_name]],
+            }
+        )
+    _ct_model = hep.Model.from_json(json.dumps(_specification))
+    ct_diagrams, _counterterms = ({}, {})
+    _self_kinematics = hep.Kinematics().with_scalar_product(P(0), P(0), p2)
+    for _label, _incoming, _count in [("self_energy", 1, 2), ("vertex", 2, 1)]:
+        _generated = _ct_model.generate_diagrams(
+            [particle.name] * _incoming,
+            [particle.name],
+            loops=0,
+            max_vertices=1,
+            coupling_orders={"CT": 1},
+            **options,
+        )
+        ct_diagrams[_label] = _generated.diagrams
+        assert len(_generated.diagrams) == _count
+        _amplitude = zero
+        for _diagram in _generated.diagrams:
+            _numerator = _ct_model.expand_couplings(
+                _diagram.numerator_expression().to_expression()
+            )
+            _numerator = TensorExpression(_numerator.expand()).to_dots().to_expression()
+            _numerator = _diagram.momentum_basis().route_expression(_numerator)
+            _amplitude += (
+                _self_kinematics.apply(_numerator)
+                * _diagram.overall_factor_expression(evaluate=True)
+                * _diagram.numerator_prefactor_expression()
+            )
+        _counterterms[_label] = (
+            (_amplitude.replace(mass**2, M) / (Symbol.I * _h)).together().expand()
+        )
+    _unknowns = [_field, _mass_ct, _vertex]
+    _rows = [
+        _counterterms["self_energy"].coefficient(p2),
+        _counterterms["self_energy"].replace(p2, zero),
+        _counterterms["vertex"],
+    ]
+    ct_matrix = Matrix.from_linear(
+        3, 3, [_row.coefficient(_x) for _row in _rows for _x in _unknowns]
+    )
+    _solution = ct_matrix.solve(
+        Matrix.vec([zero, -poles["self_energy"], -poles["vertex"]])
+    )
+    residues = [_solution[_row, 0].to_expression() for _row in range(3)]
+    assert residues == [zero, coupling**2 / (2 * M), zero]
+    _log4pi, _gamma_e = S("phi3::log4pi", "phi3::gamma_E")
+    constants = {}
+    for _scheme, _delta in [("MS", 1 / eps), ("MSbar", 1 / eps + _log4pi - _gamma_e)]:
+        constants[_scheme] = [
+            1 + _residue * _delta / (16 * pi**2) for _residue in residues
+        ]
+        _replacements = [
+            Replacement(_x, _residue * _delta)
+            for _x, _residue in zip(_unknowns, residues, strict=True)
+        ]
+        for _label in poles:
+            _remainder = (
+                poles[_label] * (1 / eps + _log4pi - _gamma_e)
+                + _counterterms[_label].replace_multiple(_replacements)
+            ).together()
+            _expected = (
+                zero if _scheme == "MSbar" else poles[_label] * (_log4pi - _gamma_e)
+            )
+            assert (_remainder - _expected).together() == zero
+    mo.vstack(
+        [
+            mo.hstack(ct_diagrams["self_energy"] + ct_diagrams["vertex"]),
+            mo.md("**Matching matrix**"),
+            ct_matrix,
+            mo.md("**Solved residues, with 1/(16π²) removed**"),
+            mo.hstack(residues),
+        ]
+    )
+    return (constants,)
+
+
+@app.cell
+def _(M, bubble_finite, coupling, finite, math, mu2, np, oneloop, p2):
+    evaluator = oneloop.compile_native(
+        [finite["self_energy"], finite["vertex"], bubble_finite], [M, coupling, mu2, p2]
+    )
+    _nodes, _weights = np.polynomial.legendre.leggauss(128)
+    _nodes, _weights = ((_nodes + 1) / 2, _weights / 2)
+    _points = [
+        (1.0, 0.5, 1.0, 0.0),
+        (2.0, 1.0, 3.0, -4.0),
+        (4.0, 2.0, 0.5, 3.0),
+        (0.25, 0.1, 2.0, 0.5),
+    ]
+    numeric_checks = []
+    for _mv, _gv, _scale, _pv in _points:
+        _values = [
+            complex(_x)
+            for _x in evaluator.evaluate_complex(
+                [[complex(_x) for _x in (_mv, _gv, _scale, _pv)]]
+            )[0]
+        ]
+        _reference = [
+            -(_gv**2) * math.log(_mv / _scale) / 2,
+            -(_gv**3) / (2 * _mv),
+            -(_gv**2)
+            * sum(
+                (
+                    float(_w)
+                    * math.log((_mv - _pv * float(_x) * (1 - float(_x))) / _scale)
+                    for _x, _w in zip(_nodes, _weights, strict=True)
+                )
+            )
+            / 2,
+        ]
+        assert all(
+            (
+                abs(_actual - _expected) < 2e-11
+                for _actual, _expected in zip(_values, _reference, strict=True)
+            )
+        )
+        numeric_checks.append((_mv, _gv, _scale, _pv, _values, _reference))
+    return (numeric_checks,)
+
+
+@app.cell
+def _(mo):
+    subtraction_scheme = mo.ui.dropdown(
+        ["MSbar", "MS"], value="MSbar", label="Subtraction scheme"
+    )
+    kinematic_point = mo.ui.dropdown(
+        {
+            "Zero external momentum": 0,
+            "Spacelike momentum": 1,
+            "Timelike below threshold": 2,
+            "Lighter scalar": 3,
+        },
+        value="Zero external momentum",
+        label="Finite evaluation",
+    )
+    mo.vstack([subtraction_scheme, kinematic_point])
+    return kinematic_point, subtraction_scheme
+
+
+@app.cell
+def _(
+    constants,
+    kinematic_point,
+    math,
+    mo,
+    numeric_checks,
+    subtraction_scheme,
+):
+    selected_constants = constants[subtraction_scheme.value]
+    _selected_point = numeric_checks[kinematic_point.value]
+    _M_value, _g_value, _mu_value, _p_value, _native, _reference = _selected_point
+    _scheme_shift = (
+        0
+        if subtraction_scheme.value == "MSbar"
+        else _g_value**2 * (math.log(4 * math.pi) - 0.5772156649015329) / 2
+    )
+    _normalization = 1j / (16 * math.pi**2)
+    selected_amplitudes = [
+        _normalization * (_value + (_scheme_shift if _i != 1 else 0))
+        for _i, _value in enumerate(_native)
+    ]
+    selected_reference = [
+        _normalization * (_value + (_scheme_shift if _i != 1 else 0))
+        for _i, _value in enumerate(_reference)
+    ]
+    finite_error = max(
+        (
+            abs(_value - _expected)
+            for _value, _expected in zip(
+                selected_amplitudes, selected_reference, strict=True
+            )
+        )
+    )
+    assert finite_error < 1e-11
+    mo.vstack(
+        [
+            mo.md("## Renormalization constants"),
+            *[
+                mo.hstack([mo.md(_label), _value])
+                for _label, _value in zip(
+                    ["Zφ", "Zm", "Zg"], selected_constants, strict=True
+                )
+            ],
+            mo.md("## Finite renormalized amplitudes"),
+            mo.ui.table(
+                [{"M": _M_value, "g": _g_value, "μ²": _mu_value, "p²": _p_value}],
+                selection=None,
+            ),
+            mo.ui.table(
+                [
+                    {
+                        "Amplitude": _label,
+                        "Generated + IBP/OneLOop": str(_value),
+                        "Independent reference": str(_expected),
+                    }
+                    for _label, _value, _expected in zip(
+                        [
+                            "Self-energy at p²=0",
+                            "Triangle at zero external momenta",
+                            "Self-energy at selected p²",
+                        ],
+                        selected_amplitudes,
+                        selected_reference,
+                        strict=True,
+                    )
+                ],
+                selection=None,
+            ),
+            mo.md(
+                f"Maximum absolute difference: `{finite_error:.3g}`. The self-energy reference is a direct Feynman-parameter integral. The triangle reference is the zero-momentum simplex integral −g³/(2M). The displayed amplitudes include i/(16π²)."
+            ),
+        ]
+    )
+
+
+if __name__ == "__main__":
+    app.run()
