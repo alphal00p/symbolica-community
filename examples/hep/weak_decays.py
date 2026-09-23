@@ -30,7 +30,7 @@ def _():
 def _(mo):
     mo.md(r"""
     # Charged-current W and top decays
-    [Browse notebooks](/) · [Z decays](/?file=hep/z_decay.py) · [Higgs decays](/?file=hep/higgs_decay.py)
+    [Browse notebooks](/) · [Muon decay](/?file=hep/muon_decay.py) · [Z decays](/?file=hep/z_decay.py) · [Higgs decays](/?file=hep/higgs_decay.py)
 
     Generate eight channels from `Model.standard_model()`: charged W decays to leptons, unequal-mass quarks or massless light quarks, together with top and antitop decay. Keep the chiral vertex and complex CKM factor, sum physical final polarizations and average the initial spin. The full massive-vector spin sum includes the longitudinal polarization.
 
