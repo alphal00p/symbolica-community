@@ -1,0 +1,112 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "setup",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "c691edd67816dcd7fc4aabc82871ae88",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"two-loop-phi4-coupling-renormalization\">Two-loop <marimo-tex class=\"arithmatex\">||(\\phi^4||)</marimo-tex> coupling renormalization</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/ibp_phi4.py\">Two-loop self-energy</a> \u00b7 <a href=\"/?file=hep/phi4_renormalization.py\">One-loop renormalization</a></span>\n<span class=\"paragraph\">Reproduce the <a href=\"https://feyncalc.github.io/FeynCalcExamples/Phi4/TwoLoops/Renormalization-SSSS\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc two-loop four-point example</a> with 12 generated bare diagrams, 12 one-loop counterterm diagrams and one local second-order counterterm.</span>\n<span class=\"paragraph\">Marimo composition supplies the model, vacuum integral family, verified momentum mappings, analytic master inputs, counterterm rules and computed two-loop field constant from the self-energy notebook. The vertex calculation uses the same Feynkit and native IBP components.</span>\n<span class=\"paragraph\">Take the zeroth Taylor coefficient in external momenta with a nonzero scalar mass. This preserves the local UV divergence without introducing an infrared singularity. Amplitudes below are in units of <marimo-tex class=\"arithmatex\">||(ig^3/(16\\pi^2)^2||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "1770b3403dd2ac88a04ef624c2676b6f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "0bf6095fc2e58d92b390672a5f526369",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"bare-four-point-uv-reduction\">Bare four-point UV reduction</h2></span><div style=\"white-space: pre-wrap; margin: 0;\">3\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>2,1,1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>3/4\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>2,2,0<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>3/2\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>3,1,0<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Computed native IBP reductions</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>2,1,1<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/3\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>d\u00b7V-3\u00b7V<span style=\"color: rgb(128, 128, 128)\">)</span>/M</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>2,2,0<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/4\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-4\u00b7d\u00b7T2+4\u00b7T2+d\u00b2\u00b7T2<span style=\"color: rgb(128, 128, 128)\">)</span>/M\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>3,1,0<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/8\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-6\u00b7d\u00b7T2+8\u00b7T2+d\u00b2\u00b7T2<span style=\"color: rgb(128, 128, 128)\">)</span>/M\u00b2</div></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Bare two-loop UV poles</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-3/4/eps<span style=\"color: rgb(205, 205, 0)\">+</span>9/2\u00b7Lm/eps<span style=\"color: rgb(205, 205, 0)\">-</span>9/2\u00b7L4pi/eps<span style=\"color: rgb(205, 205, 0)\">-</span>9/4/eps\u00b2</div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "97ab882e48e890469cdf857a40d370b1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"counterterms-retain-uv-finite-integrals\">Counterterms retain UV-finite integrals</h2>\n<span class=\"paragraph\">A mass insertion produces a UV-finite one-loop integral, but its coefficient contains a renormalization pole. Dropping that integral would lose part of the two-loop counterterm. Keep the entire zeroth-order Taylor coefficient and reduce both doubled and tripled tadpoles with the parametric IBP recurrence.</span>\n<span class=\"paragraph\">The scalar mass and logarithms cancel between bare graphs and counterterm insertions. The generated local vertex contains both the coupling and field renormalization constants; the previously computed field constant is required to determine <marimo-tex class=\"arithmatex\">||(Z_g||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "15bdfc9a492222b2f71fb43fb543d708",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Generated one-loop counterterm integral combination</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-3\u00b7M\u00b7field1\u00b7J<span style=\"color: rgb(0, 95, 175)\">(</span>3<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>3\u00b7field1\u00b7J<span style=\"color: rgb(0, 95, 175)\">(</span>2<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>6\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>field1+1/2\u00b7vertex1<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7J<span style=\"color: rgb(0, 95, 175)\">(</span>2<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>3\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>M\u00b7field1+M\u00b7mass1<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7J<span style=\"color: rgb(0, 95, 175)\">(</span>3<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Tripled-tadpole recurrence</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>1/4\u00b7d/M-1/M<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>1/2\u00b7d/M-1/M<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7J<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>One-loop counterterm poles</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-3/4/eps<span style=\"color: rgb(205, 205, 0)\">-</span>9/2\u00b7Lm/eps<span style=\"color: rgb(205, 205, 0)\">+</span>9/2\u00b7L4pi/eps<span style=\"color: rgb(205, 205, 0)\">+</span>9/2/eps\u00b2</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Pole from the UV-finite mass insertion</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-3/4/eps</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Sum before local subtraction</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-3/2/eps<span style=\"color: rgb(205, 205, 0)\">+</span>9/4/eps\u00b2</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Generated local counterterm matrix</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">[[-1]]</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Coupling renormalization</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>3/32\u00b7g/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2\u00b7eps<span style=\"color: rgb(128, 128, 128)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>17/3072\u00b7g\u00b2/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u2074\u00b7eps<span style=\"color: rgb(128, 128, 128)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>9/1024\u00b7g\u00b2/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u2074\u00b7eps\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">All poles cancel exactly after inserting the solved coupling constant.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "ae32ffeaf10d72ed09d98fea82704f52",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"beta-function-from-scale-independence\">Beta function from scale independence</h2></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">For <marimo-tex class=\"arithmatex\">||(a=g/(16\\pi^2)||)</marimo-tex>, require the bare coupling <marimo-tex class=\"arithmatex\">||(\\mu^{2\\epsilon}a Z_g||)</marimo-tex> to be scale independent. Expanding <marimo-tex class=\"arithmatex\">||(-2\\epsilon aZ_g/(Z_g+a\\partial_a Z_g)||)</marimo-tex> derives the four-dimensional beta function:</span></span><div style=\"white-space: pre-wrap; margin: 0;\">3\u00b7a\u00b2<span style=\"color: rgb(205, 205, 0)\">-</span>17/3\u00b7a\u00b3</div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "5e1faa8b6d4b4a078c2b6cc894c7765b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='SFPL-0' random-id='6b7991c8-acf7-0d56-c370-a9e6215603f4'><marimo-dropdown data-initial-value='[&quot;Bare two-loop&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eGenerated diagrams&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Bare two-loop&quot;,&quot;One-loop counterterms&quot;,&quot;Local two-loop counterterm&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "471dbcda6ccf1a0fa2c9bd94206a63da",
+      "outputs": [],
+      "console": []
+    }
+  ]
+}

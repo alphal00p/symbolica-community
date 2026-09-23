@@ -293,14 +293,16 @@ def _(
                 _diagram.overall_factor_expression(evaluate=True)
                 * _diagram.numerator_prefactor_expression()
             )
-            if _kind == "quark":
-                # An amputated two-point kernel omits only external fermion ordering.
+            if _kind in ("quark", "ghost"):
+                # Amputated Grassmann two-point kernels omit external ordering.
+                # Closed-loop signs and all other graph factors remain included.
                 _raw = _diagram.overall_factor_expression()
                 _removed = (_raw / _raw.replace(_ordering(_value), one)).replace(
                     _ordering(_value), _value
                 )
                 assert _removed == -one
                 _factor /= _removed
+            if _kind == "quark":
                 _probes = [
                     (
                         "quark_p",
@@ -757,7 +759,7 @@ def _(
                 * _diagram.numerator_prefactor_expression()
             )
             assert _factor == (
-                _external_ordering if _kind in ("quark", "vertex") else one
+                _external_ordering if _kind in ("quark", "ghost", "vertex") else one
             )
             _ports = {}
             if _kind != "ghost":
@@ -865,6 +867,8 @@ def _(
                     ).replace(mink(D, _ports[1]), mink(D, nu))
                 _probes = [(_kind, one)]
                 _normalization = Symbol.I * _a4
+                if _kind == "ghost":
+                    _normalization *= _external_ordering
             for _label, _projector in _probes:
                 _trace = (
                     TensorExpression((_numerator * _projector).expand())

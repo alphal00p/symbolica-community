@@ -15,14 +15,19 @@ def _():
     from symbolica import S, E, Expression, Symbol
     from symbolica.community.spenso import (
         ColorSimplifySettings,
+        SchoonschipSettings,
         Representation,
         TensorExpression,
         TensorName,
         TensorPattern,
         dot,
     )
-    from symbolica.community.hep import Model, SnailFilterOptions, FeynmanDiagram
-    from symbolica.community.hep.oneloop import A0
+    from symbolica.community.hep import Model, FeynmanDiagram
+
+    contraction_settings = SchoonschipSettings(
+        depth_limit=None,
+        expand_contracted_sums=True,
+    )
 
     class UVRow(TypedDict):
         loop: str
@@ -30,7 +35,6 @@ def _():
         longitudinal: TensorExpression
 
     return (
-        A0,
         ColorSimplifySettings,
         E,
         Expression,
@@ -42,6 +46,7 @@ def _():
         TensorName,
         TensorPattern,
         UVRow,
+        contraction_settings,
         copy,
         dot,
         mo,
@@ -53,8 +58,9 @@ def _(Representation, S, TensorName, dot):
     D, eps = S('hep_gluon::D', 'hep_gluon::eps')
     lorentz = Representation.mink(D)
     adjoint = Representation.coad(8)
-    P = TensorName.vector('hep_gluon::P')
-    K = TensorName.vector('hep_gluon::K')
+    P = TensorName.vector('hep_gluon::p')
+    loop_momenta = [TensorName.vector('hep_gluon::k'), TensorName.vector('hep_gluon::l'), TensorName.vector('hep_gluon::m'), TensorName.vector('hep_gluon::n')]
+    K = loop_momenta[0]
     p, k = P(lorentz), K(lorentz)
     index_ = S('hep_gluon::index_')
     MOMENTUM = TensorName.vector(
@@ -80,6 +86,7 @@ def _(Representation, S, TensorName, dot):
         index_,
         k,
         k2,
+        loop_momenta,
         lorentz,
         mUV,
         mass2_,
@@ -89,12 +96,6 @@ def _(Representation, S, TensorName, dot):
         t,
         uv_probe,
     )
-
-
-@app.cell
-def _(A0):
-    A0(2., 1.)
-    return
 
 
 @app.cell
@@ -112,27 +113,24 @@ def _(
     )
 
     def project_color(diagram: FeynmanDiagram) -> tuple[Expression, TensorExpression]:
-        """Close color first and return its global factor and the remaining numerator."""
-        numerator = diagram.numerator_expression().with_lorentz_dimension(D)
+        """Route momenta, then close color and retain its global factor separately."""
+        numerator = diagram.numerator_expression(in_lmb=True).with_lorentz_dimension(D)
         a, b = [slot for slot in numerator.interface if slot.representation == adjoint]
         color_projector = TensorExpression.g(adjoint)(a, b) / adjoint.dimension
         color_factor = None
         stripped = E("0")
         # Selectively expand color structures, leaving Lorentz/Dirac sums intact.
         for structure, coefficient in numerator.expand_color():
-            # Multiply explicit Einstein indices without compact-chain inference.
-            color = TensorExpression(structure * color_projector.to_expression())
-            color = color.simplify_color(color_settings)
+            color = (color_projector * structure).simplify_color(color_settings)
             if not color.is_scalar:
                 raise ValueError("Color projection left uncontracted indices")
-            scalar = color.to_expression()
-            if scalar == E("0"):
+            if color == E("0"):
                 continue
             if color_factor is None:
-                color_factor = scalar
+                color_factor = color
             # Four-gluon vertices can have several color structures. Retain their
             # relative factors inside, while keeping one common factor outside.
-            stripped += (scalar / color_factor).cancel() * coefficient
+            stripped += (color / color_factor).cancel() * coefficient
         return (
             E("0") if color_factor is None else color_factor,
             TensorExpression(stripped),
@@ -142,7 +140,7 @@ def _(
 
 
 @app.cell
-def _(D, P, S, TensorExpression, lorentz, p2):
+def _(D, P, S, TensorExpression, contraction_settings, lorentz, p2):
     def external_projector(
         numerator: TensorExpression, *, longitudinal=False
     ) -> TensorExpression:
@@ -156,7 +154,7 @@ def _(D, P, S, TensorExpression, lorentz, p2):
         mu, nu = [
             slot for slot in numerator.interface if slot.representation == lorentz
         ]
-        momentum_pair = P(mu).outer(P(nu)) / p2
+        momentum_pair = P(mu) * P(nu) / p2
         if longitudinal:
             return momentum_pair
         lorentz_metric = TensorExpression.g(lorentz)(mu, nu)
@@ -176,35 +174,14 @@ def _(D, P, S, TensorExpression, lorentz, p2):
         # Contract connected factors first. Only distribute residual metric
         # structures; scalar coefficients and unrelated sums stay factored.
         return (
-            TensorExpression(numerator.to_expression() * projector.to_expression())
-            .schoonschip_net(expand_contracted_sums=True)
+            (numerator * projector)
+            .schoonschip_net(contraction_settings)
             .to_dots()
             .expand(S("spenso::g"))
-            .schoonschip_net(expand_contracted_sums=True)
+            .schoonschip_net(contraction_settings)
         )
 
     return apply_projector, external_projector
-
-
-@app.cell
-def _(FeynmanDiagram, K, P, S, TensorExpression, TensorPattern, index_):
-    def route_momenta(
-        diagram: FeynmanDiagram, expression: TensorExpression
-    ) -> TensorExpression:
-        """Route edge momenta through the graph, then name the basis vectors k and p."""
-        if diagram.loop_count != 1 or len(diagram.external_edges) != 2:
-            raise ValueError("This example requires a one-loop two-point graph")
-        routed = diagram.loop_momentum_basis.route_expression(expression)
-        # The wildcard stands for a whole slot or compact representation.
-        routed = routed.replace(
-            S("gammalooprs::K")(0, index_), TensorPattern(K, ports=[index_])
-        )
-        routed = routed.replace(
-            S("gammalooprs::P")(0, index_), TensorPattern(P, ports=[index_])
-        )
-        return TensorExpression(routed)
-
-    return (route_momenta,)
 
 
 @app.cell
@@ -223,23 +200,26 @@ def _(Expression, FeynmanDiagram):
 def _(
     E,
     FeynmanDiagram,
+    K,
     MOMENTUM,
     Model,
+    P,
     S,
     TensorExpression,
     lorentz,
     prop,
-    route_momenta,
 ):
     def graph_propagators(diagram: FeynmanDiagram, model: Model) -> TensorExpression:
         """Build quadratic UV propagators with the model masses and graph routing."""
         if len(diagram.internal_edges) != 2:
-            raise ValueError('This example supports two-propagator bubbles only')
-        product = E('1')
+            raise ValueError("This example supports two-propagator bubbles only")
+        product = E("1")
         for edge in diagram.internal_edges:
             mass = model.particle(edge.particle_name).mass_parameter
-            mass_squared = E('0') if mass == 'ZERO' else S('UFO::' + mass)**2
-            momentum = route_momenta(diagram, MOMENTUM(edge.id, lorentz))
+            mass_squared = E("0") if mass == "ZERO" else S("UFO::" + mass) ** 2
+            momentum = diagram.loop_momentum_basis.route_expression(
+                MOMENTUM(edge.id, lorentz), loop_momenta=[K], external_momenta=[P]
+            )
             product *= prop(momentum, mass_squared)
         return TensorExpression(product)
 
@@ -400,10 +380,9 @@ def _(g, model):
         [g],
         loops=loops,
         coupling_orders={"QCD": 2 * loops, "QED": 0},
-        particle_veto=["c", "t", "s", "u", "d"],
-        #zero_snails=SnailFilterOptions(),
+        particle_veto=["c", "t", "s", "u", "d"]
     )
-    return (diagrams,)
+    return diagrams, loops
 
 
 @app.cell(hide_code=True)
@@ -495,7 +474,9 @@ def _(mo):
     color indices with $\delta^{ab}/8$ and contract all color tensors. Keep
     the resulting scalar as a global factor $C_{\rm color}$ throughout.
     The remaining expressions contain only Lorentz and Dirac tensors, with
-    Lorentz slots continued to symbolic $D$ before contraction.
+    Lorentz slots continued to symbolic $D$ before contraction. Edge momenta
+    are routed into the graph's loop-momentum basis before these operations,
+    allowing equivalent terms to cancel during local tensor expansions.
     """)
     return
 
@@ -510,12 +491,18 @@ def _(diagram):
 def _(diagram):
     r = diagram.numerator_expression(in_lmb=False)
     r
+    return (r,)
+
+
+@app.cell
+def _(TensorExpression):
+    TensorExpression
     return
 
 
 @app.cell
-def _(diagram):
-    diagram.to_linnet()
+def _(r):
+    r.interface[0].to_expression()
     return
 
 
@@ -528,6 +515,12 @@ def _(diagram):
 
 @app.cell
 def _(s):
+    s.numerator_expression()
+    return
+
+
+@app.cell
+def _(s):
     s.superficial_degree_of_divergence()
     return
 
@@ -535,6 +528,11 @@ def _(s):
 @app.cell
 def _(mUV, s):
     s.uv_counterterm(mUV)
+    return
+
+
+@app.cell
+def _():
     return
 
 
@@ -592,18 +590,26 @@ def _(color_stripped_numerator):
 
 
 @app.cell
-def _(color_stripped_numerator):
-    # Native simplifiers reach a fixed point internally. The network contracts
-    # connected factors incrementally, leaving unrelated scalar sums factored.
+def _(color_stripped_numerator, contraction_settings):
+    # Edge momenta already use the same loop basis, so equivalent terms can
+    # cancel at each contraction. Expand only connected tensor sums, keeping
+    # unrelated scalar factors intact.
     contracted_numerator = color_stripped_numerator.simplify_gamma().schoonschip_net(
-        expand_contracted_sums=True
+        contraction_settings
     )
     contracted_numerator
     return (contracted_numerator,)
 
 
 @app.cell
-def _():
+def _(contracted_numerator):
+    dotted = contracted_numerator.to_dots()
+    return (dotted,)
+
+
+@app.cell
+def _(dotted):
+    dotted.expand().collect_factors().collect_num()
     return
 
 
@@ -639,13 +645,17 @@ def _(diagram):
 
 @app.cell
 def _(
+    P,
     apply_projector,
     contracted_numerator,
     diagram,
+    loop_momenta,
+    loops,
     projector,
-    route_momenta,
 ):
-    routed_numerator = route_momenta(diagram, contracted_numerator)
+    routed_numerator = diagram.loop_momentum_basis.route_expression(
+        contracted_numerator, loop_momenta=loop_momenta[:loops], external_momenta=[P]
+    )
     projected_numerator = apply_projector(routed_numerator, projector).to_dots()
     projected_numerator
     return (projected_numerator,)
@@ -730,8 +740,12 @@ def _(diagram, graph_propagators, model, weighted_projected_numerator):
 
 
 @app.cell
-def _(D, diagram, route_momenta):
-    graph_denominator = route_momenta(diagram, diagram.denominator_expression(dimension=D))
+def _(D, P, diagram, loop_momenta, loops):
+    graph_denominator = diagram.loop_momentum_basis.route_expression(
+        diagram.denominator_expression(dimension=D),
+        loop_momenta=loop_momenta[:loops],
+        external_momenta=[P],
+    )
     graph_denominator
     return
 
@@ -859,9 +873,12 @@ def _(mo):
 @app.cell
 def _(
     E,
+    K,
+    P,
     TensorExpression,
     UVRow,
     apply_projector,
+    contraction_settings,
     diagram_weight,
     diagrams,
     external_projector,
@@ -869,7 +886,6 @@ def _(
     mo,
     model,
     project_color,
-    route_momenta,
     uv_expansion_data,
 ):
     _uv_rows: list[UVRow] = []
@@ -877,8 +893,10 @@ def _(
         _propagators = graph_propagators(_d, model)
         _weight = diagram_weight(_d)
         _color_factor, _stripped = project_color(_d)
-        _routed = route_momenta(
-            _d, _stripped.simplify_gamma().schoonschip_net(expand_contracted_sums=True)
+        _routed = _d.loop_momentum_basis.route_expression(
+            _stripped.simplify_gamma().schoonschip_net(contraction_settings),
+            loop_momenta=[K],
+            external_momenta=[P],
         )
         _transverse = apply_projector(_routed, external_projector(_routed)).to_dots()
         _longitudinal = apply_projector(

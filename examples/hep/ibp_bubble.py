@@ -36,6 +36,7 @@ def _(mo):
     remaining tadpoles and ordinary bubble. An independent Feynman-parameter
     quadrature checks each finite result below the production threshold.
     """)
+    return
 
 
 @app.cell
@@ -112,11 +113,22 @@ def _(bubble_ibp, integral, mo):
             mo.ui.table([bubble_solution.stats], selection=None),
         ]
     )
-    return bubble_solution, reductions
+    return (reductions,)
 
 
 @app.cell
-def _(E, Replacement, S, dimension, epsilon, integral, mass_a, mass_b, mo, reductions):
+def _(
+    E,
+    Replacement,
+    S,
+    dimension,
+    epsilon,
+    integral,
+    mass_a,
+    mass_b,
+    mo,
+    reductions,
+):
     finite_a, finite_b, finite_bubble = S(
         "ibp_bubble::A_finite", "ibp_bubble::B_finite", "ibp_bubble::bubble_finite"
     )
@@ -234,7 +246,7 @@ def _(
             ),
         ]
     )
-    return absolute_error, parameter_value, reduced_value
+    return
 
 
 @app.cell
@@ -271,6 +283,7 @@ def _(E, bubble_ibp, integral, mo):
             """),
         ]
     )
+    return
 
 
 if __name__ == "__main__":

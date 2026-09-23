@@ -1,0 +1,93 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "b77ebd343f86b14a59e4fafa63945bf6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "ccc5b26266069729dd291c255dcc586e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"finite-one-loop-phiphitophiphi\">Finite one-loop <marimo-tex class=\"arithmatex\">||(\\phi\\phi\\to\\phi\\phi||)</marimo-tex></h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/phi4_renormalization.py\">Generated counterterms</a></span>\n<span class=\"paragraph\">Use the three generated channels and counterterms from the companion notebook. Marimo composition shares that calculation. OneLOop evaluates the massive and massless finite correction, with physical <marimo-tex class=\"arithmatex\">||(s+t+u=4m^2||)</marimo-tex> and the Feynman <marimo-tex class=\"arithmatex\">||(+i0||)</marimo-tex> prescription.</span>\n<span class=\"paragraph\">Independent Feynman-parameter integrals check six kinematic points, including the two-particle threshold and massless scattering. The symbolic massless branches yield the <a href=\"https://feyncalc.github.io/FeynCalcExamples/Phi4/OneLoop/PhiPhi-PhiPhi\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc high-energy logarithm</a> at fixed negative <marimo-tex class=\"arithmatex\">||(t||)</marimo-tex>.</span>\n<span class=\"paragraph\">The displayed quantity is the one-loop correction to the amputated amplitude, including its factor <marimo-tex class=\"arithmatex\">||(i||)</marimo-tex>. It excludes the tree term <marimo-tex class=\"arithmatex\">||(-ig||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "327809d2fd15be54d5277a1ee7972b56",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "b31b4399daf1c511d6000c396198bc80",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "66030161134a862eb91863677a85df9d",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "569e34b6acf508a8b7deb260f9760154",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-0' random-id='35ee2017-0b10-cea0-7e3d-1aeb020c93cc'><marimo-dropdown data-initial-value='[&quot;Massless \u00b7 s=5&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eKinematics&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Massless \u00b7 s=5&quot;,&quot;Massless \u00b7 s=20&quot;,&quot;Massive threshold&quot;,&quot;Massive \u00b7 just above threshold&quot;,&quot;Massive \u00b7 s=12&quot;,&quot;Heavier scalar \u00b7 s=25&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-1' random-id='44648c7d-1189-a16b-9539-1438f88b1a1e'><marimo-dropdown data-initial-value='[&quot;MSbar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSubtraction scheme&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;MSbar&quot;,&quot;MS&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-2' random-id='21b1606e-5ab1-8848-a4da-d61afed756c3'><marimo-slider data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eQuartic coupling g&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.1' data-stop='2.0' data-step='0.1' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "9de810571808793c57542f0d584bbf91",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"renormalized-finite-correction\">Renormalized finite correction</h2></span><marimo-ui-element object-id='Xref-0' random-id='ed82f06e-4aae-3d5e-6c84-daa1294d9312'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;m\u00b2&#92;&quot;:0.0,&#92;&quot;s&#92;&quot;:5.0,&#92;&quot;t&#92;&quot;:-1.0,&#92;&quot;u&#92;&quot;:-4.0,&#92;&quot;\u03bc\u00b2&#92;&quot;:2.0}]&quot;' data-total-rows='1' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Generated result:</strong> <code>-0.00994718394324+0.0160964825106j</code></span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Parameter-integral reference:</strong> <code>-0.00994718394324+0.0160964825106j</code></span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Absolute difference:</strong> <code>0</code></span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

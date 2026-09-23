@@ -1,0 +1,86 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "setup",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "f56dfdb9b3541965ef50753acffa1740",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"charged-current-w-and-top-decays\">Charged-current W and top decays</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/z_decay.py\">Z decays</a> \u00b7 <a href=\"/?file=hep/higgs_decay.py\">Higgs decays</a></span>\n<span class=\"paragraph\">Generate eight channels from <code>Model.standard_model()</code>: charged W decays to leptons, unequal-mass quarks or massless light quarks, together with top and antitop decay. Keep the chiral vertex and complex CKM factor, sum physical final polarizations and average the initial spin. The full massive-vector spin sum includes the longitudinal polarization.</span>\n<span class=\"paragraph\">The symbolic comparisons reproduce the <a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/W-ElAnel\" rel=\"noopener noreferrer\" target=\"_blank\">leptonic W</a>, <a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/W-QiQjbar\" rel=\"noopener noreferrer\" target=\"_blank\">quark W</a> and <a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/Qt-QbW\" rel=\"noopener noreferrer\" target=\"_blank\">top</a> references. Massive W quark channels use the model's charm/bottom fields to retain two nonzero, unequal masses. Their formula is independent of the chosen generations.</span>\n<span class=\"paragraph\">Write <marimo-tex class=\"arithmatex\">||(H||)</marimo-tex> for the parent mass, <marimo-tex class=\"arithmatex\">||(x,y||)</marimo-tex> for the daughter masses and <marimo-tex class=\"arithmatex\">||(V=V_R+iV_I||)</marimo-tex>. All widths use the shared two-body phase-space and decay-flux methods, with <marimo-tex class=\"arithmatex\">||(e^2=4\\sqrt2 G_Fm_W^2\\sin^2\\theta_W||)</marimo-tex>. The physical domain is <marimo-tex class=\"arithmatex\">||(H&gt;x+y||)</marimo-tex>; the numerical checks also include the threshold limit.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "0b999f2e5df05ca7f1b055decd4290fc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "0bd624436d89133b8c72072117d32a0c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"initial-color-convention\">Initial color convention</h2>\n<span class=\"paragraph\">The physical top width averages its initial color, so the final bottom-color sum gives an overall factor one. The gallery sums initial colors and therefore has an extra factor three. Both choices use <code>Particle.color_sum</code>; the calculation proves their ratio exactly. W decays have no initial color, so both choices coincide.</span>\n<span class=\"paragraph\">The squared amplitudes and widths of each charge-conjugate pair agree for generic <marimo-tex class=\"arithmatex\">||(V_R,V_I||)</marimo-tex>, with dependence only on <marimo-tex class=\"arithmatex\">||(|V|^2=V_R^2+V_I^2||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "b48a41f92ad4cf8b7b98e167c6c1e53c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "b1d834865489c761f438c4754195f762",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-0' random-id='9f6d537c-3ceb-4847-1946-7317611b39e8'><marimo-dropdown data-initial-value='[&quot;Top&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eDecay channel&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;W- leptons&quot;,&quot;W+ leptons&quot;,&quot;W- quarks&quot;,&quot;W+ quarks&quot;,&quot;W- light quarks&quot;,&quot;W+ light quarks&quot;,&quot;Top&quot;,&quot;Antitop&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-1' random-id='20032fbd-2ae1-85ac-ae8b-a5a92d605769'><marimo-dropdown data-initial-value='[&quot;Physical&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eInitial color convention&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Physical&quot;,&quot;Gallery color sum&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-2' random-id='1cd3e81f-cb93-21ce-a213-ff56880f420a'><marimo-dropdown data-initial-value='[&quot;Separated masses&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eKinematics&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Light daughter limit&quot;,&quot;Separated masses&quot;,&quot;Heavy daughters&quot;,&quot;Closest to threshold&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "33b3038ee67e10f00c3fc00e953ab69c",
+      "outputs": [],
+      "console": []
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "fad1dc646f0e5bb66f6fb1dafc898438",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "8edb9b27ab3b7cb8d74aab31dc448d73",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"muon-decay-and-three-body-phase-space\">Muon decay and three-body phase space</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/weak_decays.py\">W and top decays</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(\\mu^-\\to e^-\\bar\\nu_e\\nu_\\mu||)</marimo-tex> with the embedded Standard Model charged-current vertices. The existing W propagator supplies its complete unitary-gauge numerator, including the longitudinal term. Shared particle spin sums average the muon spin and sum all final spins.</span>\n<span class=\"paragraph\">First compare the full squared amplitude with the <a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/Mu-ElAnelNmu\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc reference</a>, then derive the Fermi limit. Two calls to <code>Kinematics.two_body_phase_space</code> give the recursive three-body measure. Symbolica integrates the resulting spectrum and finite-mass correction.</span>\n<span class=\"paragraph\">Write <marimo-tex class=\"arithmatex\">||(M=m_\\mu||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(m=m_e||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(s=(p_e+p_{\\bar\\nu_e})^2||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(t=(p_e+p_{\\nu_\\mu})^2||)</marimo-tex>. Both neutrinos are massless. The coupling convention is <marimo-tex class=\"arithmatex\">||(e^4=32G_F^2m_W^4\\sin^4\\theta_W||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "c968b295df7b660b0372f9824cc4ae39",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "02c8a497fe4da42c790a25b95a7647df",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"derive-the-dalitz-measure\">Derive the Dalitz measure</h2>\n<span class=\"paragraph\">Factor the decay into <marimo-tex class=\"arithmatex\">||(P\\to Q+\\bar\\nu_e||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(Q\\to e+\\nu_\\mu||)</marimo-tex>, with <marimo-tex class=\"arithmatex\">||(Q^2=t||)</marimo-tex>. Integrate the global orientation and the inner azimuth, and include <marimo-tex class=\"arithmatex\">||(dt/(2\\pi)||)</marimo-tex>. The pair-rest-frame energies determine <marimo-tex class=\"arithmatex\">||(s(\\cos\\theta)||)</marimo-tex> and its Jacobian.</span>\n<span class=\"paragraph\">On the physical domain <marimo-tex class=\"arithmatex\">||(m^2&lt;t&lt;M^2||)</marimo-tex>, the two positive square roots are <marimo-tex class=\"arithmatex\">||(M^2-t||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(t-m^2||)</marimo-tex>. The derived boundaries are <marimo-tex class=\"arithmatex\">||(m^2M^2/t\\leq s\\leq M^2+m^2-t||)</marimo-tex>. All final particles are distinct.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "c39b42cebe5cc3a1972106b65de9bd00",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Outer and inner two-body measures per solid angle</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">-1/32\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>t-M\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2\u00b7M\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div><div style=\"white-space: pre-wrap; margin: 0;\">1/32\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>t-m\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2\u00b7t<span style=\"color: rgb(128, 128, 128)\">)</span></div></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Derived s bounds</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">M\u00b2\u00b7m\u00b2/t</div><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>t\u00b7M\u00b2+t\u00b7m\u00b2-t\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>/t</div></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>d\u03a6\u2083 / (ds dt)</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/128/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b3\u00b7M\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>d\u0393 / (ds dt) in the Fermi limit</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/16\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>GF\u00b2\u00b7t\u00b7M\u00b2+GF\u00b2\u00b7t\u00b7m\u00b2-GF\u00b2\u00b7t\u00b2-GF\u00b2\u00b7M\u00b2\u00b7m\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b3\u00b7M\u00b3<span style=\"color: rgb(128, 128, 128)\">)</span></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "f71bd915bbb68a9470dfbc060bacca62",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"exact-integrations\">Exact integrations</h2>\n<span class=\"paragraph\">Let <marimo-tex class=\"arithmatex\">||(r=m^2/M^2||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(\\Gamma_0=G_F^2M^5/(192\\pi^3)||)</marimo-tex>. Integrating the massive Dalitz distribution derives <marimo-tex class=\"arithmatex\">||(\\Gamma/\\Gamma_0=f(r)||)</marimo-tex>, including the logarithmic term.</span>\n<span class=\"paragraph\">For a massless electron, <marimo-tex class=\"arithmatex\">||(x_E=2E_e/M||)</marimo-tex> runs from zero to one. Integrating at fixed <marimo-tex class=\"arithmatex\">||(x_E||)</marimo-tex> derives the normalized Michel spectrum. Expanding the full generated W amplitude also gives its first propagator correction. The finite-mass result uses the Fermi limit; the finite-W result below uses a massless electron.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "cb8a3666aa7766e777e3d3a5bc0b4a67",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Mass correction f(r)</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">-</span>8\u00b7r<span style=\"color: rgb(205, 205, 0)\">-</span>12\u00b7r\u00b2\u00b7<span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>r<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>8\u00b7r\u00b3<span style=\"color: rgb(205, 205, 0)\">-</span>r\u2074</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Normalized massless Michel spectrum</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">6\u00b7xE\u00b2<span style=\"color: rgb(205, 205, 0)\">-</span>4\u00b7xE\u00b3</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massless width through order M\u00b2/mW\u00b2</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/320\u00b7GF\u00b2\u00b7M\u2077/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b3\u00b7MW\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>1/192\u00b7GF\u00b2\u00b7M\u2075/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b3</div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "f705f41989e371eeedf307679cf7ed38",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "32f57f1ede3a3846de4fd672bac78d71",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='221f8297-9442-1ec2-3ef6-5f38fe6e084f'><marimo-dropdown data-initial-value='[&quot;Illustrative electron/muon ratio&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eDaughter mass ratio r&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Massless electron&quot;,&quot;Illustrative electron/muon ratio&quot;,&quot;r=0.01&quot;,&quot;r=0.1&quot;,&quot;r=0.3&quot;,&quot;r=0.7&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='31f88e30-aa1d-6fd8-d9b7-54b143c2da79'><marimo-dropdown data-initial-value='[&quot;Fermi limit&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eFinite-W expansion&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Fermi limit&quot;,&quot;M\u00b2/mW\u00b2=0.000002&quot;,&quot;M\u00b2/mW\u00b2=0.01&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "260a9a81a52ce4c84d3e4bec961750e2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"mass-corrected-fermi-width\">Mass-corrected Fermi width</h2></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><code>r = 2.33903666e-05</code> \u00b7 <strong>\u0393/\u0393\u2080 = 0.999812947074</strong></span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Independent Dalitz quadrature: <code>0.999812945531</code>; difference <code>1.54e-09</code>.</span></span><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"finite-w-correction-massless-electron\">Finite-W correction, massless electron</h2></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>\u0393/\u0393\u2080 = 1</strong> through first order in M\u00b2/mW\u00b2.</span></span><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"massless-michel-spectrum-samples\">Massless Michel spectrum samples</h2></span><marimo-ui-element object-id='RGSE-0' random-id='c62d2d91-3124-16dd-b0e4-6b16a2f17bb4'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;xE&#92;&quot;:0.0,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:0.0},{&#92;&quot;xE&#92;&quot;:0.1,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:0.05600000000000001},{&#92;&quot;xE&#92;&quot;:0.2,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:0.20800000000000005},{&#92;&quot;xE&#92;&quot;:0.30000000000000004,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:0.4320000000000001},{&#92;&quot;xE&#92;&quot;:0.4,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:0.7040000000000002},{&#92;&quot;xE&#92;&quot;:0.5,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:1.0},{&#92;&quot;xE&#92;&quot;:0.6000000000000001,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:1.2960000000000003},{&#92;&quot;xE&#92;&quot;:0.7000000000000001,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:1.568},{&#92;&quot;xE&#92;&quot;:0.8,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:1.7920000000000003},{&#92;&quot;xE&#92;&quot;:0.9,&#92;&quot;(d\u0393/dxE)/\u0393\u2080&#92;&quot;:1.944}]&quot;' data-total-rows='11' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The spectrum integrates to one. Both mass and W corrections above are normalized to \u0393\u2080; they are evaluated in their stated limits.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

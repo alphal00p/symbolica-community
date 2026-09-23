@@ -26,6 +26,9 @@ provides separate worked IBP notebooks:
 - [Bubble differential equations](ibp_differential_equations.py): compatible equations
   in the invariant and masses, with numerical transport from a boundary value.
 - [Massless form-factor triangle](ibp_triangle.py): raised powers and infrared poles.
+- [Massive two-loop 2- and 3-point functions](ibp_two_loop_masses.py): symbolic-index
+  recurrences with independent masses, application to raised powers and linear
+  combinations, and exact checks of the defining IBP identities.
 - [Two-loop phi4 self-energy](ibp_phi4.py) and [vertex](phi4_two_loop_vertex.py):
   generated diagrams, reductions and counterterms.
 

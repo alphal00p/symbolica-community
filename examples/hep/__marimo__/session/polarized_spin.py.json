@@ -6,16 +6,9 @@
   },
   "cells": [
     {
-      "id": "Hbol",
-      "code_hash": "ce223c57eec68c9ea4725c911db028da",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "id": "setup",
+      "code_hash": null,
+      "outputs": [],
       "console": []
     },
     {
@@ -90,7 +83,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Xref-0' random-id='64112ce7-0abc-0ac8-fd03-e601640e18c4'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Vector&#92;&quot;:&#92;&quot;p / m&#92;&quot;,&#92;&quot;time&#92;&quot;:2.294157338705618,&#92;&quot;x&#92;&quot;:0.0,&#92;&quot;y&#92;&quot;:0.0,&#92;&quot;z&#92;&quot;:2.0647416048350564},{&#92;&quot;Vector&#92;&quot;:&#92;&quot;s&#92;&quot;,&#92;&quot;time&#92;&quot;:2.0647416048350564,&#92;&quot;x&#92;&quot;:0.0,&#92;&quot;y&#92;&quot;:0.0,&#92;&quot;z&#92;&quot;:2.294157338705618}]&quot;' data-total-rows='2' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The checks pass: <marimo-tex class=\"arithmatex\">||((p/m)^2=1||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||((p/m)\\cdot s=0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(s^2=-1||)</marimo-tex>.</span></span></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Xref-0' random-id='2db0b917-571b-e64f-46d5-0ca7a7abbe13'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Vector&#92;&quot;:&#92;&quot;p / m&#92;&quot;,&#92;&quot;time&#92;&quot;:1.0910894511799618,&#92;&quot;x&#92;&quot;:0.0,&#92;&quot;y&#92;&quot;:0.0,&#92;&quot;z&#92;&quot;:0.4364357804719847},{&#92;&quot;Vector&#92;&quot;:&#92;&quot;s&#92;&quot;,&#92;&quot;time&#92;&quot;:0.4364357804719847,&#92;&quot;x&#92;&quot;:0.0,&#92;&quot;y&#92;&quot;:0.0,&#92;&quot;z&#92;&quot;:1.0910894511799618}]&quot;' data-total-rows='2' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The checks pass: <marimo-tex class=\"arithmatex\">||((p/m)^2=1||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||((p/m)\\cdot s=0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(s^2=-1||)</marimo-tex>.</span></span></div>"
           }
         }
       ],

@@ -6,16 +6,9 @@
   },
   "cells": [
     {
-      "id": "Hbol",
-      "code_hash": "45ec2224b9cda55d86758ea00fa09958",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "id": "setup",
+      "code_hash": null,
+      "outputs": [],
       "console": []
     },
     {

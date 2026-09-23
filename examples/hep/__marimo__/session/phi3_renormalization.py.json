@@ -1,0 +1,118 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "setup",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "9df334b9739fc65650d5ad46376d8809",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"one-loop-phi3-renormalization\">One-loop <marimo-tex class=\"arithmatex\">||(\\phi^3||)</marimo-tex> renormalization</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/phi4_renormalization.py\">Quartic scalar renormalization</a> \u00b7 <a href=\"/?file=hep/tadpole_mass_insertions.py\">Tadpole mass insertions</a></span>\n<span class=\"paragraph\">Generate the bubble, triangle and local counterterms from <code>Model.phi3()</code>. The <a href=\"https://feyncalc.github.io/FeynCalcExamples/Phi3/OneLoop/Renormalization\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc reference</a> determines the field, mass-squared and cubic-coupling constants in four dimensions.</span>\n<span class=\"paragraph\">Use <marimo-tex class=\"arithmatex\">||(\\mathcal L=(\\partial\\phi)^2/2-m^2\\phi^2/2-g\\phi^3/3!||)</marimo-tex>, with nonzero <marimo-tex class=\"arithmatex\">||(m^2=M||)</marimo-tex> and dimensionful coupling <marimo-tex class=\"arithmatex\">||(g||)</marimo-tex>. This calculation concerns the one-particle-irreducible two- and three-point functions. A one-point tadpole or a choice of vacuum is separate.</span>\n<span class=\"paragraph\">All displayed loop amplitudes have the common <marimo-tex class=\"arithmatex\">||(i/(16\\pi^2)||)</marimo-tex> removed. Keeping <marimo-tex class=\"arithmatex\">||(M&gt;0||)</marimo-tex> makes the zero-momentum Taylor coefficients infrared safe.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "7f964364317336950be5943df1b36424",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "83e245e01c5e76083347525a2e885fe1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"native-ibp-and-finite-terms\">Native IBP and finite terms</h2>\n<span class=\"paragraph\">The parametric recurrence and bounded Laporta reduction agree for <marimo-tex class=\"arithmatex\">||(I_2||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(I_3||)</marimo-tex>, where <marimo-tex class=\"arithmatex\">||(I_n=\\int_k(k^2-M+i0)^{-n}||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(I_1=A_0(M)||)</marimo-tex>.</span>\n<span class=\"paragraph\">Expand the dimension-dependent coefficients before removing the master pole. In particular, the factor <marimo-tex class=\"arithmatex\">||(D-4||)</marimo-tex> in <marimo-tex class=\"arithmatex\">||(I_3||)</marimo-tex> multiplies the tadpole's <marimo-tex class=\"arithmatex\">||(1/\\epsilon||)</marimo-tex> pole and produces a nonzero finite triangle. The generic-momentum bubble separately checks that the UV pole has no <marimo-tex class=\"arithmatex\">||(p^2||)</marimo-tex> dependence.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "eb5787b57addf1351fc09a7ac9579da7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Doubled and tripled tadpoles</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>d\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>-2\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span>/M</div><div style=\"white-space: pre-wrap; margin: 0;\">1/8\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-6\u00b7d\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>+8\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>+d\u00b2\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span>/M\u00b2</div></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Self-energy and vertex UV residues</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7g\u00b2</div><div style=\"white-space: pre-wrap; margin: 0;\">0</div></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Finite zero-momentum triangle</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-1/2\u00b7g\u00b3/M</div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "d8bb792041eea9f0bb9ba59c03507d33",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"generated-counterterms\">Generated counterterms</h2>\n<span class=\"paragraph\">Expand the bare factors <marimo-tex class=\"arithmatex\">||(Z_\\phi||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(Z_\\phi Z_m||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(Z_g Z_\\phi^{3/2}||)</marimo-tex>. The generated local vertices supply the three-by-three matching system; no renormalization constants are provided as inputs.</span>\n<span class=\"paragraph\">MS subtracts <marimo-tex class=\"arithmatex\">||(1/\\epsilon||)</marimo-tex>. MS\u0304 subtracts <marimo-tex class=\"arithmatex\">||(\\Delta=1/\\epsilon+\\log(4\\pi)-\\gamma_E||)</marimo-tex>. The exact checks retain the finite difference between schemes.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "6bd59e497435df1e984298b9657ee015",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "9253b391dc5065fda2ec8d3e75629718",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "d38152a0b0f1512b54b217946dcc1180",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='6174bda5-d496-69ef-1dc7-54872d613320'><marimo-dropdown data-initial-value='[&quot;MSbar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSubtraction scheme&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;MSbar&quot;,&quot;MS&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='d6fd5ffb-314e-2e98-107e-65558f839442'><marimo-dropdown data-initial-value='[&quot;Zero external momentum&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eFinite evaluation&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Zero external momentum&quot;,&quot;Spacelike momentum&quot;,&quot;Timelike below threshold&quot;,&quot;Lighter scalar&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "d057bc3fbacf6f33b8c1d5b9646d6645",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"renormalization-constants\">Renormalization constants</h2></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Z\u03c6</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Zm</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>1/32\u00b7g\u00b2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>log4pi-gamma_E+1/eps<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2\u00b7M<span style=\"color: rgb(128, 128, 128)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Zg</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1</div></div><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"finite-renormalized-amplitudes\">Finite renormalized amplitudes</h2></span><marimo-ui-element object-id='RGSE-0' random-id='637f5bac-0490-ebed-b329-bd789e79a47e'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;M&#92;&quot;:1.0,&#92;&quot;g&#92;&quot;:0.5,&#92;&quot;\u03bc\u00b2&#92;&quot;:1.0,&#92;&quot;p\u00b2&#92;&quot;:0.0}]&quot;' data-total-rows='1' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><marimo-ui-element object-id='RGSE-1' random-id='3114a307-7e0f-c94c-7ae8-ed3faaa3201e'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Amplitude&#92;&quot;:&#92;&quot;Self-energy at p\u00b2=0&#92;&quot;,&#92;&quot;Generated + IBP/OneLOop&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Independent reference&#92;&quot;:&#92;&quot;0j&#92;&quot;},{&#92;&quot;Amplitude&#92;&quot;:&#92;&quot;Triangle at zero external momenta&#92;&quot;,&#92;&quot;Generated + IBP/OneLOop&#92;&quot;:&#92;&quot;(-0-0.00039578587360288194j)&#92;&quot;,&#92;&quot;Independent reference&#92;&quot;:&#92;&quot;(-0-0.00039578587360288194j)&#92;&quot;},{&#92;&quot;Amplitude&#92;&quot;:&#92;&quot;Self-energy at selected p\u00b2&#92;&quot;,&#92;&quot;Generated + IBP/OneLOop&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Independent reference&#92;&quot;:&#92;&quot;0j&#92;&quot;}]&quot;' data-total-rows='3' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Maximum absolute difference: <code>0</code>. The self-energy reference is a direct Feynman-parameter integral. The triangle reference is the zero-momentum simplex integral \u2212g\u00b3/(2M). The displayed amplitudes include i/(16\u03c0\u00b2).</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

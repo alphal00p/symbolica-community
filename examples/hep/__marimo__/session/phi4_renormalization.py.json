@@ -1,0 +1,79 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "setup",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "c1fb2dfc2c4e8c6ae9e0ddcebfb00b0b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"one-loop-phi4-renormalization\">One-loop <marimo-tex class=\"arithmatex\">||(\\phi^4||)</marimo-tex> renormalization</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/phi4_scattering.py\">Finite scattering</a> \u00b7 <a href=\"/?file=hep/ibp_phi4.py\">Two-loop self-energy</a></span>\n<span class=\"paragraph\">Generate the tadpole, three four-point channels, and local counterterms from <code>Model.phi4()</code>. Native numerators, graph factors and momentum routing determine the coefficients of the scalar masters. Their UV poles and the generated counterterm matrix reproduce the <a href=\"https://feyncalc.github.io/FeynCalcExamples/Phi4/OneLoop/Renormalization\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc MS/MS\u0304 example</a>.</span>\n<span class=\"paragraph\">The Lagrangian is <marimo-tex class=\"arithmatex\">||(\\mathcal L=(\\partial\\phi)^2/2-m^2\\phi^2/2-g\\phi^4/4!||)</marimo-tex>, and <marimo-tex class=\"arithmatex\">||(Z_m||)</marimo-tex> renormalizes <marimo-tex class=\"arithmatex\">||(m^2||)</marimo-tex>. Write <marimo-tex class=\"arithmatex\">||(Z_j=1+[g/(16\\pi^2)]\\delta_j||)</marimo-tex>. The ordinary amplitude contains the factor <marimo-tex class=\"arithmatex\">||(i||)</marimo-tex> from loop integration. OneLOop supplies <marimo-tex class=\"arithmatex\">||(A_0||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(B_0||)</marimo-tex> in a common master normalization.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "f63b05cf591e490bf979f4d42a5d38b5",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "9ba6f54e4061a1e50e56dfa4a6eca56f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"match-generated-local-counterterms\">Match generated local counterterms</h2>\n<span class=\"paragraph\">Expand the bare kinetic, mass and quartic factors <marimo-tex class=\"arithmatex\">||(Z_\\phi||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(Z_\\phi Z_m||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(Z_gZ_\\phi^2||)</marimo-tex>. The three generated local diagrams supply a linear system for <marimo-tex class=\"arithmatex\">||(\\delta_\\phi,\\delta_m,\\delta_g||)</marimo-tex>. No renormalization constants are supplied as inputs.</span>\n<span class=\"paragraph\">The common loop measure has <marimo-tex class=\"arithmatex\">||(\\Delta=1/\\epsilon+\\log(4\\pi)-\\gamma_E||)</marimo-tex>. MS subtracts its pole; MS\u0304 subtracts the complete <marimo-tex class=\"arithmatex\">||(\\Delta||)</marimo-tex>. The calculation checks both schemes and their finite difference.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "49d1f13f27d1cd841e76fc7b06990096",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "26da40159897552f8442e3e5a34af93b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-0' random-id='8cfc266f-4cb1-d3c6-697b-d685ad589959'><marimo-dropdown data-initial-value='[&quot;MSbar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSubtraction scheme&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;MSbar&quot;,&quot;MS&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "6a9a08b49e9aad1728f225501e370f06",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Field, mass-squared and coupling renormalization constants</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Z\u03c6</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Zm</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>1/32\u00b7lam\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>log4pi-gamma_E+1/eps<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Zg</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>3/32\u00b7lam\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>log4pi-gamma_E+1/eps<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">All UV poles cancel against the generated counterterms. In MS the finite amplitude retains the loop residue times log(4\u03c0)\u2212\u03b3E.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

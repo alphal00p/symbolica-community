@@ -986,6 +986,7 @@ dependencies = [
  "spenso",
  "symbolica",
  "thiserror",
+ "three-dimensional-reps",
  "typed-index-collections",
 ]
 
@@ -1089,6 +1090,7 @@ version = "0.1.0"
 dependencies = [
  "feynkit-model",
  "pyo3",
+ "serde_json",
  "thiserror",
 ]
 
@@ -3457,6 +3459,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1ad99c4c6d32803332c548b1af0540b357b3f5fc0be8f6c6bfe8b2e6ae784070"
 dependencies = [
  "cfg-if",
+]
+
+[[package]]
+name = "three-dimensional-reps"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "bincode-trait-derive",
+ "itertools 0.14.0",
+ "linnet",
+ "serde",
+ "symbolica",
+ "thiserror",
+ "typed-index-collections",
 ]
 
 [[package]]

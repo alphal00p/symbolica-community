@@ -1,0 +1,74 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "4565b83b69e4f4c21c8754b251aef8cb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "b42ef2326a1c109784c3cfb0feeecc28",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"sewing-aware-qed-spin-sums\">Sewing-aware QED spin sums</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/compton.py\">Amplitude-based Compton calculation</a></span>\n<span class=\"paragraph\">Generate squared tree amplitudes as sewn forward graphs, retaining the fermion\nmasses. Compare electron and positron Compton scattering, electron\u2013positron\nannihilation into muons, and electron\u2013muon scattering with the\n<a href=\"https://feyncalc.github.io/examples\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc tree examples</a>.</span>\n<span class=\"paragraph\">The graph and generator preserve particle flow at the sewing boundary.\n<code>Particle.sum_spins</code> supplies the same physical completeness tensors used by\nordinary amplitudes. Native graph factors include the relative permutation\nsign when open fermion chains close into cycles. The cut's physical particles\nand orientations determine the positive-energy final-state momenta.</span>\n<span class=\"paragraph\">For Compton scattering, covariant and timelike axial photon projectors are\nchecked separately against the complete massive result. The two choices\nmust agree. These are squared matrix elements; phase-space integration is\nseparate.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "34b24feab8921911cfb387def10d89bc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Sewn electron Compton, reference=None: exact massive result passed\nSewn electron Compton, reference=P(0): exact massive result passed\nSewn positron Compton, reference=None: exact massive result passed\nSewn positron Compton, reference=P(0): exact massive result passed\nSewn annihilation, reference=None: exact massive result passed\nSewn electron-muon scattering, reference=None: exact massive result passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "91b79e30dc9c364934bb7368cafb3ff4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='bkHC-0' random-id='6fe360fc-c140-255f-ad7c-4f5b908e7faf'><marimo-dropdown data-initial-value='[&quot;electron Compton \u00b7 covariant&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eProcess and incoming-photon projector&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;electron Compton \u00b7 covariant&quot;,&quot;electron Compton \u00b7 axial n=p\u2081&quot;,&quot;positron Compton \u00b7 covariant&quot;,&quot;positron Compton \u00b7 axial n=p\u2081&quot;,&quot;annihilation \u00b7 covariant&quot;,&quot;electron-muon scattering \u00b7 covariant&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "d6aa3dc26d7328ca87fc14d4650eca18",
+      "outputs": [],
+      "console": []
+    }
+  ]
+}

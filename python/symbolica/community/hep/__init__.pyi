@@ -12,7 +12,7 @@ import symbolica.core
 import types
 import typing
 from symbolica import ComplexFloat, Float
-from symbolica.community.spenso import TensorExpression
+from symbolica.community.spenso import TensorExpression, TensorName
 from symbolica.core import Expression
 
 @typing.final
@@ -823,9 +823,10 @@ class DiagramCut:
         r"""
         Return physical final-state particles in the stored cut-edge order.
 
-        The finalized left side is the conjugate amplitude, so source-oriented
-        lines correspond to antiparticles of their stored edge species.
-        Momentum orientations retain the native positive-energy routing.
+        The finalized left side contains the incoming initial-state endpoints.
+        A source-oriented cut line carries its stored species into the final
+        state; a target-oriented line carries its antiparticle. Momentum
+        orientations use the same left-to-right positive-energy routing.
         """
     @property
     def orientations(self) -> builtins.dict[builtins.int, builtins.int]:
@@ -2765,7 +2766,7 @@ class Generator:
         model : Model
             Particle model supplying particles, interactions, and parameters.
         """
-    def generate(self, process: Process, *, threads: typing.Optional[builtins.int] = None, max_vertices: typing.Optional[builtins.int] = None, allow_self_loops: builtins.bool = True, allow_zero_flow_edges: builtins.bool = False, graph_prefix: typing.Optional[builtins.str] = None, particle_veto: typing.Optional[typing.Sequence[Particle | builtins.str | builtins.int]] = None, vertex_allow: typing.Optional[typing.Sequence[VertexRule | builtins.str]] = None, vertex_veto: typing.Optional[typing.Sequence[VertexRule | builtins.str]] = None, maximum_bridges: int | None = 0, self_energy: SelfEnergyFilterOptions | types.EllipsisType | None = ..., tadpoles: TadpoleFilterOptions | types.EllipsisType | None = ..., zero_snails: SnailFilterOptions | types.EllipsisType | None = ..., coupling_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int | tuple[builtins.int, typing.Optional[builtins.int]]]] = None, fermion_loop_count_range: typing.Optional[tuple[builtins.int, builtins.int]] = None, factorized_loop_topologies_count_range: tuple[int, int] | types.EllipsisType | None = ..., blob_range: tuple[int, int] | types.EllipsisType | None = ..., spectator_range: tuple[int, int] | types.EllipsisType | None = ..., perturbative_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int]] = None, sewn_tadpoles: typing.Optional[builtins.bool] = None, cut_amplitude_coupling_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int | tuple[builtins.int, typing.Optional[builtins.int]]]] = None, cut_amplitude_loop_count_range: typing.Optional[tuple[builtins.int, builtins.int]] = None, select_diagrams: typing.Optional[typing.Sequence[FeynmanDiagram | builtins.str]] = None, veto_diagrams: typing.Optional[typing.Sequence[FeynmanDiagram | builtins.str]] = None, loop_momentum_bases: typing.Optional[typing.Sequence[tuple[FeynmanDiagram | builtins.str, typing.Sequence[builtins.int]]]] = None, numerator_prefactor: typing.Optional[Expression] = None, projector: typing.Optional[Expression] = None, numerator_grouping: NumeratorGrouping | types.EllipsisType | None = ..., cancellation_token: typing.Optional[CancellationToken] = None, progress: typing.Literal['auto'] | collections.abc.Callable[[GenerationProgress], None] | None = 'auto', filter: collections.abc.Callable[[symbolica.core.Graph, int], bool] | None = None) -> GenerationResult:
+    def generate(self, process: Process, *, threads: typing.Optional[builtins.int] = None, max_vertices: typing.Optional[builtins.int] = None, allow_self_loops: builtins.bool = True, allow_zero_flow_edges: builtins.bool = False, graph_prefix: typing.Optional[builtins.str] = None, particle_veto: typing.Optional[typing.Sequence[Particle | builtins.str | builtins.int]] = None, vertex_allow: typing.Optional[typing.Sequence[VertexRule | builtins.str]] = None, vertex_veto: typing.Optional[typing.Sequence[VertexRule | builtins.str]] = None, maximum_bridges: int | None = 0, self_energy: SelfEnergyFilterOptions | types.EllipsisType | None = ..., tadpoles: TadpoleFilterOptions | types.EllipsisType | None = ..., zero_snails: SnailFilterOptions | types.EllipsisType | None = ..., coupling_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int | tuple[builtins.int, typing.Optional[builtins.int]]]] = None, fermion_loop_count_range: typing.Optional[tuple[builtins.int, builtins.int]] = None, factorized_loop_topologies_count_range: tuple[int, int] | types.EllipsisType | None = ..., blob_range: tuple[int, int] | types.EllipsisType | None = ..., spectator_range: tuple[int, int] | types.EllipsisType | None = ..., perturbative_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int]] = None, sewn_tadpoles: typing.Optional[builtins.bool] = None, cut_amplitude_coupling_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int | tuple[builtins.int, typing.Optional[builtins.int]]]] = None, cut_amplitude_loop_count_range: typing.Optional[tuple[builtins.int, builtins.int]] = None, select_diagrams: typing.Optional[typing.Sequence[FeynmanDiagram | builtins.str]] = None, veto_diagrams: typing.Optional[typing.Sequence[FeynmanDiagram | builtins.str]] = None, loop_momentum_bases: typing.Optional[typing.Sequence[tuple[FeynmanDiagram | builtins.str, typing.Sequence[builtins.int]]]] = None, numerator_prefactor: typing.Optional[Expression] = None, projector: typing.Optional[Expression] = None, numerator_grouping: typing.Optional[NumeratorGrouping] = None, cancellation_token: typing.Optional[CancellationToken] = None, progress: typing.Literal['auto'] | collections.abc.Callable[[GenerationProgress], None] | None = 'auto', filter: collections.abc.Callable[[symbolica.core.Graph, int], bool] | None = None) -> GenerationResult:
         r"""
         Generate and optionally group all diagrams matching a process.
 
@@ -2843,8 +2844,8 @@ class Generator:
         projector : Expression or None, optional
             Override external-state contraction; S("1") disables external wavefunctions.
         numerator_grouping : NumeratorGrouping or None, optional
-            Omission groups up to scalar rescaling, matching the GammaLoop CLI.
-            Explicit None disables comparison, but diagrams still contain numerators.
+            Defaults to None: no numerator comparison or grouping. Diagrams still
+            contain numerators. Pass NumeratorGrouping to enable zero detection or grouping.
         progress : {"auto"}, Callable[[GenerationProgress], None] or None, optional
             Defaults to "auto": show progress when marimo.running_in_notebook()
             is true, with stage, counts, and elapsed time. None disables progress.
@@ -3983,19 +3984,6 @@ class LoopMomentumBasis:
         >>> rules = diagram.loop_momentum_basis.momentum_replacements()
         >>> routed = diagram.numerator_expression().replace_multiple(rules)
         """
-    def route_expression(self, expression: Expression | int | Float | builtins.int | builtins.float | builtins.str | decimal.Decimal | ComplexFloat | Float | builtins.int | builtins.float | builtins.str | decimal.Decimal | builtins.complex | tuple[Float | builtins.int | builtins.float | builtins.str | decimal.Decimal, Float | builtins.int | builtins.float | builtins.str | decimal.Decimal]) -> Expression:
-        r"""
-        Express edge momenta in this basis while retaining any tensor index arguments.
-
-        Examples
-        --------
-        >>> routed = diagram.loop_momentum_basis.route_expression(diagram.numerator_expression())
-
-        Parameters
-        ----------
-        expression : Expression or TensorExpression
-            Expression with canonical indexed edge momenta to route.
-        """
     def __repr__(self) -> builtins.str:
         r"""
         Return a concise description of the selected momentum basis.
@@ -4028,6 +4016,47 @@ class LoopMomentumBasis:
             The IPython pretty-printer object.
         cycle : bool
             Whether this object is part of a recursive formatting cycle.
+        """
+    @typing.overload
+    def route_expression(self, expression: TensorExpression, *, loop_momenta: typing.Optional[typing.Sequence[TensorName]] = None, external_momenta: typing.Optional[typing.Sequence[TensorName]] = None) -> TensorExpression:
+        r"""
+        Express edge momenta in this basis while preserving the tensor interface.
+
+        Tensor zeros retain their original ordered interface.
+
+        Examples
+        --------
+        >>> routed = basis.route_expression(diagram.numerator_expression())
+        >>> assert routed.interface == diagram.numerator_expression().interface
+
+        Parameters
+        ----------
+        expression : TensorExpression
+            Tensor expression with canonical indexed edge momenta to route.
+        loop_momenta : sequence[TensorName] or None, optional
+            Vector names in ``loop_edges`` order. None retains indexed ``K`` calls.
+        external_momenta : sequence[TensorName] or None, optional
+            Vector names in ``external_edges`` order, excluding ``dependent_externals``.
+            None retains indexed ``P`` calls. Naming also applies to already routed vectors.
+        """
+    @typing.overload
+    def route_expression(self, expression: Expression | int | Float | builtins.int | builtins.float | builtins.str | decimal.Decimal | ComplexFloat | Float | builtins.int | builtins.float | builtins.str | decimal.Decimal | builtins.complex | tuple[Float | builtins.int | builtins.float | builtins.str | decimal.Decimal, Float | builtins.int | builtins.float | builtins.str | decimal.Decimal], *, loop_momenta: typing.Optional[typing.Sequence[TensorName]] = None, external_momenta: typing.Optional[typing.Sequence[TensorName]] = None) -> Expression:
+        r"""
+        Express edge momenta in this basis while retaining tensor index arguments.
+
+        Examples
+        --------
+        >>> routed = basis.route_expression(diagram.numerator_expression().to_expression())
+
+        Parameters
+        ----------
+        expression : Expression or number
+            Expression with canonical edge momenta to route, or a scalar constant.
+        loop_momenta : sequence[TensorName] or None, optional
+            Vector names in ``loop_edges`` order. None retains indexed ``K`` calls.
+        external_momenta : sequence[TensorName] or None, optional
+            Vector names in ``external_edges`` order, excluding ``dependent_externals``.
+            None retains indexed ``P`` calls. Naming also applies to already routed vectors.
         """
     @typing.overload
     def route(self, loop_momenta: typing.Sequence[ThreeMomentum], external_momenta: typing.Sequence[ThreeMomentum]) -> dict[int, ThreeMomentum]:
@@ -4354,7 +4383,7 @@ class Model:
         json : str
             Serialized model object.
         """
-    def generate_diagrams(self, incoming: typing.Sequence[Particle | ParticleSelector | builtins.str | builtins.int], outgoing: typing.Sequence[Particle | ParticleSelector | builtins.str | builtins.int], *, kind: builtins.str = 'amplitude', loops: builtins.int | tuple[builtins.int, builtins.int] = 0, final_state_alternatives: typing.Optional[typing.Sequence[typing.Sequence[Particle | ParticleSelector | builtins.str | builtins.int]]] = None, threads: typing.Optional[builtins.int] = None, max_vertices: typing.Optional[builtins.int] = None, allow_self_loops: builtins.bool = True, allow_zero_flow_edges: builtins.bool = False, graph_prefix: typing.Optional[builtins.str] = None, particle_veto: typing.Optional[typing.Sequence[Particle | builtins.str | builtins.int]] = None, vertex_allow: typing.Optional[typing.Sequence[VertexRule | builtins.str]] = None, vertex_veto: typing.Optional[typing.Sequence[VertexRule | builtins.str]] = None, maximum_bridges: int | None = 0, self_energy: SelfEnergyFilterOptions | types.EllipsisType | None = ..., tadpoles: TadpoleFilterOptions | types.EllipsisType | None = ..., zero_snails: SnailFilterOptions | types.EllipsisType | None = ..., coupling_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int | tuple[builtins.int, typing.Optional[builtins.int]]]] = None, fermion_loop_count_range: typing.Optional[tuple[builtins.int, builtins.int]] = None, factorized_loop_topologies_count_range: tuple[int, int] | types.EllipsisType | None = ..., blob_range: tuple[int, int] | types.EllipsisType | None = ..., spectator_range: tuple[int, int] | types.EllipsisType | None = ..., perturbative_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int]] = None, sewn_tadpoles: typing.Optional[builtins.bool] = None, cut_amplitude_coupling_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int | tuple[builtins.int, typing.Optional[builtins.int]]]] = None, cut_amplitude_loop_count_range: typing.Optional[tuple[builtins.int, builtins.int]] = None, select_diagrams: typing.Optional[typing.Sequence[FeynmanDiagram | builtins.str]] = None, veto_diagrams: typing.Optional[typing.Sequence[FeynmanDiagram | builtins.str]] = None, loop_momentum_bases: typing.Optional[typing.Sequence[tuple[FeynmanDiagram | builtins.str, typing.Sequence[builtins.int]]]] = None, numerator_prefactor: typing.Optional[Expression] = None, projector: typing.Optional[Expression] = None, numerator_grouping: NumeratorGrouping | types.EllipsisType | None = ..., cancellation_token: typing.Optional[CancellationToken] = None, progress: typing.Literal['auto'] | collections.abc.Callable[[GenerationProgress], None] | None = 'auto', filter: collections.abc.Callable[[symbolica.core.Graph, int], bool] | None = None) -> GenerationResult:
+    def generate_diagrams(self, incoming: typing.Sequence[Particle | ParticleSelector | builtins.str | builtins.int], outgoing: typing.Sequence[Particle | ParticleSelector | builtins.str | builtins.int], *, kind: builtins.str = 'amplitude', loops: builtins.int | tuple[builtins.int, builtins.int] = 0, final_state_alternatives: typing.Optional[typing.Sequence[typing.Sequence[Particle | ParticleSelector | builtins.str | builtins.int]]] = None, threads: typing.Optional[builtins.int] = None, max_vertices: typing.Optional[builtins.int] = None, allow_self_loops: builtins.bool = True, allow_zero_flow_edges: builtins.bool = False, graph_prefix: typing.Optional[builtins.str] = None, particle_veto: typing.Optional[typing.Sequence[Particle | builtins.str | builtins.int]] = None, vertex_allow: typing.Optional[typing.Sequence[VertexRule | builtins.str]] = None, vertex_veto: typing.Optional[typing.Sequence[VertexRule | builtins.str]] = None, maximum_bridges: int | None = 0, self_energy: SelfEnergyFilterOptions | types.EllipsisType | None = ..., tadpoles: TadpoleFilterOptions | types.EllipsisType | None = ..., zero_snails: SnailFilterOptions | types.EllipsisType | None = ..., coupling_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int | tuple[builtins.int, typing.Optional[builtins.int]]]] = None, fermion_loop_count_range: typing.Optional[tuple[builtins.int, builtins.int]] = None, factorized_loop_topologies_count_range: tuple[int, int] | types.EllipsisType | None = ..., blob_range: tuple[int, int] | types.EllipsisType | None = ..., spectator_range: tuple[int, int] | types.EllipsisType | None = ..., perturbative_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int]] = None, sewn_tadpoles: typing.Optional[builtins.bool] = None, cut_amplitude_coupling_orders: typing.Optional[typing.Mapping[builtins.str, builtins.int | tuple[builtins.int, typing.Optional[builtins.int]]]] = None, cut_amplitude_loop_count_range: typing.Optional[tuple[builtins.int, builtins.int]] = None, select_diagrams: typing.Optional[typing.Sequence[FeynmanDiagram | builtins.str]] = None, veto_diagrams: typing.Optional[typing.Sequence[FeynmanDiagram | builtins.str]] = None, loop_momentum_bases: typing.Optional[typing.Sequence[tuple[FeynmanDiagram | builtins.str, typing.Sequence[builtins.int]]]] = None, numerator_prefactor: typing.Optional[Expression] = None, projector: typing.Optional[Expression] = None, numerator_grouping: typing.Optional[NumeratorGrouping] = None, cancellation_token: typing.Optional[CancellationToken] = None, progress: typing.Literal['auto'] | collections.abc.Callable[[GenerationProgress], None] | None = 'auto', filter: collections.abc.Callable[[symbolica.core.Graph, int], bool] | None = None) -> GenerationResult:
         r"""
         Generate amplitude or cross-section diagrams from this model.
 
@@ -4447,8 +4476,8 @@ class Model:
         projector : Expression or None, optional
             Override external-state contraction; S("1") disables external wavefunctions.
         numerator_grouping : NumeratorGrouping or None, optional
-            Omission groups up to scalar rescaling, matching the GammaLoop CLI.
-            Explicit None disables comparison, but diagrams still contain numerators.
+            Defaults to None: no numerator comparison or grouping. Diagrams still
+            contain numerators. Pass NumeratorGrouping to enable zero detection or grouping.
         progress : {"auto"}, Callable[[GenerationProgress], None] or None, optional
             Defaults to "auto": show progress when marimo.running_in_notebook()
             is true, with stage, counts, and elapsed time. None disables progress.
@@ -5328,14 +5357,16 @@ class Particle:
         ValueError
             If the particle's UFO color representation is unsupported.
         """
-    def spin_sum(self, momentum: Expression, left: Expression, right: Expression, *, average: builtins.bool = False, reference: typing.Optional[Expression] = None, covariant: builtins.bool = False, spin_vector: typing.Optional[Expression] = None) -> Expression:
+    def spin_sum(self, momentum: Expression, left: Expression, right: Expression, *, average: builtins.bool = False, reference: typing.Optional[Expression] = None, covariant: builtins.bool = False, spin_vector: typing.Optional[Expression] = None, dimension: typing.Optional[Expression | int | Float | builtins.int | builtins.float | builtins.str | decimal.Decimal | ComplexFloat | Float | builtins.int | builtins.float | builtins.str | decimal.Decimal | builtins.complex | tuple[Float | builtins.int | builtins.float | builtins.str | decimal.Decimal, Float | builtins.int | builtins.float | builtins.str | decimal.Decimal]] = None) -> Expression:
         r"""
         Construct this particle's external-state spin or polarization sum.
 
         Return an ordinary Symbolica expression using Spenso gamma matrices
         and metrics. Indices are bare symbols; momentum and reference are
         unindexed symbols or labeled calls such as ``Q(1)``. The calculation
-        uses four-dimensional external states. Massive vectors use the Proca
+        defaults to four-dimensional external states. ``dimension`` changes the
+        Lorentz dimension while Dirac spinor slots retain dimension four.
+        Massive vectors use the Proca
         projector. For massless vectors, supply a reference for a physical
         axial sum, or omit it for the covariant sum of a gauge-invariant
         amplitude. Subsequent kinematic substitutions must enforce on-shell
@@ -5346,14 +5377,16 @@ class Particle:
         satisfying ``p.s = 0`` and ``s.s = -1``: the rest-frame spin direction,
         boosted with the particle. The same projector sign applies to fermions
         and antifermions; do not reverse this vector for an antiparticle.
-        This option requires ``average=False``.
+        This option requires ``average=False`` and four Lorentz dimensions.
 
         Examples
         --------
         >>> from symbolica import S
         >>> p, i, j = S("p", "i", "j")
-        >>> projector = model.particle_by_pdg(11).spin_sum(p, i, j, average=True)
-        >>> polarized = model.particle_by_pdg(15).spin_sum(p, i, j, spin_vector=S("s"))
+        >>> projector = model.particle("e-").spin_sum(p, i, j, average=True)
+        >>> polarized = model.particle("ta-").spin_sum(p, i, j, spin_vector=S("s"))
+        >>> dimensional = model.particle("g").spin_sum(p, i, j, dimension=S("D"))
+        >>> six_dimensional = model.particle("g").spin_sum(p, i, j, dimension=6)
 
         Parameters
         ----------
@@ -5364,7 +5397,13 @@ class Particle:
         right : Expression
             Open index on the conjugate amplitude.
         average : bool
-            Divide by the number of physical spin states.
+            Divide by two for Dirac fermions, D-2 for massless vectors, or D-1
+            for massive vectors. Scalars have one state.
+        dimension : Expression | int | None
+            Integer or symbolic Lorentz dimension; defaults to four. Dirac
+            spinor slots and their trace dimension stay four. To use a fixed
+            two-state vector average at symbolic D, leave average=False and
+            divide the result by two.
         reference : Expression | None
             Axial reference momentum for a massless vector; need not be null.
         covariant : bool
@@ -5377,9 +5416,11 @@ class Particle:
         ------
         ValueError
             If ``spin_vector`` is used with averaging, a massless particle, or
-            a particle other than a Dirac fermion, or is not an unindexed name.
+            a particle other than a Dirac fermion, non-four-dimensional Lorentz
+            slots, or is not an unindexed name. Also raised for an invalid
+            dimension or a concrete dimension with no physical vector states.
         """
-    def sum_spins(self, expression: Expression, momentum: Expression, *, edge: builtins.int, average: builtins.bool = False, reference: typing.Optional[Expression] = None, covariant: builtins.bool = False, spin_vector: typing.Optional[Expression] = None) -> Expression:
+    def sum_spins(self, expression: Expression, momentum: Expression, *, edge: builtins.int, average: builtins.bool = False, reference: typing.Optional[Expression] = None, covariant: builtins.bool = False, spin_vector: typing.Optional[Expression] = None, dimension: typing.Optional[Expression | int | Float | builtins.int | builtins.float | builtins.str | decimal.Decimal | ComplexFloat | Float | builtins.int | builtins.float | builtins.str | decimal.Decimal | builtins.complex | tuple[Float | builtins.int | builtins.float | builtins.str | decimal.Decimal, Float | builtins.int | builtins.float | builtins.str | decimal.Decimal]] = None) -> Expression:
         r"""
         Sum paired generated external wavefunctions for one edge.
 
@@ -5388,7 +5429,8 @@ class Particle:
         diagram's ``projector_expression()`` or a squared amplitude. Only pairs
         with the supplied edge label are replaced; unpaired wavefunctions stay
         unchanged. Scalar particles have no external wavefunction factors.
-        External states are four-dimensional; reference and gauge conventions
+        Vector wavefunction slots must use the requested Lorentz dimension.
+        External states default to four dimensions; reference and gauge conventions
         are those of ``spin_sum``. For a massive Dirac particle, ``spin_vector``
         selects the same physical spin state as in ``spin_sum``, including for
         antiparticles. This does not sum color, conjugate amplitudes, or apply
@@ -5399,7 +5441,7 @@ class Particle:
         >>> from symbolica import S
         >>> p = S("p")
         >>> projector = diagram.projector_expression()
-        >>> summed = model.particle_by_pdg(11).sum_spins(projector, p, edge=0, average=True)
+        >>> summed = model.particle("e-").sum_spins(projector, p, edge=0, average=True)
 
         Parameters
         ----------
@@ -5410,7 +5452,13 @@ class Particle:
         edge : int
             Generated edge label of the pair to replace.
         average : bool
-            Divide by the number of physical spin states.
+            Divide by two for Dirac fermions, D-2 for massless vectors, or D-1
+            for massive vectors. Scalars have one state.
+        dimension : Expression | int | None
+            Integer or symbolic Lorentz dimension; defaults to four. Dirac
+            spinor slots and their trace dimension stay four. To use a fixed
+            two-state vector average at symbolic D, leave average=False and
+            divide the result by two.
         reference : Expression | None
             Axial reference for a massless vector; need not be null.
         covariant : bool
@@ -5423,7 +5471,9 @@ class Particle:
         ------
         ValueError
             If ``spin_vector`` is used with averaging, a massless particle, or
-            a particle other than a Dirac fermion, or is not an unindexed name.
+            a particle other than a Dirac fermion, non-four-dimensional Lorentz
+            slots, or is not an unindexed name. Also raised for an invalid
+            dimension or a concrete dimension with no physical vector states.
         """
     def __repr__(self) -> builtins.str:
         r"""

@@ -291,7 +291,7 @@ def _(
     _reference = complex(oneloop.B0(_endpoint, _av, _bv, 1.0)[0])
 
     # A local RK4 demonstration; all physics coefficients come from the IBP result.
-    def transport_rhs(s_value, bubble_value):
+    def transport_rhs(s_value: float, bubble_value: complex) -> complex:
         return complex(
             _rhs.evaluate(
                 {**_parameters, invariant: s_value, finite_bubble: bubble_value}
@@ -317,7 +317,7 @@ def _(
                 "Error": abs(_value - _reference),
             }
         )
-    transport_error = transport_checks[-1]["Error"]
+    transport_error = abs(_value - _reference)
     assert transport_error < 2e-9
     mo.vstack(
         [

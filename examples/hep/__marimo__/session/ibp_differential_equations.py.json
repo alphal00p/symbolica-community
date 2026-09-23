@@ -1,0 +1,126 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "2dbcd6bf7a313971da91cec5dedf82b3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "43892d97bb179bf2df84dcb0b8d22500",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"differential-equations-from-ibp\">Differential equations from IBP</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/ibp_bubble.py\">Bubble reductions</a> \u00b7\n<a href=\"/?file=hep/ibp_triangle.py\">Massless triangle</a></span>\n<span class=\"paragraph\">Differentiating a loop integral produces raised propagator powers. IBP\nreduces these derivatives to the original basis, giving differential\nequations for the master integrals. This notebook composes the\nunequal-mass bubble notebook, reusing its family and reductions.</span>\n<span class=\"paragraph\">For <marimo-tex class=\"arithmatex\">||(D_1=k^2-a||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(D_2=(k-p)^2-b||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(p^2=s||)</marimo-tex>, define the vector\n<marimo-tex class=\"arithmatex\">||(\\mathbf J=(A(a),A(b),B(s,a,b))^T=(I(1,0),I(0,1),I(1,1))^T||)</marimo-tex>.\nThe three equations are <marimo-tex class=\"arithmatex\">||(\\partial_v\\mathbf J=M_v\\mathbf J||)</marimo-tex>,\nfor <marimo-tex class=\"arithmatex\">||(v=s,a,b||)</marimo-tex>. Symbolica checks their compatibility exactly; then a\nnumerical solution transports one boundary value to another invariant.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "f0593b488265e8b395451873c28d3d33",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "4a436eff8a8cae172f4b63d1957b92fc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "ce09ee1586b6afc80798bcf986d9ab7e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Differentiate before reduction:</strong>\n$<marimo-tex class=\"arithmatex\">||(\\partial_a B=I(2,1),\\quad \\partial_b B=I(1,2),\\quad\n\\partial_s B=\\frac{I(0,2)-I(1,1)+(a-b-s)I(1,2)}{2s}.||)</marimo-tex>$\n<strong>Checks:</strong> <marimo-tex class=\"arithmatex\">||(s\\partial_sB+a\\partial_aB+b\\partial_bB=(D/2-2)B||)</marimo-tex>,\nand all three compatibility matrices\n<marimo-tex class=\"arithmatex\">||(\\partial_vM_w-\\partial_wM_v+M_wM_v-M_vM_w||)</marimo-tex> vanish exactly.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "44e12bdafedde7a10415ca2dd8f26007",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-0' random-id='515a64a5-7f3a-030b-2bfd-38597d87b019'><marimo-dropdown data-initial-value='[&quot;s&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eDifferentiate with respect to&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;s&quot;,&quot;a&quot;,&quot;b&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-1' random-id='ce5a9d3e-2ffe-7598-37f1-49991a3fa6cc'><marimo-dropdown data-initial-value='[&quot;Spacelike&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eEndpoint and masses&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Spacelike&quot;,&quot;Timelike&quot;,&quot;Unequal masses&quot;,&quot;Near threshold&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "8c59c898134b456239772e582119545a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "7d06cfe070c05619f2816dcedc2c645a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Connection matrix M_s</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">[[0, 0, 0],\n [0, 0, 0],\n [(2\u00b7b-2\u00b7a-D\u00b7b+D\u00b7a+2\u00b7s-s\u00b7D)/(2\u00b7s\u00b7b\u00b2-4\u00b7s\u00b7a\u00b7b+2\u00b7s\u00b7a\u00b2-4\u00b7s\u00b2\u00b7b-4\u00b7s\u00b2\u00b7a+2\u00b7s\u00b3), (-2\u00b7b+2\u00b7a+D\u00b7b-D\u00b7a+2\u00b7s-s\u00b7D)/(2\u00b7s\u00b7b\u00b2-4\u00b7s\u00b7a\u00b7b+2\u00b7s\u00b7a\u00b2-4\u00b7s\u00b2\u00b7b-4\u00b7s\u00b2\u00b7a+2\u00b7s\u00b3), (2\u00b7b\u00b2-4\u00b7a\u00b7b+2\u00b7a\u00b2-D\u00b7b\u00b2+2\u00b7D\u00b7a\u00b7b-D\u00b7a\u00b2+2\u00b7s\u00b7b+2\u00b7s\u00b7a-4\u00b7s\u00b2+s\u00b2\u00b7D)/(2\u00b7s\u00b7b\u00b2-4\u00b7s\u00b7a\u00b7b+2\u00b7s\u00b7a\u00b2-4\u00b7s\u00b2\u00b7b-4\u00b7s\u00b2\u00b7a+2\u00b7s\u00b3)]]</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Finite derivative after expanding at D=4\u22122\u03b5</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-<span style=\"color: rgb(128, 128, 128)\">(</span>-s\u00b7a-s\u00b7a\u00b7bubble_finite-s\u00b7b-s\u00b7b\u00b7bubble_finite+s\u00b7A_finite+s\u00b7B_finite\n    -2\u00b7a\u00b7b\u00b7bubble_finite-a\u00b7A_finite+a\u00b7B_finite+b\u00b7A_finite-b\u00b7B_finite+s\u00b2\n    +a\u00b2\u00b7bubble_finite+b\u00b2\u00b7bubble_finite\n<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-2\u00b7s\u00b7a-2\u00b7s\u00b7b-2\u00b7a\u00b7b+s\u00b2+a\u00b2+b\u00b2<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Independent parameter integral:\n<marimo-tex class=\"arithmatex\">||(B_{\\rm finite}=-\\int_0^1\\log[\\Delta(x)/\\mu^2]\\,dx||)</marimo-tex>,\n<marimo-tex class=\"arithmatex\">||(\\Delta=ax+b(1-x)-sx(1-x)||)</marimo-tex>. Its <marimo-tex class=\"arithmatex\">||(s,a,b||)</marimo-tex> derivatives have numerators\n<marimo-tex class=\"arithmatex\">||(x(1-x),-x,-(1-x)||)</marimo-tex> over <marimo-tex class=\"arithmatex\">||(\\Delta||)</marimo-tex>. The presets stay below threshold.</span></span><marimo-ui-element object-id='SFPL-0' random-id='f31b4504-50d0-7485-2875-54ce1d039bcd'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;IBP derivative&#92;&quot;:&#92;&quot;(0.048198984285501005+0j)&#92;&quot;,&#92;&quot;Parameter derivative&#92;&quot;:0.04819898428550073,&#92;&quot;Absolute error&#92;&quot;:2.7755575615628914e-16}]&quot;' data-total-rows='1' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "618fd28f0c4f0743484817bbe40919e3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Transport the finite bubble from s=-1 to s=-5</strong></span></span><marimo-ui-element object-id='BYtC-0' random-id='d9327a56-a404-05c9-6276-0e423fbc0ddc'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Steps&#92;&quot;:128,&#92;&quot;Transported B finite&#92;&quot;:&#92;&quot;(-1.192484023540528+0j)&#92;&quot;,&#92;&quot;OneLOop B finite&#92;&quot;:&#92;&quot;(-1.1924840235390444+0j)&#92;&quot;,&#92;&quot;Error&#92;&quot;:1.4837020501090592e-12},{&#92;&quot;Steps&#92;&quot;:256,&#92;&quot;Transported B finite&#92;&quot;:&#92;&quot;(-1.192484023539137+0j)&#92;&quot;,&#92;&quot;OneLOop B finite&#92;&quot;:&#92;&quot;(-1.1924840235390444+0j)&#92;&quot;,&#92;&quot;Error&#92;&quot;:9.259260025373806e-14}]&quot;' data-total-rows='2' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">OneLOop supplies one boundary value and the two constant tadpoles.\nA fourth-order Runge\u2013Kutta integration then uses only the derived\ndifferential equation. A separate OneLOop evaluation checks the endpoint.\nDoubling the step count provides a convergence check.</span>\n<span class=\"paragraph\">The connection has singular coefficients at <marimo-tex class=\"arithmatex\">||(s=0||)</marimo-tex> and at the K\u00e4ll\u00e9n\nzeros <marimo-tex class=\"arithmatex\">||(\\lambda(s,a,b)=0||)</marimo-tex>. These paths avoid those points. Transport\nthrough a singular point or across a physical cut requires appropriate\nboundary data and analytic continuation; it is not implemented here.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "setup",
+      "code_hash": null,
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "694b2f253be1a082b96bba3db2439f47",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"scalar-and-pseudoscalar-yukawa-renormalization\">Scalar and pseudoscalar Yukawa renormalization</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/phi4_renormalization.py\">Quartic scalar</a> \u00b7 <a href=\"/?file=hep/phi3_renormalization.py\">Cubic scalar</a></span>\n<span class=\"paragraph\">Reproduce both <a href=\"https://feyncalc.github.io/FeynCalcExamples/YukawaS/OneLoop/Renormalization\" rel=\"noopener noreferrer\" target=\"_blank\">scalar</a> and <a href=\"https://feyncalc.github.io/FeynCalcExamples/YukawaPS/OneLoop/Renormalization\" rel=\"noopener noreferrer\" target=\"_blank\">pseudoscalar</a> references using one calculation. The interactions are <marimo-tex class=\"arithmatex\">||(-g\\phi\\bar\\psi\\psi||)</marimo-tex> or <marimo-tex class=\"arithmatex\">||(-ig\\phi\\bar\\psi\\gamma_5\\psi||)</marimo-tex>, together with <marimo-tex class=\"arithmatex\">||(-\\lambda\\phi^4/4!||)</marimo-tex>.</span>\n<span class=\"paragraph\">Reuse <code>Model.phi4()</code> and the Standard Model's massive Dirac propagators through the existing model-definition API. For each interaction, the generator produces 13 bare diagrams and six local counterterms. Shared graph UV expansion, Spenso Dirac traces, covariant tensor reduction and native IBP determine all poles.</span>\n<span class=\"paragraph\">Take <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex>. The scalar mass renormalizes as <marimo-tex class=\"arithmatex\">||(m_\\phi^2 Z_M||)</marimo-tex> and the fermion mass as <marimo-tex class=\"arithmatex\">||(m_\\psi Z_m||)</marimo-tex>. These are the two-, three- and four-point functions in the references; vacuum and odd-scalar operators are separate. The pseudoscalar checks concern these leading UV poles, with paired gamma-five factors in the projected traces, and do not address anomalous axial traces.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "384398d6c1ab0b4fafe4f1d93cb85b22",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "7d2fc98bbbe122fc4939d7b51cbe5794",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Both interactions reproduce all six reference constants; all projected UV poles cancel exactly.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "f4c2c75f2b5e93e53233004aa0b7dbf5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"coupling-running-and-the-zero-quartic-limit\">Coupling running and the zero-quartic limit</h2>\n<span class=\"paragraph\">The local operators use <marimo-tex class=\"arithmatex\">||(Z_\\psi||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(Z_\\psi Z_m||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(Z_\\phi||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(Z_\\phi Z_M||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(Z_g Z_\\psi\\sqrt{Z_\\phi}||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(Z_\\lambda Z_\\phi^2||)</marimo-tex>. Their generated coefficients form a six-by-six system.</span>\n<span class=\"paragraph\">The calculation derives <marimo-tex class=\"arithmatex\">||(\\beta_g||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(\\beta_\\lambda||)</marimo-tex> by differentiating the bare couplings <marimo-tex class=\"arithmatex\">||(\\mu^\\epsilon gZ_g||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(\\mu^{2\\epsilon}\\lambda Z_\\lambda||)</marimo-tex>. The two theories have equal coupling beta functions but different mass constants. Although <marimo-tex class=\"arithmatex\">||(Z_\\lambda||)</marimo-tex> contains <marimo-tex class=\"arithmatex\">||(1/\\lambda||)</marimo-tex>, the additive shift <marimo-tex class=\"arithmatex\">||(\\lambda(Z_\\lambda-1)||)</marimo-tex> stays finite at <marimo-tex class=\"arithmatex\">||(\\lambda=0||)</marimo-tex>: Yukawa loops generate a quartic interaction.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "717e8ae20ce3b94738bc2676e8662f11",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "f526e63d90b73eb4af4405ddc716d1e0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Xref-0' random-id='6ede28c8-abb2-c76a-cf84-751431bd670a'><marimo-dropdown data-initial-value='[&quot;Scalar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eYukawa interaction&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Scalar&quot;,&quot;Pseudoscalar&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='Xref-1' random-id='56ea6586-e7b7-e10d-2cce-844015fee587'><marimo-dropdown data-initial-value='[&quot;MSbar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSubtraction scheme&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;MSbar&quot;,&quot;MS&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='Xref-2' random-id='dc45b1a3-64d6-9532-206b-61e3356cff20'><marimo-dropdown data-initial-value='[&quot;Scalar self-energy&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eAmplitude&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Fermion self-energy&quot;,&quot;Scalar self-energy&quot;,&quot;Yukawa vertex&quot;,&quot;Four-scalar vertex&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='Xref-3' random-id='738d73a4-eebf-8cdb-4398-4918377fcfa8'><marimo-dropdown data-initial-value='[&quot;Bare one-loop&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eDiagrams&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Bare one-loop&quot;,&quot;Local counterterms&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "4a18f3293e7a92573526d13f0f573b5c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"generated-matching-matrix\">Generated matching matrix</h2></span><div style=\"white-space: pre-wrap; margin: 0;\">[[-1, 0, 0, 0, 0, 0],\n [1, 1, 0, 0, 0, 0],\n [0, 0, 1, 0, 0, 0],\n [0, 0, -mass\u00b2, -mass\u00b2, 0, 0],\n [g, 0, g/2, 0, g, 0],\n [0, 0, -2\u00b7lam, 0, 0, -lam]]</div><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"renormalization-constants\">Renormalization constants</h2></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Z\u03c8</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>1/16\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-1/2\u00b7g\u00b2/eps-1/2\u00b7g\u00b2\u00b7log4pi+1/2\u00b7g\u00b2\u00b7gamma_E<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Zm\u03c8</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>1/16\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>3/2\u00b7g\u00b2/eps+3/2\u00b7g\u00b2\u00b7log4pi-3/2\u00b7g\u00b2\u00b7gamma_E<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Z\u03c6</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>1/16\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-2\u00b7g\u00b2/eps-2\u00b7g\u00b2\u00b7log4pi+2\u00b7g\u00b2\u00b7gamma_E<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Zm\u03c6\u00b2</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1\n    <span style=\"color: rgb(205, 205, 0)\">+</span>1/16\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>1/2\u00b7lam\u00b7log4pi-1/2\u00b7lam\u00b7gamma_E+1/2\u00b7lam/eps-12\u00b7Me\u00b2\u00b7g\u00b2/<span style=\"color: rgb(0, 95, 175)\">(</span>mass\u00b2\u00b7eps<span style=\"color: rgb(0, 95, 175)\">)</span>\n        -12\u00b7Me\u00b2\u00b7g\u00b2\u00b7log4pi/mass\u00b2+12\u00b7Me\u00b2\u00b7g\u00b2\u00b7gamma_E/mass\u00b2+2\u00b7g\u00b2/eps\n        +2\u00b7g\u00b2\u00b7log4pi-2\u00b7g\u00b2\u00b7gamma_E\n    <span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Zg</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>1/16\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>5/2\u00b7g\u00b2/eps+5/2\u00b7g\u00b2\u00b7log4pi-5/2\u00b7g\u00b2\u00b7gamma_E<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Z\u03bb</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1\n    <span style=\"color: rgb(205, 205, 0)\">+</span>1/16\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>3/2\u00b7lam\u00b7log4pi-3/2\u00b7lam\u00b7gamma_E+3/2\u00b7lam/eps-24\u00b7g\u2074/<span style=\"color: rgb(0, 95, 175)\">(</span>lam\u00b7eps<span style=\"color: rgb(0, 95, 175)\">)</span>\n        -24\u00b7g\u2074\u00b7log4pi/lam+24\u00b7g\u2074\u00b7gamma_E/lam+4\u00b7g\u00b2/eps+4\u00b7g\u00b2\u00b7log4pi\n        -4\u00b7g\u00b2\u00b7gamma_E\n    <span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"derived-beta-functions\">Derived beta functions</h2></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">\u03b2g</span></span><div style=\"white-space: pre-wrap; margin: 0;\">5/16\u00b7g\u00b3/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">\u03b2\u03bb</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/16\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>8\u00b7lam\u00b7g\u00b2+3\u00b7lam\u00b2-48\u00b7g\u2074<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Additive quartic MS counterterm at \u03bb=0</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-3/2\u00b7g\u2074/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2\u00b7eps<span style=\"color: rgb(128, 128, 128)\">)</span></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "3b136ac8e00c9b0d32206b888cf49daf",
+      "outputs": [],
+      "console": []
+    }
+  ]
+}

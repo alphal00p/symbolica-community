@@ -21,7 +21,8 @@ def _(mo):
     mo.md(r"""
     # Massive polarized spin states
 
-    [Browse all notebooks](/) · [QED cross section](/?file=hep/qed_cross_section.py)
+    [Browse all notebooks](/) · [QED cross section](/?file=hep/qed_cross_section.py) ·
+    [Polarization sums in D dimensions](/?file=hep/polarization_sums.py)
 
     `Particle.spin_sum(p, i, j, spin_vector=s)` selects one physical spin state
     of a massive Dirac particle. Omitting `spin_vector` sums both states.

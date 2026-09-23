@@ -9,10 +9,27 @@ def _():
     import marimo as mo
     from copy import copy
     from symbolica import S, E, N, Expression
-    from symbolica.community.spenso import ColorSimplifySettings, TensorExpression, as_tensor
-    from symbolica.community.hep import Model, SnailFilterOptions, Particle, FeynmanDiagram, TensorReducer
+    from symbolica.community.spenso import (
+        ColorSimplifySettings,
+        SchoonschipSettings,
+        TensorExpression,
+        as_tensor,
+    )
+    from symbolica.community.hep import (
+        Model,
+        SnailFilterOptions,
+        Particle,
+        FeynmanDiagram,
+        TensorReducer,
+    )
+
+    contraction_settings = SchoonschipSettings(
+        depth_limit=None,
+        expand_contracted_sums=True,
+    )
 
     return (
+        contraction_settings,
         ColorSimplifySettings,
         E,
         Expression,
@@ -65,8 +82,8 @@ def _(S):
 @app.cell
 def _(D, FeynmanDiagram, TensorExpression):
     def numerator_in_d(diagram: FeynmanDiagram) -> TensorExpression:
-        """Continue Lorentz slots to D, retaining the external tensor interface."""
-        return diagram.numerator_expression().with_lorentz_dimension(D)
+        """Route into the loop basis and continue Lorentz slots to D before contraction."""
+        return diagram.numerator_expression(in_lmb=True).with_lorentz_dimension(D)
 
     return (numerator_in_d,)
 
@@ -80,6 +97,7 @@ def _(ColorSimplifySettings):
 
 @app.cell
 def _(
+    contraction_settings,
     D,
     FeynmanDiagram,
     P,
@@ -127,10 +145,10 @@ def _(
             as_tensor(numerator.to_expression() * projector.to_expression())
             .simplify_color(color_settings)
             .simplify_gamma()
-            .schoonschip_net(expand_contracted_sums=True)
+            .schoonschip_net(contraction_settings)
             .to_dots()
             .expand(metric)
-            .schoonschip_net(expand_contracted_sums=True)
+            .schoonschip_net(contraction_settings)
             .to_dots()
         )
 
@@ -157,9 +175,7 @@ def _(FeynmanDiagram):
 @app.cell
 def _(FeynmanDiagram, K, P, S, TensorExpression, as_tensor, index_, numerator_in_d):
     def route_numerator(diagram: FeynmanDiagram) -> TensorExpression:
-        expression = diagram.loop_momentum_basis.route_expression(
-            numerator_in_d(diagram)
-        )
+        expression = numerator_in_d(diagram)
         expression = expression.replace(S("gammalooprs::K")(0, index_), K(index_))
         expression = expression.replace(S("gammalooprs::P")(0, index_), P(index_))
         return as_tensor(expression)
@@ -404,12 +420,12 @@ def _(diagram):
 
 
 @app.cell
-def _(color_settings, diagram, numerator_in_d):
+def _(contraction_settings, color_settings, diagram, numerator_in_d):
     contracted_numerator = (
         numerator_in_d(diagram)
         .simplify_color(color_settings)
         .simplify_gamma()
-        .schoonschip_net(expand_contracted_sums=True)
+        .schoonschip_net(contraction_settings)
     )
     contracted_numerator
     return

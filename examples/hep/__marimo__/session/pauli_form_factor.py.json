@@ -1,0 +1,146 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "8d08bbeebfb8352cf6afdb2fd7c53a64",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "178a922556bedde40c5fe77133099473",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"electron-pauli-form-factor-across-threshold\">Electron Pauli form factor across threshold</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/gminus2.py\">Generated vertex and g\u22122</a> \u00b7\n<a href=\"/?file=hep/ibp_differential_equations.py\">IBP differential equations</a> \u00b7\n<a href=\"/?file=hep/ibp_triangle.py\">Massless triangle</a></span>\n<span class=\"paragraph\">The <a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/El-GaEl\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc reference</a>\ncomputes <marimo-tex class=\"arithmatex\">||(F_2(0)=\\alpha/(2\\pi)||)</marimo-tex>. Here we continue the same generated\nvertex to nonzero momentum transfer, including the physical timelike sheet.\nThe tree normalization, spin projectors, Dirac algebra and native IBP\nreduction come from the g\u22122 notebook through Marimo composition.</span>\n<span class=\"paragraph\">Write <marimo-tex class=\"arithmatex\">||(r=t/m^2||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(R(r)=F_2(t)/(\\alpha/(2\\pi))||)</marimo-tex>. Spacelike scattering\nhas <marimo-tex class=\"arithmatex\">||(r&lt;0||)</marimo-tex>. Timelike values continue the crossed electron-pair current;\nits pair-production cut opens at <marimo-tex class=\"arithmatex\">||(r=4||)</marimo-tex>. We use <marimo-tex class=\"arithmatex\">||(t+i0||)</marimo-tex>, so the imaginary\npart is positive. Exactly at threshold the one-loop form factor diverges.\nThis notebook evaluates the Pauli form factor; it does not compute the\nrenormalized Dirac form factor <marimo-tex class=\"arithmatex\">||(F_1||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "b85eb9d9cb03c528b7b36387254c29b1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "9440c1758af25ed6063016b85fe8d6d9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/examples/hep/gminus2.py\"</span>, line <span class=\"m\">246</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">mo</span><span class=\"o\">.</span><span class=\"n\">hstack</span><span class=\"p\">(</span><span class=\"n\">diagrams</span><span class=\"p\">),</span>\n<span class=\"w\">    </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_plugins/stateless/flex.py\"</span>, line <span class=\"m\">248</span>, in <span class=\"n\">hstack</span>\n<span class=\"w\">    </span><span class=\"k\">return</span> <span class=\"n\">_flex</span><span class=\"p\">(</span>\n<span class=\"w\">           </span><span class=\"pm\">^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_plugins/stateless/flex.py\"</span>, line <span class=\"m\">111</span>, in <span class=\"n\">_flex</span>\n<span class=\"w\">    </span><span class=\"n\">live_children</span> <span class=\"o\">=</span> <span class=\"p\">[</span><span class=\"n\">as_html</span><span class=\"p\">(</span><span class=\"n\">item</span><span class=\"p\">)</span> <span class=\"k\">for</span> <span class=\"n\">item</span> <span class=\"ow\">in</span> <span class=\"n\">items</span><span class=\"p\">]</span>\n<span class=\"w\">                    </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_plugins/stateless/flex.py\"</span>, line <span class=\"m\">111</span>, in <span class=\"n\">&lt;listcomp&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">live_children</span> <span class=\"o\">=</span> <span class=\"p\">[</span><span class=\"n\">as_html</span><span class=\"p\">(</span><span class=\"n\">item</span><span class=\"p\">)</span> <span class=\"k\">for</span> <span class=\"n\">item</span> <span class=\"ow\">in</span> <span class=\"n\">items</span><span class=\"p\">]</span>\n<span class=\"w\">                     </span><span class=\"pm\">^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_output/formatting.py\"</span>, line <span class=\"m\">314</span>, in <span class=\"n\">as_html</span>\n<span class=\"w\">    </span><span class=\"n\">mimetype</span><span class=\"p\">,</span> <span class=\"n\">data</span> <span class=\"o\">=</span> <span class=\"n\">formatter</span><span class=\"p\">(</span><span class=\"n\">value</span><span class=\"p\">)</span>\n<span class=\"w\">                     </span><span class=\"pm\">^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_output/formatters/repr_formatters.py\"</span>, line <span class=\"m\">190</span>, in <span class=\"n\">f_repr</span>\n<span class=\"w\">    </span><span class=\"n\">contents</span> <span class=\"o\">=</span> <span class=\"n\">method</span><span class=\"p\">()</span>\n<span class=\"w\">               </span><span class=\"pm\">^^^^^^^^</span>\n<span class=\"gr\">typst.TypstError</span>: <span class=\"n\">unexpected argument: external-centroid-bias</span>\n</pre></div>\n</span>",
+          "mimetype": "application/vnd.marimo+traceback"
+        }
+      ]
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "df9292e9188612392c32ecaf1b6e0831",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Generated finite coefficient:</strong> <marimo-tex class=\"arithmatex\">||(F_2=-\u03b1 b/(4\u03c0)||)</marimo-tex>, with <marimo-tex class=\"arithmatex\">||(b=||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">4\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>Af+Me\u00b2-Me\u00b2\u00b7Bf<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>t-4\u00b7Me\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Exact zero-transfer limit:</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7alpha/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The independent Feynman-parameter representation is\n$<marimo-tex class=\"arithmatex\">||(R(r)=\\int_0^1\\frac{dx}{1-rx(1-x)-i0}\n  =1+t\\,\\partial_t B_0(t,m^2,m^2).||)</marimo-tex>$\nThe apparent <marimo-tex class=\"arithmatex\">||(\\mu^2||)</marimo-tex> dependence cancels between the finite tadpole\nand bubble. Vary the mass and renormalization scale to check this.</span>\n<span class=\"paragraph\">For <marimo-tex class=\"arithmatex\">||(r&gt;4||)</marimo-tex>, set <marimo-tex class=\"arithmatex\">||(\\beta=\\sqrt{1-4/r}||)</marimo-tex>. Integrating the parameter formula gives\n$<marimo-tex class=\"arithmatex\">||(R(r)=\\frac{2}{r\\beta}\n  \\left[\\log\\frac{1-\\beta}{1+\\beta}+i\\pi\\right],\n  \\qquad \\operatorname{Im}R=\\frac{2\\pi}{r\\beta}.||)</marimo-tex>$\nThe imaginary part also follows by summing the residues at\n<marimo-tex class=\"arithmatex\">||(x=(1\\pm\\beta)/2||)</marimo-tex>; it is an independent check of the branch sign.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "2c8b4abd3daeadc886cb354048c94fe9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "ab35aea5c244fad33071ef3d707ecc3e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-accordion data-labels='[&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003e60 checks: closed form, two contours, bubble derivative and cut&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;]' data-multiple='false'><div><marimo-ui-element object-id='Xref-0' random-id='d89683c1-6eb3-9405-54fd-59bddfabb16c'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;t/m\u00b2&#92;&quot;:-100.0,&#92;&quot;m&#92;&quot;:0.5,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:0.1,&#92;&quot;Maximum absolute error&#92;&quot;:1.8601432835534134e-14},{&#92;&quot;t/m\u00b2&#92;&quot;:-100.0,&#92;&quot;m&#92;&quot;:0.5,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:10.0,&#92;&quot;Maximum absolute error&#92;&quot;:1.8601432835534134e-14},{&#92;&quot;t/m\u00b2&#92;&quot;:-100.0,&#92;&quot;m&#92;&quot;:1.0,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:0.1,&#92;&quot;Maximum absolute error&#92;&quot;:1.8601432835534134e-14},{&#92;&quot;t/m\u00b2&#92;&quot;:-100.0,&#92;&quot;m&#92;&quot;:1.0,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:10.0,&#92;&quot;Maximum absolute error&#92;&quot;:1.8601432835534134e-14},{&#92;&quot;t/m\u00b2&#92;&quot;:-100.0,&#92;&quot;m&#92;&quot;:2.0,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:0.1,&#92;&quot;Maximum absolute error&#92;&quot;:1.8601432835534134e-14},{&#92;&quot;t/m\u00b2&#92;&quot;:-100.0,&#92;&quot;m&#92;&quot;:2.0,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:10.0,&#92;&quot;Maximum absolute error&#92;&quot;:1.8601432835534134e-14},{&#92;&quot;t/m\u00b2&#92;&quot;:-10.0,&#92;&quot;m&#92;&quot;:0.5,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:0.1,&#92;&quot;Maximum absolute error&#92;&quot;:2.3176878418891934e-14},{&#92;&quot;t/m\u00b2&#92;&quot;:-10.0,&#92;&quot;m&#92;&quot;:0.5,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:10.0,&#92;&quot;Maximum absolute error&#92;&quot;:2.3214872481433145e-14},{&#92;&quot;t/m\u00b2&#92;&quot;:-10.0,&#92;&quot;m&#92;&quot;:1.0,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:0.1,&#92;&quot;Maximum absolute error&#92;&quot;:2.3176878418891934e-14},{&#92;&quot;t/m\u00b2&#92;&quot;:-10.0,&#92;&quot;m&#92;&quot;:1.0,&#92;&quot;\u03bc\u00b2/m\u00b2&#92;&quot;:10.0,&#92;&quot;Maximum absolute error&#92;&quot;:2.3214872481433145e-14}]&quot;' data-total-rows='60' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div></marimo-accordion>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "b2c2ad745a256cf947d651e37933ffe9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Regular low-energy expansion</strong> (through <marimo-tex class=\"arithmatex\">||(r^4||)</marimo-tex>):</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>1/6\u00b7r<span style=\"color: rgb(205, 205, 0)\">+</span>1/30\u00b7r\u00b2<span style=\"color: rgb(205, 205, 0)\">+</span>1/140\u00b7r\u00b3<span style=\"color: rgb(205, 205, 0)\">+</span>1/630\u00b7r\u2074</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The analytic continuation obeys\n<marimo-tex class=\"arithmatex\">||(r(r-4)R'(r)+(r-2)R(r)+2=0||)</marimo-tex>; Symbolica verifies this exactly.\nThe boundary condition is <marimo-tex class=\"arithmatex\">||(R(0)=1||)</marimo-tex>. The threshold itself is singular:\n<marimo-tex class=\"arithmatex\">||(\\sqrt\\delta\\,\\operatorname{Re}R(4-\\delta)\\to\\pi||)</marimo-tex> and\n<marimo-tex class=\"arithmatex\">||(\\sqrt\\delta\\,\\operatorname{Im}R(4+\\delta)\\to\\pi||)</marimo-tex>.</span></span><marimo-ui-element object-id='SFPL-0' random-id='3736f1b1-f85b-267c-1327-b788cb6ef263'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;\u03b4&#92;&quot;:0.01,&#92;&quot;\u221a\u03b4 Re R(4\u2212\u03b4) \u2192 \u03c0&#92;&quot;:3.0453600221721664,&#92;&quot;\u221a\u03b4 Im R(4+\u03b4) \u2192 \u03c0&#92;&quot;:3.1376730105742827,&#92;&quot;Re R(4+\u03b4) \u2192 \u22121&#92;&quot;:-0.9983366595396994},{&#92;&quot;\u03b4&#92;&quot;:0.0001,&#92;&quot;\u221a\u03b4 Re R(4\u2212\u03b4) \u2192 \u03c0&#92;&quot;:3.131631757557826,&#92;&quot;\u221a\u03b4 Im R(4+\u03b4) \u2192 \u03c0&#92;&quot;:3.1415533844247387,&#92;&quot;Re R(4+\u03b4) \u2192 \u22121&#92;&quot;:-0.999983333669462},{&#92;&quot;\u03b4&#92;&quot;:1e-6,&#92;&quot;\u221a\u03b4 Re R(4\u2212\u03b4) \u2192 \u03c0&#92;&quot;:3.1405930458687745,&#92;&quot;\u221a\u03b4 Im R(4+\u03b4) \u2192 \u03c0&#92;&quot;:3.141592260008065,&#92;&quot;Re R(4+\u03b4) \u2192 \u22121&#92;&quot;:-0.9999998330224571}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "2139fb68b76d1b7abf7be8bc8ef7f40f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='780a8cc3-e120-0f7e-c632-ce45d50075db'><marimo-dropdown data-initial-value='[&quot;t/m\u00b2 = 5&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eMomentum transfer&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;t/m\u00b2 = -100&quot;,&quot;t/m\u00b2 = -10&quot;,&quot;t/m\u00b2 = -1&quot;,&quot;t/m\u00b2 = 0&quot;,&quot;t/m\u00b2 = 1&quot;,&quot;t/m\u00b2 = 3.9&quot;,&quot;t/m\u00b2 = 4.01&quot;,&quot;t/m\u00b2 = 5&quot;,&quot;t/m\u00b2 = 10&quot;,&quot;t/m\u00b2 = 100&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='609425e4-7823-9102-a4bb-c678d3fa7226'><marimo-dropdown data-initial-value='[&quot;m = 1&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eMass&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;m = 0.5&quot;,&quot;m = 1&quot;,&quot;m = 2&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='BYtC-2' random-id='0348b8e7-2164-7555-ce56-20d869eb5c01'><marimo-dropdown data-initial-value='[&quot;\u03bc\u00b2/m\u00b2 = 0.1&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eRenormalization scale&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;\u03bc\u00b2/m\u00b2 = 0.1&quot;,&quot;\u03bc\u00b2/m\u00b2 = 10&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "06b1a555c063a862fe9fc0674572d630",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Normalized Pauli form factor</strong> <marimo-tex class=\"arithmatex\">||(R=F_2/(\u03b1/(2\u03c0))||)</marimo-tex></span></span><marimo-ui-element object-id='RGSE-0' random-id='042c3c55-4e66-e58f-bec2-1b7dc514b1eb'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Re R&#92;&quot;:-0.8608178819280083,&#92;&quot;Im R&#92;&quot;:2.809925892416291,&#92;&quot;Absolute validation error&#92;&quot;:3.163823963282337e-14}]&quot;' data-total-rows='1' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Multiply by <marimo-tex class=\"arithmatex\">||(\\alpha/(2\\pi)||)</marimo-tex> to obtain <marimo-tex class=\"arithmatex\">||(F_2||)</marimo-tex>. At zero transfer this gives <marimo-tex class=\"arithmatex\">||(a_e=(g-2)/2||)</marimo-tex>.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

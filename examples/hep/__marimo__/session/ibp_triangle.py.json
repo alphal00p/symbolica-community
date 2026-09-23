@@ -1,0 +1,113 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "bc5025a8a51ffd1b1f1e032ace74d245",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "07af97432556d6b3ee9f2c322145fa1b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"massless-form-factor-triangle\">Massless form-factor triangle</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/ibp_bubble.py\">Unequal-mass bubble</a> \u00b7\n<a href=\"/?file=hep/ibp_differential_equations.py\">Differential equations</a></span>\n<span class=\"paragraph\">Vertex form factors with two on-shell massless legs contain\n<marimo-tex class=\"arithmatex\">||(D_1=k^2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(D_2=(k-p)^2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(D_3=(k-p-q)^2||)</marimo-tex>, where\n<marimo-tex class=\"arithmatex\">||(p^2=q^2=0||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(s=2p\\cdot q\\ne0||)</marimo-tex>. Mass insertions and expansions raise\npropagator powers. RustRed reduces these integrals at symbolic dimension\n<marimo-tex class=\"arithmatex\">||(D||)</marimo-tex>, before the Laurent expansion at <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex>.</span>\n<span class=\"paragraph\">The ordinary triangle reduces to a bubble with a <marimo-tex class=\"arithmatex\">||(1/(D-4)||)</marimo-tex> coefficient.\nIts double infrared pole is therefore retained even though the bubble has\nonly a single ultraviolet pole. Setting <marimo-tex class=\"arithmatex\">||(D=4||)</marimo-tex> during reduction would lose\nthis information.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "a36b196b36ef447f312607c76e2dbbfa",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><section class=\"feynkit-integral-family\" style=\"max-width:100%;overflow-x:auto\"><style>.feynkit-integral-family > .feynkit-family-metadata > div { display:inline; }</style><strong>Integral family</strong><div class=\"feynkit-family-metadata\"><strong>Loop momenta:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">k</div></div><div class=\"feynkit-family-metadata\"><strong>External momenta:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">p</div>, <div style=\"white-space: pre-wrap; margin: 0;\">q</div></div><div class=\"feynkit-family-metadata\"><strong>Dimension:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">D</div></div><div>Rank: 3 / 3 &middot; complete &middot; independent</div><table style=\"border-collapse:collapse;margin-top:.4rem\"><caption style=\"text-align:left\">Ordered inverse propagators (3)</caption><tbody><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>1</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>2</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>2\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,p<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>3</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">s<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>2\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,p<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">-</span>2\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,q<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr></tbody></table></section><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Exact reduction to <marimo-tex class=\"arithmatex\">||(I(1,0,1)||)</marimo-tex></strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>1,1,1<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-3+D<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1,0,1<span style=\"color: rgb(0, 95, 175)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-4+D<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>2,1,1<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-3+D<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1,0,1<span style=\"color: rgb(0, 95, 175)\">)</span>/s\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>1,2,1<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">4\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-3+D<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1,0,1<span style=\"color: rgb(0, 95, 175)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-6+D<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>1,1,2<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-3+D<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1,0,1<span style=\"color: rgb(0, 95, 175)\">)</span>/s\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>2,1,2<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-120+79\u00b7D-16\u00b7D\u00b2+D\u00b3<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1,0,1<span style=\"color: rgb(0, 95, 175)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b3\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-6+D<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>2,0,1<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-<span style=\"color: rgb(128, 128, 128)\">(</span>-3+D<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1,0,1<span style=\"color: rgb(0, 95, 175)\">)</span>/s</div></div><marimo-ui-element object-id='vblA-0' random-id='787fd39c-89b6-8cfd-8735-1997144c637b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;exact_trace_rows&#92;&quot;:12,&#92;&quot;rows&#92;&quot;:63,&#92;&quot;sectors&#92;&quot;:2,&#92;&quot;seeds&#92;&quot;:22}]&quot;' data-total-rows='1' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "01b04fe0cb2c0f0e13b6b4b78db98507",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Independent check: all six rational identities agree exactly.</strong></span>\n<span class=\"paragraph\">Feynman parameters give, for positive integer <marimo-tex class=\"arithmatex\">||(a,c||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(b\\ge0||)</marimo-tex>,\n$<marimo-tex class=\"arithmatex\">||(I(a,b,c)=(-1)^{N}(-s-i0)^{D/2-N}\n  \\frac{\\Gamma(N-D/2)\\Gamma(D/2-b-c)\\Gamma(D/2-a-b)}\n  {\\Gamma(a)\\Gamma(c)\\Gamma(D-N)},\\qquad N=a+b+c.||)</marimo-tex>$\nThis formula uses the measure <marimo-tex class=\"arithmatex\">||(d^Dk/(i\\pi^{D/2})||)</marimo-tex>; scale and common\nnormalization factors cancel in ratios. For <marimo-tex class=\"arithmatex\">||(b=0||)</marimo-tex> it is the two-point\nintegral. Dividing by <marimo-tex class=\"arithmatex\">||(I(1,0,1)||)</marimo-tex> and applying the Gamma recurrence gives\nthe rational expressions checked above, independently of RustRed.\nDimensional regularization supplies analytic continuation outside the\nconvergence domain of the parameter integral.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "6ef3e39977d5ed84612a79fcd8385839",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Triangle poles, in terms of the finite bubble coefficient</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7eps<span style=\"color: rgb(128, 128, 128)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>Bfinite/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7eps<span style=\"color: rgb(128, 128, 128)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>1/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7eps\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(B_{\\rm finite}=2-\\log[(-s-i0)/\\mu^2]||)</marimo-tex>. OneLOop checks the double and\nsingle poles below, including the timelike imaginary part. Computing\nthe ordinary triangle's finite term from this reduction additionally\nrequires the bubble through <marimo-tex class=\"arithmatex\">||(O(\\epsilon)||)</marimo-tex>; it is deliberately not\ninferred from the pole and finite bubble coefficients alone.</span>\n<span class=\"paragraph\">All five other targets have coefficients regular at <marimo-tex class=\"arithmatex\">||(D=4||)</marimo-tex>, so their\nfinite terms follow from the bubble pole and finite term, retaining\nthe <marimo-tex class=\"arithmatex\">||(O(\\epsilon)||)</marimo-tex> reduction coefficients.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "8bb42da29f2b11e0508f390b987da413",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Pole checks against OneLOop</strong></span></span><marimo-ui-element object-id='PKri-0' random-id='e6344fdd-b607-87b1-73f9-ebe319289bd2'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;s&#92;&quot;:-1.0,&#92;&quot;\u03bc\u00b2&#92;&quot;:1.0,&#92;&quot;double pole&#92;&quot;:&#92;&quot;(-1-0j)&#92;&quot;,&#92;&quot;single pole&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;OneLOop error&#92;&quot;:0.0},{&#92;&quot;s&#92;&quot;:-5.0,&#92;&quot;\u03bc\u00b2&#92;&quot;:2.0,&#92;&quot;double pole&#92;&quot;:&#92;&quot;(-0.2-0j)&#92;&quot;,&#92;&quot;single pole&#92;&quot;:&#92;&quot;(0.18325814637483104+0j)&#92;&quot;,&#92;&quot;OneLOop error&#92;&quot;:2.7755575615628914e-17},{&#92;&quot;s&#92;&quot;:1.0,&#92;&quot;\u03bc\u00b2&#92;&quot;:1.0,&#92;&quot;double pole&#92;&quot;:&#92;&quot;(1-0j)&#92;&quot;,&#92;&quot;single pole&#92;&quot;:&#92;&quot;3.141592653589793j&#92;&quot;,&#92;&quot;OneLOop error&#92;&quot;:0.0},{&#92;&quot;s&#92;&quot;:9.0,&#92;&quot;\u03bc\u00b2&#92;&quot;:3.0,&#92;&quot;double pole&#92;&quot;:&#92;&quot;(0.1111111111111111-0j)&#92;&quot;,&#92;&quot;single pole&#92;&quot;:&#92;&quot;(-0.12206803207423439+0.3490658503988659j)&#92;&quot;,&#92;&quot;OneLOop error&#92;&quot;:2.7755575615628914e-17}]&quot;' data-total-rows='4' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "f6dc500369b0e19dafbd53ef20de04c5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Xref-0' random-id='c2f57113-a574-fe2f-3faa-301128fc45ff'><marimo-dropdown data-initial-value='[&quot;(2, 1, 1)&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eRaised powers&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;(2, 1, 1)&quot;,&quot;(1, 2, 1)&quot;,&quot;(1, 1, 2)&quot;,&quot;(2, 1, 2)&quot;,&quot;(2, 0, 1)&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='Xref-1' random-id='6fb8f91b-b2c0-1824-a6c0-3ddcb3b684ce'><marimo-dropdown data-initial-value='[&quot;Spacelike, s=-1&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eKinematics&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Spacelike, s=-1&quot;,&quot;Spacelike, s=-5&quot;,&quot;Timelike, s=1&quot;,&quot;Timelike, s=9&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "c090b5f41249c6ea1337a09ea1101042",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>I(2, 1, 1): pole and finite coefficients</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-4/s\u00b2<span style=\"color: rgb(205, 205, 0)\">+</span>2\u00b7Bfinite/s\u00b2<span style=\"color: rgb(205, 205, 0)\">+</span>2/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b2\u00b7eps<span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Finite value at s=-1, \u03bc\u00b2=1: <strong><code>0+0j</code></strong></span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">These are dimensionally regulated Laurent coefficients, not ordinary\nconvergent four-dimensional integrals. The exact reductions assume\ngeneric <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(s\\ne0||)</marimo-tex>; the <marimo-tex class=\"arithmatex\">||(s=0||)</marimo-tex> family is scaleless and must be\nconstructed and reduced separately.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}
