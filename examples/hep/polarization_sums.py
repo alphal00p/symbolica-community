@@ -19,7 +19,8 @@ def _(mo):
     mo.md(r"""
     # Polarization sums in $D$ dimensions
 
-    [Browse all notebooks](/) · [Massive Dirac spin states](/?file=hep/polarized_spin.py) ·
+    [Browse all notebooks](/) · [Gluon scattering](/?file=hep/gluon_scattering.py) ·
+    [Massive Dirac spin states](/?file=hep/polarized_spin.py) ·
     [Gluon scattering from quarks](/?file=hep/qcd_gluons.py)
 
     Query a particle by name and call `particle.spin_sum(p, i, j, dimension=D)`.

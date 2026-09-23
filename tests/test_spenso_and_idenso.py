@@ -484,57 +484,39 @@ class TestIdensoSimplifications:
         result = Representation.euc("d").g(1, 1).simplify_metrics()
         assert result is not None
 
-    def test_simplify_gamma_chain(self):
-        """Test gamma matrix simplification"""
-        # Define p function as in the notebook
-        def p(i):
-            from symbolica import Expression
+    @pytest.mark.parametrize("dimension", [4, S("D")])
+    def test_simplify_gamma_chain(self, dimension):
+        """Tr(gamma_mu gamma_nu gamma^mu gamma_rho) in a consistent dimension."""
+        gamma = TensorExpression.gamma(dimension)
+        mink = Representation.mink(dimension)
+        # Multiply explicit indexed expressions to retain this contracted basis.
+        chain = TensorExpression(
+            gamma(1, 2, "mu").to_expression()
+            * gamma(2, 3, "nu").to_expression()
+            * gamma(3, 4, "mu").to_expression()
+            * gamma(4, 1, "rho").to_expression()
+        )
+        expected = 4 * (2 - dimension) * mink.g("nu", "rho").to_expression()
+        assert (chain.simplify_gamma().to_expression() - expected).expand() == 0
 
-            minkd = Representation("mink", "D")
-            if isinstance(i, str):
-                m = minkd(i).to_expression()
-            elif isinstance(i, int):
-                m = minkd(i).to_expression()
-            else:
-                m = minkd(i).to_expression()
-            return self.ps(m)
-
-        a = TensorExpression(
-            self.gam(1, 2, 1)
-            * self.gam(2, 3, "mu")
-            * self.gam(3, 4, 1)
-            * self.gam(4, 1, 2)
-            * p("mu")
-            * p(2)
-        ).simplify_gamma()
-        assert a is not None
-
-    def test_to_dots_conversion(self):
-        """Test conversion to dots notation"""
-        # Define p function as in the notebook
-        def p(i):
-            from symbolica import Expression
-
-            minkd = Representation("mink", "D")
-            if isinstance(i, str):
-                m = minkd(i).to_expression()
-            elif isinstance(i, int):
-                m = minkd(i).to_expression()
-            else:
-                m = minkd(i).to_expression()
-            return self.ps(m)
-
-        a = TensorExpression(
-            self.gam(1, 2, 1)
-            * self.gam(2, 3, "mu")
-            * self.gam(3, 4, 1)
-            * self.gam(4, 1, 2)
-            * p("mu")
-            * p(2)
-        ).simplify_gamma()
-
-        dots_result = a.to_dots()
-        assert dots_result is not None
+    @pytest.mark.parametrize("dimension", [4, S("D")])
+    def test_to_dots_conversion(self, dimension):
+        """Contract the gamma trace with two momenta and check its scalar value."""
+        gamma = TensorExpression.gamma(dimension)
+        mink = Representation.mink(dimension)
+        chain = TensorExpression(
+            gamma(1, 2, "mu").to_expression()
+            * gamma(2, 3, "nu").to_expression()
+            * gamma(3, 4, "mu").to_expression()
+            * gamma(4, 1, "rho").to_expression()
+            * self.ps(mink("nu").to_expression())
+            * self.ps(mink("rho").to_expression())
+        )
+        result = chain.simplify_gamma().expand().simplify_metrics().to_dots()
+        momentum = self.ps(mink.to_expression())
+        expected = 4 * (2 - dimension) * S("spenso::dot")(momentum, momentum)
+        assert result.rank == 0
+        assert (result.to_expression() - expected).expand() == 0
 
     def test_simplify_color_structure(self):
         """Test color structure simplification"""
