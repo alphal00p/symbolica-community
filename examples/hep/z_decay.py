@@ -19,7 +19,7 @@ def _(mo):
     mo.md(r"""
     # Chiral Z decays
 
-    [Browse all notebooks](/) · [Two-photon annihilation](/?file=hep/diphoton.py)
+    [Browse all notebooks](/) · [W and top decays](/?file=hep/weak_decays.py) · [Two-photon annihilation](/?file=hep/diphoton.py)
 
     Generate $Z\to f\bar f$ from the Standard Model and retain the fermion mass,
     left- and right-chiral couplings, and the Z's longitudinal polarization.
