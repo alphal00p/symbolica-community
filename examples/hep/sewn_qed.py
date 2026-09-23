@@ -19,7 +19,8 @@ def _(mo):
     mo.md(r"""
     # Sewing-aware QED spin sums
 
-    [Browse notebooks](/) · [Amplitude-based Compton calculation](/?file=hep/compton.py)
+    [Browse notebooks](/) · [Amplitude-based Compton calculation](/?file=hep/compton.py) ·
+    [Sewn diphoton annihilation](/?file=hep/sewn_diphoton.py)
 
     Generate squared tree amplitudes as sewn forward graphs, retaining the fermion
     masses. Compare electron and positron Compton scattering, electron–positron

@@ -22,7 +22,8 @@ def _(mo):
     mo.md(r"""
     # Electron–positron annihilation into two photons
 
-    [Browse all notebooks](/) · [Compton scattering](/?file=hep/compton.py)
+    [Browse all notebooks](/) · [Sewn diphoton calculation](/?file=hep/sewn_diphoton.py) ·
+    [Compton scattering](/?file=hep/compton.py)
 
     Generate both diagrams for $e^-e^+\to\gamma\gamma$, retaining the electron
     mass and their interference. Average the two incoming spins and sum the
