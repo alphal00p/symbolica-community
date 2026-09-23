@@ -46,7 +46,7 @@ def _(mo):
     vertex in a **symbolic covariant gauge**. Shared color contractions,
     Dirac traces, UV expansion and native IBP give the six physical
     renormalization constants in the
-    [FeynCalc reference](https://feyncalc.github.io/FeynCalcExamples/QCD/OneLoop/Renormalization).
+    [FeynCalc MS/MSbar reference](https://feyncalc.github.io/FeynCalcExamples/QCD/OneLoop/Renormalization2).
     The quark mass remains symbolic throughout.
 
     We use $D=4-2\epsilon$, $a_4=g_s^2/(16\pi^2)$,
@@ -58,10 +58,11 @@ def _(mo):
 
     The full UV expansion retains the mass correction terms. They cancel
     auxiliary mass poles, so our two auxiliary mass counterterms vanish.
-    This differs from the reference's selective infrared rearrangement,
+    This differs from the [selective infrared rearrangement reference](https://feyncalc.github.io/FeynCalcExamples/QCD/OneLoop/Renormalization),
     which needs a nonzero gluon auxiliary mass counterterm. The six physical
-    constants agree. Finite amplitudes and automatic counterterm diagrams
-    are outside this calculation.
+    constants agree. Here **eight generated counterterm diagrams** supply the
+    matching equations, and the controls compare MS and MSbar subtraction.
+    The finite column contains subtraction constants, not finite loop amplitudes.
     """)
 
 
@@ -69,7 +70,6 @@ def _(mo):
 def _(
     ColorCasimirSettings,
     E,
-    Matrix,
     Representation,
     S,
     Symbol,
@@ -83,7 +83,7 @@ def _(
     if _location is None:
         raise RuntimeError("Cannot locate hep_sm.json")
     model = hep.Model(_location.parent / "hep_sm.json")
-    D, epsilon, M, mUV, coordinate, integral, xi, s, Nf = S(
+    D, epsilon, M, _mUV, _coordinate, integral, xi, s, Nf = S(
         "qcd_ren::D",
         "qcd_ren::eps",
         "qcd_ren::M",
@@ -95,16 +95,16 @@ def _(
         "qcd_ren::Nf",
     )
     Nc, dA, CF, CA = S("qcd_ren::Nc", "qcd_ren::dA", "qcd_ren::CF", "qcd_ren::CA")
-    specification = json.loads(model.to_json())
-    for propagator in specification["propagators"]:
-        if propagator["particle"] == "g":
-            propagator["numerator"] = (
+    _specification = json.loads(model.to_json())
+    for _propagator in _specification["propagators"]:
+        if _propagator["particle"] == "g":
+            _propagator["numerator"] = (
                 "-1𝑖*(UFO::Metric(UFO::idx(1,1),UFO::idx(1,2))"
                 "-(1-qcd_ren::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))"
                 "/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
             )
-    model = hep.Model.from_json(json.dumps(specification))
-    K, P, mass, gs = S("gammalooprs::K", "gammalooprs::P", "UFO::MB", "UFO::G")
+    model = hep.Model.from_json(json.dumps(_specification))
+    _K, P, mass, _gs = S("gammalooprs::K", "gammalooprs::P", "UFO::MB", "UFO::G")
     mink, bis, gamma, metric = S(
         "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
     )
@@ -120,389 +120,336 @@ def _(
         "qcd_ren::left_",
         "qcd_ren::right_",
     )
-    den, edge_, mom_, mass_, quad_ = S(
+    _den, _edge_, _mom_, _mass_, _quad_ = S(
         "gammalooprs::denom",
         "qcd_ren::edge_",
         "qcd_ren::mom_",
         "qcd_ren::mass_",
         "qcd_ren::quad_",
     )
-    ordering, value, arguments = S(
+    _ordering, _value, _arguments = S(
         "feynkit_generator_factor::ExternalFermionOrderingSign",
         "qcd_ren::value_",
         "qcd_ren::arguments___",
     )
-    kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
+    kinematics = hep.Kinematics(D, momenta=[_K(0), P(0)]).with_scalar_product(
         P(0), P(0), s
     )
-    vacuum = hep.Kinematics(D, momenta=[K(0)])
+    _vacuum = hep.Kinematics(D, momenta=[_K(0)])
     family = hep.IntegralFamily(
-        [K(0)], [], [vacuum.scalar_product(K(0), K(0)) - M], kinematics=vacuum
+        [_K(0)], [], [_vacuum.scalar_product(_K(0), _K(0)) - M], kinematics=_vacuum
     )
-    reducer = hep.TensorReducer(D).with_integrated_vector(K(0, mink(D)))
+    _reducer = hep.TensorReducer(D).with_integrated_vector(_K(0, mink(D)))
     gmunu = metric(mink(D, mu), mink(D, nu))
     ppmunu = P(0, mink(D, mu)) * P(0, mink(D, nu))
     zero, one = E("0"), E("1")
-    parts, diagrams = {}, {}
-    for kind, incoming, outgoing, loops, vertices, count in [
-        ("tree", [5], [21, 5], 0, ["V_76"], 1),
-        ("quark", [5], [5], 1, ["V_76"], 1),
-        ("ghost", [9000005], [9000005], 1, ["V_35"], 1),
-        ("gluon_loop", [21], [21], 1, ["V_36"], 1),
-        ("ghost_loop", [21], [21], 1, ["V_35"], 1),
-        ("quark_loop", [21], [21], 1, ["V_76"], 1),
-        ("tadpole", [21], [21], 1, ["V_37"], 1),
-        ("vertex", [5], [21, 5], 1, ["V_76", "V_36"], 2),
+    quark, gluon, ghost = (model.particle_by_pdg(pdg) for pdg in (5, 21, 9000005))
+    interaction_rules = {}
+    for _label, _particles in [
+        ("qqg", [quark.antiname, quark.name, gluon.name]),
+        ("ccg", [ghost.antiname, ghost.name, gluon.name]),
+        ("ggg", [gluon.name] * 3),
+        ("gggg", [gluon.name] * 4),
     ]:
-        generated = hep.Generator(model).generate(
-            hep.Process.amplitude(incoming, outgoing).with_loop_count(loops, loops),
-            max_vertices=len(incoming) + len(outgoing) - 2 + 2 * loops,
+        interaction_rules[_label] = [
+            vertex
+            for vertex in model.vertex_rules
+            if sorted(vertex.particles) == sorted(_particles)
+        ]
+        assert len(interaction_rules[_label]) == 1
+    _parts, diagrams = {}, {}
+    for _kind, _incoming, _outgoing, _loops, _vertices, _count in [
+        ("tree", [quark], [gluon, quark], 0, interaction_rules["qqg"], 1),
+        ("quark", [quark], [quark], 1, interaction_rules["qqg"], 1),
+        ("ghost", [ghost], [ghost], 1, interaction_rules["ccg"], 1),
+        ("gluon_loop", [gluon], [gluon], 1, interaction_rules["ggg"], 1),
+        ("ghost_loop", [gluon], [gluon], 1, interaction_rules["ccg"], 1),
+        ("quark_loop", [gluon], [gluon], 1, interaction_rules["qqg"], 1),
+        ("tadpole", [gluon], [gluon], 1, interaction_rules["gggg"], 1),
+        (
+            "vertex",
+            [quark],
+            [gluon, quark],
+            1,
+            interaction_rules["qqg"] + interaction_rules["ggg"],
+            2,
+        ),
+    ]:
+        _generated = model.generate_diagrams(
+            _incoming,
+            _outgoing,
+            loops=_loops,
+            max_vertices=len(_incoming) + len(_outgoing) - 2 + 2 * _loops,
             maximum_bridges=0,
-            vertex_allow=vertices,
+            vertex_allow=_vertices,
             self_energy=None,
             tadpoles=None,
             zero_snails=None,
             numerator_grouping=None,
             progress=None,
         )
-        assert len(generated.diagrams) == count
-        diagrams[kind] = generated.diagrams
-        for number, diagram in enumerate(generated.diagrams):
-            ports = {}
-            if kind != "ghost":
-                for edge in diagram.external_edges:
-                    is_gluon = incoming == [21] or (
-                        kind in ("tree", "vertex") and edge.external_index == 1
+        assert len(_generated.diagrams) == _count
+        diagrams[_kind] = _generated.diagrams
+        for _number, _diagram in enumerate(_generated.diagrams):
+            _ports = {}
+            if _kind != "ghost":
+                for _edge in _diagram.external_edges:
+                    _is_gluon = _incoming == [gluon] or (
+                        _kind in ("tree", "vertex") and _edge.external_index == 1
                     )
-                    rep = mink if is_gluon else bis
-                    ports[edge.external_index] = dict(
+                    _rep = mink if _is_gluon else bis
+                    _ports[_edge.external_index] = dict(
                         next(
-                            diagram.projector_expression().match(
-                                wave(edge.id, rep(4, index)), max_level=0
+                            _diagram.projector_expression().match(
+                                wave(_edge.id, _rep(4, index)), max_level=0
                             )
                         )
                     )[index]
-            numerator = model.expand_couplings(
-                diagram.numerator_expression().to_expression()
+            _numerator = model.expand_couplings(
+                _diagram.numerator_expression().to_expression()
             )
-            if kind in ("tree", "vertex"):
+            if _kind in ("tree", "vertex"):
                 # Conjugate the tree's color tensor; the generated tree fixes the norm.
-                color_projector = (
-                    TensorExpression.t(dA, Nc)(ports[1], ports[0], ports[2])
+                _color_projector = (
+                    TensorExpression.t(dA, Nc)(_ports[1], _ports[0], _ports[2])
                     .spenso_conjugate()
                     .to_expression()
                 )
-                numerator = (
-                    numerator.replace(cof(3, index), cof(Nc, index)).replace(
+                _numerator = (
+                    _numerator.replace(cof(3, index), cof(Nc, index)).replace(
                         coad(8, index), coad(dA, index)
                     )
-                    * color_projector
+                    * _color_projector
                 )
-                settings = ColorCasimirSettings(rewrite_fundamental_dimension=False)
+                _settings = ColorCasimirSettings(rewrite_fundamental_dimension=False)
             else:
-                particle = model.particle_by_pdg(incoming[0])
-                rep, numeric_dim, symbolic_dim = (
-                    (cof, 3, Nc) if kind == "quark" else (coad, 8, dA)
+                _particle = _incoming[0]
+                _rep, _numeric_dim, _symbolic_dim = (
+                    (cof, 3, Nc) if _kind == "quark" else (coad, 8, dA)
                 )
-                color_slots = [
+                _color_slots = [
                     slot.dual().to_expression()
-                    for slot in TensorExpression(numerator).interface
-                    if slot.to_expression().matches(rep(numeric_dim, index))
+                    for slot in TensorExpression(_numerator).interface
+                    if slot.to_expression().matches(_rep(_numeric_dim, index))
                 ]
-                assert len(color_slots) == 2
-                color_indices = dict(
+                assert len(_color_slots) == 2
+                _color_indices = dict(
                     next(
-                        metric(*color_slots).match(
-                            particle.color_sum(left, right), max_level=0
+                        metric(*_color_slots).match(
+                            _particle.color_sum(left, right), max_level=0
                         )
                     )
                 )
-                color_projector = particle.color_sum(
-                    color_indices[left], color_indices[right]
+                _color_projector = _particle.color_sum(
+                    _color_indices[left], _color_indices[right]
                 )
-                numerator = (
-                    (numerator * color_projector / symbolic_dim)
+                _numerator = (
+                    (_numerator * _color_projector / _symbolic_dim)
                     .replace(cof(3, index), cof(Nc, index))
                     .replace(coad(8, index), coad(dA, index))
                 )
-                settings = ColorCasimirSettings()
-            numerator = (
-                TensorExpression(numerator)
+                _settings = ColorCasimirSettings()
+            _numerator = (
+                TensorExpression(_numerator)
                 .simplify_color()
                 .to_color_casimir(
                     fundamental=Representation.cof(Nc),
                     adjoint=Representation.coad(dA),
-                    settings=settings,
+                    settings=_settings,
                 )
                 .to_expression()
             )
             # CF and CA are display names for shared representation-aware invariants;
             # the quark-loop trace uses the conventional fundamental index TR=1/2.
-            numerator = (
-                numerator.replace(cas(2, cof(Nc)), CF)
+            _numerator = (
+                _numerator.replace(cas(2, cof(Nc)), CF)
                 .replace(cas(2, coad(dA)), CA)
                 .replace(trace_index(2, cof(Nc)), one / 2)
             )
-            if loops:
-                numerator = diagram.momentum_basis().route_expression(
-                    diagram.uv_expansion(mUV, numerator=numerator).to_expression()
+            if _loops:
+                _numerator = _diagram.momentum_basis().route_expression(
+                    _diagram.uv_expansion(_mUV, numerator=_numerator).to_expression()
                 )
-            numerator = (
-                numerator.replace(mink(dim, index), mink(D, index))
+            _numerator = (
+                _numerator.replace(mink(dim, index), mink(D, index))
                 .replace(mink(dim), mink(D))
-                .replace(mUV**2, M)
+                .replace(_mUV**2, M)
             )
-            if incoming == [21]:
-                numerator = numerator.replace(mink(D, ports[0]), mink(D, mu)).replace(
-                    mink(D, ports[1]), mink(D, nu)
+            if _incoming == [gluon]:
+                _numerator = _numerator.replace(
+                    mink(D, _ports[0]), mink(D, mu)
+                ).replace(mink(D, _ports[1]), mink(D, nu))
+            _pattern = _den(_edge_, _mom_, _mass_, _quad_)
+            for _match in list(_numerator.match(_pattern)):
+                _values = dict(_match)
+                _formal = family.rewrite_numerator(_values[_quad_], [_coordinate])
+                assert _formal == _coordinate
+                _numerator = _numerator.replace(
+                    _den(
+                        _values[_edge_],
+                        _values[_mom_],
+                        _values[_mass_],
+                        _values[_quad_],
+                    ),
+                    _formal,
                 )
-            pattern = den(edge_, mom_, mass_, quad_)
-            for match in list(numerator.match(pattern)):
-                values = dict(match)
-                formal = family.rewrite_numerator(values[quad_], [coordinate])
-                assert formal == coordinate
-                numerator = numerator.replace(
-                    den(values[edge_], values[mom_], values[mass_], values[quad_]),
-                    formal,
-                )
-            factor = (
-                diagram.overall_factor_expression(evaluate=True)
-                * diagram.numerator_prefactor_expression()
+            _factor = (
+                _diagram.overall_factor_expression(evaluate=True)
+                * _diagram.numerator_prefactor_expression()
             )
-            if kind == "quark":
+            if _kind == "quark":
                 # An amputated two-point kernel omits only external fermion ordering.
-                raw = diagram.overall_factor_expression()
-                removed = (raw / raw.replace(ordering(value), one)).replace(
-                    ordering(value), value
+                _raw = _diagram.overall_factor_expression()
+                _removed = (_raw / _raw.replace(_ordering(_value), one)).replace(
+                    _ordering(_value), _value
                 )
-                assert removed == -one
-                factor /= removed
-                probes = [
+                assert _removed == -one
+                _factor /= _removed
+                _probes = [
                     (
                         "quark_p",
-                        gamma(bis(4, ports[0]), bis(4, ports[1]), mink(D, mu))
+                        gamma(bis(4, _ports[0]), bis(4, _ports[1]), mink(D, mu))
                         * P(0, mink(D, mu))
                         / (4 * s),
                     ),
                     (
                         "quark_m",
-                        metric(bis(4, ports[0]), bis(4, ports[1])) / (4 * mass),
+                        metric(bis(4, _ports[0]), bis(4, _ports[1])) / (4 * mass),
                     ),
                 ]
-            elif kind in ("tree", "vertex"):
-                probes = [
+            elif _kind in ("tree", "vertex"):
+                _probes = [
                     (
-                        f"{kind}_{number}",
-                        gamma(bis(4, ports[0]), bis(4, ports[2]), mink(D, ports[1]))
+                        f"{_kind}_{_number}",
+                        gamma(bis(4, _ports[0]), bis(4, _ports[2]), mink(D, _ports[1]))
                         / (4 * D),
                     )
                 ]
             else:
-                probes = [(kind, one)]
-            for label, projector in probes:
-                traced = (
-                    TensorExpression((numerator * projector).expand())
+                _probes = [(_kind, one)]
+            for _label, _projector in _probes:
+                _traced = (
+                    TensorExpression((_numerator * _projector).expand())
                     .simplify_gamma()
                     .expand()
                     .simplify_metrics()
                     .to_dots()
                     .to_expression()
                 )
-                scalar = family.rewrite_numerator(
-                    kinematics.apply(reducer.reduce(traced)), [coordinate]
+                _scalar = family.rewrite_numerator(
+                    kinematics.apply(_reducer.reduce(_traced)), [_coordinate]
                 )
-                scalar = (scalar * factor).together().expand()
-                terms = []
-                for monomial, coefficient in scalar.coefficient_list(coordinate):
-                    power = -int(
+                _scalar = (_scalar * _factor).together().expand()
+                _terms = []
+                for _monomial, _coefficient in _scalar.coefficient_list(_coordinate):
+                    _power = -int(
                         (
-                            monomial.derivative(coordinate) * coordinate / monomial
+                            _monomial.derivative(_coordinate) * _coordinate / _monomial
                         ).together()
                     )
-                    assert monomial == coordinate ** (-power)
-                    assert not coefficient.matches(K(arguments))
-                    terms.append(([power], coefficient))
-                parts[label] = terms
+                    assert _monomial == _coordinate ** (-_power)
+                    assert not _coefficient.matches(_K(_arguments))
+                    _terms.append(([_power], _coefficient))
+                _parts[_label] = _terms
 
-    tree_terms = parts.pop("tree_0")
-    assert len(tree_terms) == 1 and tree_terms[0][0] == [0]
-    tree = tree_terms[0][1]
-    assert (tree + Symbol.I * gs * Nc * CF).together() == zero
+    _tree_terms = _parts.pop("tree_0")
+    assert len(_tree_terms) == 1 and _tree_terms[0][0] == [0]
+    tree = _tree_terms[0][1]
+    assert (tree + Symbol.I * _gs * Nc * CF).together() == zero
     solution = hep.IBPFamily(family, name="qcd_one_loop").reduce_laporta(
-        sorted({tuple(p) for terms in parts.values() for p, c in terms}), max_depth=2
+        sorted({tuple(p) for _terms in _parts.values() for p, c in _terms}), max_depth=2
     )
     assert solution.residuals == [[1]]
     assert abs(complex(oneloop.A0(1.0, 1.0)[1]) - 1) < 1e-12
-    reduced, uv_poles = {}, {}
-    for label, terms in parts.items():
-        expression = sum(
-            (c * solution.reduce(p, integral=integral) for p, c in terms), zero
+    _reduced, uv_poles = {}, {}
+    for _label, _terms in _parts.items():
+        _expression = sum(
+            (c * solution.reduce(p, integral=integral) for p, c in _terms), zero
         ).together()
-        reduced[label] = expression
-        normalized = (
-            expression
-            * (Symbol.I / tree if label.startswith("vertex") else one)
-            / gs**2
+        _reduced[_label] = _expression
+        _normalized = (
+            _expression
+            * (Symbol.I / tree if _label.startswith("vertex") else one)
+            / _gs**2
         )
-        if label == "quark_loop":
-            normalized *= Nf
-        pole = (
-            normalized.replace(integral(1), M / epsilon)
+        if _label == "quark_loop":
+            _normalized *= Nf
+        _pole = (
+            _normalized.replace(integral(1), M / epsilon)
             .replace(D, 4 - 2 * epsilon)
             .series(epsilon, 0, -1)
             .to_expression()
             .expand()
         )
-        pole = pole.replace(mink(4, index), mink(D, index))
-        uv_poles[label] = pole
-        assert pole.derivative(M).expand() == zero
-        assert pole.derivative(mass).expand() == zero
-        assert pole.coefficient(epsilon**-2) == zero
+        _pole = _pole.replace(mink(4, index), mink(D, index))
+        uv_poles[_label] = _pole
+        assert _pole.derivative(M).expand() == zero
+        assert _pole.derivative(mass).expand() == zero
+        assert _pole.coefficient(epsilon**-2) == zero
     uv_poles["gluon"] = sum(
         (
-            uv_poles[label]
-            for label in ("gluon_loop", "ghost_loop", "quark_loop", "tadpole")
+            uv_poles[_label]
+            for _label in ("gluon_loop", "ghost_loop", "quark_loop", "tadpole")
         ),
         zero,
     ).expand()
     uv_poles["vertex"] = (uv_poles["vertex_0"] + uv_poles["vertex_1"]).expand()
-    expected = [
+    _expected = [
         CF * xi / epsilon,
         -CF * (xi + 3) / epsilon,
         CA * (xi - 3) * s / (4 * epsilon),
         ((13 - 3 * xi) * CA - 4 * Nf) * (s * gmunu - ppmunu) / (6 * epsilon),
         (CF * xi + CA * (xi + 3) / 4) / epsilon,
     ]
-    for label, reference in zip(
-        ("quark_p", "quark_m", "ghost", "gluon", "vertex"), expected, strict=True
+    for _label, _reference in zip(
+        ("quark_p", "quark_m", "ghost", "gluon", "vertex"), _expected, strict=True
     ):
-        assert (uv_poles[label] - reference).together() == zero
+        assert (uv_poles[_label] - _reference).together() == zero
 
-    # Local counterterm operators, with Z=1+a4*deltaZ, a4=gs²/(16*pi²).
-    # Unknowns: Zq, Zm, ZA, Zxi, Zc, Zg, ZAm, Zcm. Auxiliary mass operators are
-    # (ZAm-1)*M*A²/2 and (Zcm-1)*M*cbar*c. No CT diagrams are generated here.
-    gluon_g = uv_poles["gluon"].coefficient(gmunu)
-    gluon_pp = uv_poles["gluon"].coefficient(ppmunu)
-    ct_matrix = Matrix.from_linear(
-        8,
-        8,
-        [
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            -1,
-            -1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            -1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            xi - 1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            1,
-            0,
-            E("1/2"),
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-        ],
-    )
-    rhs = Matrix.vec(
-        [
-            -uv_poles["quark_p"],
-            -uv_poles["quark_m"],
-            -gluon_g.coefficient(s),
-            -xi * gluon_pp,
-            -uv_poles["ghost"].coefficient(s),
-            -uv_poles["vertex"],
-            -gluon_g.replace(s, zero) / M,
-            -uv_poles["ghost"].replace(s, zero) / M,
-        ]
-    )
-    deltas = ct_matrix.solve(rhs)
-    references = [
-        -CF * xi / epsilon,
-        -3 * CF / epsilon,
-        ((13 - 3 * xi) * CA - 4 * Nf) / (6 * epsilon),
-        ((13 - 3 * xi) * CA - 4 * Nf) / (6 * epsilon),
-        CA * (3 - xi) / (4 * epsilon),
-        -(11 * CA - 2 * Nf) / (6 * epsilon),
-        zero,
-        zero,
-    ]
-    for row, reference in enumerate(references):
-        assert (deltas[row, 0].to_expression() - reference).together() == zero
-    residual = ct_matrix * deltas - rhs
-    assert all(residual[row, 0].to_expression().together() == zero for row in range(8))
-    assert deltas[1, 0].to_expression().derivative(xi).expand() == zero
-    assert deltas[5, 0].to_expression().derivative(xi).expand() == zero
-    counterterm_names = ["Zq", "Zm", "ZA", "Zξ", "Zc", "Zg", "ZAm", "Zcm"]
-    residues = [
-        (epsilon * deltas[row, 0].to_expression()).together() for row in range(8)
-    ]
-    vertex_residue = (epsilon * uv_poles["vertex"]).together()
     return (
         CA,
         CF,
+        D,
+        M,
+        Nc,
         Nf,
-        counterterm_names,
-        ct_matrix,
-        deltas,
+        P,
+        bis,
+        cas,
+        coad,
+        cof,
+        dA,
         diagrams,
+        dim,
+        epsilon,
         family,
+        gamma,
+        ghost,
+        gluon,
+        gmunu,
+        index,
         integral,
-        reduced,
-        residues,
+        interaction_rules,
+        kinematics,
+        left,
+        mass,
+        metric,
+        mink,
+        model,
+        mu,
+        nu,
+        one,
+        ppmunu,
+        quark,
+        right,
+        s,
         solution,
+        trace_index,
+        tree,
         uv_poles,
-        vertex_residue,
+        wave,
         xi,
+        zero,
     )
 
 
@@ -570,36 +517,565 @@ def _(family, integral, mo, solution):
     )
 
 
+@app.cell
+def _(
+    CA,
+    CF,
+    ColorCasimirSettings,
+    D,
+    M,
+    Matrix,
+    Nc,
+    Nf,
+    P,
+    Representation,
+    S,
+    Symbol,
+    TensorExpression,
+    bis,
+    cas,
+    coad,
+    cof,
+    dA,
+    diagrams,
+    dim,
+    epsilon,
+    gamma,
+    ghost,
+    gluon,
+    gmunu,
+    hep,
+    index,
+    interaction_rules,
+    json,
+    kinematics,
+    left,
+    mass,
+    metric,
+    mink,
+    model,
+    mu,
+    nu,
+    one,
+    ppmunu,
+    quark,
+    right,
+    s,
+    solution,
+    trace_index,
+    tree,
+    uv_poles,
+    wave,
+    xi,
+    zero,
+):
+    # Local counterterm operators, with Z=1+a4*deltaZ, a4=gs²/(16*pi²).
+    # Unknowns: Zq, Zm, ZA, Zxi, Zc, Zg, ZAm, Zcm. The local operator basis
+    # is an explicit model input; all matching entries come from generated graphs.
+    _qqg = interaction_rules["qqg"]
+    _spec = json.loads(model.to_json())
+    _vertex_definition = next(
+        v for v in _spec["vertex_rules"] if v["name"] == _qqg[0].name
+    )
+    # Auxiliary operators follow the reference model:
+    # M*(ZAm²-1)*A²/2 and M*(Zcm²-1)*cbar*c/2. Identical gluons supply
+    # the factor two in their local rule; the distinct ghost fields do not.
+    _a4 = S("qcd_ct::a4")
+    _unknowns = list(
+        S(
+            "qcd_ct::deltaZq",
+            "qcd_ct::deltaZm",
+            "qcd_ct::deltaZA",
+            "qcd_ct::deltaZxi",
+            "qcd_ct::deltaZc",
+            "qcd_ct::deltaZg",
+            "qcd_ct::deltaZAm",
+            "qcd_ct::deltaZcm",
+        )
+    )
+    _Zq, _Zm, _ZA, _Zxi, _Zc, _Zg, _ZAm, _Zcm = (
+        one + _a4 * _delta for _delta in _unknowns
+    )
+    _spec["orders"].append({"name": "CT", "expansion_order": 1, "hierarchy": 1})
+    for _label, _particles, _spins, _color, _lorentz, _coupling in [
+        (
+            "qq_kinetic",
+            [quark.antiname, quark.name],
+            [2, 2],
+            "Identity(1,2)",
+            "Gamma(dummy(1),idx(1,1),idx(1,2))*P(dummy(1),2)",
+            Symbol.I * (_Zq - one),
+        ),
+        (
+            "qq_mass",
+            [quark.antiname, quark.name],
+            [2, 2],
+            "Identity(1,2)",
+            "Identity(idx(1,1),idx(1,2))",
+            -Symbol.I * mass * (_Zq * _Zm - one),
+        ),
+        (
+            "gg_kinetic",
+            [gluon.name] * 2,
+            [3, 3],
+            "Identity(1,2)",
+            "Metric(idx(1,1),idx(1,2))*P(dummy(1),1)*P(dummy(1),1)-P(idx(1,1),1)*P(idx(1,2),1)",
+            -Symbol.I * (_ZA - one),
+        ),
+        (
+            "gg_gauge",
+            [gluon.name] * 2,
+            [3, 3],
+            "Identity(1,2)",
+            "P(idx(1,1),1)*P(idx(1,2),1)",
+            -Symbol.I * (_ZA / _Zxi - one) / xi,
+        ),
+        (
+            "gg_auxmass",
+            [gluon.name] * 2,
+            [3, 3],
+            "Identity(1,2)",
+            "Metric(idx(1,1),idx(1,2))",
+            Symbol.I * M * (_ZAm**2 - one),
+        ),
+        (
+            "ghost_kinetic",
+            [ghost.antiname, ghost.name],
+            [-1, -1],
+            "Identity(1,2)",
+            "P(dummy(1),2)*P(dummy(1),2)",
+            Symbol.I * (_Zc - one),
+        ),
+        (
+            "ghost_auxmass",
+            [ghost.antiname, ghost.name],
+            [-1, -1],
+            "Identity(1,2)",
+            "1",
+            Symbol.I * M * (_Zcm**2 - one) / 2,
+        ),
+    ]:
+        _spec["lorentz_structures"].append(
+            {"name": "CT_L_" + _label, "spins": _spins, "structure": _lorentz}
+        )
+        _spec["couplings"].append(
+            {
+                "name": "CT_GC_" + _label,
+                "expression": repr(_coupling.series(_a4, 0, 1).to_expression()),
+                "orders": [["QCD", 2], ["CT", 1]],
+                "value": None,
+            }
+        )
+        _spec["vertex_rules"].append(
+            {
+                "name": "CT_" + _label,
+                "particles": _particles,
+                "color_structures": [_color],
+                "lorentz_structures": ["CT_L_" + _label],
+                "couplings": [["CT_GC_" + _label]],
+            }
+        )
+    # Copy every color/Lorentz slot of the actual model rule and dress its coupling.
+    _ct_vertex = json.loads(json.dumps(_vertex_definition))
+    _ct_vertex["name"] = "CT_qqg"
+    for _row, _couplings in enumerate(_ct_vertex["couplings"]):
+        for _col, _coupling in enumerate(_couplings):
+            if _coupling is None:
+                continue
+            _dressed = model.expand_couplings(S("UFO::" + _coupling)) * (
+                _Zq * _Zg * _ZA.sqrt() - one
+            )
+            _name = f"CT_qqg_{_row}_{_col}"
+            _spec["couplings"].append(
+                {
+                    "name": _name,
+                    "expression": repr(_dressed.series(_a4, 0, 1).to_expression()),
+                    "orders": [["QCD", 3], ["CT", 1]],
+                    "value": None,
+                }
+            )
+            _couplings[_col] = _name
+    _spec["vertex_rules"].append(_ct_vertex)
+    _ct_model = hep.Model.from_json(json.dumps(_spec))
+    _ct_quark, _ct_gluon, _ct_ghost = (
+        _ct_model.particle_by_pdg(pdg) for pdg in (5, 21, 9000005)
+    )
+    _ct_vertices = [v for v in _ct_model.vertex_rules if v.name.startswith("CT_")]
+    ct_diagrams, ct_coefficients = {}, {}
+    _external_ordering = diagrams["tree"][0].overall_factor_expression(evaluate=True)
+    for _kind, _incoming, _outgoing, _count, _qcd_order in [
+        ("quark", [_ct_quark], [_ct_quark], 2, 2),
+        ("gluon", [_ct_gluon], [_ct_gluon], 3, 2),
+        ("ghost", [_ct_ghost], [_ct_ghost], 2, 2),
+        ("vertex", [_ct_quark], [_ct_gluon, _ct_quark], 1, 3),
+    ]:
+        # CT order is perturbative bookkeeping; two-point insertions have no loops.
+        # Bound vertices explicitly to exclude arbitrarily long insertion chains.
+        _options = {
+            "loops": 0,
+            "max_vertices": 1,
+            "maximum_bridges": None,
+            "vertex_allow": _ct_vertices,
+            "self_energy": None,
+            "tadpoles": None,
+            "zero_snails": None,
+            "numerator_grouping": None,
+            "progress": None,
+        }
+        _generated = _ct_model.generate_diagrams(
+            _incoming,
+            _outgoing,
+            coupling_orders={"QCD": _qcd_order, "CT": 1},
+            **_options,
+        )
+        assert len(_generated.diagrams) == _count
+        assert not _ct_model.generate_diagrams(
+            _incoming, _outgoing, coupling_orders={"CT": 0}, **_options
+        ).diagrams
+        ct_diagrams[_kind] = _generated.diagrams
+        for _diagram in _generated.diagrams:
+            assert len(_diagram.internal_edges) == 0
+            assert _diagram.symmetry_factor == one
+            _factor = (
+                _diagram.overall_factor_expression(evaluate=True)
+                * _diagram.numerator_prefactor_expression()
+            )
+            assert _factor == (
+                _external_ordering if _kind in ("quark", "vertex") else one
+            )
+            _ports = {}
+            if _kind != "ghost":
+                for _edge in _diagram.external_edges:
+                    _rep = (
+                        mink
+                        if _kind == "gluon"
+                        or (_kind == "vertex" and _edge.external_index == 1)
+                        else bis
+                    )
+                    _ports[_edge.external_index] = dict(
+                        next(
+                            _diagram.projector_expression().match(
+                                wave(_edge.id, _rep(4, index)), max_level=0
+                            )
+                        )
+                    )[index]
+            _numerator = _ct_model.expand_couplings(
+                _diagram.numerator_expression(in_lmb=True).to_expression()
+            )
+            if _kind == "vertex":
+                _color_projector = (
+                    TensorExpression.t(dA, Nc)(_ports[1], _ports[0], _ports[2])
+                    .spenso_conjugate()
+                    .to_expression()
+                )
+                _numerator = (
+                    _numerator.replace(cof(3, index), cof(Nc, index)).replace(
+                        coad(8, index), coad(dA, index)
+                    )
+                    * _color_projector
+                )
+                _settings = ColorCasimirSettings(rewrite_fundamental_dimension=False)
+            else:
+                _particle = _incoming[0]
+                _rep, _numeric_dim, _symbolic_dim = (
+                    (cof, 3, Nc) if _kind == "quark" else (coad, 8, dA)
+                )
+                _color_slots = [
+                    slot.dual().to_expression()
+                    for slot in TensorExpression(_numerator).interface
+                    if slot.to_expression().matches(_rep(_numeric_dim, index))
+                ]
+                assert len(_color_slots) == 2, (_kind, _numerator)
+                _color_indices = dict(
+                    next(
+                        metric(*_color_slots).match(
+                            _particle.color_sum(left, right), max_level=0
+                        )
+                    )
+                )
+                _color_projector = _particle.color_sum(
+                    _color_indices[left], _color_indices[right]
+                )
+                _numerator = (
+                    (_numerator * _color_projector / _symbolic_dim)
+                    .replace(cof(3, index), cof(Nc, index))
+                    .replace(coad(8, index), coad(dA, index))
+                )
+                _settings = ColorCasimirSettings()
+            _numerator = (
+                TensorExpression(_numerator)
+                .simplify_color()
+                .to_color_casimir(
+                    fundamental=Representation.cof(Nc),
+                    adjoint=Representation.coad(dA),
+                    settings=_settings,
+                )
+                .to_expression()
+            )
+            _numerator = (
+                _numerator.replace(cas(2, cof(Nc)), CF)
+                .replace(cas(2, coad(dA)), CA)
+                .replace(trace_index(2, cof(Nc)), one / 2)
+                .replace(mink(dim, index), mink(D, index))
+                .replace(mink(dim), mink(D))
+            )
+            if _kind == "quark":
+                _probes = [
+                    (
+                        "quark_p",
+                        gamma(bis(4, _ports[0]), bis(4, _ports[1]), mink(D, mu))
+                        * P(0, mink(D, mu))
+                        / (4 * s),
+                    ),
+                    (
+                        "quark_m",
+                        metric(bis(4, _ports[0]), bis(4, _ports[1])) / (4 * mass),
+                    ),
+                ]
+                _normalization = Symbol.I * _a4 * _external_ordering
+            elif _kind == "vertex":
+                _probes = [
+                    (
+                        _kind,
+                        gamma(bis(4, _ports[0]), bis(4, _ports[2]), mink(D, _ports[1]))
+                        / (4 * D),
+                    )
+                ]
+                _normalization = tree * _a4
+            else:
+                if _kind == "gluon":
+                    _numerator = _numerator.replace(
+                        mink(D, _ports[0]), mink(D, mu)
+                    ).replace(mink(D, _ports[1]), mink(D, nu))
+                _probes = [(_kind, one)]
+                _normalization = Symbol.I * _a4
+            for _label, _projector in _probes:
+                _trace = (
+                    TensorExpression((_numerator * _projector).expand())
+                    .simplify_gamma()
+                    .expand()
+                    .simplify_metrics()
+                    .to_dots()
+                    .to_expression()
+                )
+                _coefficient = (
+                    (kinematics.apply(_trace) * _factor / _normalization)
+                    .together()
+                    .expand()
+                )
+                ct_coefficients[_label] = (
+                    ct_coefficients.get(_label, zero) + _coefficient
+                )
+    _ct_g = ct_coefficients["gluon"].coefficient(gmunu)
+    _ct_pp = ct_coefficients["gluon"].coefficient(ppmunu)
+    _ct_rows = [
+        ct_coefficients["quark_p"],
+        ct_coefficients["quark_m"],
+        _ct_g.coefficient(s),
+        xi * _ct_pp,
+        ct_coefficients["ghost"].coefficient(s),
+        ct_coefficients["vertex"],
+        _ct_g.replace(s, zero) / M,
+        ct_coefficients["ghost"].replace(s, zero) / M,
+    ]
+    _entries = [r.derivative(z).together() for r in _ct_rows for z in _unknowns]
+    assert all(e.derivative(z) == zero for e in _entries for z in _unknowns)
+    for _i, _row in enumerate(_ct_rows):
+        assert (
+            _row
+            - sum((_entries[8 * _i + j] * z for j, z in enumerate(_unknowns)), zero)
+        ).together() == zero
+    ct_matrix = Matrix.from_linear(8, 8, _entries)
+    assert ct_matrix[6, 6].to_expression() == 2
+    assert ct_matrix[7, 7].to_expression() == 1
+    assert (
+        ct_coefficients["gluon"] - _ct_g * gmunu - _ct_pp * ppmunu
+    ).together() == zero
+    assert _ct_g.derivative(s).derivative(s) == zero
+    assert ct_coefficients["ghost"].derivative(s).derivative(s) == zero
+
+    _gluon_g = uv_poles["gluon"].coefficient(gmunu)
+    _gluon_pp = uv_poles["gluon"].coefficient(ppmunu)
+    _rhs = Matrix.vec(
+        [
+            -uv_poles["quark_p"],
+            -uv_poles["quark_m"],
+            -_gluon_g.coefficient(s),
+            -xi * _gluon_pp,
+            -uv_poles["ghost"].coefficient(s),
+            -uv_poles["vertex"],
+            -_gluon_g.replace(s, zero) / M,
+            -uv_poles["ghost"].replace(s, zero) / M,
+        ]
+    )
+    deltas = ct_matrix.solve(_rhs)
+    _references = [
+        -CF * xi / epsilon,
+        -3 * CF / epsilon,
+        ((13 - 3 * xi) * CA - 4 * Nf) / (6 * epsilon),
+        ((13 - 3 * xi) * CA - 4 * Nf) / (6 * epsilon),
+        CA * (3 - xi) / (4 * epsilon),
+        -(11 * CA - 2 * Nf) / (6 * epsilon),
+        zero,
+        zero,
+    ]
+    for _row, _reference in enumerate(_references):
+        assert (deltas[_row, 0].to_expression() - _reference).together() == zero
+    _residual = ct_matrix * deltas - _rhs
+    assert all(
+        _residual[_row, 0].to_expression().together() == zero for _row in range(8)
+    )
+    assert deltas[1, 0].to_expression().derivative(xi).expand() == zero
+    assert deltas[5, 0].to_expression().derivative(xi).expand() == zero
+    print(
+        "Generated QCD one-loop: symbolic gauge, four IBP targets, eight generated counterterms passed",
+        solution.stats,
+    )
+
+    # The completed MS/MSbar reference only needs the local UV poles. Use the
+    # OneLOop measure conversion (4*pi)^eps*rGamma=1+cDelta*eps+O(eps²), where
+    # cDelta=log(4*pi)-EulerGamma, with D=4-2eps. Keep it symbolic in exact checks.
+    _cDelta = S("qcd_ct::cDelta")
+    assert (-2 / (D - 4)).replace(D, 4 - 2 * epsilon) == 1 / epsilon
+    counterterms_by_scheme = {
+        "MS": [deltas[_row, 0].to_expression().together() for _row in range(8)],
+        "MSbar": [
+            (
+                epsilon * deltas[_row, 0].to_expression() * (1 / epsilon + _cDelta)
+            ).together()
+            for _row in range(8)
+        ],
+    }
+    for _scheme, _constants in counterterms_by_scheme.items():
+        for _label, _generated_ct in ct_coefficients.items():
+            for _delta, _constant in zip(_unknowns, _constants, strict=True):
+                _generated_ct = _generated_ct.replace(_delta, _constant)
+            _subtraction_part = uv_poles[_label] * (
+                one + epsilon * _cDelta if _scheme == "MSbar" else one
+            )
+            assert (_generated_ct + _subtraction_part).together() == zero
+            # In one common conventional measure MS retains the finite cDelta*P.
+            _remainder = (
+                uv_poles[_label] * (one + epsilon * _cDelta) + _generated_ct
+            ).together()
+            _expected_remainder = (
+                epsilon * _cDelta * uv_poles[_label] if _scheme == "MS" else zero
+            )
+            assert (_remainder - _expected_remainder).together() == zero
+    print("Generated QCD CT amplitudes: complete MS/MSbar tensor cancellation passed")
+
+    counterterm_names = ["Zq", "Zm", "ZA", "Zξ", "Zc", "Zg", "ZAm", "Zcm"]
+    residues = [
+        (epsilon * deltas[_row, 0].to_expression()).together() for _row in range(8)
+    ]
+    vertex_residue = (epsilon * uv_poles["vertex"]).together()
+
+    return (
+        counterterm_names,
+        counterterms_by_scheme,
+        ct_coefficients,
+        ct_diagrams,
+        ct_matrix,
+        deltas,
+        residues,
+        vertex_residue,
+    )
+
+
 @app.cell(hide_code=True)
-def _(ct_matrix, deltas, mo):
+def _(ct_coefficients, ct_diagrams, ct_matrix, deltas, mo):
     mo.vstack(
         [
             mo.md(r"""
-        ## Match the local counterterms
+    ## Generated local counterterms
 
-        Write $Z=1+a_4\delta Z$, with
-        $q_0=\sqrt{Z_q}q$, $m_0=Z_m m$, $A_0=\sqrt{Z_A}A$,
-        $\xi_0=Z_\xi\xi$, $c_0=\sqrt{Z_c}c$ and $g_{s,0}=Z_g g_s$.
-        The quark–gluon counterterm is
-        $\delta Z_q+\delta Z_g+\delta Z_A/2$ times the tree vertex.
+    Write $Z=1+a_4\delta Z$, with $q_0=\sqrt{Z_q}q$, $m_0=Z_m m$,
+    $A_0=\sqrt{Z_A}A$, $\xi_0=Z_\xi\xi$, $c_0=\sqrt{Z_c}c$ and
+    $g_{s,0}=Z_g g_s$. The local kinetic, mass and gauge-fixing operators are model
+    inputs. Symbolica expands their bare factors to obtain the CT couplings.
+    The quark–gluon rule copies the original model's ordered particle, color and
+    Lorentz data and multiplies its actual coupling by $Z_qZ_g\sqrt{Z_A}-1$.
 
-        Symbolica solves eight equations. The coefficient matrix and solution
-        below use the column order
-        $(\delta Z_q,\delta Z_m,\delta Z_A,\delta Z_\xi,
-        \delta Z_c,\delta Z_g,\delta Z_{Am},\delta Z_{cm})$.
-        The last two constants multiply the additive auxiliary operators
-        $a_4 M A^2/2$ and $a_4 M\bar c c$.
-        These local operators are stated inputs, not generated counterterm diagrams.
-        """),
+    These are tree topologies with **CT order one**, separate from loop count.
+    An explicit vertex bound prevents arbitrarily long two-point insertion chains.
+    The generator produces two quark, three gluon, two ghost and one vertex CT;
+    setting CT order zero excludes them.
+    """),
+            mo.ui.tabs(
+                {
+                    _kind: mo.hstack(_diagrams)
+                    for _kind, _diagrams in ct_diagrams.items()
+                }
+            ),
+            mo.md(r"**Coefficients extracted from generated numerators**"),
+            *[
+                mo.hstack([mo.md("**" + _kind + "**"), _coefficient])
+                for _kind, _coefficient in ct_coefficients.items()
+            ],
+            mo.md(r"""
+    Shared particle color sums close the two-point color indices, and the vertex
+    uses the conjugate tree color tensor. Native graph weights are retained.
+    Only the named external-fermion convention is converted for the amputated
+    quark two-point kernel; ghosts retain their own native sign.
+
+    The columns below are $(\delta Z_q,\delta Z_m,\delta Z_A,\delta Z_\xi,
+    \delta Z_c,\delta Z_g,\delta Z_{Am},\delta Z_{cm})$.
+    Every matrix entry is a derivative of a generated coefficient, with linearity
+    checked before solving. The complete tensor amplitudes cancel separately.
+
+    The [reference model](https://raw.githubusercontent.com/FeynCalc/feyncalc/master/FeynCalc/Examples/FeynRules/QCD/QCD.fr)
+    uses $M(Z_{Am}^2-1)A^2/2$ and $M(Z_{cm}^2-1)\bar c c/2$.
+    Identical gluons supply a factor two; the distinct ghost fields do not.
+    Their rows therefore contain $2\delta Z_{Am}$ and $\delta Z_{cm}$.
+    """),
             ct_matrix,
             deltas,
             mo.md(r"""
-        The result obeys $Z_\xi=Z_A$. Both mass and coupling renormalization
-        are gauge independent. The coupling pole determines
-        $\beta_0=(11 C_A-2N_f)/3$ in
-        $\mu\,d g_s/d\mu=-\beta_0 g_s^3/(16\pi^2)+O(g_s^5)$.
-        The displayed vertex cancellation is checked using its calculated pole.
-        """),
+    The result obeys $Z_\xi=Z_A$. Mass and coupling renormalization are gauge
+    independent. The coupling pole gives $\beta_0=(11C_A-2N_f)/3$ in
+    $\mu\,d g_s/d\mu=-\beta_0g_s^3/(16\pi^2)+O(g_s^5)$.
+    """),
+        ]
+    )
+
+
+@app.cell(hide_code=True)
+def _(counterterm_names, counterterms_by_scheme, mo):
+    mo.vstack(
+        [
+            mo.md(r"""
+    ## MS and MSbar at the same scale
+
+    Use $\Delta=1/\epsilon+c_\Delta$ with
+    $c_\Delta=\log(4\pi)-\gamma_E$ and $D=4-2\epsilon$.
+    [OneLOop](https://arxiv.org/abs/1007.4716) divides its master integrals by
+    $r_\Gamma=\Gamma(1-\epsilon)^2\Gamma(1+\epsilon)/\Gamma(1-2\epsilon)$.
+    The conventional loop measure restores $(4\pi)^\epsilon r_\Gamma=
+    1+c_\Delta\epsilon+O(\epsilon^2)$, with $i/(16\pi^2)$ stripped off.
+
+    If a normalized loop coefficient is $P/\epsilon+F$, this measure gives
+    $P/\epsilon+F+c_\Delta P$. MS subtracts its pole; MSbar also subtracts
+    $c_\Delta P$. The actual generated CT amplitudes cancel the corresponding
+    terms in every sector. The finite scheme shift left in MS is checked too.
+
+    The reference extracts UV terms after tensor reduction. Shared UV expansion
+    provides those same local coefficients here; no full finite vertex is needed
+    for this comparison. The original selective-IRR reference remains separate:
+    its nonzero auxiliary gluon mass cannot be inferred from these zero full-UV
+    auxiliary counterterms.
+    """),
+            mo.ui.table(
+                [
+                    {"Constant": _name, "MS": str(_ms), "MSbar": str(_msbar)}
+                    for _name, _ms, _msbar in zip(
+                        counterterm_names,
+                        counterterms_by_scheme["MS"],
+                        counterterms_by_scheme["MSbar"],
+                        strict=True,
+                    )
+                ],
+                selection=None,
+            ),
         ]
     )
 
@@ -611,8 +1087,13 @@ def _(mo):
     )
     flavor_count = mo.ui.slider(0, 20, step=1, value=5, label="Quark flavors Nf")
     color_count = mo.ui.slider(2, 5, step=1, value=3, label="Colors Nc")
-    mo.hstack([gauge_parameter, flavor_count, color_count])
-    return color_count, flavor_count, gauge_parameter
+    subtraction_scheme = mo.ui.dropdown(
+        ["MSbar", "MS"], value="MSbar", label="Subtraction scheme"
+    )
+    mo.vstack(
+        [mo.hstack([gauge_parameter, flavor_count, color_count]), subtraction_scheme]
+    )
+    return color_count, flavor_count, gauge_parameter, subtraction_scheme
 
 
 @app.cell
@@ -620,12 +1101,14 @@ def _(
     CA,
     CF,
     Nf,
+    Symbol,
     color_count,
     counterterm_names,
     flavor_count,
     gauge_parameter,
     mo,
     residues,
+    subtraction_scheme,
     vertex_residue,
     xi,
 ):
@@ -636,6 +1119,8 @@ def _(
         Nf: flavor_count.value,
         xi: gauge_parameter.value,
     }
+    _c_delta = complex(((4 * Symbol.PI).log() - Symbol.EULER_GAMMA).evaluate({})).real
+    _finite_factor = _c_delta if subtraction_scheme.value == "MSbar" else 0.0
     selected_residues = [
         complex(_value.evaluate(_parameters)).real for _value in residues
     ]
@@ -650,11 +1135,15 @@ def _(
     mo.vstack(
         [
             mo.md(
-                r"**Coefficients of $a_4/\epsilon$** — vary the gauge, flavor count and SU(Nc) color group."
+                r"**Counterterms** — vary gauge, flavor count, SU(Nc) color group and subtraction scheme."
             ),
             mo.ui.table(
                 [
-                    {"Constant": _name, "Pole coefficient": _value}
+                    {
+                        "Constant": _name,
+                        "1/ε coefficient": _value,
+                        "Finite subtraction coefficient": _finite_factor * _value,
+                    }
                     for _name, _value in zip(
                         counterterm_names, selected_residues, strict=True
                     )
@@ -667,7 +1156,6 @@ def _(
             ),
         ]
     )
-    return beta0, selected_residues, vertex_error
 
 
 if __name__ == "__main__":
