@@ -36,7 +36,7 @@ def _(mo):
 
     Generate $\mu^-\to e^-\bar\nu_e\nu_\mu$ with the embedded Standard Model charged-current vertices. The existing W propagator supplies its complete unitary-gauge numerator, including the longitudinal term. Shared particle spin sums average the muon spin and sum all final spins.
 
-    First compare the full squared amplitude with the [FeynCalc reference](https://feyncalc.github.io/FeynCalcExamples/EW/Tree/Mu-ElAnelNmu), then derive the Fermi limit. Two calls to `Kinematics.two_body_phase_space` give the recursive three-body measure. Symbolica integrates the resulting spectrum and finite-mass correction.
+    First compare the full squared amplitude with the [FeynCalc reference](https://feyncalc.github.io/FeynCalcExamples/EW/Tree/Mu-ElAnelNmu), then derive the Fermi limit. The shared `Kinematics.three_body_phase_space` supplies the Dalitz measure, independently checked by a recursive two-body derivation. Symbolica integrates the resulting spectrum and finite-mass correction.
 
     Write $M=m_\mu$, $m=m_e$, $s=(p_e+p_{\bar\nu_e})^2$ and $t=(p_e+p_{\nu_\mu})^2$. Both neutrinos are massless. The coupling convention is $e^4=32G_F^2m_W^4\sin^4\theta_W$.
     """)
@@ -208,7 +208,10 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
             fermi,
         ]
     )
-    return GF, M, P, fermi, finite_W, mass, one, pi, s, t, z, zero
+    dalitz_measure = (
+        _kin.three_body_phase_space(P(1), P(2), P(3)).replace(_mm, M).together()
+    )
+    return GF, M, P, dalitz_measure, fermi, finite_W, mass, one, pi, s, t, z, zero
 
 
 @app.cell(hide_code=True)
@@ -222,7 +225,7 @@ def _(mo):
 
 
 @app.cell
-def _(M, P, S, fermi, hep, mass, mo, one, pi, t, zero):
+def _(M, P, S, dalitz_measure, fermi, hep, mass, mo, one, pi, t, zero):
     _Q = S("muon_decay::Q")
     _outer = (
         hep.Kinematics()
@@ -258,9 +261,10 @@ def _(M, P, S, fermi, hep, mass, mo, one, pi, t, zero):
     assert (s_min - mass**2 * M**2 / t).together() == zero
     assert (s_max - M**2 - mass**2 + t).together() == zero
     _jacobian = -_s_of_cosine.derivative(_cosine)
-    dalitz_measure = (
+    _recursive_measure = (
         _outer_measure * _inner_measure * (4 * pi) * (2 * pi) / (2 * pi * _jacobian)
     ).together()
+    assert (dalitz_measure - _recursive_measure).together() == zero
     assert (dalitz_measure - 1 / (128 * pi**3 * M**2)).together() == zero
     flux = hep.Kinematics().with_scalar_product(P(0), P(0), M**2).flux(P(0))
     assert flux == 2 * M
@@ -277,7 +281,7 @@ def _(M, P, S, fermi, hep, mass, mo, one, pi, t, zero):
             density,
         ]
     )
-    return dalitz_measure, density, flux, s_max, s_min
+    return density, flux, s_max, s_min
 
 
 @app.cell(hide_code=True)

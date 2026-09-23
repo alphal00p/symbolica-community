@@ -40,7 +40,7 @@ def _(mo):
     mo.md(r"""
     # Light-cone soft radiation
 
-    [Browse all notebooks](/) · [Quark–gluon scattering](/?file=hep/quark_gluon_scattering.py) ·
+    [Browse all notebooks](/) · [Full QCD radiation](/?file=hep/photon_radiation.py) · [Quark–gluon scattering](/?file=hep/quark_gluon_scattering.py) ·
     [Polarization sums](/?file=hep/polarization_sums.py)
 
     Generate $\gamma^*\to q\bar q$ and both diagrams for

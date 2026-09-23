@@ -24,7 +24,7 @@ def _(Model):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    [Browse all notebooks](/)
+    [Browse all notebooks](/) · [Born currents and real radiation](/?file=hep/photon_radiation.py)
     """)
     return
 
