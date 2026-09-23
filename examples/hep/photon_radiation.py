@@ -21,6 +21,7 @@ def _(mo):
     # Virtual photons and QCD radiation
 
     [Browse notebooks](/) · [Light-cone soft radiation](/?file=hep/soft_function.py) ·
+    [Photon–gluon currents](/?file=hep/photon_gluon.py) ·
     [Quark–gluon scattering](/?file=hep/quark_gluon_scattering.py)
 
     Generate $\gamma^*\to\mu^-\mu^+$, $\gamma^*\to q\bar q$ and

@@ -21,7 +21,7 @@ def _(mo):
     # Massive quark–gluon scattering
 
     [Browse notebooks](/) · [Light-cone soft radiation](/?file=hep/soft_function.py) · [Quark annihilation to gluons](/?file=hep/qcd_gluons.py) ·
-    [Gluon scattering](/?file=hep/gluon_scattering.py)
+    [Gluon scattering](/?file=hep/gluon_scattering.py) · [Photon–gluon currents](/?file=hep/photon_gluon.py)
 
     Generate the three $qg\to qg$ diagrams and every interference term, retaining
     the quark mass and symbolic SU($N_c$) color algebra. The model's bottom quark
