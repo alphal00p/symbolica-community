@@ -6,8 +6,7 @@ import decimal
 import enum
 import symbolica.core
 import typing
-from symbolica import ComplexFloat, Float
-from symbolica.core import Condition, Expression, FormattedOutput, HeldExpression, PatternRestriction
+from symbolica.core import ComplexFloat, Condition, Expression, Float, FormattedOutput, HeldExpression, PatternRestriction
 
 AUTO: _AutoIndex
 _: _AutoIndex
@@ -276,11 +275,16 @@ class DisplaySettings:
     indices within each displayed expression. ``"graph"`` keeps graph identities
     in their subscripts; ``"raw"`` preserves the original index notation. All
     styles leave the underlying expression and tensor interface unchanged.
+    ``component_style="superscript"`` displays concrete components as A(x,7)^{0,1}.
+    Use ``component_style="array"`` for A(x,7)[0,1]; ordinary arguments remain in
+    parentheses in both styles.
     """
     @property
     def tensor_layout(self) -> builtins.str: ...
     @property
     def index_style(self) -> builtins.str: ...
+    @property
+    def component_style(self) -> builtins.str: ...
     @property
     def show_dimensions(self) -> builtins.bool: ...
     @property
@@ -293,7 +297,7 @@ class DisplaySettings:
     def index_gap(self) -> builtins.str: ...
     @property
     def factor_gap(self) -> builtins.str: ...
-    def __new__(cls, tensor_layout: builtins.str = 'ports', show_dimensions: builtins.bool = False, parentheses: builtins.bool = True, commas: typing.Optional[builtins.bool] = None, symbol_scripts: builtins.bool = True, index_gap: builtins.str = '0.08em', factor_gap: builtins.str = '0.12em', index_style: builtins.str = 'alphabet') -> DisplaySettings: ...
+    def __new__(cls, tensor_layout: builtins.str = 'ports', show_dimensions: builtins.bool = False, parentheses: builtins.bool = True, commas: typing.Optional[builtins.bool] = None, symbol_scripts: builtins.bool = True, index_gap: builtins.str = '0.08em', factor_gap: builtins.str = '0.12em', index_style: builtins.str = 'alphabet', component_style: builtins.str = 'superscript') -> DisplaySettings: ...
     @staticmethod
     def ports() -> DisplaySettings: ...
     @staticmethod
@@ -2226,6 +2230,22 @@ class TensorExpression(Expression):
 
         When `library` is omitted, use the built-in four-dimensional HEP and SU(3) library.
         """
+    def components(self, library: typing.Optional[TensorLibrary] = None) -> builtins.list[Expression | builtins.complex | builtins.float]:
+        r"""
+        Return component values in logical row-major interface order.
+
+        Parse and execute through the same path as `to_network()`. Tensors absent
+        from the library acquire symbolic components, with the same identities
+        used when they occur in a larger network. Registered tensors use their
+        library values; compound expressions are contracted before extraction.
+        Abstract index labels do not change a named tensor's component identities.
+
+        The result is a flat list (one element for a scalar). Dimensions must be
+        concrete. This does not mutate the expression or register generated data.
+        When `library` is omitted, use the default HEP library; pass
+        `TensorLibrary.hep_lib_atom()` to select its atom-valued variant.
+        Values retain the Python types returned by `TensorNetwork.result_tensor()`.
+        """
     def index(self, *indices: typing.Any, cook_indices: builtins.bool = False) -> TensorExpression:
         r"""
         Fill the unresolved external ports with `indices` in interface order.
@@ -2712,9 +2732,10 @@ class TensorNetwork:
     r"""
     A graph of tensor operations that can be simplified and executed.
 
-    Named tensor expressions are resolved through a `TensorLibrary`. Register concrete data
-    before constructing and executing a network; an expression alone supplies structure, not
-    component values.
+    Named tensor expressions are resolved through a `TensorLibrary`. Register tensors
+    to supply their component values. Unregistered tensors with concrete dimensions
+    acquire symbolic components automatically; `TensorExpression.components()` exposes
+    the same components without requiring a surrounding network.
 
     A network retains the semantic source expression and its public tensor interface
     separately from the executable graph and its stored values. Value specialization
@@ -3424,4 +3445,3 @@ def trace(representation: Representation, *factors: typing.Unpack[tuple[typing.U
 
 @typing.overload
 def trace(representation: Representation, *factors: typing.Union[Expression, int, Float, ComplexFloat, Tensor, TensorNetwork]) -> TensorExpression | TensorNetwork: ...
-
