@@ -19,7 +19,9 @@ def _(mo):
     mo.md(r"""
     # Two-loop electron self-energy: Feynman gauge
 
-    [Browse all notebooks](/) · [Photon self-energy](/?file=hep/photon_self_energy.py) ·
+    [Browse all notebooks](/) ·
+    [Massive electron self-energy](/?file=hep/electron_self_energy.py) ·
+    [Photon self-energy](/?file=hep/photon_self_energy.py) ·
     [Two-loop photon](/?file=hep/photon_two_loop.py) ·
     [Two-loop $\phi^4$](/?file=hep/ibp_phi4.py)
 

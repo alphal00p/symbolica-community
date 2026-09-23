@@ -22,7 +22,9 @@ def _(mo):
     mo.md(r"""
     # One-loop QED renormalization
 
-    [Browse all notebooks](/) · [Electron g−2](/?file=hep/gminus2.py) ·
+    [Browse all notebooks](/) ·
+    [Massive electron self-energy](/?file=hep/electron_self_energy.py) ·
+    [Electron g−2](/?file=hep/gminus2.py) ·
     [Two-loop photon](/?file=hep/photon_two_loop.py) ·
     [Two-loop electron](/?file=hep/electron_two_loop.py)
 

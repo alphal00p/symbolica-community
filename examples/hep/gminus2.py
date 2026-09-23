@@ -21,7 +21,9 @@ def _(mo):
     mo.md(r"""
     # Electron anomalous magnetic moment
 
-    [Browse all notebooks](/) · [Unequal-mass bubble](/?file=hep/ibp_bubble.py) ·
+    [Browse all notebooks](/) ·
+    [Massive electron self-energy](/?file=hep/electron_self_energy.py) ·
+    [Unequal-mass bubble](/?file=hep/ibp_bubble.py) ·
     [Two-loop φ⁴](/?file=hep/ibp_phi4.py) · [Higgs to gluons](/?file=hep/higgs_gluons.py)
 
     Generate the QED vertex and extract its Pauli form factor, reproducing
