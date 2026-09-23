@@ -20,7 +20,7 @@ def _(mo):
     mo.md(r"""
     # Massive quark–gluon scattering
 
-    [Browse notebooks](/) · [Quark annihilation to gluons](/?file=hep/qcd_gluons.py) ·
+    [Browse notebooks](/) · [Light-cone soft radiation](/?file=hep/soft_function.py) · [Quark annihilation to gluons](/?file=hep/qcd_gluons.py) ·
     [Gluon scattering](/?file=hep/gluon_scattering.py)
 
     Generate the three $qg\to qg$ diagrams and every interference term, retaining

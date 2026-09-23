@@ -19,7 +19,7 @@ def _(mo):
     mo.md(r"""
     # Polarization sums in $D$ dimensions
 
-    [Browse all notebooks](/) · [Gluon scattering](/?file=hep/gluon_scattering.py) ·
+    [Browse all notebooks](/) · [Light-cone soft radiation](/?file=hep/soft_function.py) · [Gluon scattering](/?file=hep/gluon_scattering.py) ·
     [Massive Dirac spin states](/?file=hep/polarized_spin.py) ·
     [Gluon scattering from quarks](/?file=hep/qcd_gluons.py)
 
