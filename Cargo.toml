@@ -37,7 +37,7 @@ default = ["module", "native"]
 module = ["pyo3/abi3", "symbolica/python_abi3"] # incompatible with stub_gen
 # Keep the system allocator: mimalloc can crash after Python's importing thread exits.
 native = ["symbolica/tracing_max_level_info", "symbolica/integer-gmp", "symbolica/float-mpfr", "symbolica/native_code_generation", "spynso3/native", "feynkit-py/native", "example_extension/native"]
-wasm = ["symbolica/wasm", "spynso3/wasm", "feynkit-py/wasm", "example_extension/wasm"]
+wasm = ["symbolica/wasm", "spynso3/wasm", "feynkit-py/wasm", "example_extension/wasm", "one-loop-reduce-python/wasm"]
 python_stubgen = [
     "native",
     "pyo3-stub-gen",
@@ -46,10 +46,12 @@ python_stubgen = [
     "feynkit-py/python_stubgen",
     "vakint/python_stubgen",
     "example_extension/python_stubgen",
+    "one-loop-reduce-python/python_stubgen",
 ]
 
 [dependencies]
 example_extension = { path = "example_extension", default-features = false }
+one-loop-reduce-python = { path = "../../one-loop-reduce/crates/one-loop-reduce-python", default-features = false }
 spynso3 = { path = "../../gammaloop/feynkit-rich-display/crates/spynso3", default-features = false }
 # Aggregates the cff, generator, graph, tensor, model, and kinematics bindings.
 feynkit-py = { path = "../../gammaloop/feynkit-rich-display/crates/feynkit-py", default-features = false, features = ["ufo"] }
@@ -65,6 +67,7 @@ pyo3-stub-gen = { version = "0.17", optional = true, default-features = false, f
 rustred-feynkit = { path = "../../rustred/crates/rustred-feynkit" }
 # Share the host kernel; OneLOop currently requires native numeric/JIT support.
 oneloop-python = { path = "../../oneloopmaster/python", default-features = false, features = ["community"] }
+oneloop = { path = "../../oneloopmaster" }
 # Vakint currently requires native dependencies, including GMP/MPFR.
 vakint = { path = "../../gammaloop/feynkit-rich-display/crates/vakint", features = ["symbolica_community_module"] }
 

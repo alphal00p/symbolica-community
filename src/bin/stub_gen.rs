@@ -6,10 +6,12 @@ fn main() -> Result<()> {
         [] => None,
         [arg] if arg == "--hep-only" => Some("hep"),
         [arg] if arg == "--spenso-only" => Some("spenso"),
+        [arg] if arg == "--oneloop-only" => Some("oneloop"),
         _ => {
-            return Err(
-                std::io::Error::other("Usage: stub_gen [--hep-only | --spenso-only]").into(),
-            );
+            return Err(std::io::Error::other(
+                "Usage: stub_gen [--hep-only | --spenso-only | --oneloop-only]",
+            )
+            .into());
         }
     };
     let mut stub = stub_info()?;
@@ -32,6 +34,27 @@ fn main() -> Result<()> {
             directory.join("__init__.pyi"),
             source.trim_end().to_owned() + "\n",
         )?;
+        return Ok(());
+    }
+    let reducer = stub
+        .modules
+        .remove("symbolica.community.hep.oneloop")
+        .ok_or_else(|| {
+            std::io::Error::other("One-loop reducer did not register its Python stub inventory")
+        })?;
+    let directory = stub.python_root.join("symbolica/community/hep");
+    std::fs::create_dir_all(&directory)?;
+    let oneloop = format!("{}\n{}", include_str!("../../stubs/oneloop.pyi"), reducer);
+    let oneloop = oneloop
+        .lines()
+        .map(str::trim_end)
+        .collect::<Vec<_>>()
+        .join("\n");
+    std::fs::write(
+        directory.join("oneloop.pyi"),
+        oneloop.trim_end().to_owned() + "\n",
+    )?;
+    if only == Some("oneloop") {
         return Ok(());
     }
     let feynkit = feynkit_py::stub_info()?
