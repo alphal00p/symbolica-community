@@ -26,7 +26,7 @@ def _(mo):
     mo.md(r"""
     # Quark annihilation into gluons
 
-    [Browse all notebooks](/)
+    [Browse all notebooks](/) · [Quark–gluon scattering](/?file=hep/quark_gluon_scattering.py)
 
     Generate $b\bar b\to gg$ with the bottom mass retained. The three diagrams
     include both quark-exchange channels and the three-gluon vertex. Summing

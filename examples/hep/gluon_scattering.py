@@ -21,7 +21,8 @@ def _(mo):
     # Gluon–gluon scattering in $D$ dimensions
 
     [Browse all notebooks](/) · [Polarization sums](/?file=hep/polarization_sums.py) ·
-    [Quark scattering](/?file=hep/quark_scattering.py)
+    [Quark scattering](/?file=hep/quark_scattering.py) ·
+    [Quark–gluon scattering](/?file=hep/quark_gluon_scattering.py)
 
     Generate $gg\to gg$ from the Standard Model: three exchange diagrams and
     the four-gluon contact interaction. Retain every interference term and
