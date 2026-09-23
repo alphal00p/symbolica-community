@@ -1,4 +1,4 @@
-//! Expose FeynKit and native OneLOop evaluation in one community namespace.
+//! Expose FeynKit, one-loop reduction, and native master evaluation together.
 
 use pyo3::{
     Bound, PyResult, Python,
@@ -25,13 +25,13 @@ impl SymbolicaCommunityModule for HepModule {
                 value.setattr("__module__", "symbolica.community.hep")?;
             }
         }
-        #[cfg(not(target_arch = "wasm32"))]
-        oneloop_native::register_hep_module(module)?;
+        crate::oneloop::register(module)?;
         Ok(())
     }
 
     fn initialize(py: Python<'_>) -> PyResult<()> {
         feynkit_py::FeynkitModule::initialize(py)?;
+        oneloopreduce_python::CommunityModule::initialize(py)?;
         #[cfg(not(target_arch = "wasm32"))]
         oneloop_native::CommunityModule::initialize(py)?;
         Ok(())

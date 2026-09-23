@@ -15,6 +15,7 @@ use symbolica::{
 use symbolica_integrate::Integrate;
 
 mod hep;
+mod oneloop;
 
 #[cfg(feature = "python_stubgen")]
 use pyo3_stub_gen::define_stub_info_gatherer;

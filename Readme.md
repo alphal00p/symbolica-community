@@ -46,7 +46,9 @@ from symbolica.community.hep import FeynmanDiagram, Model, Generator, TensorRedu
 
 See the [HEP example](examples/hep/README.md) for a complete one-loop calculation.
 
-Native builds also expose OneLOop in the same Symbolica kernel:
+One-loop reduction from [one-loop-reduce](https://github.com/ecavan/one-loop-reduce)
+is available in `hep.oneloop`. Native builds also expose OneLoopMaster's scalar
+integral evaluation there, sharing the same Symbolica kernel:
 
 ```python
 from symbolica.community.hep import FourMomentum, oneloop
@@ -55,12 +57,58 @@ p = FourMomentum(3.0, 1.0, 0.0, 0.0)
 finite, pole, double_pole = oneloop.B0(p.mass_squared, 4.0, 4.0)
 ```
 
-The local host uses `../../oneloopmaster/python` and pins Symbolica to the
-revision used by OneLOop's evaluator caches. Run
+Reduce a family symbolically, then compile its Laurent coefficients for numerical
+evaluation:
+
+```python
+from symbolica import E, S
+from symbolica.community.hep import oneloop
+
+mass_squared = S("example::mass_squared")
+family = oneloop.IntegralFamily(
+    [oneloop.Propagator(mass_squared)], [], exponents=[2],
+)
+reduction = family.reduce().simplify()
+coefficients = oneloop.reduction_coefficients(reduction, mu_squared=E("1"))
+evaluator = oneloop.compile_native(coefficients, [mass_squared])
+print(evaluator.evaluate_complex([2 + 0j]))  # [-log(2), 1, 0]
+```
+
+`reduction_coefficients` expands the reduction's rational coefficients at
+`oneloopreduce::d = 4 - 2*eps` through the order needed for the finite term and
+returns `[finite, simple_pole, double_pole]`. It rejects coefficients with a pole
+at `d=4`, since those require positive-order master coefficients that
+OneLoopMaster does not supply. The masses, squared invariants, and squared scale
+must be independent of `d`.
+
+`Reduction.to_expression()` retains the reducer's symbolic master heads and
+exact dimension dependence. `Reduction.to_oneloopmaster(mu_squared=...)` converts
+the heads and appends the squared scale without expanding in epsilon. For a
+single master from `reduction.terms`, `master.to_oneloopmaster()` feeds directly
+into `oneloop.master_coefficients()` or `oneloop.get_expression()`.
+
+Family invariants are `(r_i-r_j)^2` in lexicographic `i<j` order. Master arguments
+use the AVH/OneLOop ordering, so a triangle input `[p1sq, s, p2sq]` produces
+`C0(p1sq, p2sq, s, ...)`. Polynomial numerators use
+`S("oneloopreduce::dot")` with `oneloopreduce::k` and `oneloopreduce::q1`, etc.
+Import `hep.oneloop` before constructing these symbols so their attributes are
+registered. Symbolic reduction is also available in WebAssembly builds;
+numerical master evaluation requires a native build.
+
+The local host uses `../../oneloopmaster/python` and
+`../../one-loop-reduce/crates/one-loop-reduce-python`, and pins Symbolica to the
+revision used by OneLOop's evaluator caches. The local reducer checkout includes
+the shared namespace, master conversion methods, and feature selection needed
+by this host. Run
 `.venv-feynkit/bin/python examples/oneloop_smoke.py` to check numeric evaluation,
 SymJIT, arbitrary precision, and expressions shared with FeynKit. This example
 requires NumPy for Symbolica's expression evaluator. After rebuilding the host,
 restart any running Python or notebook kernel to load the updated extension.
+Run `python examples/oneloop_reduce.py` for reduction followed by master
+evaluation, and `python -m pytest tests/test_oneloop_reduce.py` for the integration
+checks. To regenerate the combined one-loop type hints, run
+`cargo run --no-default-features --features python_stubgen --bin stub_gen -- --oneloop-only`;
+native evaluator declarations are maintained in `stubs/oneloop.pyi`.
 
 #### Installation 
 

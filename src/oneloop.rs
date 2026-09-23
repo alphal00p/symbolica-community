@@ -1,0 +1,128 @@
+//! Join symbolic one-loop reduction to the host's scalar master evaluators.
+
+use pyo3::{
+    Bound, PyResult,
+    types::{PyAnyMethods, PyModule, PyModuleMethods},
+};
+use symbolica::api::python::SymbolicaCommunityModule;
+
+pub fn register(hep: &Bound<'_, PyModule>) -> PyResult<()> {
+    #[cfg(not(target_arch = "wasm32"))]
+    let module = {
+        oneloop_native::register_hep_module(hep)?;
+        hep.getattr("oneloop")?.cast_into::<PyModule>()?
+    };
+    #[cfg(target_arch = "wasm32")]
+    let module = {
+        let module = PyModule::new(hep.py(), "symbolica.community.hep.oneloop")?;
+        hep.add("oneloop", &module)?;
+        hep.py()
+            .import("sys")?
+            .getattr("modules")?
+            .set_item("symbolica.community.hep.oneloop", &module)?;
+        module
+    };
+
+    oneloopreduce_python::CommunityModule::register_module(&module)?;
+    #[cfg(not(target_arch = "wasm32"))]
+    module.add_function(pyo3::wrap_pyfunction!(
+        native::reduction_coefficients,
+        &module
+    )?)?;
+    Ok(())
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+mod native {
+    use std::collections::BTreeMap;
+
+    use oneloop::ScalarIntegral;
+    use oneloopreduce_python::{Reduction, oneloopmaster_expression};
+    use pyo3::{PyResult, exceptions::PyValueError, pyfunction};
+    use symbolica::{
+        api::python::PythonExpression,
+        atom::{Atom, AtomCore, Symbol},
+        poly::series::SeriesDepth,
+        symbol,
+    };
+
+    /// Expand a reduction at d = 4 - 2*eps and return finite, simple-pole,
+    /// and double-pole expressions in OneLoopMaster's normalization.
+    ///
+    /// The squared scale defaults to 1. Compile the returned expressions with
+    /// compile_native. Coefficients singular at d=4 require positive powers of
+    /// epsilon from the masters, which OneLoopMaster does not provide, and
+    /// raise ValueError. Kinematic arguments and the scale must not depend on d.
+    #[pyfunction]
+    #[pyo3(signature = (reduction, mu_squared = None))]
+    pub fn reduction_coefficients(
+        reduction: &Reduction,
+        mu_squared: Option<PythonExpression>,
+    ) -> PyResult<Vec<PythonExpression>> {
+        let scale = mu_squared.map(|m| m.expr).unwrap_or_else(|| Atom::num(1));
+        let dimension = symbol!("oneloopreduce::d");
+
+        // Combine repeated masters before expanding, so removable poles in
+        // their summed coefficient do not cause a false rejection.
+        let mut terms = BTreeMap::<Atom, Atom>::new();
+        for (coefficient, master) in reduction.terms_ref() {
+            let master = oneloopmaster_expression(master, &scale);
+            if master.contains_symbol(dimension) {
+                return Err(PyValueError::new_err(
+                    "master kinematics and mu_squared must be independent of oneloopreduce::d",
+                ));
+            }
+            *terms.entry(master).or_insert(Atom::Zero) += coefficient;
+        }
+
+        let mut result = [Atom::Zero, Atom::Zero, Atom::Zero];
+        for (master, coefficient) in terms {
+            let coefficient = coefficient.cancel();
+            if coefficient.is_zero() {
+                continue;
+            }
+            let series = coefficient
+                .series(dimension, Atom::num(4), SeriesDepth::absolute(2))
+                .map_err(|e| {
+                    PyValueError::new_err(format!("cannot expand reduction coefficient: {e}"))
+                })?;
+            if series.get_trailing_exponent() < 0 {
+                return Err(PyValueError::new_err(format!(
+                    "reduction coefficient for {master} has a pole at d=4; \
+                     positive-order epsilon coefficients of the master are required"
+                )));
+            }
+            if series
+                .terms()
+                .any(|(power, value)| !power.is_integer() && !value.is_zero())
+            {
+                return Err(PyValueError::new_err(
+                    "reduction coefficients must have an integer-power Taylor expansion at d=4",
+                ));
+            }
+            // The series is in (d-4), so multiply Taylor coefficients by (-2)^n.
+            let c0 = series.coefficient(0.into()).unwrap();
+            let c1 = series.coefficient(1.into()).unwrap() * Atom::num(-2);
+            let c2 = series.coefficient(2.into()).unwrap() * Atom::num(4);
+            let (family, arguments) =
+                oneloop::master_arguments(&master).map_err(PyValueError::new_err)?;
+            let head: Symbol = match family {
+                ScalarIntegral::A0 => oneloop::A0(),
+                ScalarIntegral::B0 => oneloop::B0(),
+                ScalarIntegral::DB0 => oneloop::dB0(),
+                ScalarIntegral::C0 => oneloop::C0(),
+                ScalarIntegral::D0 => oneloop::D0(),
+            };
+            let [finite, pole, double_pole] = [0, -1, -2].map(|tag| {
+                let args = std::iter::once(Atom::num(tag))
+                    .chain(arguments.iter().cloned())
+                    .collect::<Vec<_>>();
+                head.call(args.as_slice())
+            });
+            result[0] += &c0 * &finite + &c1 * &pole + &c2 * &double_pole;
+            result[1] += &c0 * &pole + &c1 * &double_pole;
+            result[2] += &c0 * &double_pole;
+        }
+        Ok(result.into_iter().map(Into::into).collect())
+    }
+}
