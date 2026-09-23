@@ -1,0 +1,736 @@
+import marimo
+
+__generated_with = "0.24.0"
+app = marimo.App(
+    width="medium",
+    app_title="Scalar and pseudoscalar Yukawa renormalization",
+)
+
+
+@app.cell
+def _():
+    import copy
+    import json
+
+    import marimo as mo
+    from symbolica import E, Matrix, Replacement, S, Symbol
+    from symbolica.community import hep
+    from symbolica.community.hep import oneloop
+    from symbolica.community.spenso import TensorExpression
+
+    return (
+        E,
+        Matrix,
+        Replacement,
+        S,
+        Symbol,
+        TensorExpression,
+        copy,
+        hep,
+        json,
+        mo,
+        oneloop,
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    # Scalar and pseudoscalar Yukawa renormalization
+    [Browse notebooks](/) · [Quartic scalar](/?file=hep/phi4_renormalization.py) · [Cubic scalar](/?file=hep/phi3_renormalization.py)
+
+    Reproduce both [scalar](https://feyncalc.github.io/FeynCalcExamples/YukawaS/OneLoop/Renormalization) and [pseudoscalar](https://feyncalc.github.io/FeynCalcExamples/YukawaPS/OneLoop/Renormalization) references using one calculation. The interactions are $-g\phi\bar\psi\psi$ or $-ig\phi\bar\psi\gamma_5\psi$, together with $-\lambda\phi^4/4!$.
+
+    Reuse `Model.phi4()` and the Standard Model's massive Dirac propagators through the existing model-definition API. For each interaction, the generator produces 13 bare diagrams and six local counterterms. Shared graph UV expansion, Spenso Dirac traces, covariant tensor reduction and native IBP determine all poles.
+
+    Take $D=4-2\epsilon$. The scalar mass renormalizes as $m_\phi^2 Z_M$ and the fermion mass as $m_\psi Z_m$. These are the two-, three- and four-point functions in the references; vacuum and odd-scalar operators are separate. The pseudoscalar checks concern these leading UV poles, with paired gamma-five factors in the projected traces, and do not address anomalous axial traces.
+    """)
+
+
+@app.cell
+def _(E, S, copy, hep, json, oneloop):
+    specification = json.loads(hep.Model.phi4().to_json())
+    _standard = json.loads(hep.Model.standard_model().to_json())
+    specification["particles"] += [
+        _p for _p in _standard["particles"] if abs(_p["pdg_code"]) == 11
+    ]
+    _fermion_names = {
+        _p["name"] for _p in specification["particles"] if _p["spin"] == 2
+    }
+    specification["propagators"] += [
+        _p for _p in _standard["propagators"] if _p["particle"] in _fermion_names
+    ]
+    specification["parameters"] += [
+        _p for _p in _standard["parameters"] if _p["name"] == "Me"
+    ]
+    _parameter = copy.deepcopy(specification["parameters"][2])
+    _parameter.update(name="g", lhacode=[3])
+    specification["parameters"].append(_parameter)
+    specification["orders"].append(
+        {"name": "YUKAWA", "expansion_order": 99, "hierarchy": 1}
+    )
+    D, eps, M, mUV, coordinate, integral, s = S(
+        "yukawa::D",
+        "yukawa::eps",
+        "yukawa::M",
+        "yukawa::mUV",
+        "yukawa::x",
+        "yukawa::I",
+        "yukawa::s",
+    )
+    K, P, mass, scalar_mass, g, lam = S(
+        "gammalooprs::K", "gammalooprs::P", "UFO::Me", "UFO::mass", "UFO::g", "UFO::lam"
+    )
+    mink, bis, gamma, metric = S(
+        "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
+    )
+    index, dim, wave, mu = S(
+        "yukawa::index_", "yukawa::dim_", "yukawa::wave_", "yukawa::mu"
+    )
+    den, edge_, mom_, mass_, quad_ = S(
+        "gammalooprs::denom",
+        "yukawa::edge_",
+        "yukawa::mom_",
+        "yukawa::mass_",
+        "yukawa::quad_",
+    )
+    zero, one = (E("0"), E("1"))
+    kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
+        P(0), P(0), s
+    )
+    _vacuum = hep.Kinematics(D, momenta=[K(0)])
+    family = hep.IntegralFamily(
+        [K(0)], [], [_vacuum.scalar_product(K(0), K(0)) - M], kinematics=_vacuum
+    )
+    _master_reduction = oneloop.IntegralFamily([oneloop.Propagator(M)], []).reduce()
+    _master = _master_reduction.terms[0][1].to_oneloopmaster(one)
+    master_pole = oneloop.get_expression(_master, coefficient=-1)
+    assert master_pole == M
+    reducer = hep.TensorReducer(D).with_integrated_vector(K(0, mink(D)))
+    options = {
+        "maximum_bridges": 0,
+        "self_energy": None,
+        "tadpoles": None,
+        "zero_snails": None,
+        "numerator_grouping": None,
+        "progress": None,
+    }
+    h, _dpsi, _dm, _dphi, _dM, _dg, _dlam = S(
+        "yukawa::h",
+        "yukawa::dpsi",
+        "yukawa::dm",
+        "yukawa::dphi",
+        "yukawa::dM",
+        "yukawa::dg",
+        "yukawa::dlam",
+    )
+    unknowns = [_dpsi, _dm, _dphi, _dM, _dg, _dlam]
+    Zpsi, Zm, Zphi, ZM, Zg, Zlam = (1 + h * _x for _x in unknowns)
+    return (
+        D,
+        K,
+        M,
+        P,
+        ZM,
+        Zg,
+        Zlam,
+        Zm,
+        Zphi,
+        Zpsi,
+        bis,
+        coordinate,
+        den,
+        dim,
+        edge_,
+        eps,
+        family,
+        g,
+        gamma,
+        h,
+        index,
+        integral,
+        kinematics,
+        lam,
+        mUV,
+        mass,
+        mass_,
+        master_pole,
+        metric,
+        mink,
+        mom_,
+        mu,
+        one,
+        options,
+        quad_,
+        reducer,
+        s,
+        scalar_mass,
+        specification,
+        unknowns,
+        wave,
+        zero,
+    )
+
+
+@app.cell
+def _(
+    D,
+    K,
+    M,
+    Matrix,
+    P,
+    Replacement,
+    S,
+    Symbol,
+    TensorExpression,
+    ZM,
+    Zg,
+    Zlam,
+    Zm,
+    Zphi,
+    Zpsi,
+    bis,
+    coordinate,
+    copy,
+    den,
+    dim,
+    edge_,
+    eps,
+    family,
+    g,
+    gamma,
+    h,
+    hep,
+    index,
+    integral,
+    json,
+    kinematics,
+    lam,
+    mUV,
+    mass,
+    mass_,
+    master_pole,
+    metric,
+    mink,
+    mo,
+    mom_,
+    mu,
+    one,
+    options,
+    quad_,
+    reducer,
+    s,
+    scalar_mass,
+    specification,
+    unknowns,
+    wave,
+    zero,
+):
+    models, all_diagrams, all_poles, all_reductions = ({}, {}, {}, {})
+    all_counterterms, all_matrices, all_constants = ({}, {}, {})
+    for _variant, _lorentz, _local_coupling in [
+        ("Scalar", "Identity(idx(1,1),idx(1,2))", -Symbol.I * g),
+        ("Pseudoscalar", "Gamma5(idx(1,1),idx(1,2))", g),
+    ]:
+        _definition = copy.deepcopy(specification)
+        _definition["name"] = "yukawa_" + _variant.lower()
+        _definition["lorentz_structures"].append(
+            {"name": "YUKAWA", "spins": [2, 2, 1], "structure": _lorentz}
+        )
+        _definition["couplings"].append(
+            {
+                "name": "YUKAWA",
+                "expression": repr(_local_coupling),
+                "orders": [["YUKAWA", 1]],
+                "value": None,
+            }
+        )
+        _definition["vertex_rules"].append(
+            {
+                "name": "YUKAWA",
+                "particles": ["e+", "e-", "phi"],
+                "color_structures": ["1"],
+                "lorentz_structures": ["YUKAWA"],
+                "couplings": [["YUKAWA"]],
+            }
+        )
+        _model = hep.Model.from_json(json.dumps(_definition))
+        models[_variant] = _model
+        _fermion, _scalar = (_model.particle("e-"), _model.particle("phi"))
+        _ct_definition = json.loads(_model.to_json())
+        _ct_definition["orders"].append(
+            {"name": "CT", "expansion_order": 1, "hierarchy": 1}
+        )
+        for _label, _particles, _structure, _factor in [
+            (
+                "fermion_kinetic",
+                ["e+", "e-"],
+                "Gamma(dummy(1),idx(1,1),idx(1,2))*P(dummy(1),2)",
+                Symbol.I * (Zpsi - 1),
+            ),
+            (
+                "fermion_mass",
+                ["e+", "e-"],
+                "Identity(idx(1,1),idx(1,2))",
+                -Symbol.I * mass * (Zpsi * Zm - 1),
+            ),
+            (
+                "scalar_kinetic",
+                ["phi"] * 2,
+                "P(dummy(1),1)*P(dummy(1),1)",
+                Symbol.I * (Zphi - 1),
+            ),
+            (
+                "scalar_mass",
+                ["phi"] * 2,
+                "1",
+                -Symbol.I * scalar_mass**2 * (Zphi * ZM - 1),
+            ),
+            (
+                "vertex",
+                ["e+", "e-", "phi"],
+                _lorentz,
+                _local_coupling * (Zpsi * Zg * Zphi.sqrt() - 1),
+            ),
+            ("quartic", ["phi"] * 4, "1", -Symbol.I * lam * (Zlam * Zphi**2 - 1)),
+        ]:
+            _name = "CT_" + _label
+            _ct_definition["lorentz_structures"].append(
+                {
+                    "name": _name,
+                    "spins": [_model.particle(_p).spin for _p in _particles],
+                    "structure": _structure,
+                }
+            )
+            _ct_definition["couplings"].append(
+                {
+                    "name": _name,
+                    "expression": repr(_factor.series(h, 0, 1).to_expression()),
+                    "orders": [["CT", 1]],
+                    "value": None,
+                }
+            )
+            _ct_definition["vertex_rules"].append(
+                {
+                    "name": _name,
+                    "particles": _particles,
+                    "color_structures": ["1"],
+                    "lorentz_structures": [_name],
+                    "couplings": [[_name]],
+                }
+            )
+        _ct_model = hep.Model.from_json(json.dumps(_ct_definition))
+        _stage_parts, _stage_diagrams = ({}, {})
+        for _stage, _stage_model, _loops in [("bare", _model, 1), ("ct", _ct_model, 0)]:
+            _parts, _diagrams = ({}, {})
+            for _kind, _incoming, _outgoing, _bare_count, _ct_count in [
+                ("fermion", [_fermion], [_fermion], 1, 2),
+                ("scalar", [_scalar], [_scalar], 2, 2),
+                ("vertex", [_fermion], [_scalar, _fermion], 1, 1),
+                ("quartic", [_scalar] * 2, [_scalar] * 2, 9, 1),
+            ]:
+                _generated = _stage_model.generate_diagrams(
+                    _incoming,
+                    _outgoing,
+                    loops=_loops,
+                    max_vertices=len(_incoming) + len(_outgoing) if _loops else 1,
+                    coupling_orders={"CT": 1} if not _loops else None,
+                    **options,
+                )
+                _diagrams[_kind] = _generated.diagrams
+                assert len(_generated.diagrams) == (
+                    _bare_count if _loops else _ct_count
+                ), (_variant, _kind, len(_generated.diagrams))
+                for _diagram in _generated.diagrams:
+                    _ports = {}
+                    if _kind in ("fermion", "vertex"):
+                        for _edge in _diagram.external_edges:
+                            if _kind == "vertex" and _edge.external_index == 1:
+                                continue
+                            _ports[_edge.external_index] = dict(
+                                next(
+                                    _diagram.projector_expression().match(
+                                        wave(_edge.id, bis(4, index)), max_level=0
+                                    )
+                                )
+                            )[index]
+                    _numerator = _stage_model.expand_couplings(
+                        _diagram.numerator_expression().to_expression()
+                    )
+                    if _loops:
+                        _numerator = _diagram.uv_expansion(
+                            mUV, numerator=_numerator
+                        ).to_expression()
+                    _numerator = _diagram.momentum_basis().route_expression(_numerator)
+                    _numerator = (
+                        _numerator.replace(mink(dim, index), mink(D, index))
+                        .replace(mink(dim), mink(D))
+                        .replace(mUV**2, M)
+                    )
+                    for _match in list(
+                        _numerator.match(den(edge_, mom_, mass_, quad_))
+                    ):
+                        _values = dict(_match)
+                        _formal = family.rewrite_numerator(_values[quad_], [coordinate])
+                        assert _formal == coordinate
+                        _numerator = _numerator.replace(
+                            den(
+                                _values[edge_],
+                                _values[mom_],
+                                _values[mass_],
+                                _values[quad_],
+                            ),
+                            _formal,
+                        )
+                    _factor = (
+                        _diagram.overall_factor_expression(evaluate=True)
+                        * _diagram.numerator_prefactor_expression()
+                    )
+                    if not _loops:
+                        _factor /= Symbol.I * h
+                    if _kind == "fermion":
+                        _probes = [
+                            (
+                                "fermion_p",
+                                gamma(bis(4, _ports[0]), bis(4, _ports[1]), mink(D, mu))
+                                * P(0, mink(D, mu))
+                                / (4 * s),
+                            ),
+                            (
+                                "fermion_m",
+                                metric(bis(4, _ports[0]), bis(4, _ports[1]))
+                                / (4 * mass),
+                            ),
+                        ]
+                    elif _kind == "vertex":
+                        _probe = (
+                            metric(bis(4, _ports[0]), bis(4, _ports[2]))
+                            if _variant == "Scalar"
+                            else TensorExpression.gamma5(4)(
+                                _ports[0], _ports[2]
+                            ).to_expression()
+                        )
+                        _vertex_phase = _local_coupling / (-Symbol.I * g)
+                        _probes = [(_kind, _probe / (4 * _vertex_phase))]
+                    else:
+                        _probes = [(_kind, one)]
+                    for _label, _projector in _probes:
+                        _trace = (
+                            TensorExpression((_numerator * _projector).expand())
+                            .simplify_gamma()
+                            .expand()
+                            .to_dots()
+                            .to_expression()
+                        )
+                        _expression = family.rewrite_numerator(
+                            kinematics.apply(reducer.reduce(_trace)), [coordinate]
+                        )
+                        _expression = (_expression * _factor).together().expand()
+                        _terms = _parts.setdefault(_label, [])
+                        for _monomial, _coefficient in _expression.coefficient_list(
+                            coordinate
+                        ):
+                            _power = -int(
+                                (
+                                    _monomial.derivative(coordinate)
+                                    * coordinate
+                                    / _monomial
+                                ).together()
+                            )
+                            assert _monomial == coordinate ** (-_power)
+                            assert not _coefficient.matches(K(S("yukawa::args___")))
+                            _terms.append(([_power], _coefficient))
+            _stage_parts[_stage], _stage_diagrams[_stage] = (_parts, _diagrams)
+        _parts = _stage_parts["bare"]
+        all_diagrams[_variant] = _stage_diagrams
+        _ibp = hep.IBPFamily(family, name="yukawa_one_loop")
+        _solution = _ibp.reduce_laporta(
+            sorted({tuple(_p) for _terms in _parts.values() for _p, _c in _terms}),
+            max_depth=2,
+        )
+        assert _solution.residuals == [[1]]
+        _reduced, _poles = ({}, {})
+        for _label, _terms in _parts.items():
+            _expression = sum(
+                (_c * _solution.reduce(_p, integral=integral) for _p, _c in _terms),
+                zero,
+            ).together()
+            _reduced[_label] = _expression
+            _poles[_label] = (
+                _expression.replace(integral(1), master_pole / eps)
+                .replace(D, 4 - 2 * eps)
+                .series(eps, 0, -1)
+                .to_expression()
+                .expand()
+            )
+            assert _poles[_label].derivative(M).expand() == zero
+        all_reductions[_variant] = _reduced
+        all_poles[_variant] = _poles
+        _reference_poles = {
+            "fermion_p": -(g**2) / (2 * eps),
+            "fermion_m": (-1 if _variant == "Scalar" else 1) * g**2 / eps,
+            "scalar": (
+                lam * scalar_mass**2 / 2
+                + 2 * g**2 * s
+                - (12 if _variant == "Scalar" else 4) * g**2 * mass**2
+            )
+            / eps,
+            "vertex": -(g**3) / eps,
+            "quartic": (3 * lam**2 / 2 - 24 * g**4) / eps,
+        }
+        for _label, _reference in _reference_poles.items():
+            assert (_poles[_label] - _reference).together() == zero
+        _counterterms = {}
+        for _label, _terms in _stage_parts["ct"].items():
+            assert all((_powers == [0] for _powers, _coefficient in _terms))
+            _counterterms[_label] = sum(
+                (_coefficient for _powers, _coefficient in _terms), zero
+            ).expand()
+        _ct_rows = [
+            _counterterms["fermion_p"],
+            _counterterms["fermion_m"],
+            _counterterms["scalar"].coefficient(s),
+            _counterterms["scalar"].replace(s, zero),
+            _counterterms["vertex"],
+            _counterterms["quartic"],
+        ]
+        _loop_rows = [
+            _poles["fermion_p"],
+            _poles["fermion_m"],
+            _poles["scalar"].coefficient(s),
+            _poles["scalar"].replace(s, zero),
+            _poles["vertex"],
+            _poles["quartic"],
+        ]
+        _entries = [_row.coefficient(_x) for _row in _ct_rows for _x in unknowns]
+        for _row_index, _row in enumerate(_ct_rows):
+            assert (
+                _row
+                - sum(
+                    (
+                        _entries[_row_index * 6 + _i] * _x
+                        for _i, _x in enumerate(unknowns)
+                    ),
+                    zero,
+                )
+            ).expand() == zero
+        _matrix = Matrix.from_linear(6, 6, _entries)
+        _solved = _matrix.solve(Matrix.vec([-_row for _row in _loop_rows]))
+        _constants = [_solved[_i, 0].to_expression().expand() for _i in range(6)]
+        _expected = [
+            -(g**2) / (2 * eps),
+            (3 if _variant == "Scalar" else -1) * g**2 / (2 * eps),
+            -2 * g**2 / eps,
+            (
+                2 * g**2
+                + lam / 2
+                - (12 if _variant == "Scalar" else 4) * g**2 * mass**2 / scalar_mass**2
+            )
+            / eps,
+            5 * g**2 / (2 * eps),
+            (4 * g**2 + 3 * lam / 2 - 24 * g**4 / lam) / eps,
+        ]
+        assert all(
+            (
+                (_actual - _reference).together() == zero
+                for _actual, _reference in zip(_constants, _expected, strict=True)
+            )
+        ), (_variant, _constants)
+        _replacements = [
+            Replacement(_x, _value)
+            for _x, _value in zip(unknowns, _constants, strict=True)
+        ]
+        for _label, _pole in _poles.items():
+            assert (
+                _pole + _counterterms[_label].replace_multiple(_replacements)
+            ).together() == zero
+        all_counterterms[_variant] = _counterterms
+        all_matrices[_variant] = _matrix
+        all_constants[_variant] = _constants
+    mo.md(
+        "Both interactions reproduce all six reference constants; all projected UV poles cancel exactly."
+    )
+    return (
+        all_constants,
+        all_counterterms,
+        all_diagrams,
+        all_matrices,
+        all_poles,
+    )
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Coupling running and the zero-quartic limit
+    The local operators use $Z_\psi$, $Z_\psi Z_m$, $Z_\phi$, $Z_\phi Z_M$, $Z_g Z_\psi\sqrt{Z_\phi}$ and $Z_\lambda Z_\phi^2$. Their generated coefficients form a six-by-six system.
+
+    The calculation derives $\beta_g$ and $\beta_\lambda$ by differentiating the bare couplings $\mu^\epsilon gZ_g$ and $\mu^{2\epsilon}\lambda Z_\lambda$. The two theories have equal coupling beta functions but different mass constants. Although $Z_\lambda$ contains $1/\lambda$, the additive shift $\lambda(Z_\lambda-1)$ stays finite at $\lambda=0$: Yukawa loops generate a quartic interaction.
+    """)
+
+
+@app.cell
+def _(
+    Matrix,
+    Replacement,
+    S,
+    Symbol,
+    all_constants,
+    all_counterterms,
+    all_poles,
+    eps,
+    g,
+    h,
+    lam,
+    unknowns,
+    zero,
+):
+    _log4pi, _gamma_e = S("yukawa::log4pi", "yukawa::gamma_E")
+    scheme_constants, additive_shifts, beta_functions = ({}, {}, {})
+    for _variant, _constants in all_constants.items():
+        for _scheme, _delta in [
+            ("MS", 1 / eps),
+            ("MSbar", 1 / eps + _log4pi - _gamma_e),
+        ]:
+            _shifts = [(_constant * eps * _delta).expand() for _constant in _constants]
+            scheme_constants[_variant, _scheme] = [
+                1 + _shift / (16 * Symbol.PI**2) for _shift in _shifts
+            ]
+            _replacements = [
+                Replacement(_x, _value)
+                for _x, _value in zip(unknowns, _shifts, strict=True)
+            ]
+            for _label, _pole in all_poles[_variant].items():
+                _remainder = (
+                    _pole * (1 + eps * (_log4pi - _gamma_e))
+                    + all_counterterms[_variant][_label].replace_multiple(_replacements)
+                ).together()
+                _expected = (
+                    zero if _scheme == "MSbar" else _pole * eps * (_log4pi - _gamma_e)
+                )
+                assert (_remainder - _expected).together() == zero
+        _shifts = [(g * _constants[4]).expand(), (lam * _constants[5]).expand()]
+        additive_shifts[_variant] = _shifts
+        assert (_shifts[1].replace(lam, zero) + 24 * g**4 / eps).together() == zero
+        _bare_couplings = [g + h * _shifts[0], lam + h * _shifts[1]]
+        _jacobian = Matrix.from_linear(
+            2,
+            2,
+            [_value.derivative(_x) for _value in _bare_couplings for _x in (g, lam)],
+        )
+        _flow = _jacobian.solve(
+            Matrix.vec([-eps * _bare_couplings[0], -2 * eps * _bare_couplings[1]])
+        )
+        _beta = [
+            _flow[_i, 0]
+            .to_expression()
+            .series(h, 0, 1)
+            .to_expression()
+            .series(eps, 0, 0)
+            .to_expression()
+            .expand()
+            .coefficient(h)
+            for _i in range(2)
+        ]
+        assert (_beta[0] - 5 * g**3).together() == zero
+        assert (_beta[1] - 3 * lam**2 - 8 * g**2 * lam + 48 * g**4).together() == zero
+        beta_functions[_variant] = [_value / (16 * Symbol.PI**2) for _value in _beta]
+    assert beta_functions["Scalar"] == beta_functions["Pseudoscalar"]
+    return additive_shifts, beta_functions, scheme_constants
+
+
+@app.cell
+def _(mo):
+    interaction = mo.ui.dropdown(
+        ["Scalar", "Pseudoscalar"], value="Scalar", label="Yukawa interaction"
+    )
+    subtraction_scheme = mo.ui.dropdown(
+        ["MSbar", "MS"], value="MSbar", label="Subtraction scheme"
+    )
+    process = mo.ui.dropdown(
+        {
+            "Fermion self-energy": "fermion",
+            "Scalar self-energy": "scalar",
+            "Yukawa vertex": "vertex",
+            "Four-scalar vertex": "quartic",
+        },
+        value="Scalar self-energy",
+        label="Amplitude",
+    )
+    diagram_order = mo.ui.dropdown(
+        {"Bare one-loop": "bare", "Local counterterms": "ct"},
+        value="Bare one-loop",
+        label="Diagrams",
+    )
+    mo.vstack([interaction, subtraction_scheme, process, diagram_order])
+    return diagram_order, interaction, process, subtraction_scheme
+
+
+@app.cell
+def _(
+    Symbol,
+    additive_shifts,
+    all_matrices,
+    beta_functions,
+    interaction,
+    lam,
+    mo,
+    scheme_constants,
+    subtraction_scheme,
+    zero,
+):
+    selected_constants = scheme_constants[interaction.value, subtraction_scheme.value]
+    selected_beta = beta_functions[interaction.value]
+    _selected_additive = additive_shifts[interaction.value][1] / (16 * Symbol.PI**2)
+    zero_quartic_shift = _selected_additive.replace(lam, zero)
+    mo.vstack(
+        [
+            mo.md("## Generated matching matrix"),
+            all_matrices[interaction.value],
+            mo.md("## Renormalization constants"),
+            *[
+                mo.hstack([mo.md(_label), _value])
+                for _label, _value in zip(
+                    ["Zψ", "Zmψ", "Zφ", "Zmφ²", "Zg", "Zλ"],
+                    selected_constants,
+                    strict=True,
+                )
+            ],
+            mo.md("## Derived beta functions"),
+            mo.hstack([mo.md("βg"), selected_beta[0]]),
+            mo.hstack([mo.md("βλ"), selected_beta[1]]),
+            mo.md("**Additive quartic MS counterterm at λ=0**"),
+            zero_quartic_shift,
+        ]
+    )
+
+
+@app.cell
+def _(all_diagrams, all_poles, diagram_order, interaction, mo, process):
+    selected_diagrams = all_diagrams[interaction.value][diagram_order.value][
+        process.value
+    ]
+    _keys = (
+        ["fermion_p", "fermion_m"] if process.value == "fermion" else [process.value]
+    )
+    mo.vstack(
+        [
+            mo.md(f"## {len(selected_diagrams)} generated diagrams"),
+            *[
+                mo.hstack(selected_diagrams[_i : _i + 3])
+                for _i in range(0, len(selected_diagrams), 3)
+            ],
+            mo.md("**Projected bare UV poles, with i/(16π²) removed**"),
+            *[
+                mo.hstack([mo.md(_key), all_poles[interaction.value][_key]])
+                for _key in _keys
+            ],
+            mo.md(
+                "The displayed projections retain the generator's external-fermion ordering. The pseudoscalar vertex is projected onto the scalar phase convention before matching; the same projection is applied to its counterterm."
+            ),
+        ]
+    )
+
+
+if __name__ == "__main__":
+    app.run()

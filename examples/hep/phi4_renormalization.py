@@ -21,7 +21,7 @@ def _():
 def _(mo):
     mo.md(r"""
     # One-loop $\phi^4$ renormalization
-    [Browse all notebooks](/) · [Cubic scalar](/?file=hep/phi3_renormalization.py) · [Finite scattering](/?file=hep/phi4_scattering.py) · [Two-loop self-energy](/?file=hep/ibp_phi4.py)
+    [Browse all notebooks](/) · [Cubic scalar](/?file=hep/phi3_renormalization.py) · [Yukawa theories](/?file=hep/yukawa_renormalization.py) · [Finite scattering](/?file=hep/phi4_scattering.py) · [Two-loop self-energy](/?file=hep/ibp_phi4.py)
 
     Generate the tadpole, three four-point channels, and local counterterms from `Model.phi4()`. Native numerators, graph factors and momentum routing determine the coefficients of the scalar masters. Their UV poles and the generated counterterm matrix reproduce the [FeynCalc MS/MS̄ example](https://feyncalc.github.io/FeynCalcExamples/Phi4/OneLoop/Renormalization).
 
