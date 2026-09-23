@@ -8,9 +8,12 @@ app = marimo.App(width="medium", app_title="Photon vacuum polarization")
 def _():
     import marimo as mo
     from symbolica import E, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import Model, oneloop
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("photon_self_energy")
 
     return E, Model, S, TensorExpression, hep, mo, oneloop
 
@@ -132,9 +135,9 @@ def _(E, S, TensorExpression, hep, mo, oneloop, qed_model):
     photon_uv = _laurent.coefficient(_eps**-1)
     assert (photon_uv + 4 * _charge**2 / 3).together() == 0
     _finite = dict(_laurent.expand().coefficient_list(_eps))[E("1")]
-    _a_coeffs = oneloop.master_coefficients(S("oneloopmaster::A0")(_mass**2, E("1")))
+    _a_coeffs = oneloop.master_coefficients(oneloop.A0(_mass**2, E("1")))
     _b_coeffs = oneloop.master_coefficients(
-        S("oneloopmaster::B0")(_s, _mass**2, _mass**2, E("1"))
+        oneloop.B0(_s, _mass**2, _mass**2, E("1"))
     )
     _finite = _finite.replace(_af, _a_coeffs[0]).replace(_bf, _b_coeffs[0])
     photon_finite_values = [

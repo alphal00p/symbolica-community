@@ -10,6 +10,7 @@ def _():
 
     import marimo as mo
     from symbolica import E, Matrix, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
     from symbolica.community.spenso import (
@@ -17,6 +18,8 @@ def _():
         Representation,
         TensorExpression,
     )
+
+    _set_namespace("qcd_ren")
 
     return (
         ColorCasimirSettings,
@@ -83,17 +86,17 @@ def _(
 ):
     model = hep.Model.standard_model()
     D, epsilon, M, _mUV, coordinate, integral, xi, s, Nf = S(
-        "qcd_ren::D",
-        "qcd_ren::eps",
-        "qcd_ren::M",
-        "qcd_ren::mUV",
-        "qcd_ren::d0",
-        "qcd_ren::I",
-        "qcd_ren::xi",
-        "qcd_ren::s",
-        "qcd_ren::Nf",
+        "D",
+        "eps",
+        "M",
+        "mUV",
+        "d0",
+        "I",
+        "xi",
+        "s",
+        "Nf",
     )
-    Nc, dA, CF, CA = S("qcd_ren::Nc", "qcd_ren::dA", "qcd_ren::CF", "qcd_ren::CA")
+    Nc, dA, CF, CA = S("Nc", "dA", "CF", "CA")
     _specification = json.loads(model.to_json())
     for _propagator in _specification["propagators"]:
         if _propagator["particle"] == "g":
@@ -111,25 +114,25 @@ def _(
         "spenso::cof", "spenso::coad", "spenso::cas", "spenso::idx"
     )
     index, dim, wave, mu, nu, left, right = S(
-        "qcd_ren::index_",
-        "qcd_ren::dim_",
-        "qcd_ren::wave_",
-        "qcd_ren::mu",
-        "qcd_ren::nu",
-        "qcd_ren::left_",
-        "qcd_ren::right_",
+        "index_",
+        "dim_",
+        "wave_",
+        "mu",
+        "nu",
+        "left_",
+        "right_",
     )
     den, edge_, mom_, mass_, quad_ = S(
         "gammalooprs::denom",
-        "qcd_ren::edge_",
-        "qcd_ren::mom_",
-        "qcd_ren::mass_",
-        "qcd_ren::quad_",
+        "edge_",
+        "mom_",
+        "mass_",
+        "quad_",
     )
     _ordering, _value, _arguments = S(
         "feynkit_generator_factor::ExternalFermionOrderingSign",
-        "qcd_ren::value_",
-        "qcd_ren::arguments___",
+        "value_",
+        "arguments___",
     )
     kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
         P(0), P(0), s
@@ -366,7 +369,7 @@ def _(
         sorted({tuple(p) for _terms in _parts.values() for p, c in _terms}), max_depth=2
     )
     assert solution.residuals == [[1]]
-    assert abs(complex(oneloop.A0(1.0, 1.0)[1]) - 1) < 1e-12
+    assert abs(complex(oneloop.a0(1.0, 1.0)[1]) - 1) < 1e-12
     _reduced, uv_poles = {}, {}
     for _label, _terms in _parts.items():
         _expression = sum(

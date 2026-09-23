@@ -13,8 +13,11 @@ def _():
     import numpy as np
     from linnet import RenderConfig
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("ww")
 
     return (
         CookSettings,
@@ -80,16 +83,16 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         "UFO::vev",
         "UFO::yme",
     )
-    s, t, u, H = S("ww::s", "ww::t", "ww::u", "ww::Higgs")
+    s, t, u, H = S("s", "t", "u", "Higgs")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
     _kin = hep.Kinematics.mandelstam(
         [_P(_i) for _i in range(4)], [me**2, me**2, mw**2, mw**2], [s, t, u]
     )
-    _ports = S("ww::port0", "ww::port1", "ww::port2", "ww::port3")
+    _ports = S("port0", "port1", "port2", "port3")
     _a, _b, _c, _inverse, _wave, _rep, _index = S(
         "a_", "b_", "c_", "inverse_", "wave_", "rep_", "index_"
     )
-    _conjugate, _wrapped = S("spenso::conj", "ww::adjoint")
+    _conjugate, _wrapped = S("spenso::conj", "adjoint")
     _diagram_terms = {}
     for _diagram in generated.diagrams:
         _numerator = model.expand_couplings(
@@ -126,7 +129,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
             / _denominator
         )
         _diagram_terms[_particle_name] = _term
-    _polar_ports = S("ww::physical2", "ww::physical3")
+    _polar_ports = S("physical2", "physical3")
     _projection = model.particle("W-").spin_sum(
         _P(2), _ports[2], _polar_ports[0]
     ) * model.particle("W+").spin_sum(_P(3), _ports[3], _polar_ports[1])
@@ -296,7 +299,7 @@ def _(E, H, S, charge, cw, me, mh, mo, mw, one, s, squared, sw, t, zero):
     full = squared.replace(H, one)
     assert (full - reference).together() == zero
     print("PASS massive FeynCalc amplitude", flush=True)
-    z, _angle = S("ww::inverse_s", "ww::angle")
+    z, _angle = S("inverse_s", "angle")
     high_energy = (
         squared.replace(t, -s * (1 - _angle) / 2)
         .replace(s, 1 / z)
@@ -359,7 +362,7 @@ def _(
     zero,
 ):
     _coefficients = (full * t**2).together().expand().coefficient_list(t)
-    _C = S("ww::C")
+    _C = S("C")
     _compressed = sum(
         (_C(_i) * _power / t**2 for _i, (_power, _) in enumerate(_coefficients)), zero
     )

@@ -11,9 +11,12 @@ app = marimo.App(
 def _():
     import marimo as mo
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import Model
     from symbolica.community.spenso import Representation, TensorExpression, chain
+
+    _set_namespace("qed_example")
 
     return E, Model, Representation, S, Symbol, TensorExpression, chain, hep, mo
 
@@ -59,7 +62,7 @@ def _(E, Model, S, TensorExpression, hep, mo):
     _cut = qed_diagram.cuts[0]
     _Q, _P, _K = S("gammalooprs::Q", "gammalooprs::P", "gammalooprs::K")
     qed_p1, qed_p2 = _P(0), _P(1)
-    qed_k1, qed_k2 = S("qed_example::k1", "qed_example::k2")
+    qed_k1, qed_k2 = S("k1", "k2")
     _loop_edge = qed_diagram.loop_momentum_basis.loop_edges[0]
     _loop_particle = next(
         _particle.name
@@ -67,11 +70,11 @@ def _(E, Model, S, TensorExpression, hep, mo):
         if _edge.id == _loop_edge
     )
     _physical_momentum = qed_k1 if _loop_particle == "mu-" else qed_k2
-    _index = S("qed_example::index_")
+    _index = S("index_")
     qed_loop_pattern = _K(0, _index)
     qed_loop_replacement = _cut.orientations[_loop_edge] * _physical_momentum(_index)
-    qed_s = S("qed_example::s", is_positive=True)
-    qed_t, qed_u = S("qed_example::t", "qed_example::u")
+    qed_s = S("s", is_positive=True)
+    qed_t, qed_u = S("t", "u")
     qed_me, qed_mm, qed_e = S("UFO::Me", "UFO::MM", "UFO::ee")
     _kin = hep.Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
@@ -104,9 +107,7 @@ def _(E, Model, S, TensorExpression, hep, mo):
         dimension=4,
         in_lmb=True,
     )
-    _a, _b, _c, _inverse = S(
-        "qed_example::a_", "qed_example::b_", "qed_example::c_", "qed_example::inverse_"
-    )
+    _a, _b, _c, _inverse = S("a_", "b_", "c_", "inverse_")
     _denominator = _kin.apply(
         _denominator.replace(S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse)
     )
@@ -178,7 +179,7 @@ def _(
     qed_t,
     qed_u,
 ):
-    qed_cos_theta, qed_alpha = S("qed_example::cos_theta", "qed_example::alpha")
+    qed_cos_theta, qed_alpha = S("cos_theta", "alpha")
     _pi = Symbol.PI
     _kin = hep.Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],

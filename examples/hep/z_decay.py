@@ -8,9 +8,11 @@ app = marimo.App(width="medium", app_title="Chiral Z decays")
 def _():
     import marimo as mo
     from symbolica import E, Expression, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep as fk
     from symbolica.community.spenso import CookSettings, TensorExpression
 
+    _set_namespace("z_decay")
     return CookSettings, E, Expression, S, TensorExpression, fk, mo
 
 
@@ -31,6 +33,7 @@ def _(mo):
     summed. Fermion and antifermion are distinct, so no identical-particle factor
     is needed.
     """)
+    return
 
 
 @app.cell
@@ -49,8 +52,8 @@ def _(fk, mo):
 def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     P = S("gammalooprs::P")
     charge, sw, cw, mz = S("UFO::ee", "UFO::sw", "UFO::cw", "UFO::MZ")
-    conjugate, wrapped = S("spenso::conj", "z_decay::adjoint_index")
-    ports = S("z_decay::z", "z_decay::fermion", "z_decay::antifermion")
+    conjugate, wrapped = S("spenso::conj", "adjoint_index")
+    ports = S("z", "fermion", "antifermion")
     wave, rep, index, left, right = S("wave_", "rep_", "index_", "left_", "right_")
     metric = S("spenso::g")
     particle_name, mass, weak_isospin, electric_charge = {
@@ -190,15 +193,32 @@ def _(mo):
     total width. In the massless neutrino channel it reduces to
     $G_Fm_Z^3/(12\pi\sqrt2)$.
     """)
+    return
 
 
 @app.cell
-def _(E, Expression, P, S, ca, charge, colors, cv, cw, fk, mass, mo, mz, squared, sw):
+def _(
+    E,
+    Expression,
+    P,
+    S,
+    ca,
+    charge,
+    colors,
+    cv,
+    cw,
+    fk,
+    mass,
+    mo,
+    mz,
+    squared,
+    sw,
+):
     pi = Expression.PI
     # Express the physical branch with positive M and beta. The on-shell
     # relation m^2=M^2(1-beta^2)/4 describes 0<beta<=1 above threshold.
-    physical_mass = S("z_decay::M", is_positive=True)
-    beta = E("1") if mass == E("0") else S("z_decay::beta", is_positive=True)
+    physical_mass = S("M", is_positive=True)
+    beta = E("1") if mass == E("0") else S("beta", is_positive=True)
     mass_squared = physical_mass**2 * (1 - beta**2) / 4
     physical_kin = (
         fk.Kinematics()
@@ -223,7 +243,7 @@ def _(E, Expression, P, S, ca, charge, colors, cv, cw, fk, mass, mo, mz, squared
         )
     # f and fbar are distinct final particles, so no factorial is present.
     width = 4 * pi * measure * physical_squared / flux
-    gf = S("z_decay::G_F")
+    gf = S("G_F")
     width = width.replace(
         charge**2, 4 * E("2").sqrt() * gf * physical_mass**2 * sw**2 * cw**2
     )
@@ -269,7 +289,7 @@ def _(E, Expression, P, S, ca, charge, colors, cv, cw, fk, mass, mo, mz, squared
             ),
         ]
     )
-    return (z_decay_width,)
+    return
 
 
 if __name__ == "__main__":

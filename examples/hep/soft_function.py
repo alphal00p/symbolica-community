@@ -9,6 +9,7 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import (
         GammaChainOrdering,
@@ -18,6 +19,8 @@ def _():
         TensorExpression,
         TensorName,
     )
+
+    _set_namespace("soft")
 
     return (
         E,
@@ -83,13 +86,10 @@ def _(
         ]
         assert len(vertices) == 2
         P = S("gammalooprs::P")
-        D, Q, Qbar, kp, km, lam = S(
-            "soft::D", "soft::Q", "soft::Qbar", "soft::kp", "soft::km", "soft::lam"
-        )
+        D, Q, Qbar, kp, km, lam = S("D", "Q", "Qbar", "kp", "km", "lam")
         # Rank-one declarations let Spenso recognize contracted vectors and slashes.
         n, nb, k, ref = [
-            TensorName.vector("soft::" + name).to_expression()
-            for name in ("n", "nb", "k", "r")
+            TensorName.vector(name).to_expression() for name in ("n", "nb", "k", "r")
         ]
         mink, bis = S("spenso::mink", "spenso::bis")
         zero, one = E("0"), E("1")
@@ -101,12 +101,10 @@ def _(
             .with_scalar_product(n, k, kp)
             .with_scalar_product(nb, k, km)
         )
-        ports = S("soft::i0", "soft::i1", "soft::i2", "soft::i3")
+        ports = S("i0", "i1", "i2", "i3")
         a, b, c, inv, idx = S("a_", "b_", "c_", "inv_", "idx_")
         gamma, metric = S("spenso::gamma", "spenso::g")
-        si, sj, sx, sy, sm, sn = S(
-            "soft::si", "soft::sj", "soft::sx", "soft::sy", "soft::sm", "soft::sn"
-        )
+        si, sj, sx, sy, sm, sn = S("si", "sj", "sx", "sy", "sm", "sn")
         ordering = GammaSimplifySettings(chain_ordering=GammaChainOrdering.Canonical)
 
         def simplify(expression):
@@ -175,7 +173,7 @@ def _(
         )
 
         # The transverse metric projects onto the D-2 directions orthogonal to n,nbar.
-        mu, nu, rho = S("soft::mu", "soft::nu", "soft::rho")
+        mu, nu, rho = S("mu", "nu", "rho")
         transverse = (
             metric(mink(D, mu), mink(D, nu))
             - (n(mink(D, mu)) * nb(mink(D, nu)) + nb(mink(D, mu)) * n(mink(D, nu))) / 2
@@ -287,7 +285,7 @@ def _(
         assert eikonal.derivative(Q) == zero and eikonal.derivative(Qbar) == zero
 
         # Close color indices without summing or averaging the external spin states.
-        Nc, dA = S("soft::Nc", "soft::dA")
+        Nc, dA = S("Nc", "dA")
         fund = Representation.cof(Nc)
         color_born = TensorExpression.g(fund, fund.dual())(ports[2], ports[1])
         color_real = TensorExpression.t(dA, Nc)(ports[3], ports[2], ports[1])
@@ -309,14 +307,14 @@ def _(
         cf = (colors[1] / colors[0]).together()
 
         # An arbitrary reference includes a nonzero r^2; no gauge term may survive.
-        rn, rnb, rk, r2 = S("soft::rn", "soft::rnb", "soft::rk", "soft::r2")
+        rn, rnb, rk, r2 = S("rn", "rnb", "rk", "r2")
         kin = (
             kin.with_scalar_product(ref, n, rn)
             .with_scalar_product(ref, nb, rnb)
             .with_scalar_product(ref, k, rk)
             .with_scalar_product(ref, ref, r2)
         )
-        mu2 = S("soft::mu2")
+        mu2 = S("mu2")
         polarization_results = {}
         for label, reference in (
             ("Covariant", None),
@@ -337,18 +335,18 @@ def _(
             ).together()
             assert (squared - 4 / (kp * km)).together() == zero
             polarization_results[label] = squared
-        alpha = S("soft::alpha_s")
+        alpha = S("alpha_s")
         soft_function = (
             squared * cf * 4 * Symbol.PI * alpha / (32 * Symbol.PI**2)
         ).together()
         assert (
             soft_function - cf * alpha / (2 * Symbol.PI * kp * km)
         ).together() == zero
-        eta = S("soft::eta")
+        eta = S("eta")
         assert (
             soft_function.replace(kp, eta * kp).replace(km, km / eta) - soft_function
         ).together() == zero
-        energy, z = S("soft::energy", "soft::z")
+        energy, z = S("energy", "z")
         angular_soft = (
             soft_function.replace(kp, energy * (1 - z))
             .replace(km, energy * (1 + z))

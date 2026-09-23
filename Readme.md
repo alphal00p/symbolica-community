@@ -54,51 +54,80 @@ integral evaluation there, sharing the same Symbolica kernel:
 from symbolica.community.hep import FourMomentum, oneloop
 
 p = FourMomentum(3.0, 1.0, 0.0, 0.0)
-finite, pole, double_pole = oneloop.B0(p.mass_squared, 4.0, 4.0)
+finite, pole, double_pole = oneloop.b0(p.mass_squared, 4.0, 4.0)
 ```
 
-Reduce a family symbolically, then compile its Laurent coefficients for numerical
-evaluation:
+The uppercase exports `oneloop.A0`, `B0`, `dB0`, `C0`, and `D0` are primitive
+Symbolica symbols. Construct a symbolic master directly, for example
+`oneloop.B0(s, m0_squared, m1_squared, mu_squared)`. Lowercase `a0`, `b0`,
+`db0`, `c0`, and `d0` numerically return all three Laurent coefficients and
+accept the precision and backend options.
+
+Tagged master calls containing only numeric arguments evaluate through the
+native Rust hooks during construction when at least one argument is inexact,
+for example `oneloop.A0(0, Float("2", decimal_digits=50), 1)` after importing
+`Float` from Symbolica. Untagged calls and calls containing only exact arguments
+remain symbolic; `Expression.evaluate` also evaluates tagged calls explicitly.
+
+Reduce a family to OneLoopMaster's symbols, then evaluate its Laurent
+coefficients through their registered native Rust hooks:
 
 ```python
 from symbolica import E, S
+from symbolica.community import hep
 from symbolica.community.hep import oneloop
 
-mass_squared = S("example::mass_squared")
-family = oneloop.IntegralFamily(
-    [oneloop.Propagator(mass_squared)], [], exponents=[2],
+k, D, mass_squared = S("example::k", "example::D", "example::mass_squared")
+kinematics = hep.Kinematics(D, momenta=[k])
+family = hep.IntegralFamily(
+    [k], [], [kinematics.scalar_product(k, k) - mass_squared], kinematics=kinematics,
 )
-reduction = family.reduce().simplify()
+reduction = oneloop.reduce(family, [2]).simplify()
 coefficients = oneloop.reduction_coefficients(reduction, mu_squared=E("1"))
-evaluator = oneloop.compile_native(coefficients, [mass_squared])
-print(evaluator.evaluate_complex([2 + 0j]))  # [-log(2), 1, 0]
+print([c.evaluate({mass_squared: 2 + 0j}) for c in coefficients])  # [-log(2), 1, 0]
 ```
 
-`reduction_coefficients` expands the reduction's rational coefficients at
-`oneloopreduce::d = 4 - 2*eps` through the order needed for the finite term and
+`oneloop.reduce` takes Feynkit's existing `hep.IntegralFamily` and one signed
+power per ordered denominator. The same family supports `hep.IBPFamily`,
+momentum mappings, completion, and diagram extraction. Zero powers omit a
+denominator; negative powers contribute to the numerator. Optional scalar
+numerators use the family's `Kinematics.scalar_product` notation. Feynkit's
+model-backed `hep.Propagator` remains the shared particle-propagator type.
+
+Use a symbolic kinematic dimension such as `D` for dimensional regularization.
+`Reduction.dimension` retains that symbol. `reduction_coefficients` expands it
+at `D = 4 - 2*eps` through the order needed for the finite term and
 returns `[finite, simple_pole, double_pole]`. It rejects coefficients with a pole
-at `d=4`, since those require positive-order master coefficients that
+at `D=4`, since those require positive-order master coefficients that
 OneLoopMaster does not supply. The masses, squared invariants, and squared scale
-must be independent of `d`.
+must be independent of `D`. A family with fixed integer dimension is rejected
+instead of losing epsilon-dependent contributions to the finite term.
 
-`Reduction.to_expression()` retains the reducer's symbolic master heads and
-exact dimension dependence. `Reduction.to_oneloopmaster(mu_squared=...)` converts
-the heads and appends the squared scale without expanding in epsilon. For a
-single master from `reduction.terms`, `master.to_oneloopmaster()` feeds directly
-into `oneloop.master_coefficients()` or `oneloop.get_expression()`.
+`Reduction.to_expression(mu_squared=...)` uses the canonical
+`oneloopmaster::{A0,B0,C0,D0}` heads, appends the squared scale (default `1`), and
+retains exact dimension dependence. A single `master.to_expression()` from
+`reduction.terms` feeds directly into `oneloop.master_coefficients()` for tagged
+calls or `oneloop.get_expression()` for exact formulas. The leading tags
+`0`, `-1`, and `-2` select Laurent coefficients for numerical evaluation;
+untagged calls describe the whole master for symbolic inspection. No conversion
+between master namespaces is needed.
 
-Family invariants are `(r_i-r_j)^2` in lexicographic `i<j` order. Master arguments
-use the AVH/OneLOop ordering, so a triangle input `[p1sq, s, p2sq]` produces
-`C0(p1sq, p2sq, s, ...)`. Polynomial numerators use
-`S("oneloopreduce::dot")` with `oneloopreduce::k` and `oneloopreduce::q1`, etc.
-Import `hep.oneloop` before constructing these symbols so their attributes are
-registered. Symbolic reduction is also available in WebAssembly builds;
-numerical master evaluation requires a native build.
+The native hooks use OneLoopMaster's generated Rust arithmetic, without building
+an expression evaluator or loading its evaluator caches. For inspecting an
+analytical region, use `oneloop.select_branch(oneloop.get_expression(master),
+replacement_rules)`: the probe selects conditional branches while preserving
+symbolic kinematics. The [marimo example](examples/hep/oneloop_reduce.py) shows
+this for a nontrivial triangle C0.
+
+Master arguments use the AVH/OneLOop ordering. Invariants, masses, and momentum
+shifts are extracted from the shared family's actual inverse denominators and
+kinematics; users do not supply a second family or a separate invariant list.
+Numerical master evaluation requires a native build.
 
 The local host uses `../../oneloopmaster/python` and
-`../../one-loop-reduce/crates/one-loop-reduce-python`, and pins Symbolica to the
-revision used by OneLOop's evaluator caches. The local reducer checkout includes
-the shared namespace, master conversion methods, and feature selection needed
+`../../one-loop-reduce/crates/one-loop-reduce-python`, and shares OneLoopMaster's
+pinned Symbolica revision. The local reducer checkout includes
+the canonical master symbols, scale-aware expressions, and feature selection needed
 by this host. Run
 `.venv-feynkit/bin/python examples/oneloop_smoke.py` to check numeric evaluation,
 SymJIT, arbitrary precision, and expressions shared with FeynKit. This example

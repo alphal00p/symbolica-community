@@ -8,8 +8,11 @@ app = marimo.App(width="medium", app_title="Bhabha and Møller scattering")
 def _():
     import marimo as mo
     from symbolica import E, Expression, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep as fk
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("lepton_scattering")
 
     return CookSettings, E, Expression, S, TensorExpression, fk, mo
 
@@ -60,10 +63,8 @@ def _(
     reaction,
 ):
     P = S("gammalooprs::P")
-    s = S("lepton_scattering::s", is_positive=True)
-    t, u, mass, charge = S(
-        "lepton_scattering::t", "lepton_scattering::u", "UFO::Me", "UFO::ee"
-    )
+    s = S("s", is_positive=True)
+    t, u, mass, charge = S("t", "u", "UFO::Me", "UFO::ee")
     _names = ["e-", "e+", "e-", "e+"] if reaction.value == "Bhabha" else ["e-"] * 4
     _kinematics = fk.Kinematics.mandelstam(
         [P(_position) for _position in range(4)], [mass**2] * 4, [s, t, u]
@@ -78,15 +79,15 @@ def _(
     )
     assert len(lepton_generated.diagrams) == 2
     _ports = S(
-        "lepton_scattering::external_0",
-        "lepton_scattering::external_1",
-        "lepton_scattering::external_2",
-        "lepton_scattering::external_3",
+        "external_0",
+        "external_1",
+        "external_2",
+        "external_3",
     )
     _a, _b, _c, _inverse, _wave, _rep, _index = S(
         "a_", "b_", "c_", "inverse_", "wave_", "rep_", "index_"
     )
-    _conjugate, _wrapped = S("spenso::conj", "lepton_scattering::adjoint_index")
+    _conjugate, _wrapped = S("spenso::conj", "adjoint_index")
     _operators, _denominators = [], []
     for _diagram in lepton_generated.diagrams:
         _numerator = lepton_model.expand_couplings(
@@ -237,8 +238,8 @@ def _(
     t,
     u,
 ):
-    beta = S("lepton_scattering::beta", is_positive=True)
-    cos_theta, alpha = S("lepton_scattering::cos_theta", "lepton_scattering::alpha")
+    beta = S("beta", is_positive=True)
+    cos_theta, alpha = S("cos_theta", "alpha")
     _mass_squared = s * (1 - beta**2) / 4
     _kinematics = fk.Kinematics.mandelstam(
         [P(_position) for _position in range(4)], [_mass_squared] * 4, [s, t, u]

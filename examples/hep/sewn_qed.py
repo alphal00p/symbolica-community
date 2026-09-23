@@ -8,8 +8,11 @@ app = marimo.App(width="medium", app_title="Sewing-aware QED spin sums")
 def _():
     import marimo as mo
     from symbolica import E, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep as fk
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("sewn_qed")
 
     return E, S, TensorExpression, fk, mo
 

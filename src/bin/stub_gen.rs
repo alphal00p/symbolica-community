@@ -15,6 +15,9 @@ fn main() -> Result<()> {
         }
     };
     let mut stub = stub_info()?;
+    if let Some(module) = stub.modules.get_mut("symbolica.community.spenso") {
+        spynso3::SpensoModule::prepare_stub_module(module);
+    }
     if only == Some("spenso") {
         let spenso = stub
             .modules
@@ -24,8 +27,7 @@ fn main() -> Result<()> {
             })?;
         let directory = stub.python_root.join("symbolica/community/spenso");
         std::fs::create_dir_all(&directory)?;
-        let source = spenso
-            .to_string()
+        let source = spynso3::SpensoModule::stub_source(spenso)
             .lines()
             .map(str::trim_end)
             .collect::<Vec<_>>()
@@ -44,7 +46,8 @@ fn main() -> Result<()> {
         })?;
     let directory = stub.python_root.join("symbolica/community/hep");
     std::fs::create_dir_all(&directory)?;
-    let oneloop = format!("{}\n{}", include_str!("../../stubs/oneloop.pyi"), reducer);
+    let oneloop = format!("{}\n{}", include_str!("../../stubs/oneloop.pyi"), reducer)
+        .replace("symbolica.community.feynkit", "symbolica.community.hep");
     let oneloop = oneloop
         .lines()
         .map(str::trim_end)
@@ -73,6 +76,13 @@ fn main() -> Result<()> {
             community.submodules.insert("hep".to_owned());
         }
         stub.generate()?;
+        if let Some(spenso) = stub.modules.get("symbolica.community.spenso") {
+            std::fs::write(
+                stub.python_root
+                    .join("symbolica/community/spenso/__init__.pyi"),
+                spynso3::SpensoModule::stub_source(spenso),
+            )?;
+        }
     }
     let directory = stub.python_root.join("symbolica/community/hep");
     std::fs::create_dir_all(&directory)?;

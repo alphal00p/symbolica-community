@@ -10,9 +10,12 @@ def _():
 
     import marimo as mo
     from symbolica import E, Matrix, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("phi4_one")
 
     return json, mo, E, Matrix, Replacement, S, Symbol, hep, oneloop, TensorExpression
 
@@ -35,15 +38,16 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
     particle = model.particle("phi")
     mass, coupling = S("UFO::mass", "UFO::lam")
     M, s, t, u, mu2, p2, eps = S(
-        "phi4_one::M",
-        "phi4_one::s",
-        "phi4_one::t",
-        "phi4_one::u",
-        "phi4_one::mu2",
-        "phi4_one::p2",
-        "phi4_one::eps",
+        "M",
+        "s",
+        "t",
+        "u",
+        "mu2",
+        "p2",
+        "eps",
     )
     Q, K, P = S("gammalooprs::Q", "gammalooprs::K", "gammalooprs::P")
+    _dimension = S("D")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
     _kinematics = hep.Kinematics.mandelstam(
         [P(_i) for _i in range(4)], [M] * 4, [s, t, u]
@@ -81,7 +85,7 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
     channel_coefficients, channel_reductions = ({}, {})
     for _diagram in diagrams["vertex"]:
         _basis = _diagram.momentum_basis()
-        _family = _diagram.integral_family(kinematics=_kinematics)
+        _family = _diagram.propagator_family(kinematics=_kinematics)
         _shifts = []
         for _edge, _denominator in zip(
             _diagram.internal_edges, _family.denominators, strict=True
@@ -107,9 +111,18 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
             * _diagram.numerator_prefactor_expression()
         )
         assert _coefficient == coupling**2 / 2
-        _reduction = oneloop.IntegralFamily(
-            [oneloop.Propagator(M)] * 2, [_invariant]
-        ).reduce()
+        _master_kinematics = hep.Kinematics(
+            _dimension, momenta=[K(0), P(0)]
+        ).with_scalar_product(P(0), P(0), _invariant)
+        _master_family = hep.IntegralFamily(
+            [K(0)], [P(0)],
+            [
+                _master_kinematics.scalar_product(_momentum, _momentum) - M
+                for _momentum in [K(0), K(0) + P(0)]
+            ],
+            kinematics=_master_kinematics,
+        )
+        _reduction = oneloop.reduce(_master_family, [1, 1])
         assert len(_reduction.terms) == 1
         channel_coefficients[_invariant] = _coefficient
         channel_reductions[_invariant] = _reduction
@@ -118,7 +131,7 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
     vertex_finite, _vertex_pole = (zero, zero)
     for _invariant, _reduction in channel_reductions.items():
         _coefficients = oneloop.reduction_coefficients(_reduction, mu2)
-        _master = _reduction.terms[0][1].to_oneloopmaster(mu2)
+        _master = _reduction.terms[0][1].to_expression(mu2)
         _pole_expression = oneloop.get_expression(_master, coefficient=-1)
         _pole = oneloop.select_branch(
             _pole_expression, [Replacement(_invariant, one), Replacement(M, one)]
@@ -134,10 +147,14 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
         * _self_diagram.numerator_prefactor_expression()
     )
     assert _self_numerator == coupling / 2
-    _self_family = _self_diagram.integral_family()
+    _self_family = _self_diagram.propagator_family()
     assert len(_self_family.denominators) == 1
-    _self_reduction = oneloop.IntegralFamily([oneloop.Propagator(M)], []).reduce()
-    _self_master = _self_reduction.terms[0][1].to_oneloopmaster(mu2)
+    _vacuum = hep.Kinematics(_dimension, momenta=[K(0)])
+    _tadpole_family = hep.IntegralFamily(
+        [K(0)], [], [_vacuum.scalar_product(K(0), K(0)) - M], kinematics=_vacuum
+    )
+    _self_reduction = oneloop.reduce(_tadpole_family, [1])
+    _self_master = _self_reduction.terms[0][1].to_expression(mu2)
     _self_pole = (
         _self_numerator
         / coupling
@@ -233,10 +250,10 @@ def _(
     zero,
 ):
     _h, _delta_field, _delta_mass, _delta_vertex = S(
-        "phi4_one::h",
-        "phi4_one::delta_field",
-        "phi4_one::delta_mass",
-        "phi4_one::delta_vertex",
+        "h",
+        "delta_field",
+        "delta_mass",
+        "delta_vertex",
     )
     _Zfield, _Zmass, _Zvertex = (
         1 + _h * _x for _x in (_delta_field, _delta_mass, _delta_vertex)
@@ -318,7 +335,7 @@ def _(
     _solved = ct_matrix.solve(_rhs)
     residues = [_solved[_i, 0].to_expression() for _i in range(3)]
     assert residues == [zero, E("1/2"), E("3/2")]
-    L, gamma_e = S("phi4_one::log4pi", "phi4_one::gamma_E")
+    L, gamma_e = S("log4pi", "gamma_E")
     renormalization_constants = {}
     for _scheme, _subtraction in [("MS", 1 / eps), ("MSbar", 1 / eps + L - gamma_e)]:
         _constants = [_x * _subtraction for _x in residues]

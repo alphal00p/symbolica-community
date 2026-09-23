@@ -9,8 +9,11 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, Replacement, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
+
+    _set_namespace("ibp_bubble")
 
     return E, Replacement, S, hep, mo, np, oneloop
 
@@ -42,15 +45,15 @@ def _(mo):
 @app.cell
 def _(S, hep, mo):
     dimension, loop, external, invariant, mass_a, mass_b, epsilon = S(
-        "ibp_bubble::D",
-        "ibp_bubble::k",
-        "ibp_bubble::p",
-        "ibp_bubble::s",
-        "ibp_bubble::a",
-        "ibp_bubble::b",
-        "ibp_bubble::eps",
+        "D",
+        "k",
+        "p",
+        "s",
+        "a",
+        "b",
+        "eps",
     )
-    integral = S("ibp_bubble::I")
+    integral = S("I")
     kinematics = hep.Kinematics(
         dimension, momenta=[loop, external]
     ).with_scalar_product(external, external, invariant)
@@ -129,9 +132,7 @@ def _(
     mo,
     reductions,
 ):
-    finite_a, finite_b, finite_bubble = S(
-        "ibp_bubble::A_finite", "ibp_bubble::B_finite", "ibp_bubble::bubble_finite"
-    )
+    finite_a, finite_b, finite_bubble = S("A_finite", "B_finite", "bubble_finite")
     master_expansions = [
         Replacement(integral(1, 0), finite_a + mass_a / epsilon),
         Replacement(integral(0, 1), finite_b + mass_b / epsilon),
@@ -203,9 +204,9 @@ def _(
     assert abs(complex(discriminant.evaluate(_parameters))) > 1e-10
     _parameters.update(
         {
-            finite_a: complex(oneloop.A0(_a, 1.0)[0]),
-            finite_b: complex(oneloop.A0(_b, 1.0)[0]),
-            finite_bubble: complex(oneloop.B0(_s, _a, _b, 1.0)[0]),
+            finite_a: complex(oneloop.a0(_a, 1.0)[0]),
+            finite_b: complex(oneloop.a0(_b, 1.0)[0]),
+            finite_bubble: complex(oneloop.b0(_s, _a, _b, 1.0)[0]),
         }
     )
     reduced_value = complex(finite_reductions[_target].evaluate(_parameters))

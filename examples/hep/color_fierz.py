@@ -8,11 +8,14 @@ app = marimo.App(width="medium", app_title="Color Fierz contractions")
 def _():
     import marimo as mo
     from symbolica import E
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community.spenso import (
         ColorSimplifySettings,
         Representation,
         TensorExpression,
     )
+
+    _set_namespace("color_fierz")
 
     return ColorSimplifySettings, E, Representation, TensorExpression, mo
 

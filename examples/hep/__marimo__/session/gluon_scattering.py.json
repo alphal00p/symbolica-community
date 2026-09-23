@@ -1,0 +1,159 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "7cacf6154552466b444f4c27850977c6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "3115ccf373f30443b8fa4fcf6f7d791a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"gluongluon-scattering-in-d-dimensions\">Gluon\u2013gluon scattering in <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex> dimensions</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/polarization_sums.py\">Polarization sums</a> \u00b7\n<a href=\"/?file=hep/quark_scattering.py\">Quark scattering</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(gg\\to gg||)</marimo-tex> from the Standard Model: three exchange diagrams and\nthe four-gluon contact interaction. Retain every interference term and\nkeep both the Lorentz dimension <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex> and the SU(<marimo-tex class=\"arithmatex\">||(N_c||)</marimo-tex>) color dimension symbolic.\nAll particles are selected by model name.</span>\n<span class=\"paragraph\">Each external gluon uses the shared physical axial projector. The two incoming\nmomenta are each other's gauge references, as are the outgoing pair.\nIncoming colors are averaged; outgoing colors and polarizations are summed.\nThe derivation reproduces the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/GlGl-GlGl\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc four-gluon example</a>\nand its four-dimensional SU(3) reference exactly.</span>\n<span class=\"paragraph\">The initial symbolic contraction can take several minutes. The controls below\nreuse that derived result.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "9911d53905127007260757af095cb718",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "color contraction\npolarization 0 start\npolarization 0 done\npolarization 1 start\npolarization 1 done\npolarization 2 start\npolarization 2 done\npolarization 3 start\npolarization 3 done\nGenerated four-gluon amplitude: symbolic D, SU(N), both averages and Bose exchange passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "7937629f0203afa27b98c342e7ecf77d",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "11c2b9ee57214205995a78388e5a5032",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Two averaging conventions</strong></span>\n<span class=\"paragraph\">The reference divides each incoming polarization sum by two:\n$<marimo-tex class=\"arithmatex\">||(\\overline{|\\mathcal M|^2}_{2} =\n\\frac{(D-2)^2 N_c^2 g_s^4(t^2+tu+u^2)^3}\n{(N_c^2-1)s^2t^2u^2},\\qquad s+t+u=0.||)</marimo-tex>$\nAveraging over all <marimo-tex class=\"arithmatex\">||(D-2||)</marimo-tex> physical incoming states instead multiplies this\nresult by <marimo-tex class=\"arithmatex\">||(4/(D-2)^2||)</marimo-tex>. These conventions agree at <marimo-tex class=\"arithmatex\">||(D=4||)</marimo-tex>.</span>\n<span class=\"paragraph\">For <marimo-tex class=\"arithmatex\">||(D=4||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(N_c=3||)</marimo-tex>, the result equals\n<marimo-tex class=\"arithmatex\">||(\\frac92 g_s^4(3-tu/s^2-su/t^2-st/u^2)||)</marimo-tex>.\nThe exact comparison also checks exchange of the identical outgoing gluons.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "cccac435abf9b26b85a6026cbe5ad169",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-0' random-id='b64ae4e0-c092-cc15-25a9-ad12413a468b'><marimo-dropdown data-initial-value='[&quot;Nc = 3&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eColor group&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Nc = 2&quot;,&quot;Nc = 3&quot;,&quot;Nc = 5&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-1' random-id='e361a731-d531-14d3-c27f-9d5a822d5bcf'><marimo-dropdown data-initial-value='[&quot;4&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eLorentz dimension&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Symbolic D&quot;,&quot;4&quot;,&quot;6&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-2' random-id='07f51e7f-c3fb-9fca-74f6-f1828567e6ae'><marimo-dropdown data-initial-value='[&quot;Two-state reference average&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eInitial spin average&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Two-state reference average&quot;,&quot;D-dimensional state average&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "4a641ad1f8adf93a68e5eec0e62a1315",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Squared amplitude divided by <marimo-tex class=\"arithmatex\">||(g_s^4||)</marimo-tex></strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">9/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7t+t\u00b2+s\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b3/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b2\u00b7t\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>t+s<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "09af38c1fe4eb6b37fb00c354b1d2fb7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Native flux, identical-event factor and nine angular-cut quadratures passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "b68e3731b3879d63e65b8e12181ed121",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Four-dimensional angular-cut event rates</strong></span>\n<span class=\"paragraph\">The rate uses <marimo-tex class=\"arithmatex\">||(D=4||)</marimo-tex> with native flux and two-body phase space, the full\nazimuth integral and the <marimo-tex class=\"arithmatex\">||(1/2!||)</marimo-tex> factor for identical final gluons:</span>\n<marimo-tex class=\"arithmatex\">||[\\frac{d\\sigma}{d\\cos\\theta}=\\frac{\\overline{|\\mathcal M|^2}}{64\\pi s}.||]</marimo-tex><span class=\"paragraph\">This lower panel always uses four dimensions, independently of the amplitude\ndisplay above. We show <marimo-tex class=\"arithmatex\">||(s\\sigma/\\alpha_s^2||)</marimo-tex>, with <marimo-tex class=\"arithmatex\">||(g_s^2=4\\pi\\alpha_s||)</marimo-tex>.\nThe cut <marimo-tex class=\"arithmatex\">||(|\\cos\\theta|&lt;c&lt;1||)</marimo-tex> excludes the massless exchange poles.\nSymbolica integrates the angular density; nine independent Gaussian\nquadratures verify the color and cut choices below.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "530b8164308969851da692d2181d4536",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='RGSE-0' random-id='c0225d67-0a24-e146-9a7e-6950893c2f33'><marimo-dropdown data-initial-value='[&quot;|cos\u03b8| &#92;u003c 0.8&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eAngular acceptance&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;|cos\u03b8| &#92;u003c 0.2&quot;,&quot;|cos\u03b8| &#92;u003c 0.5&quot;,&quot;|cos\u03b8| &#92;u003c 0.8&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "d8e1304235e09b613ec39c2ca409cb49",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Accepted event rate: <strong>110.45365</strong> \u00d7 \u03b1s\u00b2/s.</span></span><marimo-ui-element object-id='Kclp-0' random-id='6181abb1-1eca-d799-393b-1e9fb2a89837'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;cos(theta)&#92;&quot;:-0.8,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:328.8073774386549},{&#92;&quot;cos(theta)&#92;&quot;:-0.64,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:100.47546002875679},{&#92;&quot;cos(theta)&#92;&quot;:-0.48000000000000004,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:50.289948462462675},{&#92;&quot;cos(theta)&#92;&quot;:-0.32000000000000006,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:32.74689227892214},{&#92;&quot;cos(theta)&#92;&quot;:-0.16000000000000003,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:25.775220410752638},{&#92;&quot;cos(theta)&#92;&quot;:0.0,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:23.856469213197492},{&#92;&quot;cos(theta)&#92;&quot;:0.15999999999999992,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:25.775220410752638},{&#92;&quot;cos(theta)&#92;&quot;:0.32000000000000006,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:32.74689227892214},{&#92;&quot;cos(theta)&#92;&quot;:0.48,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:50.289948462462675},{&#92;&quot;cos(theta)&#92;&quot;:0.6399999999999999,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:100.47546002875674}]&quot;' data-total-rows='11' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

@@ -13,6 +13,7 @@ def _():
     from copy import copy
     from typing import TypedDict
     from symbolica import S, E, Expression, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community.spenso import (
         ColorSimplifySettings,
         SchoonschipSettings,
@@ -23,6 +24,8 @@ def _():
         dot,
     )
     from symbolica.community.hep import Model, FeynmanDiagram
+
+    _set_namespace("hep_gluon")
 
     contraction_settings = SchoonschipSettings(
         depth_limit=None,
@@ -55,24 +58,30 @@ def _():
 
 @app.cell
 def _(Representation, S, TensorName, dot):
-    D, eps = S('hep_gluon::D', 'hep_gluon::eps')
+    D, eps = S("D", "eps")
     lorentz = Representation.mink(D)
     adjoint = Representation.coad(8)
-    P = TensorName.vector('hep_gluon::p')
-    loop_momenta = [TensorName.vector('hep_gluon::k'), TensorName.vector('hep_gluon::l'), TensorName.vector('hep_gluon::m'), TensorName.vector('hep_gluon::n')]
+    P = TensorName.vector("p")
+    loop_momenta = [
+        TensorName.vector("k"),
+        TensorName.vector("l"),
+        TensorName.vector("m"),
+        TensorName.vector("n"),
+    ]
     K = loop_momenta[0]
     p, k = P(lorentz), K(lorentz)
-    index_ = S('hep_gluon::index_')
+    index_ = S("index_")
     MOMENTUM = TensorName.vector(
-        'gammalooprs::Q', tags=S('gammalooprs::Q').get_tags(),
+        "gammalooprs::Q",
+        tags=S("gammalooprs::Q").get_tags(),
     )
-    t = S("hep_gluon::t", is_scalar=True) # a scale that can move out of dot products
-    mUV = S("hep_gluon::mUV", is_scalar=True)
-    uv_probe = S("hep_gluon::uv_probe", is_scalar=True)
-    prop = S("hep_gluon::prop", is_scalar=True)
-    q_, mass2_ = S("hep_gluon::q_", "hep_gluon::mass2_")
+    t = S("t", is_scalar=True)  # a scale that can move out of dot products
+    mUV = S("mUV", is_scalar=True)
+    uv_probe = S("uv_probe", is_scalar=True)
+    prop = S("prop", is_scalar=True)
+    q_, mass2_ = S("q_", "mass2_")
     # Rewrite patterns contain wildcards rather than concrete rank-one tensors.
-    dot_pattern = S('spenso::dot')
+    dot_pattern = S("spenso::dot")
     # Python aliases for actual dot expressions, not substitute scalar symbols.
     k2, p2 = dot(k, k), dot(p, p)
     return (
@@ -230,17 +239,21 @@ def _(
 def _(Expression, TensorExpression, dot_pattern, k, mUV, mass2_, prop, q_, t):
     def evaluate_propagators(expression: Expression) -> TensorExpression:
         """Interpret prop(q, M2) as 1/(q.q-M2), retaining the model's mass term."""
-        return TensorExpression(expression.replace(prop(q_, mass2_), 1/(dot_pattern(q_, q_)-mass2_)))
+        return TensorExpression(
+            expression.replace(prop(q_, mass2_), 1 / (dot_pattern(q_, q_) - mass2_))
+        )
 
     def uv_deform(expression: Expression) -> TensorExpression:
         """Scale the full integrand and shift normalized propagator masses."""
-        scaled = expression.replace(k, k/t)
+        scaled = expression.replace(k, k / t)
         # Factoring t^2 from a rescaled propagator rescales its mass to t^2*m^2.
         # Apply prop(q,M2) -> prop(q,M2+(1-t^2)*mUV^2) in that normalization.
-        return TensorExpression(scaled.replace(
-            prop(q_, mass2_),
-            t**2 * prop(t*q_, t**2*mass2_ + (1-t**2)*mUV**2),
-        ))
+        return TensorExpression(
+            scaled.replace(
+                prop(q_, mass2_),
+                t**2 * prop(t * q_, t**2 * mass2_ + (1 - t**2) * mUV**2),
+            )
+        )
 
     return evaluate_propagators, uv_deform
 
@@ -380,7 +393,7 @@ def _(g, model):
         [g],
         loops=loops,
         coupling_orders={"QCD": 2 * loops, "QED": 0},
-        particle_veto=["c", "t", "s", "u", "d"]
+        particle_veto=["c", "t", "s", "u", "d"],
     )
     return diagrams, loops
 
@@ -402,8 +415,11 @@ def _(diagrams, mo):
         for i, d in enumerate(diagrams)
     }
     _default = next(
-        (label for label, index in _options.items()
-         if all(edge.particle_name == "g" for edge in diagrams[index].internal_edges)),
+        (
+            label
+            for label, index in _options.items()
+            if all(edge.particle_name == "g" for edge in diagrams[index].internal_edges)
+        ),
         next(iter(_options)),
     )
     diagram_index = mo.ui.dropdown(
@@ -531,11 +547,6 @@ def _(mUV, s):
     return
 
 
-@app.cell
-def _():
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -578,8 +589,7 @@ def _(mo):
 @app.cell
 def _(color_stripped_numerator):
     bispinor_numerator = (
-        color_stripped_numerator
-        .schoonschip()
+        color_stripped_numerator.schoonschip()
         .collect_gamma_chains()
         # Collection exposes identity factors in the massive propagator terms.
         .simplify_metrics()
@@ -765,7 +775,9 @@ def _(mo):
 
 @app.cell
 def _(color_stripped_numerator, diagram, mUV):
-    diagram_local_uv_counterterm = diagram.uv_counterterm(mUV, numerator=color_stripped_numerator)
+    diagram_local_uv_counterterm = diagram.uv_counterterm(
+        mUV, numerator=color_stripped_numerator
+    )
     diagram_local_uv_counterterm
     return
 
@@ -781,7 +793,7 @@ def _(copy, projected_integrand, uv_deform):
 @app.cell
 def _(diagram, evaluate_propagators, t, uv_deformed_expression):
     uv_scaled_expression = evaluate_propagators(uv_deformed_expression)
-    uv_measure_factor = t**(-4*diagram.loop_count)
+    uv_measure_factor = t ** (-4 * diagram.loop_count)
     uv_with_measure = uv_scaled_expression * uv_measure_factor
     uv_series = uv_with_measure.series(t, 0, 0)
     uv_series
@@ -805,7 +817,9 @@ def _(mo):
 
 @app.cell
 def _(diagram, uv_measure_factor, uv_series, uv_tensor_input):
-    uv_routed_series = uv_tensor_input(uv_series.to_expression()/uv_measure_factor, diagram)
+    uv_routed_series = uv_tensor_input(
+        uv_series.to_expression() / uv_measure_factor, diagram
+    )
     return (uv_routed_series,)
 
 
@@ -853,7 +867,7 @@ def _(TensorExpression, t, uv_reduced_series):
 @app.cell
 def _(E, color_factor, eps, uv_counterterm_integrand, uv_pole_residue):
     uv_residue = -uv_pole_residue(uv_counterterm_integrand)
-    uv_counterterm = color_factor * (-E('1i') * uv_residue / (16 * E('pi')**2 * eps))
+    uv_counterterm = color_factor * (-E("1i") * uv_residue / (16 * E("pi") ** 2 * eps))
     uv_counterterm
     return
 
@@ -942,7 +956,7 @@ def _(
 
 @app.cell
 def _(E, eps, total_uv_residue):
-    total_uv_counterterm = -E('1i') * total_uv_residue / (16 * E('pi')**2 * eps)
+    total_uv_counterterm = -E("1i") * total_uv_residue / (16 * E("pi") ** 2 * eps)
     total_uv_counterterm
     return
 

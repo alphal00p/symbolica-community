@@ -11,8 +11,11 @@ def _():
     import marimo as mo
     from ibp_phi4 import app as self_energy_app
     from symbolica import E, Matrix, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("ibp_phi4")
 
     return (
         E,
@@ -384,7 +387,7 @@ def _(
 ):
     vertex_ct_diagrams = {}
     vertex_ct_input, _vertex_tree_ct = (zero, zero)
-    _external_index = S("ibp_phi4::external_")
+    _external_index = S("external_")
     for _loops, _order in [(1, 1), (0, 2)]:
         _result = ct_model.generate_diagrams(
             [particle.name] * 2,
@@ -545,7 +548,7 @@ def _(
 
 @app.cell
 def _(E, S, eps, mo, zero, zg1, zg2):
-    a = S("ibp_phi4::a")
+    a = S("a")
     _Zg = 1 + a * zg1 + a**2 * zg2
     beta = (
         (-2 * eps * a * _Zg / (_Zg + a * _Zg.derivative(a)))

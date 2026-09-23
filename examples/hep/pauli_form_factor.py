@@ -12,7 +12,10 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community.hep import oneloop
+
+    _set_namespace("pauli")
 
     return S, Symbol, mo, np, oneloop
 
@@ -98,8 +101,8 @@ def _(finite, finite_a, finite_b, mass, np, oneloop, transfer):
                     {
                         transfer: ratio * m2,
                         mass: electron_mass,
-                        finite_a: complex(oneloop.A0(m2, scale)[0]),
-                        finite_b: complex(oneloop.B0(ratio * m2, m2, m2, scale)[0]),
+                        finite_a: complex(oneloop.a0(m2, scale)[0]),
+                        finite_b: complex(oneloop.b0(ratio * m2, m2, m2, scale)[0]),
                     }
                 )
             )
@@ -147,7 +150,7 @@ def _(analytic_pauli, generated_pauli, mo, np, oneloop, parameter_pauli):
             for _scale_ratio in (0.1, 10.0):
                 _generated = generated_pauli(_r, _m, _scale_ratio)
                 _derivative = 1 + _r * _m**2 * complex(
-                    oneloop.dB0(_r * _m**2, _m**2, _m**2, _scale_ratio * _m**2)[0]
+                    oneloop.db0(_r * _m**2, _m**2, _m**2, _scale_ratio * _m**2)[0]
                 )
                 _error = max(abs(_generated - _v) for _v in [*_references, _derivative])
                 assert _error < 5e-10 * max(1, abs(_generated))
@@ -173,7 +176,7 @@ def _(analytic_pauli, generated_pauli, mo, np, oneloop, parameter_pauli):
 
 @app.cell
 def _(S, Symbol, generated_pauli, mo, np):
-    x, r, beta = S("pauli::x", "pauli::r", "pauli::beta")
+    x, r, beta = S("x", "r", "beta")
     _primitive = (
         (1 / (1 - r * x * (1 - x)))
         .series(r, 0, 4)

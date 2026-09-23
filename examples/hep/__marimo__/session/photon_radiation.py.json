@@ -1,0 +1,113 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "7cacf6154552466b444f4c27850977c6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "678e75baf2ed9b028784bdf65b1f66b3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"virtual-photons-and-qcd-radiation\">Virtual photons and QCD radiation</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/soft_function.py\">Light-cone soft radiation</a> \u00b7\n<a href=\"/?file=hep/quark_gluon_scattering.py\">Quark\u2013gluon scattering</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(\\gamma^*\\to\\mu^-\\mu^+||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(\\gamma^*\\to q\\bar q||)</marimo-tex> and\nboth diagrams for <marimo-tex class=\"arithmatex\">||(\\gamma^*\\to q\\bar qg||)</marimo-tex>. The massive squared\namplitudes are checked before taking the massless limit used for the\nDalitz distribution and regulated integral.</span>\n<span class=\"paragraph\">This covers FeynCalc's <a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/Tree/Ga-MuAmu\" rel=\"noopener noreferrer\" target=\"_blank\">muon-pair</a>,\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/Ga-QQbar\" rel=\"noopener noreferrer\" target=\"_blank\">quark-pair</a>, and\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/Ga-QQbarGl\" rel=\"noopener noreferrer\" target=\"_blank\">real-radiation</a>\nexamples. All particles are selected by name.</span>\n<span class=\"paragraph\">The virtual-photon current is contracted with <marimo-tex class=\"arithmatex\">||(-g_{\\mu\\nu}||)</marimo-tex> without\nan initial spin average, matching those references. Its invariant mass is\n<marimo-tex class=\"arithmatex\">||(Q=\\sqrt{q^2}&gt;0||)</marimo-tex>. These are timelike current rates, not decays of an\non-shell photon.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "befb65a93a96a3f37303442218a3730c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "2026-09-23T17:23:28.992919Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-23T17:23:28.992965Z  WARN symbolica::coefficient: Created indeterminate by raising \u29de to the power of (0+0i)\n2026-09-23T17:23:28.993004Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -1\n2026-09-23T17:23:28.993010Z  WARN symbolica::coefficient: Created infinity by raising 0 to the power of -2\n2026-09-23T17:23:28.993015Z  WARN symbolica::coefficient: Created indeterminate by raising \u29de to the power of (0+0i)\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "a18d6c52e9b9ca9eed011106ce67fcc6",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "83fe1a02a07c364b26506e64c3e199da",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"exact-amplitude-and-phase-space-checks\">Exact amplitude and phase-space checks</h2>\n<span class=\"paragraph\">The full massive result agrees with the reference. Both photon and\ngluon Ward contractions vanish. Gluon polarization sums using either\nmassive quark momentum as reference equal the covariant result.\nThe full amplitude also reproduces the independently checked soft limit.</span>\n<span class=\"paragraph\">Shared Kinematics.three_body_phase_space(k1, k2, k3) returns</span>\n<marimo-tex class=\"arithmatex\">||[\\frac{d\\Phi_3}{ds_{12}ds_{23}}=\\frac{1}{128\\pi^3 q^2}.||]</marimo-tex><span class=\"paragraph\">It integrates the overall orientation. Physical Dalitz boundaries,\nthe decay factor <marimo-tex class=\"arithmatex\">||(1/(2Q)||)</marimo-tex>, and any identical-particle factors remain\nexplicit. These three final particles are distinct.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/128/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b3\u00b7QQ<span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">For massless final states define <marimo-tex class=\"arithmatex\">||(x_i=2E_i/Q||)</marimo-tex>,\n<marimo-tex class=\"arithmatex\">||(0&lt;x_i&lt;1||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(x_1+x_2+x_3=2||)</marimo-tex>. Changing from pair invariants to\n<marimo-tex class=\"arithmatex\">||(x_1,x_2||)</marimo-tex> has Jacobian <marimo-tex class=\"arithmatex\">||(q^4||)</marimo-tex>. The resulting distribution is\n$<marimo-tex class=\"arithmatex\">||(\\frac{1}{\\Gamma_q}\\frac{d\\Gamma_{q\\bar qg}}{dx_1dx_2}\n=\\frac{\\alpha_s C_F}{2\\pi}\n\\frac{x_1^2+x_2^2}{(1-x_1)(1-x_2)},\\qquad\nC_F=\\frac{N_c^2-1}{2N_c}.||)</marimo-tex>$</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/4\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>Nc\u00b2\u00b7x1\u00b2\u00b7alpha_s+Nc\u00b2\u00b7x2\u00b2\u00b7alpha_s-x1\u00b2\u00b7alpha_s-x2\u00b2\u00b7alpha_s<span style=\"color: rgb(128, 128, 128)\">)</span>\n    /<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b7Nc\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-1+x1<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-1+x2<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "9aa8205f38ef7f52d784f05e355acbe2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-0' random-id='315f5f9f-2888-06ac-8ad6-56a79a114f39'><marimo-dropdown data-initial-value='[&quot;SU(3)&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eColor group&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;SU(2)&quot;,&quot;SU(3)&quot;,&quot;SU(5)&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-1' random-id='c0e31afd-87b4-89c9-fbea-d57b064d1767'><marimo-dropdown data-initial-value='[&quot;0.1&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eInvariant cut \u03b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;0.01&quot;,&quot;0.05&quot;,&quot;0.1&quot;,&quot;0.25&quot;,&quot;0.4&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-2' random-id='a705c28f-7d6b-0c5c-629a-cb06e2590a14'><marimo-slider data-initial-value='0.118' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003e\u03b1s&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.05' data-stop='0.2' data-step='0.001' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-3' random-id='5d6ff56d-7277-39ef-73a1-ecba385c9965'><marimo-slider data-initial-value='0.5' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eFirst position in the allowed Dalitz region&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.05' data-stop='0.95' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='PKri-4' random-id='b3dc51c1-8547-396c-b89c-4dcbdadc8fcb'><marimo-slider data-initial-value='0.5' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSecond position in the allowed Dalitz region&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.05' data-stop='0.95' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "3505fc843b77d36041de6d25e233bd58",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"explore-the-physical-dalitz-region\">Explore the physical Dalitz region</h2>\n<span class=\"paragraph\">Set <marimo-tex class=\"arithmatex\">||(y_1=1-x_1||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(y_2=1-x_2||)</marimo-tex>. The cut\n<marimo-tex class=\"arithmatex\">||(y_1,y_2\\ge\\beta||)</marimo-tex> with <marimo-tex class=\"arithmatex\">||(y_1+y_2\\le1||)</marimo-tex> excludes the soft/collinear\nsingularities. The position controls stay inside this triangle.\nEnergy fractions are normalized to half the virtual-photon mass.</span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Energy fractions:</strong> x\u2081 = 0.5000, x\u2082 = 0.7000, x\u2083 = 0.8000</span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Normalized differential density:</strong> 0.12353253</span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Integrated real-emission rate / Born rate:</strong> 0.09990217</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "e7d4e9ce2f920d7147eaa63dbf28eb35",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"regulated-integral-and-infrared-logarithms\">Regulated integral and infrared logarithms</h2>\n<span class=\"paragraph\">Symbolica computes the rational inner integral and the outer primitive,\nincluding its dilogarithm. Their derivatives are checked exactly.\nA real-branch form of the integrated kernel is displayed below; its\ncut derivative also agrees with the boundary of the integration region.\nIndependent two-dimensional Gaussian quadrature checks the result.</span>\n<span class=\"paragraph\">Multiply this kernel by <marimo-tex class=\"arithmatex\">||(\\alpha_s C_F/(2\\pi)||)</marimo-tex>.\nAs <marimo-tex class=\"arithmatex\">||(\\beta\\to0^+||)</marimo-tex> it approaches</span>\n<marimo-tex class=\"arithmatex\">||[2\\log^2\\beta+3\\log\\beta+\\frac52-\\frac{\\pi^2}{3}.||]</marimo-tex><span class=\"paragraph\">The real contribution diverges as the cut is removed. Cancellation\nrequires the virtual correction, which is not included here.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">5/2<span style=\"color: rgb(205, 205, 0)\">-</span>5\u00b7beta<span style=\"color: rgb(205, 205, 0)\">+</span>4\u00b7<span style=\"color: rgb(205, 0, 205)\">polylog</span><span style=\"color: rgb(0, 95, 175)\">(</span>2,beta<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span><span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>beta<span style=\"color: rgb(0, 95, 175)\">)</span>-<span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>1-beta<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>3-4\u00b7beta+beta\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">+</span>2\u00b7<span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>beta<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2<span style=\"color: rgb(205, 205, 0)\">-</span>1/3\u00b7<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2</div><marimo-ui-element object-id='SFPL-0' random-id='965a93a0-6b6b-67ac-fd78-b83b52479db3'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;\u03b2&#92;&quot;:0.01,&#92;&quot;Exact real / Born&#92;&quot;:0.7014661903648036,&#92;&quot;Independent quadrature&#92;&quot;:0.70146619036476,&#92;&quot;Small-\u03b2 expansion&#92;&quot;:0.6963680511806467},{&#92;&quot;\u03b2&#92;&quot;:0.05,&#92;&quot;Exact real / Born&#92;&quot;:0.22185079800057814,&#92;&quot;Independent quadrature&#92;&quot;:0.22185079800057375,&#92;&quot;Small-\u03b2 expansion&#92;&quot;:0.20462392581243333},{&#92;&quot;\u03b2&#92;&quot;:0.1,&#92;&quot;Exact real / Born&#92;&quot;:0.09990217028501598,&#92;&quot;Independent quadrature&#92;&quot;:0.0999021702850149,&#92;&quot;Small-\u03b2 expansion&#92;&quot;:0.07277166481889905},{&#92;&quot;\u03b2&#92;&quot;:0.25,&#92;&quot;Exact real / Born&#92;&quot;:0.015236536192983806,&#92;&quot;Independent quadrature&#92;&quot;:0.015236536192983742,&#92;&quot;Small-\u03b2 expansion&#92;&quot;:-0.027672800148003714},{&#92;&quot;\u03b2&#92;&quot;:0.4,&#92;&quot;Exact real / Born&#92;&quot;:0.0013500671433013458,&#92;&quot;Independent quadrature&#92;&quot;:0.0013500671433013312,&#92;&quot;Small-\u03b2 expansion&#92;&quot;:-0.04656415786511738}]&quot;' data-total-rows='5' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><marimo-accordion data-labels='[&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSymbolica&#x27;s outer primitive&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;]' data-multiple='false'><div><div style=\"white-space: pre-wrap; margin: 0;\">2\u00b7y1<span style=\"color: rgb(205, 205, 0)\">+</span>2\u00b7y1\u00b7<span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>beta<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>2\u00b7<span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>y1<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7<span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>beta<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>2\u00b7<span style=\"color: rgb(205, 0, 205)\">polylog</span><span style=\"color: rgb(0, 95, 175)\">(</span>2,y1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>1-y1<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7<span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>1-y1<span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">-</span>1/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>1-y1<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b2<span style=\"color: rgb(205, 205, 0)\">-</span><span style=\"color: rgb(128, 128, 128)\">(</span>1-y1<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>beta<span style=\"color: rgb(0, 95, 175)\">)</span>-<span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 95, 175)\">(</span>1-y1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div></div></marimo-accordion></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

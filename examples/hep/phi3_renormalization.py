@@ -12,9 +12,12 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, Matrix, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("phi3")
 
     return (
         E,
@@ -52,17 +55,17 @@ def _(E, S, Symbol, hep, mo):
     particle = model.particle("phi")
     mass, coupling = S("UFO::mass", "UFO::g")
     d, M, p2, mu2, eps, k, coordinate, integral = S(
-        "phi3::d",
-        "phi3::M",
-        "phi3::p2",
-        "phi3::mu2",
-        "phi3::eps",
-        "phi3::k",
-        "phi3::x",
-        "phi3::I",
+        "d",
+        "M",
+        "p2",
+        "mu2",
+        "eps",
+        "k",
+        "x",
+        "I",
     )
     Q, K, P = S("gammalooprs::Q", "gammalooprs::K", "gammalooprs::P")
-    _index, _external = S("phi3::index_", "phi3::external_")
+    _index, _external = S("index_", "external_")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
     _kinematics = hep.Kinematics(d, momenta=[k])
     family = hep.IntegralFamily(
@@ -103,7 +106,7 @@ def _(E, S, Symbol, hep, mo):
         coefficients[_label] = _coefficient
         if not _loops:
             continue
-        _generated_family = _diagram.integral_family(kinematics=hep.Kinematics(d))
+        _generated_family = _diagram.propagator_family(kinematics=hep.Kinematics(d))
         _denominators = [
             _den.replace(P(_external, _index), zero)
             .replace(K(0, _index), k(_index))
@@ -140,6 +143,7 @@ def _(E, S, Symbol, hep, mo):
         d,
         diagrams,
         eps,
+        family,
         ibp,
         inputs,
         integral,
@@ -179,6 +183,7 @@ def _(
     d,
     diagrams,
     eps,
+    family,
     hep,
     ibp,
     inputs,
@@ -206,12 +211,12 @@ def _(
         assert (
             laporta.reduce([_power], integral=integral) - reductions[_power]
         ).together() == zero
-    _master_reduction = oneloop.IntegralFamily([oneloop.Propagator(M)], []).reduce()
-    _master = _master_reduction.terms[0][1].to_oneloopmaster(mu2)
+    _master_reduction = oneloop.reduce(family, [1])
+    _master = _master_reduction.terms[0][1].to_expression(mu2)
     _master_pole = oneloop.get_expression(_master, coefficient=-1)
     assert _master_pole == M
     _master_finite = oneloop.reduction_coefficients(_master_reduction, mu2)[0]
-    _finite_symbol = S("phi3::Afinite")
+    _finite_symbol = S("Afinite")
     _reduced, poles, finite = ({}, {}, {})
     for _label, _power in [("self_energy", 2), ("vertex", 3)]:
         _reduced[_label] = inputs[_label].replace(integral(_power), reductions[_power])
@@ -233,7 +238,7 @@ def _(
     assert (finite["vertex"] + coupling**3 / (2 * M)).together() == zero
     _self_diagram = diagrams["self_energy"]
     _basis = _self_diagram.momentum_basis()
-    _routed_kinematics = hep.Kinematics(momenta=[K(0), P(0), P(1)]).with_scalar_product(
+    _routed_kinematics = hep.Kinematics(d, momenta=[K(0), P(0), P(1)]).with_scalar_product(
         P(0), P(0), p2
     )
     _shifts = []
@@ -246,10 +251,16 @@ def _(
         _shifts[0] - _shifts[1], _shifts[0] - _shifts[1]
     )
     assert _invariant == p2
-    _bubble_reduction = oneloop.IntegralFamily(
-        [oneloop.Propagator(M)] * 2, [_invariant]
-    ).reduce()
-    _bubble_master = _bubble_reduction.terms[0][1].to_oneloopmaster(mu2)
+    _bubble_family = hep.IntegralFamily(
+        [K(0)], [P(0)],
+        [
+            _routed_kinematics.scalar_product(_momentum, _momentum) - M
+            for _momentum in [K(0), K(0) + P(0)]
+        ],
+        kinematics=_routed_kinematics,
+    )
+    _bubble_reduction = oneloop.reduce(_bubble_family, [1, 1])
+    _bubble_master = _bubble_reduction.terms[0][1].to_expression(mu2)
     _bubble_pole = oneloop.select_branch(
         oneloop.get_expression(_bubble_master, coefficient=-1),
         [Replacement(M, one), Replacement(p2, one)],
@@ -307,9 +318,7 @@ def _(
     poles,
     zero,
 ):
-    _h, _field, _mass_ct, _vertex = S(
-        "phi3::h", "phi3::field", "phi3::mass_ct", "phi3::vertex"
-    )
+    _h, _field, _mass_ct, _vertex = S("h", "field", "mass_ct", "vertex")
     _Zfield, _Zmass, _Zvertex = (1 + _h * _x for _x in (_field, _mass_ct, _vertex))
     _specification = json.loads(model.to_json())
     _specification["orders"].append(
@@ -385,7 +394,7 @@ def _(
     )
     residues = [_solution[_row, 0].to_expression() for _row in range(3)]
     assert residues == [zero, coupling**2 / (2 * M), zero]
-    _log4pi, _gamma_e = S("phi3::log4pi", "phi3::gamma_E")
+    _log4pi, _gamma_e = S("log4pi", "gamma_E")
     constants = {}
     for _scheme, _delta in [("MS", 1 / eps), ("MSbar", 1 / eps + _log4pi - _gamma_e)]:
         constants[_scheme] = [
@@ -417,10 +426,8 @@ def _(
 
 
 @app.cell
-def _(M, bubble_finite, coupling, finite, math, mu2, np, oneloop, p2):
-    evaluator = oneloop.compile_native(
-        [finite["self_energy"], finite["vertex"], bubble_finite], [M, coupling, mu2, p2]
-    )
+def _(M, bubble_finite, coupling, finite, math, mu2, np, p2):
+    _coefficients = [finite["self_energy"], finite["vertex"], bubble_finite]
     _nodes, _weights = np.polynomial.legendre.leggauss(128)
     _nodes, _weights = ((_nodes + 1) / 2, _weights / 2)
     _points = [
@@ -431,12 +438,8 @@ def _(M, bubble_finite, coupling, finite, math, mu2, np, oneloop, p2):
     ]
     numeric_checks = []
     for _mv, _gv, _scale, _pv in _points:
-        _values = [
-            complex(_x)
-            for _x in evaluator.evaluate_complex(
-                [[complex(_x) for _x in (_mv, _gv, _scale, _pv)]]
-            )[0]
-        ]
+        _point = {M: _mv, coupling: _gv, mu2: _scale, p2: _pv}
+        _values = [_coefficient.evaluate(_point) for _coefficient in _coefficients]
         _reference = [
             -(_gv**2) * math.log(_mv / _scale) / 2,
             -(_gv**3) / (2 * _mv),

@@ -8,8 +8,11 @@ app = marimo.App(width="medium", app_title="Odd photons and Furry cancellation")
 def _():
     import marimo as mo
     from symbolica import E, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("furry")
 
     return E, S, TensorExpression, hep, mo
 
@@ -67,7 +70,7 @@ def _(S, hep, model, photons):
         == sorted([electron.name, electron.antiname, photon.name])
     ]
     assert len(vertices) == 1
-    D = S("furry::D")
+    D = S("D")
     K, P, mink = S("gammalooprs::K", "gammalooprs::P", "spenso::mink")
     generated = model.generate_diagrams(
         [photon],
@@ -91,7 +94,7 @@ def _(S, hep, model, photons):
     )
     families = []
     for _diagram in generated.diagrams:
-        raw = _diagram.integral_family(kinematics=kinematics)
+        raw = _diagram.propagator_family(kinematics=kinematics)
         # Include probes so the scalar map also transports each loop-probe product.
         families.append(
             hep.IntegralFamily(

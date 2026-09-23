@@ -9,8 +9,11 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("gg")
 
     return CookSettings, E, S, Symbol, TensorExpression, hep, mo, np
 
@@ -46,15 +49,15 @@ def _(CookSettings, E, S, TensorExpression, hep):
     def calculate_scattering():
         model = hep.Model.standard_model()
         P = S("gammalooprs::P")
-        s = S("gg::s", is_positive=True)
-        t, u, D, N, dA, gs = S("gg::t", "gg::u", "gg::D", "gg::N", "gg::dA", "UFO::G")
+        s = S("s", is_positive=True)
+        t, u, D, N, dA, gs = S("t", "u", "D", "N", "dA", "UFO::G")
         coad, conj = S("spenso::coad", "spenso::conj")
         index, a, b, c, inv, wave, rep = S(
             "index_", "a_", "b_", "c_", "inv_", "wave_", "rep_"
         )
-        ports = S("gg::i0", "gg::i1", "gg::i2", "gg::i3")
-        wrapped = S("gg::adjoint")
-        bars = S("gg::j0", "gg::j1", "gg::j2", "gg::j3")
+        ports = S("i0", "i1", "i2", "i3")
+        wrapped = S("adjoint")
+        bars = S("j0", "j1", "j2", "j3")
         gluon = model.particle("g")
         vertices = [
             v
@@ -259,7 +262,7 @@ def _(D, E, N, averaging, colors, dimension, dimensional_average, fixed_two, gs,
 @app.cell
 def _(D, E, N, P, S, Symbol, fixed_two, gs, hep, np, s, t, u):
     def integrate_rate():
-        z, cutoff, alpha = S("gg::z", "gg::cutoff", "gg::alpha_s")
+        z, cutoff, alpha = S("z", "cutoff", "alpha_s")
         kin4 = hep.Kinematics.mandelstam(
             [P(i) for i in range(4)], [E("0")] * 4, [s, t, u]
         )

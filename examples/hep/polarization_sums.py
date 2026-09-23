@@ -8,8 +8,11 @@ app = marimo.App(width="medium", app_title="Polarization sums in D dimensions")
 def _():
     import marimo as mo
     from symbolica import E, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("polarization")
 
     return E, S, TensorExpression, hep, mo
 
@@ -64,18 +67,14 @@ def _(mo):
 def _(E, S, TensorExpression, dimension_choice, hep, normalization, species):
     model = hep.Model.standard_model()
     particle = model.particle(species.value)
-    D = (
-        S("polarization::D")
-        if dimension_choice.value == "Symbolic D"
-        else E(dimension_choice.value)
-    )
+    D = S("D") if dimension_choice.value == "Symbolic D" else E(dimension_choice.value)
     p, n, i, j, chi, zeta = S(
-        "polarization::p",
-        "polarization::n",
-        "polarization::i",
-        "polarization::j",
-        "polarization::chi",
-        "polarization::zeta",
+        "p",
+        "n",
+        "i",
+        "j",
+        "chi",
+        "zeta",
     )
     mink, metric = S("spenso::mink", "spenso::g")
     mass_squared = (

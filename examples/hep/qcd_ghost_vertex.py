@@ -10,8 +10,11 @@ def _():
 
     import marimo as mo
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("ghost_uv")
 
     return E, S, Symbol, TensorExpression, hep, json, mo
 
@@ -57,16 +60,16 @@ def _(E, S, Symbol, TensorExpression, hep, json):
             )
     model = hep.Model.from_json(json.dumps(spec))
     D, eps, M, mUV, x, integral, xi, s, dA, CA = S(
-        "ghost_uv::D",
-        "ghost_uv::eps",
-        "ghost_uv::M",
-        "ghost_uv::mUV",
-        "ghost_uv::x",
-        "ghost_uv::I",
-        "ghost_uv::xi",
-        "ghost_uv::s",
-        "ghost_uv::dA",
-        "ghost_uv::CA",
+        "D",
+        "eps",
+        "M",
+        "mUV",
+        "x",
+        "I",
+        "xi",
+        "s",
+        "dA",
+        "CA",
     )
     K, P, gs = S("gammalooprs::K", "gammalooprs::P", "UFO::G")
     mink, coad, metric, hedge, f, cas = S(
@@ -78,19 +81,19 @@ def _(E, S, Symbol, TensorExpression, hep, json):
         "spenso::cas",
     )
     idx, dim, a, b, c, arguments = S(
-        "ghost_uv::idx_",
-        "ghost_uv::dim_",
-        "ghost_uv::a",
-        "ghost_uv::b",
-        "ghost_uv::c",
-        "ghost_uv::arguments___",
+        "idx_",
+        "dim_",
+        "a",
+        "b",
+        "c",
+        "arguments___",
     )
     den, ed, mom, ms, quad = S(
         "gammalooprs::denom",
-        "ghost_uv::ed_",
-        "ghost_uv::mom_",
-        "ghost_uv::ms_",
-        "ghost_uv::quad_",
+        "ed_",
+        "mom_",
+        "ms_",
+        "quad_",
     )
     zero, one = E("0"), E("1")
     kinematics = hep.Kinematics(D, momenta=[K(0), P(0), P(1)]).with_scalar_product(
@@ -268,7 +271,7 @@ def _(E, S, Symbol, TensorExpression, hep, json):
     # The gluon field counterterm is an explicit reference input from the separate
     # generated QCD renormalization calculation. The ghost kinetic pole is computed
     # here; combining it with the vertex supplies an independent coupling check.
-    Nf = S("ghost_uv::Nf")
+    Nf = S("Nf")
     vertex_ratios = {
         particle_name: (pole / trees[particle_name].replace(D, 4)).together()
         for particle_name, pole in vertex_poles.items()

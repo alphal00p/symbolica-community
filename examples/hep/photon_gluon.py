@@ -9,8 +9,11 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("photon_gluon")
 
     return mo, np, E, S, Symbol, hep, CookSettings, TensorExpression
 
@@ -49,12 +52,8 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression, np):
         model = hep.Model.standard_model()
         P = S("gammalooprs::P")
         mass, ee, gs = S("UFO::MB", "UFO::ee", "UFO::G")
-        s, t, u, virtuality = S(
-            "photon_gluon::s", "photon_gluon::t", "photon_gluon::u", "photon_gluon::q2"
-        )
-        Nc, dA, cof, coad = S(
-            "photon_gluon::Nc", "photon_gluon::dA", "spenso::cof", "spenso::coad"
-        )
+        s, t, u, virtuality = S("s", "t", "u", "q2")
+        Nc, dA, cof, coad = S("Nc", "dA", "spenso::cof", "spenso::coad")
 
         def calculate(names, photon_position, gluon_position, fermion_ports):
             masses = [
@@ -86,15 +85,15 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression, np):
             )
             assert len(generated.diagrams) == 2
             ports = S(
-                "photon_gluon::i0",
-                "photon_gluon::i1",
-                "photon_gluon::i2",
-                "photon_gluon::i3",
+                "i0",
+                "i1",
+                "i2",
+                "i3",
             )
             a, b, c, inv, index, left, right = S(
                 "a_", "b_", "c_", "inv_", "index_", "left_", "right_"
             )
-            conj, wrap, metric = S("spenso::conj", "photon_gluon::adjoint", "spenso::g")
+            conj, wrap, metric = S("spenso::conj", "adjoint", "spenso::g")
             terms = []
             for diagram in generated.diagrams:
                 numerator = model.expand_couplings(
@@ -360,7 +359,7 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression, np):
             fusion - fusion.replace(t, 2 * mass**2 + virtuality - s - t)
         ).together() == E("0")
         # Check the reference spacelike continuation q^2=-Q^2 explicitly at zero mass.
-        Q2 = S("photon_gluon::Q2", is_positive=True)
+        Q2 = S("Q2", is_positive=True)
         for channel, x, y, prefactor in (
             ("fusion", t, u, 2 * ee**2 * gs**2 / 9),
             ("compton", s, t, -16 * ee**2 * gs**2 / 27),
@@ -377,8 +376,8 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression, np):
         # Only for a real photon do we form ordinary two-body cross sections.
         # Incoming photons have two physical states, so include their missing 1/2;
         # the off-shell current convention used above intentionally has no such average.
-        z, rho, beta = S("photon_gluon::z", "photon_gluon::rho", "photon_gluon::beta")
-        alpha, alpha_s = S("photon_gluon::alpha", "photon_gluon::alpha_s")
+        z, rho, beta = S("z", "rho", "beta")
+        alpha, alpha_s = S("alpha", "alpha_s")
         angular = {}
         for channel, (_, sums, kin) in channels.items():
             phase = (

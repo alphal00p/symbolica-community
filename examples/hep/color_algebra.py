@@ -8,7 +8,10 @@ app = marimo.App(width="medium", app_title="Color chains and conjugation")
 def _():
     import marimo as mo
     from symbolica import E, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community.spenso import AUTO, Representation, TensorExpression, chain
+
+    _set_namespace("color_algebra")
 
     return AUTO, E, Representation, S, TensorExpression, chain, mo
 
@@ -51,7 +54,6 @@ def _(Representation, TensorExpression):
         explicit_word.spenso_conjugate().simplify_color().to_expression()
     )
     assert color_word.dirac_adjoint().to_expression() == color_conjugate.to_expression()
-
 
     return color_conjugate, color_word, explicit_word, fundamental, generator
 

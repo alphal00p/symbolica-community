@@ -11,7 +11,10 @@ app = marimo.App(
 def _():
     import marimo as mo
     from symbolica import E, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
+
+    _set_namespace("parameters")
 
     return E, S, hep, mo
 
@@ -21,6 +24,52 @@ def _(mo):
     mo.md("""
     [Browse all notebooks](/) · [Two-loop topology preparation](/?file=hep/topology_preparation.py)
     """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## A complete family from a diagram
+
+    `diagram.integral_family()` preserves the routed propagators and appends
+    auxiliary scalar products to complete the basis. Supply preferred dot
+    products as its optional argument, or omit them to choose automatically.
+    The original scalar integral has zero powers for these auxiliary entries.
+    """)
+    return
+
+
+@app.cell
+def _(hep, mo):
+    _sunrise = hep.FeynmanDiagram.from_dot(
+        hep.Model.phi4(),
+        """digraph sunrise {
+            ext [style=invis];
+            ext -> a [particle="phi"];
+            a -> b [particle="phi", lmb_id=0];
+            a -> b [particle="phi", lmb_id=1];
+            a -> b [particle="phi"];
+            b -> ext [particle="phi"];
+        }""",
+    )
+    automatic_family = _sunrise.integral_family()
+    _p = automatic_family.external_momenta[0]
+    _products = [
+        automatic_family.kinematics.scalar_product(_k, _p)
+        for _k in automatic_family.loop_momenta
+    ]
+    chosen_family = _sunrise.integral_family(_products)
+    assert automatic_family.is_complete and chosen_family.is_complete
+    assert chosen_family.denominators[3:] == _products
+    mo.vstack(
+        [
+            mo.md("**Automatic basis**"),
+            automatic_family,
+            mo.md("**Preferred dot products**"),
+            chosen_family,
+        ]
+    )
     return
 
 
@@ -41,14 +90,14 @@ def _(mo):
 @app.cell
 def _(E, S, hep, mo):
     _k, _l, _p, _s, _m2, _delta, _x, _y = S(
-        "parameters::k",
-        "parameters::l",
-        "parameters::p",
-        "parameters::s",
-        "parameters::m2",
-        "parameters::delta",
-        "parameters::x",
-        "parameters::y",
+        "k",
+        "l",
+        "p",
+        "s",
+        "m2",
+        "delta",
+        "x",
+        "y",
     )
     _kin = hep.Kinematics(momenta=[_k, _l, _p]).with_scalar_product(_p, _p, _s)
     parameter_family = hep.IntegralFamily(

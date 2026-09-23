@@ -1,0 +1,256 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "6b228491ce93a5b6991faea43b53ca7b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "b1444e2a409296d958b5624a2b708e76",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"one-loop-reduction-and-native-master-symbols\">One-loop reduction and native master symbols</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/integral_families.py\">Integral families</a> \u00b7\n<a href=\"/?file=hep/ibp_bubble.py\">Unequal-mass bubble IBP</a></span>\n<span class=\"paragraph\">Build the shared <code>hep.IntegralFamily</code> with Feynkit kinematics and pass it to\n<code>hep.oneloop.reduce</code>, reducing a loop-momentum numerator directly\nto the primitive <strong><code>oneloopmaster::A0</code>, <code>B0</code>, <code>C0</code>, and <code>D0</code> symbols</strong>.\nTheir registered numerical hooks run OneLoopMaster's generated native Rust\narithmetic. Calling <code>Expression.evaluate</code> on the resulting coefficients\nuses those hooks directly, without constructing an evaluator or function map.</span>\n<span class=\"paragraph\">We reduce a triangle numerator, inspect the exact symbolic expression of a\nsecond triangle on a chosen analytic branch, and check a squared tadpole\nwhose finite term depends on keeping <marimo-tex class=\"arithmatex\">||(d=4-2\\epsilon||)</marimo-tex> during reduction.\nResults use OneLoopMaster's normalization and coefficient order\n<strong>finite, <marimo-tex class=\"arithmatex\">||(1/\\epsilon||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(1/\\epsilon^2||)</marimo-tex></strong>.</span>\n<span class=\"paragraph\">The conventions and inspection API follow the\n<a href=\"https://github.com/alphal00p/oneloopmaster#compact-master-symbols\" rel=\"noopener noreferrer\" target=\"_blank\">OneLoopMaster README</a>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "abaca66d6251cf471b015c1426c5a02e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "d51078eebc76543e845fa964fff9acee",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"a-triangle-with-a-loop-momentum-numerator\">A triangle with a loop-momentum numerator</h2>\n<span class=\"paragraph\">Let <marimo-tex class=\"arithmatex\">||(r_0=0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(r_1=q_1||)</marimo-tex>, and <marimo-tex class=\"arithmatex\">||(r_2=q_1+q_2||)</marimo-tex>. The denominators are\n<marimo-tex class=\"arithmatex\">||(D_i=(k+r_i)^2-m^2+i0||)</marimo-tex>, and the numerator is <marimo-tex class=\"arithmatex\">||(k\\cdot q_1||)</marimo-tex>.</span>\n<span class=\"paragraph\">Declare <marimo-tex class=\"arithmatex\">||(q_1^2=p_1^2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(q_2^2=p_2^2||)</marimo-tex>, and\n<marimo-tex class=\"arithmatex\">||(q_1\\cdot q_2=(s-p_1^2-p_2^2)/2||)</marimo-tex> in <code>hep.Kinematics</code>.\nBuild the three denominator expressions with <code>scalar_product</code>; the reducer\nderives the masses and master invariants from this shared family.\nThe output master is\n<code>C0(p1sq, p2sq, s, mass2, mass2, mass2, mu2)</code>.\nThe <strong>last argument is always the squared renormalization scale</strong>.</span>\n<span class=\"paragraph\">Keep the dimension symbolic: <code>Kinematics(D, ...)</code> retains the dependence\nneeded for <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex>. The explicit powers <code>[1, 1, 1]</code> specify this\nintegral; zero powers pinch propagators, and negative powers put them in\nthe numerator. The same family can also be passed to <code>hep.IBPFamily</code>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "508795d46d420af8b16951700445d97c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Shared Feynkit family, also accepted by <code>hep.IBPFamily</code></strong></span></span><section class=\"feynkit-integral-family\" style=\"max-width:100%;overflow-x:auto\"><style>.feynkit-integral-family > .feynkit-family-metadata > div { display:inline; }</style><strong>Integral family</strong><div class=\"feynkit-family-metadata\"><strong>Loop momenta:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">k</div></div><div class=\"feynkit-family-metadata\"><strong>External momenta:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">q1</div>, <div style=\"white-space: pre-wrap; margin: 0;\">q2</div></div><div class=\"feynkit-family-metadata\"><strong>Dimension:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">D</div></div><div>Rank: 3 / 3 &middot; complete &middot; independent</div><table style=\"border-collapse:collapse;margin-top:.4rem\"><caption style=\"text-align:left\">Ordered inverse propagators (3)</caption><tbody><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>1</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">-mass2<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>2</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">-mass2<span style=\"color: rgb(205, 205, 0)\">+</span>p1sq<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>2\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,q1<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>3</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">-mass2<span style=\"color: rgb(205, 205, 0)\">+</span>s<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">+</span>2\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,q1<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">+</span>2\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>k<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,q2<span style=\"color: rgb(135, 95, 175)\">(</span>mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr></tbody></table></section><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Reduced expression in primitive OneLoopMaster symbols</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-1/2\u00b7p1sq\u00b7C0<span style=\"color: rgb(0, 95, 175)\">(</span>p1sq,p2sq,s,mass2,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>1/2\u00b7B0<span style=\"color: rgb(0, 95, 175)\">(</span>p2sq,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">+</span>1/2\u00b7B0<span style=\"color: rgb(0, 95, 175)\">(</span>s,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Coefficient \u00d7 scalar master</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">-1/2\u00b7p1sq</div><div style=\"white-space: pre-wrap; margin: 0;\">C0<span style=\"color: rgb(0, 95, 175)\">(</span>p1sq,p2sq,s,mass2,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">1/2</div><div style=\"white-space: pre-wrap; margin: 0;\">B0<span style=\"color: rgb(0, 95, 175)\">(</span>s,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">-1/2</div><div style=\"white-space: pre-wrap; margin: 0;\">B0<span style=\"color: rgb(0, 95, 175)\">(</span>p2sq,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span></div></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "a2a565c2b7a4eceeeb0e06b55139e836",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "04f924e5e61eb2330c624ffbea931e04",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"laurent-coefficients-and-native-numerical-hooks\">Laurent coefficients and native numerical hooks</h2>\n<span class=\"paragraph\">An untagged call describes the master integral for symbolic inspection.\nA <strong>leading Laurent-power tag</strong> selects a numerical coefficient:\n<code>B0(0, s, m0sq, m1sq, mu2)</code> is the finite term;\ntags <code>-1</code> and <code>-2</code> select the simple and double poles.</span>\n<span class=\"paragraph\"><code>reduction_coefficients</code> expands the rational prefactors at <marimo-tex class=\"arithmatex\">||(d=4-2\\epsilon||)</marimo-tex>\nand combines them with these tagged primitive calls. Evaluate each resulting\nexpression with a map of parameter values. OneLoopMaster's symbol hooks\nhandle the master calls and return complex numbers, including at real inputs.</span>\n<span class=\"paragraph\">The exported symbols also evaluate a tagged call during construction when\nall its arguments are numeric and at least one is inexact (<code>Float</code> or\n<code>ComplexFloat</code>). The native Rust hook preserves the supplied working precision.\nUntagged calls and tagged calls with only exact arguments stay symbolic.\nHere the leading <code>0</code> requests the finite term; the complex squared mass has\nthe nonpositive imaginary part required by OneLoopMaster.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Vxnm",
+      "code_hash": "24c121dcecec2db56d49c6ac7c41759b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Untagged master for inspection</span></span><div style=\"white-space: pre-wrap; margin: 0;\">A0<span style=\"color: rgb(0, 95, 175)\">(</span>2,1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Exact tagged call</span></span><div style=\"white-space: pre-wrap; margin: 0;\">A0<span style=\"color: rgb(0, 95, 175)\">(</span>0,2,1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Native result from a 50-digit Float input</span></span><div style=\"white-space: pre-wrap; margin: 0;\">6.137056388801093811655357570836468638489997312795e-1</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Native result from a 50-digit ComplexFloat input</span></span><div style=\"white-space: pre-wrap; margin: 0;\">6.1620459825371645832630445072286317247339336436010e-1+6.9356353509809413710747382968720828766340878031127e-2<span style=\"color: rgb(205, 0, 205)\">\ud835\udc56</span></div></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "8073dc5525ac982b796664062126390e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Finite</span></span><div style=\"white-space: pre-wrap; margin: 0;\">-1/2\u00b7p1sq\u00b7C0<span style=\"color: rgb(0, 95, 175)\">(</span>0,p1sq,p2sq,s,mass2,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>1/2\u00b7B0<span style=\"color: rgb(0, 95, 175)\">(</span>0,p2sq,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">+</span>1/2\u00b7B0<span style=\"color: rgb(0, 95, 175)\">(</span>0,s,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(1/\\epsilon||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-1/2\u00b7p1sq\u00b7C0<span style=\"color: rgb(0, 95, 175)\">(</span>-1,p1sq,p2sq,s,mass2,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>1/2\u00b7B0<span style=\"color: rgb(0, 95, 175)\">(</span>-1,p2sq,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">+</span>1/2\u00b7B0<span style=\"color: rgb(0, 95, 175)\">(</span>-1,s,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(1/\\epsilon^2||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-1/2\u00b7p1sq\u00b7C0<span style=\"color: rgb(0, 95, 175)\">(</span>-2,p1sq,p2sq,s,mass2,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>1/2\u00b7B0<span style=\"color: rgb(0, 95, 175)\">(</span>-2,p2sq,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">+</span>1/2\u00b7B0<span style=\"color: rgb(0, 95, 175)\">(</span>-2,s,mass2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span></div></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "2a80723ae35186f490e8f30b7b986615",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Choose positive squared masses and scales. For the reduced triangle, <marimo-tex class=\"arithmatex\">||(p_1^2=-Q^2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(p_2^2=-2Q^2||)</marimo-tex>, and <marimo-tex class=\"arithmatex\">||(s=-3Q^2||)</marimo-tex>.</span></span><marimo-ui-element object-id='BYtC-0' random-id='09c68dbc-bbb9-b057-0904-122fcbfc5e8f'><marimo-slider data-initial-value='2' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eMass squared m\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.5' data-stop='5' data-step='0.5' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='ea357aa6-dc84-3866-aa33-6fdc0562010f'><marimo-slider data-initial-value='1' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eScale squared \u03bc\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.5' data-stop='5' data-step='0.5' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='BYtC-2' random-id='375634a8-4bce-0913-33b8-fc44c37a3349'><marimo-slider data-initial-value='1' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSpacelike scale Q\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.5' data-stop='4' data-step='0.5' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "2655f13ec2aa82a21f329f280825a281",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Triangle: reduced coefficients evaluated through native symbol hooks</strong></span></span><marimo-ui-element object-id='RGSE-0' random-id='23535fe6-bba4-5790-43e6-c5d9f1812b1a'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;Finite&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;(-0.13391905511020702+3.336446474703022e-16j)&#92;&quot;,&#92;&quot;Master identity&#92;&quot;:&#92;&quot;(-0.13391905511020674-5.551115123125783e-17j)&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:4.77995223238202e-16},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Master identity&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5\u00b2&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Master identity&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The exact numerator identity and all three numerical coefficients agree.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "10b8c9483ec41a9ccc0a8a2d5eeaf96d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"inspect-an-exact-triangle-expression-and-select-its-analytic-branch\">Inspect an exact triangle expression and select its analytic branch</h2>\n<span class=\"paragraph\">Take the nontrivial one-mass triangle\n<marimo-tex class=\"arithmatex\">||(C_0(0,0,s;0,m^2,0;\\mu^2=1)||)</marimo-tex>, which contains a dilogarithm.\n<code>get_expression</code> takes an <strong>untagged primitive master call</strong> and returns\nits three exact Laurent coefficients with every OneLoopMaster helper expanded.\nThe invariant <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex> stays real and symbolic; <marimo-tex class=\"arithmatex\">||(m^2||)</marimo-tex> stays positive and symbolic.</span>\n<span class=\"paragraph\"><code>select_branch</code> uses numerical <strong>probe replacements only in branch conditions</strong>.\nIt selects a formula for the probe's analytic region without substituting\nthose numbers into the returned formula. Choose a spacelike or timelike\nprobe below; the timelike expression includes the prescribed continuation.\nA selected formula must be selected again when crossing a branch cut.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "e6dae0e65c603f18a0c9be169901abb1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">C0<span style=\"color: rgb(0, 95, 175)\">(</span>0,0,s,0,mass2,0,1<span style=\"color: rgb(0, 95, 175)\">)</span></div><marimo-accordion data-labels='[&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eComplete exact coefficients before selecting a branch&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;]' data-multiple='false'><div><div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 95, 175)\">(</span>mass2,\n    <span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(135, 95, 175)\">(</span>s,\n        <span style=\"color: rgb(0, 175, 135)\">(</span>-<span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 175, 215)\">(</span>1/2\u00b7<span style=\"color: rgb(0, 215, 0)\">(</span>1-<span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 215, 135)\">(</span>s-<span style=\"color: rgb(205, 0, 205)\">abs</span><span style=\"color: rgb(0, 215, 215)\">(</span>s<span style=\"color: rgb(0, 215, 215)\">)</span>,-1,1<span style=\"color: rgb(0, 215, 135)\">)</span><span style=\"color: rgb(0, 215, 0)\">)</span>,<span style=\"color: rgb(205, 0, 205)\">polylog</span><span style=\"color: rgb(0, 215, 0)\">(</span>2,1+s/mass2<span style=\"color: rgb(0, 215, 0)\">)</span>,\n            <span style=\"color: rgb(205, 0, 205)\">conj</span><span style=\"color: rgb(0, 215, 0)\">(</span><span style=\"color: rgb(205, 0, 205)\">polylog</span><span style=\"color: rgb(0, 215, 135)\">(</span>2,1+s/mass2<span style=\"color: rgb(0, 215, 135)\">)</span><span style=\"color: rgb(0, 215, 0)\">)</span>\n        <span style=\"color: rgb(0, 175, 215)\">)</span>\n            +1/6\u00b7<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2\n        <span style=\"color: rgb(0, 175, 135)\">)</span>/s,\n        <span style=\"color: rgb(0, 175, 135)\">(</span>1-<span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 175, 215)\">(</span><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 215, 0)\">(</span>mass2,mass2,0<span style=\"color: rgb(0, 215, 0)\">)</span><span style=\"color: rgb(0, 175, 215)\">)</span><span style=\"color: rgb(0, 175, 135)\">)</span>/mass2\n    <span style=\"color: rgb(135, 95, 175)\">)</span>,\n    <span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(135, 95, 175)\">(</span>s,\n        1/2\u00b7<span style=\"color: rgb(0, 175, 135)\">(</span><span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 175, 215)\">(</span><span style=\"color: rgb(205, 0, 205)\">abs</span><span style=\"color: rgb(0, 215, 0)\">(</span><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 215, 135)\">(</span>-s,-s,0<span style=\"color: rgb(0, 215, 135)\">)</span><span style=\"color: rgb(0, 215, 0)\">)</span><span style=\"color: rgb(0, 175, 215)\">)</span>\n            -1<span style=\"color: rgb(205, 0, 205)\">\ud835\udc56</span>\u00b7<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b7<span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 175, 215)\">(</span><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 215, 0)\">(</span>-s,-s,0<span style=\"color: rgb(0, 215, 0)\">)</span>-<span style=\"color: rgb(205, 0, 205)\">abs</span><span style=\"color: rgb(0, 215, 0)\">(</span><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 215, 135)\">(</span>-s,-s,0<span style=\"color: rgb(0, 215, 135)\">)</span><span style=\"color: rgb(0, 215, 0)\">)</span>,1,0<span style=\"color: rgb(0, 175, 215)\">)</span>\n        <span style=\"color: rgb(0, 175, 135)\">)</span>\u00b2\n            /s,\n        0\n    <span style=\"color: rgb(135, 95, 175)\">)</span>\n<span style=\"color: rgb(0, 95, 175)\">)</span></div><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 95, 175)\">(</span>mass2,<span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(135, 95, 175)\">(</span>s,0,1/mass2<span style=\"color: rgb(135, 95, 175)\">)</span>,\n    <span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(135, 95, 175)\">(</span>s,\n        -<span style=\"color: rgb(0, 175, 135)\">(</span><span style=\"color: rgb(205, 0, 205)\">log</span><span style=\"color: rgb(0, 175, 215)\">(</span><span style=\"color: rgb(205, 0, 205)\">abs</span><span style=\"color: rgb(0, 215, 0)\">(</span><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 215, 135)\">(</span>-s,-s,0<span style=\"color: rgb(0, 215, 135)\">)</span><span style=\"color: rgb(0, 215, 0)\">)</span><span style=\"color: rgb(0, 175, 215)\">)</span>\n            -1<span style=\"color: rgb(205, 0, 205)\">\ud835\udc56</span>\u00b7<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b7<span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 175, 215)\">(</span><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 215, 0)\">(</span>-s,-s,0<span style=\"color: rgb(0, 215, 0)\">)</span>-<span style=\"color: rgb(205, 0, 205)\">abs</span><span style=\"color: rgb(0, 215, 0)\">(</span><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 215, 135)\">(</span>-s,-s,0<span style=\"color: rgb(0, 215, 135)\">)</span><span style=\"color: rgb(0, 215, 0)\">)</span>,1,0<span style=\"color: rgb(0, 175, 215)\">)</span>\n        <span style=\"color: rgb(0, 175, 135)\">)</span>/s,\n        0\n    <span style=\"color: rgb(135, 95, 175)\">)</span>\n<span style=\"color: rgb(0, 95, 175)\">)</span></div><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(0, 95, 175)\">(</span>mass2,<span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(135, 95, 175)\">(</span>s,0,0<span style=\"color: rgb(135, 95, 175)\">)</span>,<span style=\"color: rgb(205, 0, 205)\">if</span><span style=\"color: rgb(135, 95, 175)\">(</span>s,1/s,0<span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></div></div></marimo-accordion></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "7c69531b9c241cdbaecb745cf1e5a808",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Hstk-0' random-id='2873ada6-eb2b-f029-a187-4d7ddb9d832e'><marimo-dropdown data-initial-value='[&quot;Spacelike: s &#92;u003c 0&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eAnalytic region&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Spacelike: s &#92;u003c 0&quot;,&quot;Timelike: s &#92;u003e 0&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "c18d47714744838e8acd6ad394af5914",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Branch probe:</strong> <marimo-tex class=\"arithmatex\">||(s=-2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(m^2=1||)</marimo-tex>. The exact selected coefficients below retain both symbols.</span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Finite</span></span><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>-<span style=\"color: rgb(205, 0, 205)\">polylog</span><span style=\"color: rgb(0, 95, 175)\">(</span>2,1+s/mass2<span style=\"color: rgb(0, 95, 175)\">)</span>+1/6\u00b7<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>/s</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(1/\\epsilon||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">0</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(1/\\epsilon^2||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">0</div></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "05cf15a1eb1cfb1c87fb9b1412a3ff54",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Selected exact formula versus primitive native hook</strong>, at <marimo-tex class=\"arithmatex\">||(s=-2.0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(m^2=2.0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(\\mu^2=1||)</marimo-tex>.</span></span><marimo-ui-element object-id='iLit-0' random-id='8e75c1c8-71e8-5c63-7485-abfaa5bd737f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;Finite&#92;&quot;,&#92;&quot;Selected formula&#92;&quot;:&#92;&quot;(-0.8224670334241131-0j)&#92;&quot;,&#92;&quot;Native C0 hook&#92;&quot;:&#92;&quot;(-0.8224670334241131+0j)&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5&#92;&quot;,&#92;&quot;Selected formula&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Native C0 hook&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5\u00b2&#92;&quot;,&#92;&quot;Selected formula&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Native C0 hook&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "787576b75ac1caf23d2d58c2878e59ab",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"a-squared-tadpole-epsilon-terms-change-the-finite-answer\">A squared tadpole: epsilon terms change the finite answer</h2>\n<span class=\"paragraph\">For <marimo-tex class=\"arithmatex\">||(I_2=\\int_k (k^2-m^2+i0)^{-2}||)</marimo-tex>, reduction gives\n<marimo-tex class=\"arithmatex\">||(I_2=(d-2)A_0(m^2;\\mu^2)/(2m^2)||)</marimo-tex>.\nSince <marimo-tex class=\"arithmatex\">||((d-2)/(2m^2)=(1-\\epsilon)/m^2||)</marimo-tex>, the tadpole's pole contributes\nan additional <marimo-tex class=\"arithmatex\">||(-1||)</marimo-tex> to the finite term. Setting <marimo-tex class=\"arithmatex\">||(d=4||)</marimo-tex> prematurely would\nmiss it. The correct coefficients are\n<marimo-tex class=\"arithmatex\">||([-\\log(m^2/\\mu^2),\\,1,\\,0]||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "08400881f839685fa4702f60951eb90f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-2+D<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7A0<span style=\"color: rgb(0, 95, 175)\">(</span>mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>/mass2</div><div style=\"white-space: pre-wrap; margin: 0;\">A0<span style=\"color: rgb(0, 95, 175)\">(</span>0,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>/mass2<span style=\"color: rgb(205, 205, 0)\">-</span>A0<span style=\"color: rgb(0, 95, 175)\">(</span>-1,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>/mass2</div><div style=\"white-space: pre-wrap; margin: 0;\">A0<span style=\"color: rgb(0, 95, 175)\">(</span>-1,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>/mass2<span style=\"color: rgb(205, 205, 0)\">-</span>A0<span style=\"color: rgb(0, 95, 175)\">(</span>-2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>/mass2</div><div style=\"white-space: pre-wrap; margin: 0;\">A0<span style=\"color: rgb(0, 95, 175)\">(</span>-2,mass2,mu2<span style=\"color: rgb(0, 95, 175)\">)</span>/mass2</div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "qnkX",
+      "code_hash": "970e0a942077e4a14c31dcef8c25f0be",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Squared tadpole: native master hooks versus the analytic answer</strong></span></span><marimo-ui-element object-id='qnkX-0' random-id='2a0231a5-a42a-55a3-850a-b7dd606ddfbb'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;Finite&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;(-0.6931471805599453+0j)&#92;&quot;,&#92;&quot;Analytic answer&#92;&quot;:-0.6931471805599453,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;(1+0j)&#92;&quot;,&#92;&quot;Analytic answer&#92;&quot;:1,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5\u00b2&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Analytic answer&#92;&quot;:0,&#92;&quot;Absolute difference&#92;&quot;:0.0}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Changing the mass or scale above updates the result, including the finite contribution from the epsilon-dependent coefficient.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

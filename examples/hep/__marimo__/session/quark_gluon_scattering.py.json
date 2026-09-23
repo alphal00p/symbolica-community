@@ -1,0 +1,146 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "7cacf6154552466b444f4c27850977c6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "285ff23470e75fe31add8b78746c7441",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"massive-quarkgluon-scattering\">Massive quark\u2013gluon scattering</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/qcd_gluons.py\">Quark annihilation to gluons</a> \u00b7\n<a href=\"/?file=hep/gluon_scattering.py\">Gluon scattering</a></span>\n<span class=\"paragraph\">Generate the three <marimo-tex class=\"arithmatex\">||(qg\\to qg||)</marimo-tex> diagrams and every interference term, retaining\nthe quark mass and symbolic SU(<marimo-tex class=\"arithmatex\">||(N_c||)</marimo-tex>) color algebra. The model's bottom quark\nsupplies the generic mass; particles and vertices are selected by name.</span>\n<span class=\"paragraph\">Compare two independent routes from the FeynCalc examples:\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/QGl-QGl\" rel=\"noopener noreferrer\" target=\"_blank\">physical gluon polarizations</a>\nand <a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/QGl-QGl-2\" rel=\"noopener noreferrer\" target=\"_blank\">covariant sums with ghost subtraction</a>.\nShared particle spin/color sums, Spenso and Idenso perform the contractions.\nBoth null and timelike gauge references give the same massive result.</span>\n<span class=\"paragraph\">The initial symbolic calculation runs once. The controls reuse its results.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "2255469496942f7eefdc8810f478bd99",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "color ghG\nspin ghG\nLorentz structures ghG 1\nFinished ghG ghost\ncolor ghG~\nspin ghG~\nLorentz structures ghG~ 1\nFinished ghG~ ghost\ncolor g\nspin g\nLorentz structures g 107\nFinished g covariant\nFinished g null\nFinished g timelike\nMassive SU(N) quark-gluon scattering, physical gauges, ghost subtraction and massless reference passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "31c74483340518275fbe4f1ed218db4e",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "f4e041cc24aaf2af515d948dae9bcd98",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Initial averages and the ghost subtraction</strong></span>\n<span class=\"paragraph\">Each result includes the incoming quark spin average and the initial color\nfactor <marimo-tex class=\"arithmatex\">||(1/[N_c(N_c^2-1)]||)</marimo-tex>. The covariant calculation includes unphysical\ngluon modes. Subtract both generated ghost channels before averaging the\ntwo physical incoming gluon polarizations:\n$<marimo-tex class=\"arithmatex\">||(\\overline{|\\mathcal M|^2}=\\tfrac12\n(|\\mathcal M_{\\rm cov}|^2-|\\mathcal M_{\\rm gh}|^2-|\\mathcal M_{\\rm anti\\,gh}|^2).||)</marimo-tex>$\nEach ghost contribution before that last factor is\n<marimo-tex class=\"arithmatex\">||(g_s^4(m^2-u)(s-m^2)/(2t^2)||)</marimo-tex>. It is nonzero; a covariant sum alone does not\nreproduce the physical rate.</span>\n<span class=\"paragraph\">At <marimo-tex class=\"arithmatex\">||(m=0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(N_c=3||)</marimo-tex>, the physical result is</span>\n<marimo-tex class=\"arithmatex\">||[g_s^4(s^2+u^2)\\left(\\frac1{t^2}-\\frac4{9su}\\right).||]</marimo-tex></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "c506498993a3db177695610552d9459c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "All 27 cut rates passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "Xref",
+      "code_hash": "56ed6389d6537b3f246e7230248bebd5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massive angular-cut rates</strong></span>\n<span class=\"paragraph\">Write <marimo-tex class=\"arithmatex\">||(\\rho=m^2/s||)</marimo-tex>, with <marimo-tex class=\"arithmatex\">||(0\\leq\\rho&lt;1||)</marimo-tex>, and <marimo-tex class=\"arithmatex\">||(z=\\cos\\theta||)</marimo-tex> for the outgoing\nquark angle. Then <marimo-tex class=\"arithmatex\">||(t=-s(1-\\rho)^2(1-z)/2||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(u=2m^2-s-t||)</marimo-tex>.\nNative flux and two-body phase space give</span>\n<marimo-tex class=\"arithmatex\">||[\\frac{d\\sigma}{dz}=\\frac{\\overline{|\\mathcal M|^2}}{32\\pi s}.||]</marimo-tex><span class=\"paragraph\">The quark and gluon are distinct final particles. The cut <marimo-tex class=\"arithmatex\">||(|z|&lt;c&lt;1||)</marimo-tex> excludes\nthe forward pole and the additional backward pole in the massless limit.</span>\n<span class=\"paragraph\">Symbolica integrates the angular density exactly. Differentiation, cut\nboundary checks, and 27 Gaussian quadratures validate the rates below.\nDisplayed rates use <marimo-tex class=\"arithmatex\">||(s\\sigma/\\alpha_s^2||)</marimo-tex>, where <marimo-tex class=\"arithmatex\">||(g_s^2=4\\pi\\alpha_s||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "46540044925e9fc4ee480e9cbbec5e06",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='SFPL-0' random-id='103ec7da-4a28-5da1-8f54-d1a03f80f6e3'><marimo-dropdown data-initial-value='[&quot;SU(3)&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eColor group&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;SU(2)&quot;,&quot;SU(3)&quot;,&quot;SU(5)&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='SFPL-1' random-id='821a366f-9d02-ba57-1d78-36f6f9a832c4'><marimo-dropdown data-initial-value='[&quot;m\u00b2/s = 1/4&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eQuark mass&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Massless&quot;,&quot;m\u00b2/s = 1/4&quot;,&quot;m\u00b2/s = 2/3&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='SFPL-2' random-id='def94d64-bab5-ab02-0f1c-9026ff0e306e'><marimo-dropdown data-initial-value='[&quot;Covariant minus ghosts&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003ePolarization sum&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Physical \u00b7 null reference&quot;,&quot;Physical \u00b7 timelike reference&quot;,&quot;Covariant minus ghosts&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='SFPL-3' random-id='d4962649-5714-0387-0a3b-7afac17ae537'><marimo-dropdown data-initial-value='[&quot;|cos\u03b8| &#92;u003c 0.8&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eAngular acceptance&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;|cos\u03b8| &#92;u003c 0.2&quot;,&quot;|cos\u03b8| &#92;u003c 0.5&quot;,&quot;|cos\u03b8| &#92;u003c 0.8&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "603cfe85316208294b13ab252b13764f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Squared amplitude divided by <marimo-tex class=\"arithmatex\">||(g_s^4||)</marimo-tex> in center-of-mass variables</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/18\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>11+4\u00b7z+z\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>317+417\u00b7z+263\u00b7z\u00b2+27\u00b7z\u00b3<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(0, 95, 175)\">(</span>-1+z<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>5+3\u00b7z<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "4575cdeac59694043092e173385aef83",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Accepted rate: <strong>75.026667</strong> \u00d7 \u03b1s\u00b2/s.</span></span><marimo-ui-element object-id='RGSE-0' random-id='02da7f5e-2670-4d34-4033-87e23f185477'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;cos(theta)&#92;&quot;:-0.8,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:4.637135442185798},{&#92;&quot;cos(theta)&#92;&quot;:-0.64,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:4.563393544308503},{&#92;&quot;cos(theta)&#92;&quot;:-0.48000000000000004,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:5.105770703433407},{&#92;&quot;cos(theta)&#92;&quot;:-0.32000000000000006,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:6.317700983893485},{&#92;&quot;cos(theta)&#92;&quot;:-0.16000000000000003,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:8.469425507552605},{&#92;&quot;cos(theta)&#92;&quot;:0.0,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:12.171926203408452},{&#92;&quot;cos(theta)&#92;&quot;:0.15999999999999992,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:18.764037733295986},{&#92;&quot;cos(theta)&#92;&quot;:0.32000000000000006,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:31.46315178695793},{&#92;&quot;cos(theta)&#92;&quot;:0.48,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:59.42792118522251},{&#92;&quot;cos(theta)&#92;&quot;:0.6399999999999999,&#92;&quot;s/alpha_s\u00b2 \u00d7 d\u03c3/dcos(theta)&#92;&quot;:137.24424257802872}]&quot;' data-total-rows='11' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

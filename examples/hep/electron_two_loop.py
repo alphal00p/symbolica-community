@@ -8,8 +8,11 @@ app = marimo.App(width="medium", app_title="Two-loop electron self-energy")
 def _():
     import marimo as mo
     from symbolica import E, Replacement, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("electron_2l")
 
     return E, Replacement, S, TensorExpression, hep, mo
 
@@ -61,39 +64,33 @@ def _(hep):
 @app.cell
 def _(E, Replacement, S, TensorExpression, hep, qed_model):
     d, s, mass_squared, uv_mass, eps, log_mass, log_4pi, flavors, coupling = S(
-        "electron_2l::D",
-        "electron_2l::s",
-        "electron_2l::M",
-        "electron_2l::mUV",
-        "electron_2l::eps",
-        "electron_2l::Lm",
-        "electron_2l::L4pi",
-        "electron_2l::Nf",
-        "electron_2l::a4",
+        "D",
+        "s",
+        "M",
+        "mUV",
+        "eps",
+        "Lm",
+        "L4pi",
+        "Nf",
+        "a4",
     )
     k, p, mass, charge = S("gammalooprs::K", "gammalooprs::P", "UFO::Me", "UFO::ee")
-    mink, bis, gamma, wave = S(
-        "spenso::mink", "spenso::bis", "spenso::gamma", "electron_2l::wave_"
-    )
-    index, dimension, mu = S(
-        "electron_2l::index_", "electron_2l::dimension_", "electron_2l::mu"
-    )
+    mink, bis, gamma, wave = S("spenso::mink", "spenso::bis", "spenso::gamma", "wave_")
+    index, dimension, mu = S("index_", "dimension_", "mu")
     ordering, closed_loop, value = S(
         "feynkit_generator_factor::ExternalFermionOrderingSign",
         "feynkit_generator_factor::InternalFermionLoopSign",
-        "electron_2l::value_",
+        "value_",
     )
     denominator, edge_pattern, momentum_pattern, mass_pattern, quadratic_pattern = S(
         "gammalooprs::denom",
-        "electron_2l::edge_",
-        "electron_2l::momentum_",
-        "electron_2l::mass_",
-        "electron_2l::quadratic_",
+        "edge_",
+        "momentum_",
+        "mass_",
+        "quadratic_",
     )
-    coordinates = list(S("electron_2l::d0", "electron_2l::d1", "electron_2l::d2"))
-    tadpole_squared, sunset, integral = S(
-        "electron_2l::T2", "electron_2l::V", "electron_2l::I"
-    )
+    coordinates = list(S("d0", "d1", "d2"))
+    tadpole_squared, sunset, integral = S("T2", "V", "I")
     zero, one, imaginary = E("0"), E("1"), E("1i")
     kinematics = hep.Kinematics(d, momenta=[k(0), k(1), p(0)]).with_scalar_product(
         p(0), p(0), s

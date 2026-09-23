@@ -12,9 +12,12 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("qed_full")
 
     return (
         E,
@@ -59,7 +62,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(E, S, Symbol, TensorExpression, hep, json):
     model = hep.Model.standard_model()
-    D, eps, xi, s = S("qed_full::D", "qed_full::eps", "qed_full::xi", "qed_full::s")
+    D, eps, xi, s = S("D", "eps", "xi", "s")
     specification = json.loads(model.to_json())
     for _propagator in specification["propagators"]:
         if _propagator["particle"] == "a":
@@ -97,18 +100,16 @@ def _(E, S, Symbol, TensorExpression, hep, json):
     mink, bis, gamma, metric = S(
         "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
     )
-    _index, _wave, _mu, args = S(
-        "qed_full::index_", "qed_full::wave_", "qed_full::mu", "qed_full::args___"
-    )
+    _index, _wave, _mu, args = S("index_", "wave_", "mu", "args___")
     _ordering, _value = S(
-        "feynkit_generator_factor::ExternalFermionOrderingSign", "qed_full::value_"
+        "feynkit_generator_factor::ExternalFermionOrderingSign", "value_"
     )
     zero, one = E("0"), E("1")
     kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
         P(0), P(0), s
     )
     family = diagram.integral_family(kinematics=kinematics)
-    coordinates = S("qed_full::d0", "qed_full::d1")
+    coordinates = S("d0", "d1")
     _q2 = kinematics.scalar_product(K(0), K(0))
     _pq = kinematics.scalar_product(P(0), K(0))
     assert (family.denominators[0] - _q2 + mass**2).expand() == zero
@@ -317,8 +318,8 @@ def _(
         [list(p) for p in sorted(targets)], max_depth=2
     )
     assert {tuple(p) for p in solution.residuals} == {(1, 0), (1, 1)}
-    I, A, B = S("qed_full::I", "qed_full::A", "qed_full::B")
-    _x0, _x1 = S("qed_full::x0", "qed_full::x1")
+    I, A, B = S("I", "A", "B")
+    _x0, _x1 = S("x0", "x1")
     _U, _F = family.symanzik([_x0, _x1])
     assert (_U - _x0 - _x1).expand() == zero
     assert (_F - mass**2 * _x0 * _U + s * _x0 * _x1).expand() == zero
@@ -441,9 +442,7 @@ def _(
     xi,
     zero,
 ):
-    Af, Bf, scale2, L = S(
-        "qed_full::Af", "qed_full::Bf", "qed_full::scale2", "qed_full::L"
-    )
+    Af, Bf, scale2, L = S("Af", "Bf", "scale2", "L")
     laurent = [
         _coefficient.replace(A, mass**2 / eps + Af)
         .replace(B, 1 / eps + Bf)
@@ -491,10 +490,10 @@ def _(
     # Shared OneLOop callbacks. Preserve the D-dependent coefficients through the
     # Laurent expansion: the finite rational terms are -xi and +2 respectively.
     a_coefficients = oneloop.master_coefficients(
-        S("oneloopmaster::A0")(mass**2, scale2)
+        oneloop.A0(mass**2, scale2)
     )
     b_coefficients = oneloop.master_coefficients(
-        S("oneloopmaster::B0")(s, mass**2, 0, scale2)
+        oneloop.B0(s, mass**2, 0, scale2)
     )
     finite_oneloop = [
         _expression.replace(Af, a_coefficients[0]).replace(Bf, b_coefficients[0])

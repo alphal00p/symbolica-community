@@ -13,9 +13,12 @@ def _():
 
     import marimo as mo
     from symbolica import E, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
     from symbolica.community.spenso import ColorSimplifySettings, TensorExpression
+
+    _set_namespace("hgg")
 
     return (
         ColorSimplifySettings,
@@ -60,16 +63,16 @@ def _(mo):
 def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
     model = hep.Model.standard_model()
     D, s, m, gs, y, mu, nu, ca, cb, eps = S(
-        "hgg::D",
-        "hgg::s",
+        "D",
+        "s",
         "UFO::MT",
         "UFO::G",
-        "hgg::y",
-        "hgg::mu",
-        "hgg::nu",
-        "hgg::ca",
-        "hgg::cb",
-        "hgg::eps",
+        "y",
+        "mu",
+        "nu",
+        "ca",
+        "cb",
+        "eps",
     )
     K, P, mink, cof, coad, metric = S(
         "gammalooprs::K",
@@ -80,7 +83,7 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
         "spenso::g",
     )
     index, wave, arguments = S("index_", "wave_", "arguments__")
-    Nc, dA = S("hgg::Nc", "hgg::dA")
+    Nc, dA = S("Nc", "dA")
     # The SM UFO stores yt=sqrt(2)*m/v separately from the propagator pole mass.
     # Define y=yt/sqrt(2); the comparison later imposes y=m/v explicitly.
     top, higgs, gluon = (model.particle(_name) for _name in ("t", "H", "g"))
@@ -140,11 +143,9 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
         .with_external_vector(P(1, mink(D)))
     )
     family = result.diagrams[0].integral_family(kinematics=kinematics)
-    coordinates = S("hgg::d0", "hgg::d1", "hgg::d2")
-    Qg, Q11, Q12, Q21, Q22 = S(
-        "hgg::Qg", "hgg::Q11", "hgg::Q12", "hgg::Q21", "hgg::Q22"
-    )
-    p_mu, p_nu, q_mu, q_nu = S("hgg::pmu", "hgg::pnu", "hgg::qmu", "hgg::qnu")
+    coordinates = S("d0", "d1", "d2")
+    Qg, Q11, Q12, Q21, Q22 = S("Qg", "Q11", "Q12", "Q21", "Q22")
+    p_mu, p_nu, q_mu, q_nu = S("pmu", "pnu", "qmu", "qnu")
     color = gluon.color_sum(ca, cb).replace(coad(8, index), coad(dA, index))
     terms_by_diagram, targets, routed_polynomials = [], set(), []
     for orientation, diagram in enumerate(result.diagrams):
@@ -248,14 +249,14 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
         (1, 0, 0),
         (1, 1, 1),
     }
-    integral, a0, b0, c0 = S("hgg::I", "hgg::A0", "hgg::B0", "hgg::C0")
+    integral, a0, b0, c0 = S("I", "A0", "B0", "C0")
     # One-line pinches are shifted equal-mass tadpoles; the two-line pinch has
     # invariant s, and the three-line master has external invariants (0,0,s).
     for powers in ((0, 0, 1), (0, 1, 0), (1, 0, 0)):
         assert family.sector(powers).find_mapping(family.sector([0, 1, 0])) is not None
     # Symanzik polynomials independently identify the mass/invariant arguments
     # of the scalar B0(s;m^2,m^2) and C0(0,0,s;m^2,m^2,m^2) masters.
-    x0, x1, x2 = S("hgg::x0", "hgg::x1", "hgg::x2")
+    x0, x1, x2 = S("x0", "x1", "x2")
     triangle_U, triangle_F = family.symanzik([x0, x1, x2])
     assert (triangle_U - x0 - x1 - x2).expand() == E("0")
     assert (triangle_F - m**2 * triangle_U**2 + s * x1 * x2).expand() == E("0")
@@ -298,7 +299,7 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
     assert (form_factor - expected_D).together() == E("0")
     # Keep D dependence until after supplying the scalar pole residues. The
     # finite rational 2 is produced by (D-4)*B0; setting D=4 first loses it.
-    Af, Bf, Cf = S("hgg::Af", "hgg::Bf", "hgg::Cf")
+    Af, Bf, Cf = S("Af", "Bf", "Cf")
     laurent = (
         integrated.replace(D, 4 - 2 * eps)
         .replace_multiple(
@@ -362,7 +363,7 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
     assert color_norm == dA
     # Also evaluate the physical axial polarization sums, taking each gluon as
     # the other's null reference. Ward identities imply agreement with -g sums.
-    rho, sigma = S("hgg::rho", "hgg::sigma")
+    rho, sigma = S("rho", "sigma")
     physical_kinematics = (
         hep.Kinematics(momenta=[P(1), P(2)])
         .with_scalar_product(P(1), P(1), E("0"))
@@ -410,8 +411,8 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
     ).together()
     assert physical_projection_residual == E("0")
     # y=m/v and gs^2=4*pi*alpha_s. Color dimension is specialized after contraction.
-    alpha_s, vev, A, Abar = S("hgg::alpha_s", "hgg::vev", "hgg::A", "hgg::Abar")
-    MH = S("hgg::MH", is_positive=True)
+    alpha_s, vev, A, Abar = S("alpha_s", "vev", "A", "Abar")
+    MH = S("MH", is_positive=True)
     squared = (
         physical_norm * color_norm * (alpha_s / (3 * Symbol.PI * vev)) ** 2 * A * Abar
     ).replace(dA, Nc**2 - 1)
@@ -517,7 +518,7 @@ def _(
 def _(Cf, S, m, normalized, oneloop, s):
     scale2 = S("hgg_notebook::scale2")
     triangle_coefficients = oneloop.master_coefficients(
-        S("oneloopmaster::C0")(0, 0, s, m**2, m**2, m**2, scale2)
+        oneloop.C0(0, 0, s, m**2, m**2, m**2, scale2)
     )
     normalized_oneloop = normalized.replace(Cf, triangle_coefficients[0])
     return normalized_oneloop, scale2, triangle_coefficients

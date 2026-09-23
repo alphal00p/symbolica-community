@@ -11,8 +11,11 @@ def _():
 
     import marimo as mo
     from symbolica import E, Replacement, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("photon_2l")
 
     return E, Replacement, S, TensorExpression, hep, json, math, mo
 
@@ -44,35 +47,31 @@ def _(mo):
 def _(E, Replacement, S, TensorExpression, hep, json):
     model = hep.Model.standard_model()
     d, s, mass_squared, uv_mass, eps, log_mass, log_4pi, flavors = S(
-        "photon_2l::D",
-        "photon_2l::s",
-        "photon_2l::M",
-        "photon_2l::mUV",
-        "photon_2l::eps",
-        "photon_2l::Lm",
-        "photon_2l::L4pi",
-        "photon_2l::Nf",
+        "D",
+        "s",
+        "M",
+        "mUV",
+        "eps",
+        "Lm",
+        "L4pi",
+        "Nf",
     )
     k, p, mass, charge = S("gammalooprs::K", "gammalooprs::P", "UFO::Me", "UFO::ee")
-    mink, wave = S("spenso::mink", "photon_2l::wave_")
-    index, dimension, mu = S(
-        "photon_2l::index_", "photon_2l::dimension_", "photon_2l::mu"
-    )
+    mink, wave = S("spenso::mink", "wave_")
+    index, dimension, mu = S("index_", "dimension_", "mu")
     closed_loop, arguments = S(
         "feynkit_generator_factor::InternalFermionLoopSign",
-        "photon_2l::arguments___",
+        "arguments___",
     )
     denominator, edge_pattern, momentum_pattern, mass_pattern, quadratic_pattern = S(
         "gammalooprs::denom",
-        "photon_2l::edge_",
-        "photon_2l::momentum_",
-        "photon_2l::mass_",
-        "photon_2l::quadratic_",
+        "edge_",
+        "momentum_",
+        "mass_",
+        "quadratic_",
     )
-    coordinates = list(S("photon_2l::d0", "photon_2l::d1", "photon_2l::d2"))
-    tadpole_squared, sunset, integral = S(
-        "photon_2l::T2", "photon_2l::V", "photon_2l::I"
-    )
+    coordinates = list(S("d0", "d1", "d2"))
+    tadpole_squared, sunset, integral = S("T2", "V", "I")
     zero, one, imaginary = E("0"), E("1"), E("1i")
     kinematics = hep.Kinematics(d, momenta=[k(0), k(1), p(0)]).with_scalar_product(
         p(0), p(0), s
@@ -93,7 +92,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
         .with_integrated_vector(k(1, mink(d)))
     )
 
-    xi, nu = S("photon_2l::xi", "photon_2l::nu")
+    xi, nu = S("xi", "nu")
     metric = S("spenso::g")
     specification = json.loads(model.to_json())
     for particle in specification["particles"]:
@@ -107,7 +106,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     model = hep.Model.from_json(json.dumps(specification))
     gmunu = metric(mink(d, mu), mink(d, nu))
     ppmunu = p(0, mink(d, mu)) * p(0, mink(d, nu))
-    Qg, Qpp = S("photon_2l::metric_basis", "photon_2l::momentum_basis")
+    Qg, Qpp = S("metric_basis", "momentum_basis")
     Q, dot = S("gammalooprs::Q", "spenso::dot")
     result = hep.Generator(model).generate(
         hep.Process.amplitude(["a"], ["a"]).with_loop_count(2, 2),
@@ -306,7 +305,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     )
     assert (bare_uv - expected_bare).together() == zero
 
-    ct_coordinate, ct_integral = S("photon_2l::ctd", "photon_2l::ctI")
+    ct_coordinate, ct_integral = S("ctd", "ctI")
     # Derive the four one-loop counterterm insertions on one generated bubble.
     # QED.mod gives vertexCT/tree = sqrt(ZA)*Ze*Zpsi-1 and a kinetic insertion
     # i*(Zpsi-1)*slash(q).  The one-loop Ward relation gives deltaZ1=deltaZpsi;

@@ -9,9 +9,12 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, Matrix, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("gminus2")
 
     return E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo, np, oneloop
 
@@ -48,9 +51,7 @@ def _(mo):
 @app.cell
 def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
     model = hep.Model.standard_model()
-    dimension, transfer, mass, charge, mu = S(
-        "gminus2::D", "gminus2::t", "UFO::Me", "UFO::ee", "gminus2::mu"
-    )
+    dimension, transfer, mass, charge, mu = S("D", "t", "UFO::Me", "UFO::ee", "mu")
     K, P, mink, bis, metric, gamma = S(
         "gammalooprs::K",
         "gammalooprs::P",
@@ -60,10 +61,10 @@ def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
         "spenso::gamma",
     )
     a, b, c, d, index, wave, slot = S(
-        "gminus2::a",
-        "gminus2::b",
-        "gminus2::c",
-        "gminus2::d",
+        "a",
+        "b",
+        "c",
+        "d",
         "index_",
         "wave_",
         "slot_",
@@ -162,7 +163,7 @@ def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
     projectors = Matrix.from_linear(2, 2, traces[:4])
     pauli_numerator = projectors.solve(Matrix.vec(traces[4:]))[1, 0].to_expression()
     family = diagrams[1].integral_family(kinematics=kinematics)
-    denominators = S("gminus2::d0", "gminus2::d1", "gminus2::d2")
+    denominators = S("d0", "d1", "d2")
     polynomial = family.rewrite_numerator(pauli_numerator, denominators).expand()
     terms = []
     for monomial, coefficient in polynomial.coefficient_list(*denominators):
@@ -179,7 +180,7 @@ def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
         (1, 0, 0),
         (1, 1, 0),
     }
-    integral, tadpole, bubble = S("gminus2::I", "gminus2::A0", "gminus2::B0")
+    integral, tadpole, bubble = S("I", "A0", "B0")
     reduction = sum(
         (
             coefficient * solution.reduce(powers, integral=integral)
@@ -203,9 +204,7 @@ def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
         / ((dimension - 3) * (transfer - 4 * mass**2))
     )
     assert (reduction - expected).together() == E("0")
-    epsilon, finite_a, finite_b, logarithm = S(
-        "gminus2::eps", "gminus2::Af", "gminus2::Bf", "gminus2::L"
-    )
+    epsilon, finite_a, finite_b, logarithm = S("eps", "Af", "Bf", "L")
     laurent = (
         reduction.replace(dimension, 4 - 2 * epsilon)
         .replace_multiple(
@@ -238,7 +237,7 @@ def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
     )
     assert limit == E("-2")
 
-    alpha = S("gminus2::alpha")
+    alpha = S("alpha")
     anomalous_moment = (-alpha * limit / (4 * Symbol.PI)).together()
     mo.vstack(
         [
@@ -295,8 +294,8 @@ def _(finite, finite_a, finite_b, mass, mo, np, oneloop, transfer, virtuality):
                 {
                     transfer: _t,
                     mass: 1.0,
-                    finite_a: complex(oneloop.A0(1.0, 1.0)[0]),
-                    finite_b: complex(oneloop.B0(_t, 1.0, 1.0, 1.0)[0]),
+                    finite_a: complex(oneloop.a0(1.0, 1.0)[0]),
+                    finite_b: complex(oneloop.b0(_t, 1.0, 1.0, 1.0)[0]),
                 }
             )
         )
@@ -306,7 +305,7 @@ def _(finite, finite_a, finite_b, mass, mo, np, oneloop, transfer, virtuality):
     _nodes, _weights = np.polynomial.legendre.leggauss(96)
     _x, _weights = (_nodes + 1) / 2, _weights / 2
     parameter_reference = float(np.dot(_weights, 1 / (1 + _ratio * _x * (1 - _x))))
-    _derivative = 1 + _t * complex(oneloop.dB0(_t, 1.0, 1.0, 1.0)[0])
+    _derivative = 1 + _t * complex(oneloop.db0(_t, 1.0, 1.0, 1.0)[0])
     form_factor_error = abs(normalized_form_factor - parameter_reference)
     assert form_factor_error < 2e-12
     assert abs(normalized_form_factor - _derivative) < 2e-12

@@ -14,9 +14,12 @@ def _():
 
     import marimo as mo
     from symbolica import E, Matrix, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("yukawa")
 
     return (
         E,
@@ -70,13 +73,13 @@ def _(E, S, copy, hep, json, oneloop):
         {"name": "YUKAWA", "expansion_order": 99, "hierarchy": 1}
     )
     D, eps, M, mUV, coordinate, integral, s = S(
-        "yukawa::D",
-        "yukawa::eps",
-        "yukawa::M",
-        "yukawa::mUV",
-        "yukawa::x",
-        "yukawa::I",
-        "yukawa::s",
+        "D",
+        "eps",
+        "M",
+        "mUV",
+        "x",
+        "I",
+        "s",
     )
     K, P, mass, scalar_mass, g, lam = S(
         "gammalooprs::K", "gammalooprs::P", "UFO::Me", "UFO::mass", "UFO::g", "UFO::lam"
@@ -84,15 +87,13 @@ def _(E, S, copy, hep, json, oneloop):
     mink, bis, gamma, metric = S(
         "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
     )
-    index, dim, wave, mu = S(
-        "yukawa::index_", "yukawa::dim_", "yukawa::wave_", "yukawa::mu"
-    )
+    index, dim, wave, mu = S("index_", "dim_", "wave_", "mu")
     den, edge_, mom_, mass_, quad_ = S(
         "gammalooprs::denom",
-        "yukawa::edge_",
-        "yukawa::mom_",
-        "yukawa::mass_",
-        "yukawa::quad_",
+        "edge_",
+        "mom_",
+        "mass_",
+        "quad_",
     )
     zero, one = (E("0"), E("1"))
     kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
@@ -102,8 +103,8 @@ def _(E, S, copy, hep, json, oneloop):
     family = hep.IntegralFamily(
         [K(0)], [], [_vacuum.scalar_product(K(0), K(0)) - M], kinematics=_vacuum
     )
-    _master_reduction = oneloop.IntegralFamily([oneloop.Propagator(M)], []).reduce()
-    _master = _master_reduction.terms[0][1].to_oneloopmaster(one)
+    _master_reduction = oneloop.reduce(family, [1])
+    _master = _master_reduction.terms[0][1].to_expression(one)
     master_pole = oneloop.get_expression(_master, coefficient=-1)
     assert master_pole == M
     reducer = hep.TensorReducer(D).with_integrated_vector(K(0, mink(D)))
@@ -116,13 +117,13 @@ def _(E, S, copy, hep, json, oneloop):
         "progress": None,
     }
     h, _dpsi, _dm, _dphi, _dM, _dg, _dlam = S(
-        "yukawa::h",
-        "yukawa::dpsi",
-        "yukawa::dm",
-        "yukawa::dphi",
-        "yukawa::dM",
-        "yukawa::dg",
-        "yukawa::dlam",
+        "h",
+        "dpsi",
+        "dm",
+        "dphi",
+        "dM",
+        "dg",
+        "dlam",
     )
     unknowns = [_dpsi, _dm, _dphi, _dM, _dg, _dlam]
     Zpsi, Zm, Zphi, ZM, Zg, Zlam = (1 + h * _x for _x in unknowns)
@@ -438,7 +439,7 @@ def _(
                                 ).together()
                             )
                             assert _monomial == coordinate ** (-_power)
-                            assert not _coefficient.matches(K(S("yukawa::args___")))
+                            assert not _coefficient.matches(K(S("args___")))
                             _terms.append(([_power], _coefficient))
             _stage_parts[_stage], _stage_diagrams[_stage] = (_parts, _diagrams)
         _parts = _stage_parts["bare"]
@@ -585,7 +586,7 @@ def _(
     unknowns,
     zero,
 ):
-    _log4pi, _gamma_e = S("yukawa::log4pi", "yukawa::gamma_E")
+    _log4pi, _gamma_e = S("log4pi", "gamma_E")
     scheme_constants, additive_shifts, beta_functions = ({}, {}, {})
     for _variant, _constants in all_constants.items():
         for _scheme, _delta in [

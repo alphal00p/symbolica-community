@@ -22,6 +22,13 @@ Class identities and the exception hierarchy are preserved; their Python
 The Marimo directory server (`marimo edit examples/` from the repository root)
 provides separate worked IBP notebooks:
 
+- [One-loop reduction and master evaluation](oneloop_reduce.py): pass a shared
+  `hep.IntegralFamily` and explicit powers to `hep.oneloop.reduce` for primitive
+  `oneloopmaster::` symbols, exported as `oneloop.A0`, `B0`, `C0`, and `D0`
+  and evaluated through their native Rust hooks.
+  Interactive examples cover a triangle numerator, an exact dilogarithmic C0
+  expression with `get_expression` and `select_branch`, and a squared tadpole
+  whose finite term includes epsilon-dependent prefactors.
 - [Unequal-mass bubble](ibp_bubble.py): raised powers and numerical master evaluation.
 - [Bubble differential equations](ibp_differential_equations.py): compatible equations
   in the invariant and masses, with numerical transport from a boundary value.
@@ -32,8 +39,11 @@ provides separate worked IBP notebooks:
 - [Two-loop phi4 self-energy](ibp_phi4.py) and [vertex](phi4_two_loop_vertex.py):
   generated diagrams, reductions and counterterms.
 
-They use the shared `IntegralFamily` and `IBPFamily` API, Symbolica algebra,
-and native RustRed reductions. Links inside each notebook stay on the same server.
+All these examples use the shared `hep.IntegralFamily` frontend with
+`hep.Kinematics` and a symbolic dimension. The one-loop example chooses
+`hep.oneloop.reduce` for reduction to OneLoopMaster symbols; `hep.IBPFamily`
+provides native RustRed reductions of the same families. Links inside each
+notebook stay on the same server.
 
 After installing a community wheel built from this checkout:
 

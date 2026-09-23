@@ -11,7 +11,10 @@ app = marimo.App(
 def _():
     import marimo as mo
     from symbolica import E, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
+
+    _set_namespace("angular_demo")
 
     return E, S, hep, mo
 
@@ -27,9 +30,9 @@ def _(mo):
 @app.cell
 def _(E, S, hep, mo):
     _D, _k, _p, _mink, _dot = S(
-        "angular_demo::D",
-        "angular_demo::k",
-        "angular_demo::p",
+        "D",
+        "k",
+        "p",
         "spenso::mink",
         "spenso::dot",
     )

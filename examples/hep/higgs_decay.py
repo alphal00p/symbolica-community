@@ -8,8 +8,11 @@ app = marimo.App(width="medium", app_title="Massive Higgs decays")
 def _():
     import marimo as mo
     from symbolica import E, Expression, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep as fk
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("higgs_decay")
 
     return CookSettings, E, Expression, S, TensorExpression, fk, mo
 
@@ -56,8 +59,8 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     charge, sw, cw, mh, mw, mz, vev = S(
         "UFO::ee", "UFO::sw", "UFO::cw", "UFO::MH", "UFO::MW", "UFO::MZ", "UFO::vev"
     )
-    conjugate, wrapped = S("spenso::conj", "higgs_decay::adjoint_index")
-    ports = S("higgs_decay::h", "higgs_decay::first", "higgs_decay::second")
+    conjugate, wrapped = S("spenso::conj", "adjoint_index")
+    ports = S("h", "first", "second")
     wave, rep, index, left, right = S("wave_", "rep_", "index_", "left_", "right_")
     metric = S("spenso::g")
     particle_names, mass, yukawa, yukawa_mass = {
@@ -242,9 +245,9 @@ def _(
     yukawa,
 ):
     pi = Expression.PI
-    alpha = S("higgs_decay::alpha")
-    physical_mass = S("higgs_decay::M", is_positive=True)
-    beta = S("higgs_decay::beta", is_positive=True)
+    alpha = S("alpha")
+    physical_mass = S("M", is_positive=True)
+    beta = S("beta", is_positive=True)
     mass_squared = physical_mass**2 * (1 - beta**2) / 4
 
     # M>0 and 0<beta<1 select the physical, above-threshold two-body branch.

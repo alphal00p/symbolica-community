@@ -14,8 +14,11 @@ def _():
 
     import marimo as mo
     from symbolica import E, Expression, Matrix, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("ibp_phi4")
 
     return (
         E,
@@ -54,23 +57,19 @@ def _(mo):
 @app.cell
 def _(E, Expression, Replacement, S, hep):
     d, k1, k2, mass_squared, p_squared, eps, coupling = S(
-        "ibp_phi4::d",
-        "ibp_phi4::k1",
-        "ibp_phi4::k2",
-        "ibp_phi4::M",
-        "ibp_phi4::p2",
-        "ibp_phi4::eps",
-        "ibp_phi4::g",
+        "d",
+        "k1",
+        "k2",
+        "M",
+        "p2",
+        "eps",
+        "g",
     )
-    tadpole_squared, vacuum_integral, log_mass, log_4pi = S(
-        "ibp_phi4::T2", "ibp_phi4::V", "ibp_phi4::Lm", "ibp_phi4::L4pi"
-    )
-    integral = S("ibp_phi4::I")
+    tadpole_squared, vacuum_integral, log_mass, log_4pi = S("T2", "V", "Lm", "L4pi")
+    integral = S("I")
     zero = E("0")
     pi = Expression.PI
-    _q, _p, _scaling, _denominator = S(
-        "ibp_phi4::q", "ibp_phi4::p", "ibp_phi4::scaling", "ibp_phi4::D3"
-    )
+    _q, _p, _scaling, _denominator = S("q", "p", "scaling", "D3")
     mink, _dot = S("spenso::mink", "spenso::dot")
     _qc, _pc = (_q(mink(d)), _p(mink(d)))
     _shifted_line = 1 / (
@@ -164,15 +163,15 @@ def _(
     assert len(generated.diagrams) == 2
     K, P, dim = S("gammalooprs::K", "gammalooprs::P", "gammalooprs::dim")
     model_mass, model_coupling = S("UFO::mass", "UFO::lam")
-    index, dimension = S("ibp_phi4::index_", "ibp_phi4::dimension_")
+    index, dimension = S("index_", "dimension_")
     den, edge_, mom_, mass_, quad_ = S(
         "gammalooprs::denom",
-        "ibp_phi4::edge_",
-        "ibp_phi4::mom_",
-        "ibp_phi4::mass_",
-        "ibp_phi4::quad_",
+        "edge_",
+        "mom_",
+        "mass_",
+        "quad_",
     )
-    coordinates = S("ibp_phi4::x1", "ibp_phi4::x2", "ibp_phi4::x3")
+    coordinates = S("x1", "x2", "x3")
     external_kinematics = _kinematics.with_scalar_product(P(0), P(0), p_squared)
     _reducer = (
         hep.TensorReducer(d)
@@ -190,7 +189,7 @@ def _(
             _diagram.overall_factor_expression(evaluate=True)
             * _diagram.numerator_prefactor_expression()
         )
-        _raw_family = _diagram.integral_family(kinematics=hep.Kinematics(d))
+        _raw_family = _diagram.propagator_family(kinematics=hep.Kinematics(d))
         _raw = _factor * _numerator / (Symbol.I * model_coupling**2)
         for _propagator in _raw_family.denominators:
             _raw /= _propagator
@@ -232,7 +231,7 @@ def _(
                     for _x, _power in zip(coordinates, _powers, strict=True)
                 )
             )
-            assert not _coefficient.matches(K(S("ibp_phi4::args___")))
+            assert not _coefficient.matches(K(S("args___")))
             bare_terms.append((_powers, _coefficient))
             bare_input += _coefficient * integral(*_powers)
     _raw_reference = [
@@ -494,13 +493,13 @@ def _(
     assert (tadpole_coefficient - (d - 2) / (2 * mass_squared)).together() == zero
     zg1, zm1 = (3 / (2 * eps), 1 / (2 * eps))
     h, field1, mass1, vertex1, field2, mass2, vertex2 = S(
-        "ibp_phi4::h",
-        "ibp_phi4::field1",
-        "ibp_phi4::mass1",
-        "ibp_phi4::vertex1",
-        "ibp_phi4::field2",
-        "ibp_phi4::mass2",
-        "ibp_phi4::vertex2",
+        "h",
+        "field1",
+        "mass1",
+        "vertex1",
+        "field2",
+        "mass2",
+        "vertex2",
     )
     _Zfield = 1 + h * field1 + h**2 * field2
     _Zmass = 1 + h * mass1 + h**2 * mass2
@@ -540,7 +539,7 @@ def _(
             )
     ct_model = hep.Model.from_json(json.dumps(_specification))
     ct_diagrams = {}
-    ct_integral, ct_coordinate = S("ibp_phi4::J", "ibp_phi4::y")
+    ct_integral, ct_coordinate = S("J", "y")
     ct_input, tree_ct = (zero, zero)
     for _loops, _ct_order in [(1, 1), (0, 2)]:
         _result = ct_model.generate_diagrams(

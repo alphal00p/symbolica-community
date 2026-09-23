@@ -13,12 +13,17 @@ with app.setup:
     import marimo as mo
     from marimo import Html
     from symbolica import E, Expression, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community.hep import (
+        FeynmanDiagram,
         IBPFamily,
         IBPSolution,
         IntegralFamily,
         Kinematics,
+        Model,
     )
+
+    _set_namespace("massive_ibp")
 
 
 @app.cell(hide_code=True)
@@ -58,17 +63,17 @@ def _():
 @app.cell
 def _():
     D, k, l, p, q, s, t, u = S(
-        "massive_ibp::D",
-        "massive_ibp::k",
-        "massive_ibp::l",
-        "massive_ibp::p",
-        "massive_ibp::q",
-        "massive_ibp::s",
-        "massive_ibp::t",
-        "massive_ibp::u",
+        "D",
+        "k",
+        "l",
+        "p",
+        "q",
+        "s",
+        "t",
+        "u",
     )
-    masses = S(*(f"massive_ibp::m{i}sq" for i in range(1, 7)))
-    J, V = S("massive_ibp::J", "massive_ibp::V")
+    masses = S(*(f"m{i}sq" for i in range(1, 7)))
+    J, V = S("J", "V")
     return D, J, V, k, l, masses, p, q, s, t, u
 
 
@@ -201,6 +206,69 @@ def _(J, show_recurrence, sunrise_ibp: IBPFamily):
     assert sunrise_solution.rules
     show_recurrence(sunrise_solution, J, perf_counter() - _start)
     return (sunrise_solution,)
+
+
+@app.cell(hide_code=True)
+def _():
+    mo.md(r"""
+    ## Start from a Feynman diagram
+
+    Use **`diagram.integral_family()`** to obtain a complete family.
+    It reads the stored momentum routing and model masses, retains the physical
+    propagators first, and automatically appends suitable ISPs. Pass preferred
+    dot products as its optional argument to choose the auxiliary entries.
+
+    This example loads a sunrise from DOT using `Model.phi4()`, so all three
+    propagators have the model's common mass. The unequal-mass example above
+    instead specifies each denominator explicitly.
+
+    `IntegralFamily.from_diagram(diagram, ...)` offers the same completion.
+    The returned family exposes the routed momentum names, which we use
+    below to impose $p^2=s$. Use `diagram.propagator_family()` when you need
+    only the physical propagators, for example before partial fractioning.
+    The original scalar integral has powers `[1, 1, 1, 0, 0]` in either
+    completed family; the last two entries are auxiliary denominators.
+    """)
+    return
+
+
+@app.cell
+def _(D, s):
+    sunrise_diagram = FeynmanDiagram.from_dot(
+        Model.phi4(),
+        """digraph sunrise {
+            ext [style=invis];
+            ext -> a [particle="phi"];
+            a -> b [particle="phi", lmb_id=0];
+            a -> b [particle="phi", lmb_id=1];
+            a -> b [particle="phi"];
+            b -> ext [particle="phi"];
+        }""",
+    )
+    _routed = sunrise_diagram.integral_family(kinematics=Kinematics(D))
+    _p = _routed.external_momenta[0]
+    _kin = _routed.kinematics.with_scalar_product(_p, _p, s)
+    automatic_diagram_family = sunrise_diagram.integral_family(kinematics=_kin)
+    _dot_products = [_kin.scalar_product(_k, _p) for _k in _routed.loop_momenta]
+    diagram_family = sunrise_diagram.integral_family(
+        independent_dot_products=_dot_products, kinematics=_kin
+    )
+    assert (
+        automatic_diagram_family.is_complete and automatic_diagram_family.is_independent
+    )
+    assert diagram_family.is_complete and diagram_family.is_independent
+    assert len(diagram_family.denominators) == 5
+    assert diagram_family.denominators[:3] == automatic_diagram_family.denominators[:3]
+    assert diagram_family.denominators[3:] == _dot_products
+    mo.vstack(
+        [
+            mo.md("**Automatically completed family**"),
+            automatic_diagram_family,
+            mo.md("**Family with the two loop–external dot products as ISPs**"),
+            diagram_family,
+        ]
+    )
+    return
 
 
 @app.cell(hide_code=True)

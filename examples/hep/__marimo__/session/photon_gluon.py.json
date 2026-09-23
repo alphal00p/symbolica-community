@@ -1,0 +1,93 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "955230188b3f5ca78512afe11dabae6d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "f3305b0f25eccb88cedc3d231b66125b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"photongluon-currents-and-crossing\">Photon\u2013gluon currents and crossing</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/photon_radiation.py\">Real QCD radiation</a> \u00b7\n<a href=\"/?file=hep/quark_gluon_scattering.py\">Quark\u2013gluon scattering</a></span>\n<span class=\"paragraph\">Generate both diagrams for each process:\n<marimo-tex class=\"arithmatex\">||(\\gamma^*g\\to q\\bar q||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(q\\gamma^*\\to gq||)</marimo-tex> and\n<marimo-tex class=\"arithmatex\">||(q\\bar q\\to\\gamma^*g||)</marimo-tex>. Keep the quark mass, photon virtuality and\ngeneric SU(<marimo-tex class=\"arithmatex\">||(N_c||)</marimo-tex>) color. Model particles and vertices are selected by name.</span>\n<span class=\"paragraph\">These calculations reproduce FeynCalc's\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/GaGl-QQbar\" rel=\"noopener noreferrer\" target=\"_blank\">photon\u2013gluon fusion</a>,\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/QGa-GlQ\" rel=\"noopener noreferrer\" target=\"_blank\">QCD Compton</a>, and\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/QQbar-GaGl\" rel=\"noopener noreferrer\" target=\"_blank\">annihilation</a>\nexamples. Each channel is generated independently before checking crossing.</span>\n<span class=\"paragraph\">The off-shell photon current is contracted with <marimo-tex class=\"arithmatex\">||(-g_{\\mu\\nu}||)</marimo-tex> without\na photon spin average, matching the references. Incoming quark/gluon\nspins and colors are averaged. This current contraction is not a physical\nvirtual-photon cross section; a lepton tensor is needed for an observable\ninvolving a virtual photon.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "c4a2424f5e2ce9ec98c155d55067028e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "af0f6c086f9f6e8b643cb5f79ddd93de",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"checks-before-choosing-a-numerical-point\">Checks before choosing a numerical point</h2>\n<ul>\n<li>Both diagrams and their interference reproduce the complete massive references.</li>\n<li>Photon and gluon Ward contractions vanish in every channel.</li>\n<li>Gluon references along the quark or virtual photon give the same current contraction.</li>\n<li>Exact crossing includes the fermion sign and changed incoming color averages.</li>\n<li>The massless spacelike-photon limits agree with the reference formulas.</li>\n<li>Shared flux and two-body phase space supply the real-photon angular rates.</li>\n</ul>\n<span class=\"paragraph\">Write <marimo-tex class=\"arithmatex\">||(F(s,t,u)||)</marimo-tex> for the fusion current contraction. With the same invariant\narguments, annihilation gives <marimo-tex class=\"arithmatex\">||((N_c^2-1)F/(2N_c^2)||)</marimo-tex>; crossing <marimo-tex class=\"arithmatex\">||(s\\leftrightarrow u||)</marimo-tex>\ngives the Compton current with factor <marimo-tex class=\"arithmatex\">||(-(N_c^2-1)/N_c||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "3707f73fd2884518552d4e506d160891",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='lEQa-0' random-id='5edee074-dfe1-da22-305d-3e0447bd4ac7'><marimo-dropdown data-initial-value='[&quot;Photon\u2013gluon fusion&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eProcess&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Photon\u2013gluon fusion&quot;,&quot;QCD Compton&quot;,&quot;Quark annihilation&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='lEQa-1' random-id='04da5c4c-8f1a-0be7-d274-f0a731137abd'><marimo-dropdown data-initial-value='[&quot;SU(3)&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eColor group&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;SU(2)&quot;,&quot;SU(3)&quot;,&quot;SU(5)&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='lEQa-2' random-id='f42ba3be-258e-893c-5829-c3e1ce9be9d2'><marimo-slider data-initial-value='0.02' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eQuark mass squared / s&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0' data-stop='0.2' data-step='0.01' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='lEQa-3' random-id='01620b47-4b96-c1d9-645c-80c90f6a1b0a'><marimo-slider data-initial-value='0.2' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003ePhoton |q\u00b2| / s&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0' data-stop='0.3' data-step='0.01' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='lEQa-4' random-id='2cba965c-3c76-49e6-6f21-653c4a270f92'><marimo-slider data-initial-value='0.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003ecos \u03b8&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='-0.8' data-stop='0.8' data-step='0.1' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "c6a78e70615767ab7bc0a1232fc784d7",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "60d590a155cbaa7befaa8ba80a40e73f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"off-shell-current-and-real-photon-rate\">Off-shell current and real-photon rate</h2></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Photon q\u00b2/s = -0.20.</strong> Incoming photons are spacelike; outgoing photons are timelike.</span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Selected current / (e\u00b2 gs\u00b2 Qq\u00b2):</strong> 2.3644444</span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8:</strong> 0.38409656</span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Real-photon angular-cut rate s \u03c3/(\u03b1 \u03b1s), |cos\u03b8| &lt; 0.8:</strong> 0.98022161</span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The angle is between the first incoming and first outgoing particle.\nThe off-shell column uses the displayed virtuality. The rate column sets\n<marimo-tex class=\"arithmatex\">||(q^2=0||)</marimo-tex> and averages an incoming photon's two physical polarizations.\nAll final particles are distinct. To obtain a rate, multiply by\n<marimo-tex class=\"arithmatex\">||(\\alpha\\alpha_s/s||)</marimo-tex>; the model's bottom-quark charge is <marimo-tex class=\"arithmatex\">||(Q_q=-1/3||)</marimo-tex>.\nThe angular cut keeps the massless collinear endpoints outside the integral.</span></span><marimo-ui-element object-id='Xref-0' random-id='97d6ee8d-4d73-5a93-7769-67b622abcbb7'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;cos \u03b8&#92;&quot;:-0.8,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:11.972989750034142,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:1.3985831926576944},{&#92;&quot;cos \u03b8&#92;&quot;:-0.7,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:7.80113757024942,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:0.9677934291681347},{&#92;&quot;cos \u03b8&#92;&quot;:-0.6,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:5.621523723764978,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:0.7369378981917484},{&#92;&quot;cos \u03b8&#92;&quot;:-0.5,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:4.320683645358992,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:0.5971730534914811},{&#92;&quot;cos \u03b8&#92;&quot;:-0.4,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:3.491783678119654,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:0.5073184642972849},{&#92;&quot;cos \u03b8&#92;&quot;:-0.3,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:2.9529911904616943,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:0.44857405920925053},{&#92;&quot;cos \u03b8&#92;&quot;:-0.2,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:2.613245622748832,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:0.4113931805874579},{&#92;&quot;cos \u03b8&#92;&quot;:-0.1,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:2.424873878030732,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:0.39073176886185784},{&#92;&quot;cos \u03b8&#92;&quot;:0.0,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:2.3644444444444455,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:0.3840965579175431},{&#92;&quot;cos \u03b8&#92;&quot;:0.1,&#92;&quot;Off-shell current / (e\u00b2 gs\u00b2 Qq\u00b2)&#92;&quot;:2.424873878030729,&#92;&quot;Real-photon s/(\u03b1 \u03b1s) d\u03c3/dcos\u03b8&#92;&quot;:0.3907317688618578}]&quot;' data-total-rows='17' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

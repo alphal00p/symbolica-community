@@ -12,7 +12,10 @@ def _():
 
     import marimo as mo
     from symbolica import E, Replacement, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
+
+    _set_namespace("etac")
 
     return mo, json, reduce, Path, E, S, Replacement, hep
 
@@ -36,9 +39,11 @@ def _(mo):
     propagators drawn from the full input. Every partial-fraction identity and
     every reconstructed scalar product is checked exactly.
 
-    **Remaining work:** global topology minimization and momentum mappings
-    between the surviving families. This notebook prepares integral families;
-    decay amplitudes and IBP reductions are separate calculations.
+    The surviving sectors are grouped with verified loop-momentum maps. Every
+    input integral is expressed in completed representative families, retaining
+    its coefficients and propagator powers. The grouping keeps external momenta
+    fixed and treats different propagator counts separately. Cross-size
+    subtopology minimization remains to be integrated into this workflow.
     """)
 
 
@@ -54,14 +59,14 @@ def _(Path, json):
 def _(E, S, Replacement, hep, fixture, reduce):
     def prepare_topologies():
         D, k1, k2, n, nb, gkin, meta, u0b = S(
-            "etac::D",
-            "etac::k1",
-            "etac::k2",
-            "etac::n",
-            "etac::nb",
-            "etac::gkin",
-            "etac::meta",
-            "etac::u0b",
+            "D",
+            "k1",
+            "k2",
+            "n",
+            "nb",
+            "gkin",
+            "meta",
+            "u0b",
             is_real=True,
         )
         kin = (
@@ -71,7 +76,7 @@ def _(E, S, Replacement, hep, fixture, reduce):
             .with_scalar_product(n, nb, E("2"))
         )
         momenta = dict(zip(("k1", "k2", "n", "nb"), (k1, k2, n, nb)))
-        labels = S(*["etac::" + label for label in fixture["labels"]], is_real=True)
+        labels = S(*fixture["labels"], is_real=True)
         products = [
             kin.scalar_product(momenta[a], momenta[b])
             for a, b in fixture["scalar_products"]
@@ -133,7 +138,7 @@ def _(E, S, Replacement, hep, fixture, reduce):
         }
         completed_rows = []
         for family in sectors.values():
-            parameters = [S(f"etac::x{i}") for i in range(len(family.denominators))]
+            parameters = [S(f"x{i}") for i in range(len(family.denominators))]
             U, F = family.symanzik(parameters)
             if U == E("0"):
                 direction = family.scaleless_transverse_direction()
@@ -176,6 +181,17 @@ def _(E, S, Replacement, hep, fixture, reduce):
                         - G
                     ).expand() == E("0")
             statistics[status] += 1
+            if status == "not detected":
+                # All surviving families must pass automatic self-mapping before any
+                # global minimization can rely on the shift search. Fractional
+                # light-cone offsets previously broke candidate reconstruction.
+                mapping = family.find_mapping(family)
+                assert mapping is not None
+                for source, target in enumerate(mapping.denominator_map):
+                    assert (
+                        mapping.apply(family.denominators[source])
+                        - family.denominators[target]
+                    ).together() == E("0")
             completed = family.complete(candidates=pool)
             assert completed.is_complete and completed.is_independent
             assert (
@@ -188,7 +204,7 @@ def _(E, S, Replacement, hep, fixture, reduce):
                 == completed.denominators
             )
             # Reconstruct every independent loop scalar product from the selected basis.
-            names = [S(f"etac::d{i}") for i in range(len(completed.denominators))]
+            names = [S(f"d{i}") for i in range(len(completed.denominators))]
             rules = completed.scalar_product_rules(names)
             for scalar_product, expression in rules:
                 for name, denominator in zip(names, completed.denominators):
@@ -200,10 +216,111 @@ def _(E, S, Replacement, hep, fixture, reduce):
             "not detected": 434,
             "transverse certificate": 131,
         }
-        return input_rows, completed_rows, statistics, pool
 
-    input_rows, completed_rows, statistics, pool = prepare_topologies()
-    return input_rows, completed_rows, statistics, pool
+        # Group physical sectors before adding auxiliary denominators. Complete only
+        # the retained representatives when constructing final integral coordinates.
+        surviving_rows = [row for row in completed_rows if row[2] == "not detected"]
+        surviving = [row[0] for row in surviving_rows]
+        mappings = hep.IntegralFamily.find_mappings(surviving)
+        representatives = sorted({target for target, _ in mappings})
+        for source, (target, mapping) in enumerate(mappings):
+            assert mappings[target][0] == target
+            for i, j in enumerate(mapping.denominator_map):
+                assert (
+                    mapping.apply(surviving[source].denominators[i])
+                    - surviving[target].denominators[j]
+                ).together() == E("0")
+            # Independently check the two-loop Jacobian in the returned coordinates.
+            images = [image for _, image in mapping.momentum_rules]
+            coefficients = [dict(image.coefficient_list(k1, k2)) for image in images]
+            determinant = (
+                coefficients[0].get(k1, E("0")) * coefficients[1].get(k2, E("0"))
+                - coefficients[0].get(k2, E("0")) * coefficients[1].get(k1, E("0"))
+            ).together()
+            assert determinant in (E("1"), E("-1"))
+            assert (
+                mapping.apply(kin.scalar_product(k1, k2)) - kin.scalar_product(*images)
+            ).together() == E("0")
+        assert [
+            target
+            for target, _ in hep.IntegralFamily.find_mappings(
+                [surviving[i] for i in representatives]
+            )
+        ] == list(range(len(representatives)))
+
+        # Map every nonzero partial-fraction term from every original input to the
+        # completed representative. Preserve coefficients and propagator powers.
+        survivor_indices = {
+            tuple(sorted(d.to_canonical_string() for d in family.denominators)): i
+            for i, family in enumerate(surviving)
+        }
+        final_integrals = []
+        for family, fractions in input_rows:
+            terms = {}
+            for coefficient, powers in fractions:
+                assert all(power >= 0 for power in powers)
+                sector = family.sector(powers)
+                key = tuple(
+                    sorted(d.to_canonical_string() for d in sector.denominators)
+                )
+                if key not in survivor_indices:
+                    continue  # Removed only by one of the independently checked certificates.
+                source = survivor_indices[key]
+                alignment = sector.mapping_to(surviving[source], [k1, k2])
+                assert alignment is not None
+                source_powers = alignment.map_powers(
+                    [power for power in powers if power > 0]
+                )
+                target, mapping = mappings[source]
+                mapped_powers = mapping.map_powers(source_powers)
+                completed = surviving_rows[target][1]
+                mapped_powers += [0] * (
+                    len(completed.denominators) - len(mapped_powers)
+                )
+                term = (target, tuple(mapped_powers))
+                terms[term] = terms.get(term, E("0")) + coefficient
+            final_integrals.append(
+                {
+                    term: coefficient.together()
+                    for term, coefficient in terms.items()
+                    if coefficient.together() != E("0")
+                }
+            )
+        assert len(final_integrals) == 251
+        assert len(representatives) == 223
+        assert sum(len(terms) for terms in final_integrals) == 551
+        assert sum(not terms for terms in final_integrals) == 59
+        return (
+            input_rows,
+            completed_rows,
+            statistics,
+            pool,
+            surviving_rows,
+            mappings,
+            representatives,
+            final_integrals,
+        )
+
+    (
+        input_rows,
+        completed_rows,
+        statistics,
+        pool,
+        surviving_rows,
+        mappings,
+        representatives,
+        final_integrals,
+    ) = prepare_topologies()
+    return (
+        input_rows,
+        completed_rows,
+        statistics,
+        pool,
+        surviving_rows,
+        mappings,
+        representatives,
+        final_integrals,
+    )
 
 
 @app.cell(hide_code=True)
@@ -254,7 +371,7 @@ def _(mo):
 
 
 @app.cell
-def _(fixture, input_rows, input_index, mo):
+def _(fixture, input_rows, input_index, final_integrals, topology_names, mo):
     selected_family, selected_fractions = input_rows[input_index.value - 1]
     _input = fixture["integrals"][input_index.value - 1]
     mo.vstack(
@@ -274,6 +391,20 @@ def _(fixture, input_rows, input_index, mo):
             ),
             mo.md(
                 "The exact rational difference between the input and this sum is zero."
+            ),
+            mo.md("### In completed representative families"),
+            mo.ui.table(
+                [
+                    {
+                        "Topology": topology_names[target],
+                        "Coefficient": str(coefficient),
+                        "Powers": str(powers),
+                    }
+                    for (target, powers), coefficient in final_integrals[
+                        input_index.value - 1
+                    ].items()
+                ],
+                selection=None,
             ),
         ]
     )
@@ -327,6 +458,62 @@ def _(original_sector, mo):
             )
         )
     return (transverse_direction,)
+
+
+@app.cell
+def _(representatives, mappings, final_integrals, mo):
+    topology_names = {target: f"T{i + 1}" for i, target in enumerate(representatives)}
+    mo.md(f"""
+    ## Verified topology mappings
+
+    **{len(mappings)} surviving families → {len(representatives)} representatives.**
+    Every map preserves the loop measure and matches every denominator exactly.
+    All representatives have complete seven-propagator bases; auxiliary powers
+    remain zero. {sum(not terms for terms in final_integrals)} of the 251 input
+    integrals vanish after certified scaleless terms are removed and equal
+    mapped terms are combined.
+
+    `IntegralFamily.find_mappings(families)` returns `(target_index, mapping)`
+    for each input, with indices into the original list. Earlier families are
+    preferred, and every map goes directly to a representative.
+    """)
+    return (topology_names,)
+
+
+@app.cell
+def _(mappings, mo):
+    mapping_index = mo.ui.slider(
+        1, len(mappings), value=1, step=1, label="Surviving family"
+    )
+    mo.output.append(mapping_index)
+    return (mapping_index,)
+
+
+@app.cell
+def _(mapping_index, mappings, surviving_rows, topology_names, mo):
+    mapped_target, selected_mapping = mappings[mapping_index.value - 1]
+    mapped_source = surviving_rows[mapping_index.value - 1][0]
+    mapped_family = surviving_rows[mapped_target][1]
+    mo.vstack(
+        [
+            mo.md(
+                f"### Family {mapping_index.value} → {topology_names[mapped_target]}"
+            ),
+            mo.ui.table(
+                [
+                    {"Source momentum": str(momentum), "Target coordinates": str(image)}
+                    for momentum, image in selected_mapping.momentum_rules
+                ],
+                selection=None,
+            ),
+            mo.md(
+                f"**Propagator map (zero-based):** {selected_mapping.denominator_map}"
+            ),
+            mapped_source,
+            mapped_family,
+        ]
+    )
+    return mapped_target, selected_mapping, mapped_source, mapped_family
 
 
 if __name__ == "__main__":

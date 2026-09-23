@@ -8,9 +8,12 @@ app = marimo.App(width="medium", app_title="Gluon ghost subtraction")
 def _():
     import marimo as mo
     from symbolica import E, Replacement, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import Model
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("qcd_ghosts")
 
     return CookSettings, E, Model, Replacement, S, TensorExpression, hep, mo
 

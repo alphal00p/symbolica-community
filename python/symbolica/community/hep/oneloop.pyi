@@ -41,22 +41,28 @@ class Evaluator:
     def evaluate_batch(self, rows: Sequence[Sequence[Number]], *, prec: int | None = None, backend: Backend | None = None) -> list[Coefficients]: ...
     def rebuild(self) -> None: ...
 
-def A0(mass_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
-def B0(momentum_squared: Number, mass_0_squared: Number, mass_1_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
-def dB0(momentum_squared: Number, mass_0_squared: Number, mass_1_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
-def C0(p1_squared: Number, p2_squared: Number, p3_squared: Number, mass_0_squared: Number, mass_1_squared: Number, mass_2_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
-def D0(p1_squared: Number, p2_squared: Number, p3_squared: Number, p4_squared: Number, s12: Number, s23: Number, mass_0_squared: Number, mass_1_squared: Number, mass_2_squared: Number, mass_3_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
-a0 = A0
-b0 = B0
-db0 = dB0
-c0 = C0
-d0 = D0
+# Callable primitive symbols from oneloopmaster. Untagged calls include the
+# squared scale last; prepend 0, -1 or -2 for native Laurent evaluation hooks.
+# Tagged numeric calls containing a Float or ComplexFloat normalize through
+# those hooks. Untagged and exact-only calls stay symbolic for inspection.
+A0: Expression
+B0: Expression
+dB0: Expression
+C0: Expression
+D0: Expression
+
+def a0(mass_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
+def b0(momentum_squared: Number, mass_0_squared: Number, mass_1_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
+def db0(momentum_squared: Number, mass_0_squared: Number, mass_1_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
+def c0(p1_squared: Number, p2_squared: Number, p3_squared: Number, mass_0_squared: Number, mass_1_squared: Number, mass_2_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
+def d0(p1_squared: Number, p2_squared: Number, p3_squared: Number, p4_squared: Number, s12: Number, s23: Number, mass_0_squared: Number, mass_1_squared: Number, mass_2_squared: Number, mass_3_squared: Number, mu_squared: Number | None = None, *, rebuild: bool = False, prec: int = 16, backend: Backend = "auto") -> Coefficients: ...
 
 def master_coefficients(master: Expression) -> list[Expression]: ...
 def reduction_coefficients(reduction: Reduction, mu_squared: Expression | None = None) -> list[Expression]:
-    """Expand at d=4-2*eps and combine with OneLoopMaster's Laurent coefficients.
+    """Expand the family's dimension at 4-2*eps and combine the master coefficients.
 
-    Return [finite, simple_pole, double_pole] for compile_native. The squared
+    Return [finite, simple_pole, double_pole] as tagged oneloopmaster symbols
+    with native Rust evaluation hooks; use Expression.evaluate. The squared
     scale defaults to 1. Raise ValueError for coefficients with poles at d=4
     (which need unavailable positive-order master coefficients), fractional
     Taylor powers, or dimension-dependent kinematics or scale.
@@ -72,109 +78,8 @@ def select_branch(expression: _Expressions, replacement_rules: Sequence[Replacem
 
 import builtins
 import typing
+from symbolica.community.hep import IntegralFamily
 from symbolica.core import Expression
-
-@typing.final
-class IntegralFamily:
-    r"""
-    A one-loop integral family: N propagators, their external kinematics, and a
-    numerator polynomial in `dot(k, ...)`.
-
-    ## Examples
-    ```python
-    from symbolica import E, S
-    from symbolica.community.hep.oneloop import IntegralFamily, Propagator
-
-    # A massless bubble with an off-shell external leg and a unit numerator.
-    family = IntegralFamily(
-        propagators=[Propagator(E("0")), Propagator(E("0"))],
-        invariants=[E("s")],
-    )
-    reduction = family.reduce()
-    print(reduction.to_expression())
-
-    # A rank-one massless triangle numerator.
-    dot, k, q1 = S("oneloopreduce::dot"), S("oneloopreduce::k"), S("oneloopreduce::q1")
-    triangle = IntegralFamily(
-        propagators=[Propagator(E("0"))] * 3,
-        invariants=[E("p1sq"), E("s"), E("p2sq")],
-        numerator=dot(k, q1),
-    )
-    ```
-
-    Parameters
-    ----------
-    propagators : Sequence[Propagator]
-        The N loop propagators, in the order that fixes the labelling `r_0 .. r_{N-1}`.
-    invariants : Sequence[Expression]
-        The `C(N, 2)` pairwise invariants `(r_i - r_j)^2`, in lexicographic `i < j`
-        order: `(0,1), (0,2), ..., (0,N-1), (1,2), ...`. A zero entry is treated as
-        an on-shell leg and is off-shell regularized internally.
-    numerator : Optional[Expression]
-        A polynomial in the symmetric linear dot product `oneloopreduce::dot`, built
-        from `dot(k, k)` and `dot(k, q_i)`. Defaults to `1` (a scalar integral).
-    exponents : Optional[Sequence[int]]
-        The power of each propagator. Defaults to `[1] * N`. Must be non-negative
-        and sum to at most `oneloopreduce::MAX_TOTAL_INDEX`, which `reduce()`
-        enforces.
-
-    Raises
-    ------
-    ValueError
-        If `propagators` is empty, or if `invariants` or `exponents` has the wrong
-        length for an N-point family.
-    """
-    @property
-    def propagators(self) -> builtins.list[Propagator]:
-        r"""
-        The propagators of the family.
-        """
-    @property
-    def invariants(self) -> builtins.list[Expression]:
-        r"""
-        The `C(N, 2)` pairwise invariants, in lexicographic `i < j` order.
-        """
-    @property
-    def numerator(self) -> Expression:
-        r"""
-        The numerator polynomial.
-        """
-    @property
-    def exponents(self) -> builtins.list[builtins.int]:
-        r"""
-        The power of each propagator.
-        """
-    def __new__(cls, propagators: typing.Sequence[Propagator], invariants: typing.Sequence[Expression], numerator: typing.Optional[Expression] = None, exponents: typing.Optional[typing.Sequence[builtins.int]] = None) -> IntegralFamily: ...
-    def reduce(self) -> Reduction:
-        r"""
-        Reduce the family to the scalar masters `A0`, `B0`, `C0` and `D0`.
-
-        ## Examples
-        ```python
-        reduction = family.reduce()
-        for coefficient, master in reduction.terms:
-            print(master.kind, coefficient)
-        ```
-
-        Returns
-        -------
-        Reduction
-            The coefficient of each master integral.
-
-        Raises
-        ------
-        ValueError
-            If the reduction fails -- on kinematics the reducer cannot handle, or
-            on a propagator index that is negative or whose total is beyond the
-            depth the recursion can reach. The Rust-side message is included.
-
-        Notes
-        -----
-        The GIL is held for the whole call. Symbolica aborts the process when an
-        unlicensed instance is touched from a second thread, so releasing it
-        would turn a concurrent call into a crash rather than a speed-up.
-        """
-    def __repr__(self) -> builtins.str: ...
 
 @typing.final
 class MasterIntegral:
@@ -185,7 +90,7 @@ class MasterIntegral:
 
     ## Examples
     ```python
-    _, master = family.reduce().terms[0]
+    _, master = oneloop.reduce(family, [1, 1]).terms[0]
 
     master.kind
     # 'bubble'
@@ -194,7 +99,7 @@ class MasterIntegral:
     # [s, 0, 0]
 
     master.to_expression()
-    # oneloopreduce::B0(s,0,0)
+    # oneloopmaster::B0(s,0,0,1)
     ```
     """
     @property
@@ -218,61 +123,21 @@ class MasterIntegral:
         - `D0(p1_sq, p2_sq, p3_sq, p4_sq, s, t, m1_sq, m2_sq, m3_sq, m4_sq)`
         """
     def __eq__(self, other: builtins.object) -> builtins.bool: ...
-    def to_expression(self) -> Expression:
+    def to_expression(self, mu_squared: typing.Optional[Expression] = None) -> Expression:
         r"""
-        The master as a Symbolica function call on its head.
+        Return the primitive untagged `oneloopmaster::` call.
+
+        The squared renormalization scale defaults to `1` and is appended after
+        the kinematic arguments. Pass this expression to `get_expression` for
+        exact formulas or to `master_coefficients` for tagged expressions using
+        the registered direct Rust numerical hooks.
 
         ## Examples
         ```python
         master.to_expression()
-        # oneloopreduce::C0(p1sq,p2sq,s,0,0,0)
+        # oneloopmaster::C0(p1sq,p2sq,s,0,0,0,1)
         ```
-
-        Returns
-        -------
-        Expression
-            The `A0`/`B0`/`C0`/`D0` head, in the `oneloopreduce` namespace, applied
-            to `arguments`.
         """
-    def to_oneloopmaster(self, mu_squared: typing.Optional[Expression] = None) -> Expression:
-        r"""
-        Return an unexpanded canonical `oneloopmaster::` call.
-
-        The squared renormalization scale defaults to `1` and is appended after
-        the kinematic arguments. Pass the result to `master_coefficients` to get
-        evaluable finite, simple-pole and double-pole expressions.
-        """
-    def __repr__(self) -> builtins.str: ...
-
-@typing.final
-class Propagator:
-    r"""
-    A loop propagator `1 / ((k + r)^2 - mass_sq)`.
-
-    Only the mass is carried here. The external offset `r` never enters the
-    reduction directly: the reducer works from the pairwise invariants
-    `(r_i - r_j)^2` that you hand to `IntegralFamily`.
-
-    ## Examples
-    ```python
-    from symbolica import E
-    from symbolica.community.hep.oneloop import Propagator
-
-    massless = Propagator(E("0"))
-    massive = Propagator(E("mt^2"))
-    ```
-
-    Parameters
-    ----------
-    mass_sq : Expression
-        The propagator mass squared. Use `E("0")` for a massless line.
-    """
-    @property
-    def mass_sq(self) -> Expression:
-        r"""
-        The propagator mass squared.
-        """
-    def __new__(cls, mass_sq: Expression) -> Propagator: ...
     def __repr__(self) -> builtins.str: ...
 
 @typing.final
@@ -283,7 +148,7 @@ class Reduction:
 
     ## Examples
     ```python
-    reduction = family.reduce()
+    reduction = oneloop.reduce(family, [1, 1])
 
     len(reduction)
     # 2
@@ -295,35 +160,29 @@ class Reduction:
     ```
     """
     @property
+    def dimension(self) -> Expression:
+        r"""
+        Symbolic dimension inherited from the shared HEP family.
+        """
+    @property
     def terms(self) -> builtins.list[tuple[Expression, MasterIntegral]]:
         r"""
         The `(coefficient, master)` pairs of the reduction.
         """
-    def to_expression(self) -> Expression:
+    def to_expression(self, mu_squared: typing.Optional[Expression] = None) -> Expression:
         r"""
-        Contract the reduction into a single expression over the `A0`/`B0`/`C0`/`D0`
-        heads.
+        Contract the reduction into primitive `oneloopmaster::A0/B0/C0/D0` calls.
+
+        The squared renormalization scale `mu_squared` is appended to each call
+        and defaults to `1`. Coefficients retain their exact dependence on
+        the shared family dimension. Use `reduction_coefficients` to expand at `d=4-2*eps`
+        and obtain tagged calls for the masters' native Rust evaluation hooks.
 
         ## Examples
         ```python
-        family.reduce().to_expression()
-        # oneloopreduce::B0(s,0,0)
+        oneloop.reduce(family, [1, 1]).to_expression()
+        # oneloopmaster::B0(s,0,0,1)
         ```
-
-        Returns
-        -------
-        Expression
-            `sum(coefficient * master.to_expression())` over every term.
-        """
-    def to_oneloopmaster(self, mu_squared: typing.Optional[Expression] = None) -> Expression:
-        r"""
-        Convert the reduction to `oneloopmaster::A0/B0/C0/D0` calls.
-
-        `mu_squared` is the squared renormalization scale, appended to every
-        master call, and defaults to `1`. Coefficients retain their exact
-        dependence on `oneloopreduce::d`. This does not expand in epsilon: use
-        `reduction_coefficients` from the community module to combine that
-        dimension dependence with the masters' Laurent coefficients.
         """
     def simplify(self) -> Reduction:
         r"""
@@ -331,7 +190,7 @@ class Reduction:
 
         ## Examples
         ```python
-        reduction = family.reduce().simplify()
+        reduction = oneloop.reduce(family, [1, 1]).simplify()
         ```
 
         Returns
@@ -341,3 +200,14 @@ class Reduction:
         """
     def __len__(self) -> builtins.int: ...
     def __repr__(self) -> builtins.str: ...
+
+def reduce(family: IntegralFamily, powers: typing.Sequence[builtins.int], *, numerator: typing.Optional[Expression] = None) -> Reduction:
+    r"""
+    Reduce a shared `hep.IntegralFamily` to primitive OneLoopMaster integrals.
+
+    `powers` contains one signed integer per family denominator. Negative
+    powers are numerator factors, and zero powers omit auxiliary denominators.
+    `numerator` uses the family's `Kinematics.scalar_product` expressions.
+    Exactly one loop and a symbolic Kinematics dimension are required. Positive
+    powers of eikonal denominators and uncontracted loop tensors are rejected.
+    """

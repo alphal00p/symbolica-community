@@ -9,8 +9,11 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("qg")
 
     return CookSettings, E, S, Symbol, TensorExpression, hep, mo, np
 
@@ -374,7 +377,7 @@ def _(Nc, P, S, Symbol, gs, kinematics, mass, np, physical, s, t, u):
             P(0), P(1)
         )
         assert (phase - 1 / (64 * Symbol.PI**2 * s)).together() == 0
-        z, rho, cutoff, alpha = S("qg::z", "qg::rho", "qg::cutoff", "qg::alpha_s")
+        z, rho, cutoff, alpha = S("z", "rho", "cutoff", "alpha_s")
         angle_t = -((s - mass**2) ** 2) * (1 - z) / (2 * s)
         density = (
             (physical_st.replace(t, angle_t) * phase * 2 * Symbol.PI * s / alpha**2)

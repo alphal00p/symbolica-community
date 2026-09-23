@@ -13,8 +13,11 @@ def _():
 
     import marimo as mo
     from symbolica import E, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
+
+    _set_namespace("formfactor")
 
     return E, S, hep, math, mo, oneloop
 
@@ -42,13 +45,13 @@ def _(mo):
 @app.cell
 def _(E, S, hep, mo):
     D, k, p, q, s, eps, I = S(
-        "formfactor::D",
-        "formfactor::k",
-        "formfactor::p",
-        "formfactor::q",
-        "formfactor::s",
-        "formfactor::eps",
-        "formfactor::I",
+        "D",
+        "k",
+        "p",
+        "q",
+        "s",
+        "eps",
+        "I",
     )
     zero, one = E("0"), E("1")
     kinematics = (
@@ -124,7 +127,7 @@ def _(D, coefficients, math, mo, one, s, targets, zero):
 
 @app.cell
 def _(D, E, S, coefficients, eps, mo, s, zero):
-    Bfinite = S("formfactor::Bfinite")
+    Bfinite = S("Bfinite")
     laurent = {}
     for _target, _coefficient in coefficients.items():
         _order = -1 if _target == (1, 1, 1) else 0
@@ -167,8 +170,8 @@ def _(D, E, S, coefficients, eps, mo, s, zero):
 def _(Bfinite, eps, laurent, mo, oneloop, s):
     numeric_checks = []
     for _sv, _scale in [(-1.0, 1.0), (-5.0, 2.0), (1.0, 1.0), (9.0, 3.0)]:
-        _bubble = oneloop.B0(_sv, 0.0, 0.0, _scale)
-        _triangle = oneloop.C0(0.0, 0.0, _sv, 0.0, 0.0, 0.0, _scale)
+        _bubble = oneloop.b0(_sv, 0.0, 0.0, _scale)
+        _triangle = oneloop.c0(0.0, 0.0, _sv, 0.0, 0.0, 0.0, _scale)
         _values = {s: _sv, Bfinite: complex(_bubble[0])}
         _double = complex(laurent[1, 1, 1].coefficient(eps**-2).evaluate(_values))
         _single = complex(laurent[1, 1, 1].coefficient(eps**-1).evaluate(_values))
@@ -231,7 +234,7 @@ def _(
         finite_parts[selected_powers].evaluate(
             {
                 s: _sv,
-                Bfinite: complex(oneloop.B0(_sv, 0.0, 0.0, _scale)[0]),
+                Bfinite: complex(oneloop.b0(_sv, 0.0, 0.0, _scale)[0]),
             }
         )
     )

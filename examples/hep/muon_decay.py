@@ -12,8 +12,11 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("muon_decay")
 
     return (
         CookSettings,
@@ -70,18 +73,12 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
     _charge, _sw, _mw, _mm, _me = S(
         "UFO::ee", "UFO::sw", "UFO::MW", "UFO::MM", "UFO::Me"
     )
-    GF, s, t, z = S(
-        "muon_decay::GF", "muon_decay::s", "muon_decay::t", "muon_decay::inverse_W2"
-    )
-    M = S("muon_decay::M", is_positive=True)
-    mass = S("muon_decay::m", is_positive=True)
-    _conjugate, _wrapped = S("spenso::conj", "muon_decay::adjoint")
-    _ports = S(
-        "muon_decay::mu", "muon_decay::e", "muon_decay::antinue", "muon_decay::numu"
-    )
-    _wave, _rep, _index = S(
-        "muon_decay::wave_", "muon_decay::rep_", "muon_decay::index_"
-    )
+    GF, s, t, z = S("GF", "s", "t", "inverse_W2")
+    M = S("M", is_positive=True)
+    mass = S("m", is_positive=True)
+    _conjugate, _wrapped = S("spenso::conj", "adjoint")
+    _ports = S("mu", "e", "antinue", "numu")
+    _wave, _rep, _index = S("wave_", "rep_", "index_")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
     _numerator = _model.expand_couplings(
         diagram.numerator_expression(in_lmb=True).to_expression()
@@ -104,7 +101,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
         ).expand()
     )
     _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
-    _momentum_index = S("muon_decay::momentum_index_")
+    _momentum_index = S("momentum_index_")
     _adjoint = _adjoint.replace(
         _conjugate(P(_momentum_index, _index)), P(_momentum_index, _index)
     )
@@ -146,10 +143,10 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
         _kin = _kin.with_scalar_product(P(_i), P(_j), _value)
     _den = S("gammalooprs::denom")
     _edge_, _momentum_, _mass_, _quad_ = S(
-        "muon_decay::edge_",
-        "muon_decay::momentum_",
-        "muon_decay::mass_",
-        "muon_decay::quad_",
+        "edge_",
+        "momentum_",
+        "mass_",
+        "quad_",
     )
     _denominator = _kin.apply(
         diagram.denominator_expression(dimension=4, in_lmb=True)
@@ -226,7 +223,7 @@ def _(mo):
 
 @app.cell
 def _(M, P, S, dalitz_measure, fermi, hep, mass, mo, one, pi, t, zero):
-    _Q = S("muon_decay::Q")
+    _Q = S("Q")
     _outer = (
         hep.Kinematics()
         .with_scalar_product(_Q, _Q, t)
@@ -249,7 +246,7 @@ def _(M, P, S, dalitz_measure, fermi, hep, mass, mo, one, pi, t, zero):
     ).together()
     assert (_outer_measure - (M**2 - t) / (32 * pi**2 * M**2)).together() == zero
     assert (_inner_measure - (t - mass**2) / (32 * pi**2 * t)).together() == zero
-    _cosine = S("muon_decay::cosine")
+    _cosine = S("cosine")
     _electron_energy = (t + mass**2) / (2 * t.sqrt())
     _electron_momentum = (t - mass**2) / (2 * t.sqrt())
     _spectator_energy = (M**2 - t) / (2 * t.sqrt())
@@ -314,8 +311,8 @@ def _(
     z,
     zero,
 ):
-    _tau = S("muon_decay::tau", is_positive=True)
-    r = S("muon_decay::r", is_positive=True)
+    _tau = S("tau", is_positive=True)
+    r = S("r", is_positive=True)
     normalization = GF**2 * M**5 / (192 * pi**3)
     _integrand = (
         (density * (s_max - s_min) * M**2 / normalization)
@@ -334,7 +331,7 @@ def _(
     assert (mass_correction - _reference_correction).together() == zero
     assert mass_correction.replace(r, one) == zero
     _total_width = normalization * mass_correction
-    xE = S("muon_decay::xE", is_positive=True)
+    xE = S("xE", is_positive=True)
     _massless_density = density.replace(mass, zero)
     _dimensionless_density = (
         (_massless_density * M**4 / normalization).replace(t, M**2 * _tau).together()

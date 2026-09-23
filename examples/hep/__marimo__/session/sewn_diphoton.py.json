@@ -1,0 +1,100 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "402f4f9cf958ce6ebcca631ddf6441d0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "a00e4202f431047af8ed0640bc207b59",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"diphoton-annihilation-through-sewing\">Diphoton annihilation through sewing</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/diphoton.py\">Ordinary diphoton amplitudes</a> \u00b7\n<a href=\"/?file=hep/sewn_qed.py\">Other sewn QED processes</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(e^-e^+ \\to \\gamma\\gamma||)</marimo-tex> as forward graphs cut through the two\nfinal photons. Keep the electron mass, all interference terms and graph\nfactors, then compare with the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/Tree/ElAel-GaGa\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc result</a>.</span>\n<span class=\"paragraph\">A stored cut-edge momentum has a direction. <code>cut.orientations</code> converts it\ninto a positive-energy outgoing momentum before imposing the Mandelstam\nrelations. Both choices of cut photon as the loop coordinate must give the\nsame result. Particle lookup uses model names throughout.</span>\n<span class=\"paragraph\">Incoming spins use the shared <code>Particle.sum_spins</code>. The outgoing photons\nuse covariant sums or physical axial projectors from <code>Particle.spin_sum</code>.\nNull and timelike gauge references agree exactly; replacing either photon\npolarization by its momentum gives zero.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "e705159d9e21d6a9d6848509375cd693",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "PASS 0 covariant\nPASS 0 null\nPASS 0 timelike\nPASS 0 Ward 0\nPASS 0 Ward 1\nPASS 1 covariant\nPASS 1 null\nPASS 1 timelike\nPASS 1 Ward 0\nPASS 1 Ward 1\nBoth cut coordinates, physical photon sums, Ward identities and massive diphoton reference passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "cadb783ada8791ae419f0cf9a82ccbd3",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "9cb6bc10e23c2cb1fa224d798ce555db",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Physical cut momenta and identical photons</strong></span>\n<span class=\"paragraph\">The table gives the sign in <marimo-tex class=\"arithmatex\">||(K(0)=\\eta k_1||)</marimo-tex>. Cut propagator denominators\nbelong to the phase-space measure and are omitted from the squared\namplitude. The two forward topologies identify the identical cut photons;\nadding the <marimo-tex class=\"arithmatex\">||(t\\leftrightarrow u||)</marimo-tex> assignment restores the fully labeled result.</span>\n<span class=\"paragraph\">This labeled squared amplitude has no final-state <marimo-tex class=\"arithmatex\">||(1/2!||)</marimo-tex> factor. The\n<a href=\"/?file=hep/diphoton.py\">ordinary-amplitude notebook</a> includes that factor\nwhen integrating an event rate over both photon labels.</span></span><marimo-ui-element object-id='lEQa-0' random-id='74dafec4-407e-d603-8c92-061647482f73'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coordinate&#92;&quot;:1,&#92;&quot;Diagram&#92;&quot;:&#92;&quot;FK0&#92;&quot;,&#92;&quot;Cut edge&#92;&quot;:3,&#92;&quot;K(0) / k1&#92;&quot;:-1},{&#92;&quot;Coordinate&#92;&quot;:1,&#92;&quot;Diagram&#92;&quot;:&#92;&quot;FK1&#92;&quot;,&#92;&quot;Cut edge&#92;&quot;:3,&#92;&quot;K(0) / k1&#92;&quot;:-1},{&#92;&quot;Coordinate&#92;&quot;:2,&#92;&quot;Diagram&#92;&quot;:&#92;&quot;FK0&#92;&quot;,&#92;&quot;Cut edge&#92;&quot;:4,&#92;&quot;K(0) / k1&#92;&quot;:-1},{&#92;&quot;Coordinate&#92;&quot;:2,&#92;&quot;Diagram&#92;&quot;:&#92;&quot;FK1&#92;&quot;,&#92;&quot;Cut edge&#92;&quot;:4,&#92;&quot;K(0) / k1&#92;&quot;:-1}]&quot;' data-total-rows='4' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "c36717c98b9de5577fc96b84df0908ef",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-0' random-id='c62c6ad9-dd9f-dcad-fb6e-b1ce33a55275'><marimo-dropdown data-initial-value='[&quot;First cut photon&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eLoop coordinate&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;First cut photon&quot;,&quot;Second cut photon&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-1' random-id='54a60e6c-f12a-f97d-5552-97ff4fe39f1e'><marimo-dropdown data-initial-value='[&quot;Physical \u00b7 timelike reference&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003ePhoton projectors&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Covariant&quot;,&quot;Physical \u00b7 null reference&quot;,&quot;Physical \u00b7 timelike reference&quot;,&quot;Ward \u00b7 first photon&quot;,&quot;Ward \u00b7 second photon&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='PKri-2' random-id='822cc447-794a-84f1-40d0-f41925e62eb4'><marimo-switch data-initial-value='false' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eMassless electron limit&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-disabled='false'></marimo-switch></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "7d1edba6b0ec55499be177fbe9df8609",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Spin-averaged labeled squared amplitude</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2\u00b7ee\u2074\n    \u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-t\u00b7u\u00b3+7\u00b7Me\u00b2\u00b7t\u00b7u\u00b2+7\u00b7Me\u00b2\u00b7t\u00b2\u00b7u+Me\u00b2\u00b7t\u00b3+Me\u00b2\u00b7u\u00b3-14\u00b7Me\u2074\u00b7t\u00b7u-3\u00b7Me\u2074\u00b7t\u00b2\n        -3\u00b7Me\u2074\u00b7u\u00b2+6\u00b7Me\u2078-t\u00b3\u00b7u\n    <span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(0, 95, 175)\">(</span>t-Me\u00b2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-u+Me\u00b2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Exact difference from the reference</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">0</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">With <marimo-tex class=\"arithmatex\">||(e=m_e=1||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(t=-1||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(u=-7||)</marimo-tex> (hence <marimo-tex class=\"arithmatex\">||(s=10||)</marimo-tex>), the massive physical\nresult is <marimo-tex class=\"arithmatex\">||(83/8||)</marimo-tex>. Ward projections vanish. In the massless limit,\n<marimo-tex class=\"arithmatex\">||(\\overline{|\\mathcal M|^2}=2e^4(t/u+u/t)||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(s=8||)</marimo-tex> at the same <marimo-tex class=\"arithmatex\">||(t,u||)</marimo-tex>.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">83/8</div></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

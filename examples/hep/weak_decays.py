@@ -10,8 +10,11 @@ def _():
 
     import marimo as mo
     from symbolica import E, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("weak_decay")
 
     return (
         CookSettings,
@@ -46,18 +49,18 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
     _P = S("gammalooprs::P")
     _charge, _sw, _mw = S("UFO::ee", "UFO::sw", "UFO::MW")
     _me, _mc, _mb, _mt = S("UFO::Me", "UFO::MC", "UFO::MB", "UFO::MT")
-    _conjugate, _wrapped = S("spenso::conj", "weak_decay::adjoint_index")
-    _ports = S("weak_decay::parent", "weak_decay::first", "weak_decay::second")
+    _conjugate, _wrapped = S("spenso::conj", "adjoint_index")
+    _ports = S("parent", "first", "second")
     _wave, _rep, _index, _left, _right = S(
-        "weak_decay::wave_",
-        "weak_decay::rep_",
-        "weak_decay::index_",
-        "weak_decay::left_",
-        "weak_decay::right_",
+        "wave_",
+        "rep_",
+        "index_",
+        "left_",
+        "right_",
     )
     _metric = S("spenso::g")
-    Vr, Vi, GF = S("weak_decay::Vr", "weak_decay::Vi", "weak_decay::GF")
-    H, x, y = (S("weak_decay::" + _name, is_positive=True) for _name in ("H", "x", "y"))
+    Vr, Vi, GF = S("Vr", "Vi", "GF")
+    H, x, y = (S(_name, is_positive=True) for _name in ("H", "x", "y"))
     zero, _one, _pi = (E("0"), E("1"), Symbol.PI)
     results, diagrams = ({}, {})
     for _label, _names, _masses, _ckm_name in [
@@ -177,7 +180,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
             )
         )
         _measure = _phase_kin.two_body_phase_space(_P(1), _P(2))
-        _radicand = S("weak_decay::radicand_")
+        _radicand = S("radicand_")
         for _match in list(_measure.match(_radicand.sqrt())):
             _value = dict(_match)[_radicand]
             _measure = _measure.replace(_value.sqrt(), _value.expand().sqrt())

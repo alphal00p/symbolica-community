@@ -10,8 +10,11 @@ def _():
 
     import marimo as mo
     from symbolica import E, S
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep as fk
     from symbolica.community.spenso import GammaSimplifySettings, TensorExpression
+
+    _set_namespace("polarized_spin")
 
     return E, GammaSimplifySettings, S, TensorExpression, fk, math, mo
 
@@ -56,14 +59,12 @@ def _(fk, mo):
 def _(E, GammaSimplifySettings, S, TensorExpression, fk, mo, species, spin_model):
     _particle = spin_model.particle("ta-" if species.value == "Tau" else "ta+")
     _sign = -1 if _particle.is_antiparticle else 1
-    spin_momentum, spin_vector, spin_mass = S(
-        "polarized_spin::p", "polarized_spin::s", "UFO::MTA"
-    )
+    spin_momentum, spin_vector, spin_mass = S("p", "s", "UFO::MTA")
     _i, _j, _k, _slot = S(
-        "polarized_spin::i",
-        "polarized_spin::j",
-        "polarized_spin::k",
-        "polarized_spin::slot_",
+        "i",
+        "j",
+        "k",
+        "slot_",
     )
     _settings = GammaSimplifySettings.canonical()
     density = _particle.spin_sum(spin_momentum, _i, _j, spin_vector=spin_vector)

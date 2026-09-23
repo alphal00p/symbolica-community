@@ -1,4 +1,4 @@
-//! Join symbolic one-loop reduction to the host's scalar master evaluators.
+//! Reduce directly to OneLoopMaster's symbols in the host's shared kernel.
 
 use pyo3::{
     Bound, PyResult,
@@ -37,20 +37,20 @@ mod native {
     use std::collections::BTreeMap;
 
     use oneloop::ScalarIntegral;
-    use oneloopreduce_python::{Reduction, oneloopmaster_expression};
+    use oneloopreduce_python::{OneLoopMasters, Reduction, validate_namespace};
     use pyo3::{PyResult, exceptions::PyValueError, pyfunction};
     use symbolica::{
         api::python::PythonExpression,
         atom::{Atom, AtomCore, Symbol},
         poly::series::SeriesDepth,
-        symbol,
     };
 
     /// Expand a reduction at d = 4 - 2*eps and return finite, simple-pole,
     /// and double-pole expressions in OneLoopMaster's normalization.
     ///
-    /// The squared scale defaults to 1. Compile the returned expressions with
-    /// compile_native. Coefficients singular at d=4 require positive powers of
+    /// The squared scale defaults to 1. The returned tagged OneLoopMaster
+    /// symbols evaluate through their registered native Rust hooks using
+    /// Expression.evaluate. Coefficients singular at d=4 require positive powers of
     /// epsilon from the masters, which OneLoopMaster does not provide, and
     /// raise ValueError. Kinematic arguments and the scale must not depend on d.
     #[pyfunction]
@@ -60,17 +60,18 @@ mod native {
         mu_squared: Option<PythonExpression>,
     ) -> PyResult<Vec<PythonExpression>> {
         let scale = mu_squared.map(|m| m.expr).unwrap_or_else(|| Atom::num(1));
-        let dimension = symbol!("oneloopreduce::d");
+        validate_namespace(&scale)?;
+        let dimension = reduction.dimension_symbol();
 
         // Combine repeated masters before expanding, so removable poles in
         // their summed coefficient do not cause a false rejection.
         let mut terms = BTreeMap::<Atom, Atom>::new();
         for (coefficient, master) in reduction.terms_ref() {
-            let master = oneloopmaster_expression(master, &scale);
+            let master = OneLoopMasters.symbol_with_scale(master, &scale);
             if master.contains_symbol(dimension) {
-                return Err(PyValueError::new_err(
-                    "master kinematics and mu_squared must be independent of oneloopreduce::d",
-                ));
+                return Err(PyValueError::new_err(format!(
+                    "master kinematics and mu_squared must be independent of the reduction dimension {dimension}"
+                )));
             }
             *terms.entry(master).or_insert(Atom::Zero) += coefficient;
         }

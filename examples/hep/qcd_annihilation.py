@@ -10,9 +10,12 @@ app = marimo.App(
 def _():
     import marimo as mo
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import Model
     from symbolica.community.spenso import ColorSimplifySettings, TensorExpression
+
+    _set_namespace("qcd_annihilation")
 
     return ColorSimplifySettings, E, Model, S, Symbol, TensorExpression, hep, mo
 

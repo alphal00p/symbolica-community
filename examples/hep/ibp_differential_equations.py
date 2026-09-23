@@ -12,7 +12,10 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, Matrix, Replacement
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community.hep import oneloop
+
+    _set_namespace("ibp_differential_equations")
 
     return E, Matrix, Replacement, mo, np, oneloop
 
@@ -227,9 +230,9 @@ def _(
         invariant: _sv,
         mass_a: _av,
         mass_b: _bv,
-        finite_a: complex(oneloop.A0(_av, 1.0)[0]),
-        finite_b: complex(oneloop.A0(_bv, 1.0)[0]),
-        finite_bubble: complex(oneloop.B0(_sv, _av, _bv, 1.0)[0]),
+        finite_a: complex(oneloop.a0(_av, 1.0)[0]),
+        finite_b: complex(oneloop.a0(_bv, 1.0)[0]),
+        finite_bubble: complex(oneloop.b0(_sv, _av, _bv, 1.0)[0]),
     }
     selected_derivative = complex(finite_derivatives[_variable].evaluate(_values))
     _nodes, _weights = np.polynomial.legendre.leggauss(128)
@@ -284,11 +287,11 @@ def _(
     _parameters = {
         mass_a: _av,
         mass_b: _bv,
-        finite_a: complex(oneloop.A0(_av, 1.0)[0]),
-        finite_b: complex(oneloop.A0(_bv, 1.0)[0]),
+        finite_a: complex(oneloop.a0(_av, 1.0)[0]),
+        finite_b: complex(oneloop.a0(_bv, 1.0)[0]),
     }
-    _boundary = complex(oneloop.B0(_start, _av, _bv, 1.0)[0])
-    _reference = complex(oneloop.B0(_endpoint, _av, _bv, 1.0)[0])
+    _boundary = complex(oneloop.b0(_start, _av, _bv, 1.0)[0])
+    _reference = complex(oneloop.b0(_endpoint, _av, _bv, 1.0)[0])
 
     # A local RK4 demonstration; all physics coefficients come from the IBP result.
     def transport_rhs(s_value: float, bubble_value: complex) -> complex:

@@ -10,9 +10,12 @@ def _():
 
     import marimo as mo
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
     from symbolica.community.spenso import ColorSimplifySettings, TensorExpression
+
+    _set_namespace("tadinsert")
 
     return ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, math, mo, oneloop
 
@@ -49,15 +52,15 @@ def _(mo):
 def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep):
     model = hep.Model.standard_model()
     D, eps, m, Nc, y, L, scale2 = S(
-        "tadinsert::D",
-        "tadinsert::eps",
+        "D",
+        "eps",
         "UFO::MT",
-        "tadinsert::Nc",
-        "tadinsert::y",
-        "tadinsert::L",
-        "tadinsert::mu2",
+        "Nc",
+        "y",
+        "L",
+        "mu2",
     )
-    I, Af, coordinate = S("tadinsert::I", "tadinsert::Af", "tadinsert::d0")
+    I, Af, coordinate = S("I", "Af", "d0")
     K, mink, cof, metric = S(
         "gammalooprs::K", "spenso::mink", "spenso::cof", "spenso::g"
     )
@@ -319,9 +322,9 @@ def _(Af, D, E, I, L, Nc, derivative, eps, m, mo, reductions, tadpole, y):
 
 
 @app.cell(hide_code=True)
-def _(Af, S, finite, m, oneloop, scale2):
+def _(Af, finite, m, oneloop, scale2):
     master_coefficients = oneloop.master_coefficients(
-        S("oneloopmaster::A0")(m**2, scale2)
+        oneloop.A0(m**2, scale2)
     )
     numeric_expressions = {
         _label: _expression.replace(Af, master_coefficients[0])
@@ -363,7 +366,7 @@ def _(
 ):
     _mass, _scale2 = mass_control.value, scale_control.value
     _point = {m: _mass, scale2: _scale2, Nc: 3.0, y: 0.7}
-    _master = oneloop.A0(_mass**2, _scale2)
+    _master = oneloop.a0(_mass**2, _scale2)
     for _order in (0, 1, 2):
         assert abs(
             complex(master_coefficients[_order].evaluate(_point))

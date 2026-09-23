@@ -11,8 +11,11 @@ app = marimo.App(
 def _():
     import marimo as mo
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep as fk
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("diphoton")
 
     return CookSettings, E, S, Symbol, TensorExpression, fk, mo
 
@@ -44,8 +47,8 @@ def _(fk):
 @app.cell
 def _(CookSettings, E, S, TensorExpression, fk, mo, model):
     P = S("gammalooprs::P")
-    s = S("diphoton::s", is_positive=True)
-    t, u, mass, charge = S("diphoton::t", "diphoton::u", "UFO::Me", "UFO::ee")
+    s = S("s", is_positive=True)
+    t, u, mass, charge = S("t", "u", "UFO::Me", "UFO::ee")
     kin = fk.Kinematics.mandelstam(
         [P(0), P(1), P(2), P(3)], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
     )
@@ -59,15 +62,15 @@ def _(CookSettings, E, S, TensorExpression, fk, mo, model):
     )
     assert len(generated.diagrams) == 2
     ports = S(
-        "diphoton::external_0",
-        "diphoton::external_1",
-        "diphoton::external_2",
-        "diphoton::external_3",
+        "external_0",
+        "external_1",
+        "external_2",
+        "external_3",
     )
     a, b, c, inverse, wave, rep, index = S(
         "a_", "b_", "c_", "inverse_", "wave_", "rep_", "index_"
     )
-    conjugate, adjoint_index = S("spenso::conj", "diphoton::adjoint_index")
+    conjugate, adjoint_index = S("spenso::conj", "adjoint_index")
     amplitude = E("0")
     denominators = []
     for diagram in generated.diagrams:
@@ -232,9 +235,7 @@ def _(mo):
 def _(E, P, S, Symbol, charge, diphoton_squared, fk, kin, mass, mo, s, t, u):
     massless = diphoton_squared.replace(mass, E("0"))
     assert (massless - 2 * charge**4 * (t / u + u / t)).together() == E("0")
-    cos_theta, alpha, cutoff = S(
-        "diphoton::cos_theta", "diphoton::alpha", "diphoton::cutoff"
-    )
+    cos_theta, alpha, cutoff = S("cos_theta", "alpha", "cutoff")
     kin_massless = fk.Kinematics.mandelstam(
         [P(0), P(1), P(2), P(3)], [E("0")] * 4, [s, t, u]
     )
@@ -266,7 +267,7 @@ def _(E, P, S, Symbol, charge, diphoton_squared, fk, kin, mass, mo, s, t, u):
         - 2 * Symbol.PI * alpha**2 / s * (2 * cutoff.atanh() - cutoff)
     ).together() == E("0")
     # Retain the electron mass: beta is the incoming CM speed, 0 < beta < 1.
-    beta = S("diphoton::beta", is_positive=True)
+    beta = S("beta", is_positive=True)
     cm_squared = (
         diphoton_squared.replace(t, mass**2 - s * (1 - beta * cos_theta) / 2)
         .replace(u, mass**2 - s * (1 + beta * cos_theta) / 2)

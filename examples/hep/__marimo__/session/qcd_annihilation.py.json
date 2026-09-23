@@ -7,7 +7,7 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "b70276f635168bf53ff75a76f1667b77",
+      "code_hash": "f70c1004c7feba32b40415f6464f1244",
       "outputs": [
         {
           "type": "data",
@@ -20,7 +20,7 @@
     },
     {
       "id": "MJUe",
-      "code_hash": "3345c09ac7feb0b768fe4fc2368d83a0",
+      "code_hash": "9ba3a03f3aff27d3771bbf644aaad9ab",
       "outputs": [
         {
           "type": "data",
@@ -33,12 +33,12 @@
     },
     {
       "id": "vblA",
-      "code_hash": "c503a7077051b1ff05ea88aa0504905b",
+      "code_hash": "2989803b5fd4ab74d32b88e20aac3f41",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"different-flavor-qcd-annihilation\">Different-flavor QCD annihilation</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(b\\bar b\\to t\\bar t||)</marimo-tex> through gluon exchange, retaining both\nquark masses. Initial spins and colors are averaged; final spins and colors\nare summed. <code>Particle.color_sum</code> supplies the shared completeness tensor,\nand Idenso contracts the color and Dirac algebra.</span>\n<span class=\"paragraph\">The symbolic <marimo-tex class=\"arithmatex\">||(SU(N_c)||)</marimo-tex> result uses <marimo-tex class=\"arithmatex\">||(T_R=1/2||)</marimo-tex> and agrees with the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/QiQibar-QjQjbar\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc reference</a>.\nThe massless <marimo-tex class=\"arithmatex\">||(SU(3)||)</marimo-tex> limit is carried through two-body phase space below.</span></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"different-flavor-qcd-annihilation\">Different-flavor QCD annihilation</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/quark_scattering.py\">Elastic quark scattering</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(b\\bar b\\to t\\bar t||)</marimo-tex> through gluon exchange, retaining both\nquark masses. Initial spins and colors are averaged; final spins and colors\nare summed. <code>Particle.color_sum</code> supplies the shared completeness tensor,\nand Idenso contracts the color and Dirac algebra.</span>\n<span class=\"paragraph\">The symbolic <marimo-tex class=\"arithmatex\">||(SU(N_c)||)</marimo-tex> result uses <marimo-tex class=\"arithmatex\">||(T_R=1/2||)</marimo-tex> and agrees with the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/QiQibar-QjQjbar\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc reference</a>.\nThe massless <marimo-tex class=\"arithmatex\">||(SU(3)||)</marimo-tex> limit is carried through two-body phase space below.</span></span>"
           }
         }
       ],
@@ -46,7 +46,7 @@
     },
     {
       "id": "bkHC",
-      "code_hash": "b9eb0fd857ae654b7820cf5951889063",
+      "code_hash": "71a764b9667d3075d6495f9dc2809b32",
       "outputs": [],
       "console": []
     }

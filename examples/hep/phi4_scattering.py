@@ -12,7 +12,10 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community.hep import oneloop
+
+    _set_namespace("phi4_one")
 
     return cmath, math, np, mo, E, Replacement, S, Symbol, oneloop
 
@@ -131,7 +134,7 @@ def _(
                     )
                     / 2
                 )
-            _actual = complex(oneloop.B0(_qv, _mass_squared, _mass_squared, _scale)[0])
+            _actual = complex(oneloop.b0(_qv, _mass_squared, _mass_squared, _scale)[0])
             assert abs(_actual - _expected) < 2e-10, (
                 _qv,
                 _mass_squared,
@@ -151,7 +154,7 @@ def _(
     _log, _absolute = S("log", "abs")
     physical_finite = zero
     for _invariant, _sign in [(s, 1), (t, -1), (u, -1)]:
-        _massless_master = S("oneloopmaster::B0")(_invariant, zero, zero, mu2)
+        _massless_master = oneloop.B0(_invariant, zero, zero, mu2)
         _branch = oneloop.select_branch(
             oneloop.get_expression(_massless_master, coefficient=0),
             [Replacement(_invariant, E(str(_sign))), Replacement(mu2, one)],
@@ -170,7 +173,7 @@ def _(
         + Symbol.I * pi
     ) / 2
     assert (physical_finite - _expected_massless).expand() == zero
-    _asymptotic_parameter = S("phi4_one::inverse_s")
+    _asymptotic_parameter = S("inverse_s")
     logarithmic_coefficient = (
         (s * physical_finite.derivative(s))
         .replace(s, 1 / _asymptotic_parameter)

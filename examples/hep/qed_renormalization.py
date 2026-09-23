@@ -10,9 +10,12 @@ def _():
 
     import marimo as mo
     from symbolica import E, Matrix, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import oneloop
     from symbolica.community.spenso import TensorExpression
+
+    _set_namespace("qed_ren")
 
     return (
         E,
@@ -65,15 +68,15 @@ def _(mo):
 def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
     model = hep.Model.standard_model()
     D, epsilon, M, mUV, coordinate, integral, xi, s, Nf = S(
-        "qed_ren::D",
-        "qed_ren::eps",
-        "qed_ren::M",
-        "qed_ren::mUV",
-        "qed_ren::d0",
-        "qed_ren::I",
-        "qed_ren::xi",
-        "qed_ren::s",
-        "qed_ren::Nf",
+        "D",
+        "eps",
+        "M",
+        "mUV",
+        "d0",
+        "I",
+        "xi",
+        "s",
+        "Nf",
     )
     _specification = json.loads(model.to_json())
     for _propagator in _specification["propagators"]:
@@ -95,21 +98,21 @@ def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
         "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
     )
     index, dim, wave, mu, nu = S(
-        "qed_ren::index_",
-        "qed_ren::dim_",
-        "qed_ren::wave_",
-        "qed_ren::mu",
-        "qed_ren::nu",
+        "index_",
+        "dim_",
+        "wave_",
+        "mu",
+        "nu",
     )
     den, edge_, mom_, mass_, quad_ = S(
         "gammalooprs::denom",
-        "qed_ren::edge_",
-        "qed_ren::mom_",
-        "qed_ren::mass_",
-        "qed_ren::quad_",
+        "edge_",
+        "mom_",
+        "mass_",
+        "quad_",
     )
     _ordering, _value = S(
-        "feynkit_generator_factor::ExternalFermionOrderingSign", "qed_ren::value_"
+        "feynkit_generator_factor::ExternalFermionOrderingSign", "value_"
     )
     kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
         P(0), P(0), s
@@ -236,7 +239,7 @@ def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
                     ).together()
                 )
                 assert _monomial == coordinate ** (-_power)
-                assert not _coefficient.matches(K(S("qed_ren::args___")))
+                assert not _coefficient.matches(K(S("args___")))
                 _terms.append(([_power], _coefficient))
             _parts[_label] = _terms
 
@@ -246,7 +249,7 @@ def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
         sorted({tuple(p) for _terms in _parts.values() for p, c in _terms}), max_depth=2
     )
     assert solution.residuals == [[1]]
-    assert abs(complex(oneloop.A0(1.0, 1.0)[1]) - 1) < 1e-12
+    assert abs(complex(oneloop.a0(1.0, 1.0)[1]) - 1) < 1e-12
     _reduced, uv_poles = {}, {}
     for _label, _terms in _parts.items():
         _expression = sum(
@@ -399,13 +402,13 @@ def _(
     # M=mUV². The reference auxiliary-mass operator is M*(ZAm²-1)*A²/2:
     # its linear coefficient is 2*deltaZAm, unlike an additive mass-squared shift.
     _a4, _delta_psi, delta_m, _delta_A, _delta_xi, _delta_e, _delta_Am = S(
-        "qed_ren::a4",
-        "qed_ren::deltaZpsi",
-        "qed_ren::deltaZm",
-        "qed_ren::deltaZA",
-        "qed_ren::deltaZxi",
-        "qed_ren::deltaZe",
-        "qed_ren::deltaZAm",
+        "a4",
+        "deltaZpsi",
+        "deltaZm",
+        "deltaZA",
+        "deltaZxi",
+        "deltaZe",
+        "deltaZAm",
     )
     unknowns = [_delta_psi, delta_m, _delta_A, _delta_xi, _delta_e, _delta_Am]
     _Zpsi, _Zm, _ZA, _Zxi, _Ze, _ZAm = (one + _a4 * delta for delta in unknowns)
@@ -825,16 +828,16 @@ def _(
     _Q, _dot, _massless_scale, _massless_a, _massless_b, _massless_args = S(
         "gammalooprs::Q",
         "spenso::dot",
-        "qed_ren::massless_scale",
-        "qed_ren::massless_a_",
-        "qed_ren::massless_b_",
-        "qed_ren::massless_args___",
+        "massless_scale",
+        "massless_a_",
+        "massless_b_",
+        "massless_args___",
     )
     _massless_kinematics = hep.Kinematics(
         D, momenta=[K(0), P(0), P(1)]
     ).with_scalar_product(P(0), P(0), s)
     _massless_loop_square = vacuum.scalar_product(K(0), K(0))
-    _massless_Qg, _massless_Qpp = S("qed_ren::massless_Qg", "qed_ren::massless_Qpp")
+    _massless_Qg, _massless_Qpp = S("massless_Qg", "massless_Qpp")
     _massless_parts, _massless_targets, _massless_scalars, massless_diagrams = (
         {},
         set(),
@@ -842,7 +845,7 @@ def _(
         {},
     )
     _massless_components, _massless_component_scalars = {}, {}
-    _massless_photon_coordinate = S("qed_ren::massless_photon_coordinate")
+    _massless_photon_coordinate = S("massless_photon_coordinate")
     for _kind, _incoming, _outgoing in [
         ("electron_p", [_massless_electron], [_massless_electron]),
         ("photon", [_massless_photon], [_massless_photon]),
@@ -1297,7 +1300,7 @@ def _(
     # divides by rGamma; (4*pi)^epsilon*rGamma=1+cDelta*epsilon+O(epsilon^2),
     # with cDelta=log(4*pi)-EulerGamma. Keep that real constant symbolic through
     # exact simplification. No finite part is inferred from a UV-expanded graph.
-    _cDelta = S("qed_ren::cDelta")
+    _cDelta = S("cDelta")
     assert (-2 / (D - 4)).replace(D, 4 - 2 * epsilon) == 1 / epsilon
     counterterms_by_scheme = {
         "MS": [deltas[row, 0].to_expression().together() for row in range(6)],
@@ -1345,8 +1348,8 @@ def _(
     # Actual OneLOop values check the measure conversion independently of the
     # counterterm solve. The remaining cDelta*P in MS is a finite scheme shift.
     for _master in [
-        S("oneloopmaster::A0")(4, 7),
-        S("oneloopmaster::B0")(-3, 4, 0, 7),
+        oneloop.A0(4, 7),
+        oneloop.B0(-3, 4, 0, 7),
     ]:
         _finite_master, _pole_master, _double_master = oneloop.get_expression(_master)
         assert _double_master == zero

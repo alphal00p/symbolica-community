@@ -13,8 +13,11 @@ def _():
     import numpy as np
     from linnet import RenderConfig
     from symbolica import E, Replacement, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("qscatter")
 
     return (
         CookSettings,
@@ -63,17 +66,13 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
     def calculate_amplitudes():
         model = hep.Model.standard_model()
         P = S("gammalooprs::P")
-        s, t, u, m, M, gs = S(
-            "qscatter::s", "qscatter::t", "qscatter::u", "UFO::MB", "UFO::MT", "UFO::G"
-        )
-        Nc, dA, cof, coad = S(
-            "qscatter::Nc", "qscatter::dA", "spenso::cof", "spenso::coad"
-        )
+        s, t, u, m, M, gs = S("s", "t", "u", "UFO::MB", "UFO::MT", "UFO::G")
+        Nc, dA, cof, coad = S("Nc", "dA", "spenso::cof", "spenso::coad")
         a, b, c, inverse, wave, rep, index = S(
             "a_", "b_", "c_", "inverse_", "wave_", "rep_", "index_"
         )
-        ports = S("qscatter::i0", "qscatter::i1", "qscatter::i2", "qscatter::i3")
-        conj, wrapped = S("spenso::conj", "qscatter::adjoint")
+        ports = S("i0", "i1", "i2", "i3")
+        conj, wrapped = S("spenso::conj", "adjoint")
         flavors = [model.particle(_name) for _name in ("b", "t")]
         gluon = model.particle("g")
         vertices = [
@@ -300,9 +299,7 @@ def _(E, M, Nc, Replacement, S, Symbol, gs, m, np, results, s, t):
 
         # Carry the generated massive result through the native elastic flux and phase
         # space. Full angular integration needs a cut because of massless gluon exchange.
-        z, cutoff, alpha_s, C = S(
-            "qscatter::z", "qscatter::cutoff", "qscatter::alpha_s", "qscatter::C"
-        )
+        z, cutoff, alpha_s, C = S("z", "cutoff", "alpha_s", "C")
         template = sum((C(i) * z**i for i in range(7)), E("0")) / (1 - z**2) ** 2
         primitive_template = template.integrate(z)
         assert (primitive_template.derivative(z) - template).together() == 0

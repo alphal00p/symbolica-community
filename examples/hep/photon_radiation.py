@@ -9,8 +9,11 @@ def _():
     import marimo as mo
     import numpy as np
     from symbolica import E, S, Symbol
+    from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.spenso import CookSettings, TensorExpression
+
+    _set_namespace("radiation")
 
     return mo, np, E, S, Symbol, hep, CookSettings, TensorExpression
 
@@ -48,12 +51,10 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
         model = hep.Model.standard_model()
         P = S("gammalooprs::P")
         mass, ee, gs = S("UFO::MB", "UFO::ee", "UFO::G")
-        A, B, C = S("radiation::A", "radiation::B", "radiation::C")
-        Nc, dA, cof, coad = S(
-            "radiation::Nc", "radiation::dA", "spenso::cof", "spenso::coad"
-        )
-        QQ = S("radiation::QQ", is_positive=True)
-        x1, x2, x3 = S("radiation::x1", "radiation::x2", "radiation::x3")
+        A, B, C = S("A", "B", "C")
+        Nc, dA, cof, coad = S("Nc", "dA", "spenso::cof", "spenso::coad")
+        QQ = S("QQ", is_positive=True)
+        x1, x2, x3 = S("x1", "x2", "x3")
 
         def calculate(outgoing, kin):
             allowed = [
@@ -76,13 +77,11 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
                 progress=None,
             )
             assert len(generated.diagrams) == len(outgoing) - 1
-            ports = S(
-                "radiation::i0", "radiation::i1", "radiation::i2", "radiation::i3"
-            )
+            ports = S("i0", "i1", "i2", "i3")
             a, b, c, inv, index, left, right = S(
                 "a_", "b_", "c_", "inv_", "index_", "left_", "right_"
             )
-            conj, wrap, metric = S("spenso::conj", "radiation::adjoint", "spenso::g")
+            conj, wrap, metric = S("spenso::conj", "adjoint", "spenso::g")
             terms = []
             for diagram in generated.diagrams:
                 numerator = model.expand_couplings(
@@ -353,7 +352,7 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
         phase = massless_kin.three_body_phase_space(P(1), P(2), P(3)).together()
         assert (phase - 1 / (128 * Symbol.PI**3 * QQ)).together() == E("0")
         # The transformation from pair invariant masses to energy fractions has Jacobian Q^4.
-        alpha_s = S("radiation::alpha_s")
+        alpha_s = S("alpha_s")
         distribution = (
             (massless * phase * QQ**2 / massless_kin.flux(P(0)) / born_results["b"][3])
             .replace(gs**2, 4 * Symbol.PI * alpha_s)
@@ -365,7 +364,7 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
             "0"
         )
         # The full generated result must reproduce the independently audited soft limit.
-        lam = S("radiation::lambda")
+        lam = S("lambda")
         soft_ratio = results["covariant"].replace(mass, 0) / (4 * ee**2 * Nc * A / 9)
         soft_limit = (
             soft_ratio.replace(B, lam**2 * B)
@@ -378,11 +377,9 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
 
         # Positive invariants y1=1-x1 and y2=1-x2 obey y1+y2<=1. The cut is
         # y1,y2>=beta, 0<beta<1/2, excluding both soft/collinear poles.
-        y1, y2, beta = S(
-            "radiation::y1", "radiation::y2", "radiation::beta", is_positive=True
-        )
+        y1, y2, beta = S("y1", "y2", "beta", is_positive=True)
         kernel = shape.replace(x1, 1 - y1).replace(x2, 1 - y2).together()
-        argument = S("radiation::argument_")
+        argument = S("argument_")
         inner_primitive = kernel.integrate(y2).replace(
             Symbol.LOG(argument), lambda match: match[argument].expand().log()
         )
@@ -415,7 +412,7 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
             - Symbol.PI**2 / 3
         )
         # Expand the analytic coefficients while retaining log(beta) symbolically.
-        log_beta = S("radiation::log_beta")
+        log_beta = S("log_beta")
         leading = (
             closed.replace(beta.log(), log_beta)
             .series(beta, 0, 0)
