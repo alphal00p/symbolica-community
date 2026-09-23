@@ -11,10 +11,10 @@ def _():
     from pathlib import Path
 
     import marimo as mo
-    from symbolica import E, S
+    from symbolica import E, Replacement, S
     from symbolica.community import hep
 
-    return mo, json, reduce, Path, E, S, hep
+    return mo, json, reduce, Path, E, S, Replacement, hep
 
 
 @app.cell(hide_code=True)
@@ -36,11 +36,10 @@ def _(mo):
     propagators drawn from the full input. Every partial-fraction identity and
     every reconstructed scalar product is checked exactly.
 
-    **Remaining work:** global topology minimization and classification of
-    singular quadratic forms. Those sectors stay visible. This notebook does
-    not calculate a decay amplitude or perform an IBP reduction.
+    **Remaining work:** global topology minimization and momentum mappings
+    between the surviving families. This notebook prepares integral families;
+    decay amplitudes and IBP reductions are separate calculations.
     """)
-    return
 
 
 @app.cell
@@ -52,7 +51,7 @@ def _(Path, json):
 
 
 @app.cell
-def _(E, S, hep, fixture, reduce):
+def _(E, S, Replacement, hep, fixture, reduce):
     def prepare_topologies():
         D, k1, k2, n, nb, gkin, meta, u0b = S(
             "etac::D",
@@ -130,15 +129,37 @@ def _(E, S, hep, fixture, reduce):
         statistics = {
             "scaleless certificate": 0,
             "not detected": 0,
-            "singular quadratic form": 0,
+            "transverse certificate": 0,
         }
         completed_rows = []
         for family in sectors.values():
             parameters = [S(f"etac::x{i}") for i in range(len(family.denominators))]
             U, F = family.symanzik(parameters)
             if U == E("0"):
-                # Degenerate U/F do not prove scalelessness; never discard these sectors.
-                status = "singular quadratic form"
+                direction = family.scaleless_transverse_direction()
+                assert direction is not None and any(w != E("0") for w in direction)
+                assert all(w.is_real() is True for w in direction)
+                # Independently shift each loop by w_i*r_perp. External products stay
+                # fixed; z_i=r_perp.k_i and z2=r_perp^2 are independent formal symbols.
+                loops = [k1, k2]
+                z = S("etac_shift::z1", "etac_shift::z2")
+                z_squared = S("etac_shift::squared")
+                shifts = [
+                    Replacement(
+                        kin.scalar_product(ki, kj),
+                        kin.scalar_product(ki, kj)
+                        + direction[i] * z[j]
+                        + direction[j] * z[i]
+                        + direction[i] * direction[j] * z_squared,
+                    )
+                    for i, ki in enumerate(loops)
+                    for j, kj in enumerate(loops[i:], i)
+                ]
+                for denominator in family.denominators:
+                    assert (
+                        denominator.replace_multiple(shifts) - denominator
+                    ).together() == E("0")
+                status = "transverse certificate"
             else:
                 weights = family.scaleless_scaling(parameters)
                 status = "not detected" if weights is None else "scaleless certificate"
@@ -177,7 +198,7 @@ def _(E, S, hep, fixture, reduce):
         assert statistics == {
             "scaleless certificate": 112,
             "not detected": 434,
-            "singular quadratic form": 131,
+            "transverse certificate": 131,
         }
         return input_rows, completed_rows, statistics, pool
 
@@ -201,8 +222,11 @@ def _(fixture, mo, statistics):
         This partial-fraction ordering produces **677 distinct sectors**.
         All have independent denominators, and all can be completed to the
         seven-dimensional loop scalar-product basis using the supplied pool.
-        The 112 scaleless classifications have explicit scaling certificates.
-        A singular quadratic form is not a certificate of scalelessness.
+        There are **112 parametric scaling certificates** and **131 transverse
+        certificates**. For the latter, an explicit loop shift leaves every
+        denominator unchanged, isolating a polynomial transverse integral that
+        vanishes in dimensional regularization. The other 434 sectors remain
+        unclassified. A singular quadratic form alone does not prove zero.
         Different decomposition orders can produce different intermediate counts.
 
         Use `family.complete(candidates=pool)` to prefer existing propagators;
@@ -219,7 +243,6 @@ def _(fixture, mo, statistics):
             ),
         ]
     )
-    return
 
 
 @app.cell
@@ -277,6 +300,33 @@ def _(completed_rows, sector_index, mo):
         ]
     )
     return original_sector, completed_sector, sector_status, added_count
+
+
+@app.cell
+def _(original_sector, mo):
+    transverse_direction = original_sector.scaleless_transverse_direction()
+    if transverse_direction is not None:
+        mo.output.append(
+            mo.md(r"""
+        ### Transverse certificate
+        The entries below define $k_i \mapsto k_i+w_i r_\perp$, with
+        $r_\perp\cdot n=r_\perp\cdot\bar n=0$. Every denominator is
+        unchanged. The unconstrained transverse integral vanishes for any
+        polynomial numerator in dimensional regularization.
+        """)
+        )
+        mo.output.append(
+            mo.ui.table(
+                [
+                    {"Loop": str(loop), "Weight": str(weight)}
+                    for loop, weight in zip(
+                        original_sector.loop_momenta, transverse_direction
+                    )
+                ],
+                selection=None,
+            )
+        )
+    return (transverse_direction,)
 
 
 if __name__ == "__main__":
