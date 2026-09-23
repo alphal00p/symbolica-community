@@ -59,7 +59,7 @@ def _(hep, mo):
 @app.cell
 def _(S, hep, model, photons):
     count = photons.value
-    electron, photon = (model.particle_by_pdg(pdg) for pdg in (11, 22))
+    electron, photon = (model.particle(_name) for _name in ("e-", "a"))
     vertices = [
         v
         for v in model.vertex_rules

@@ -43,7 +43,7 @@ def _(fk, json):
     _source = json.loads(fk.Model.standard_model().to_json())
     _source["name"] = "adjoint_scalar_example"
     for _particle in _source["particles"]:
-        if _particle["pdg_code"] == 25:
+        if _particle["name"] == "H":
             _particle["color"] = 8
     _source["vertex_rules"] = [
         _vertex for _vertex in _source["vertex_rules"] if _vertex["name"] == "V_9"
@@ -97,7 +97,7 @@ def _(E, S, TensorExpression, adjoint_model, mo, symmetric_generated):
     assert symmetric_color_norm.is_scalar
     assert symmetric_color_norm.to_expression() == E("40/3")
     # Initial-state color averaging is independently supplied by the particle API.
-    _particle = adjoint_model.particle_by_pdg(25)
+    _particle = adjoint_model.particle("H")
     assert TensorExpression(
         _particle.color_sum(S("x"), S("x"), average=True)
     ).simplify_metrics().to_expression() == E("1")

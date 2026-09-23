@@ -108,9 +108,9 @@ def _(CookSettings, E, S, TensorExpression, fk, mo, model):
         adjoint = adjoint.replace(conjugate(real), real)
     adjoint = TensorExpression(adjoint).wrap_indices(adjoint_index)
     # Dirac adjunction exchanges the open fermion chain's endpoints.
-    spins = model.particle_by_pdg(11).spin_sum(
+    spins = model.particle("e-").spin_sum(
         P(0), ports[0], adjoint_index(ports[1]), average=True
-    ) * model.particle_by_pdg(-11).spin_sum(
+    ) * model.particle("e+").spin_sum(
         P(1), adjoint_index(ports[0]), ports[1], average=True
     )
     spin_summed = (
@@ -165,7 +165,7 @@ def _(
     }[gauge.value]
     _density = E("1")
     for _position, _reference in zip((2, 3), _references):
-        _density *= model.particle_by_pdg(22).spin_sum(
+        _density *= model.particle("a").spin_sum(
             P(_position),
             ports[_position],
             adjoint_index(ports[_position]),

@@ -97,7 +97,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     metric = S("spenso::g")
     specification = json.loads(model.to_json())
     for particle in specification["particles"]:
-        if abs(particle["pdg_code"]) == 11:
+        if particle["name"] in ("e-", "e+"):
             particle["mass"] = "ZERO"
     for propagator in specification["propagators"]:
         if propagator["particle"] == "a":

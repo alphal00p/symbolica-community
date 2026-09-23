@@ -66,7 +66,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
     )
     _projector = qcd_diagram.projector_expression()
     for _edge in qcd_diagram.external_edges:
-        _projector = qcd_model.particle_by_pdg(_edge.particle_pdg).sum_spins(
+        _projector = qcd_model.particle(_edge.particle_name).sum_spins(
             _projector, _Q(_edge.id), edge=_edge.id, average=True
         )
     _numerator = qcd_model.expand_couplings(
@@ -83,7 +83,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
     _color_projector = E("1")
     _initial_color_states = 1
     for _edge in qcd_diagram.external_edges:
-        _particle = qcd_model.particle_by_pdg(_edge.particle_pdg)
+        _particle = qcd_model.particle(_edge.particle_name)
         _initial_color_states *= abs(_particle.color)
         _indices = [
             dict(_match)[_index]
@@ -110,9 +110,9 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
 
     # Check singlet and adjoint sums through the same installed public interface.
     _i, _j = S("color_i", "color_j")
-    assert qcd_model.particle_by_pdg(11).color_sum(_i, _j, average=True) == E("1")
-    for _pdg in (5, -5, 21):
-        _identity = qcd_model.particle_by_pdg(_pdg).color_sum(_i, _i, average=True)
+    assert qcd_model.particle("e-").color_sum(_i, _j, average=True) == E("1")
+    for _name in ("b", "b~", "g"):
+        _identity = qcd_model.particle(_name).color_sum(_i, _i, average=True)
         assert TensorExpression(_identity).simplify_metrics().to_expression() == E("1")
 
     # A named adjoint dimension is required by Spenso. Impose dA=Nc²-1 after
@@ -125,9 +125,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
     )
     _contracted = (
         TensorExpression(_generic.expand())
-        .simplify_color(
-            ColorSimplifySettings(substitute_cof_dimension_invariants=True)
-        )
+        .simplify_color(ColorSimplifySettings(substitute_cof_dimension_invariants=True))
         .simplify_gamma()
         .expand()
         .to_dots()

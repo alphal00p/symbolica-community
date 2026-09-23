@@ -53,14 +53,16 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     ports = S("z_decay::z", "z_decay::fermion", "z_decay::antifermion")
     wave, rep, index, left, right = S("wave_", "rep_", "index_", "left_", "right_")
     metric = S("spenso::g")
-    pdg, mass, weak_isospin, electric_charge = {
-        "Electron neutrinos": (12, E("0"), E("1/2"), E("0")),
-        "Electrons": (11, S("UFO::Me"), E("-1/2"), E("-1")),
-        "Charm quarks": (4, S("UFO::MC"), E("1/2"), E("2/3")),
-        "Bottom quarks": (5, S("UFO::MB"), E("-1/2"), E("-1/3")),
+    particle_name, mass, weak_isospin, electric_charge = {
+        "Electron neutrinos": ("ve", E("0"), E("1/2"), E("0")),
+        "Electrons": ("e-", S("UFO::Me"), E("-1/2"), E("-1")),
+        "Charm quarks": ("c", S("UFO::MC"), E("1/2"), E("2/3")),
+        "Bottom quarks": ("b", S("UFO::MB"), E("-1/2"), E("-1/3")),
     }[channel.value]
+    fermion = model.particle(particle_name)
+    antifermion = fermion.antiparticle
     generated = fk.Generator(model).generate(
-        fk.Process.amplitude([23], [pdg, -pdg]),
+        fk.Process.amplitude(["Z"], [fermion, antifermion]),
         max_vertices=1,
         numerator_grouping=None,
         progress=None,
@@ -93,8 +95,7 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     adjoint = TensorExpression(adjoint).wrap_indices(wrapped)
 
     color_projector = E("1")
-    for position, particle_pdg in ((1, pdg), (2, -pdg)):
-        particle = model.particle_by_pdg(particle_pdg)
+    for position, particle in enumerate((fermion, antifermion), start=1):
         if particle.color == 1:
             continue
         matches = []
@@ -117,11 +118,9 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     # The final fermions are summed, while the three initial Z polarizations
     # are averaged with the full Proca projector, including its longitudinal term.
     spin_projector = (
-        model.particle_by_pdg(pdg).spin_sum(P(1), wrapped(ports[2]), ports[1])
-        * model.particle_by_pdg(-pdg).spin_sum(P(2), ports[2], wrapped(ports[1]))
-        * model.particle_by_pdg(23).spin_sum(
-            P(0), ports[0], wrapped(ports[0]), average=True
-        )
+        fermion.spin_sum(P(1), wrapped(ports[2]), ports[1])
+        * antifermion.spin_sum(P(2), ports[2], wrapped(ports[1]))
+        * model.particle("Z").spin_sum(P(0), ports[0], wrapped(ports[0]), average=True)
     )
     scalar = (
         TensorExpression(
@@ -147,7 +146,7 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
         .with_scalar_product(P(0), P(2), mz**2 / 2)
     )
     squared = kin.apply(scalar.to_expression())
-    colors = abs(model.particle_by_pdg(pdg).color)
+    colors = abs(fermion.color)
     cv, ca = weak_isospin - 2 * electric_charge * sw**2, weak_isospin
     expected = (
         colors
@@ -161,7 +160,7 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
         .replace(cw, (1 - sw**2).sqrt())
         .together()
     )
-    assert residual == E("0"), (pdg, residual.format_plain())
+    assert residual == E("0"), (particle_name, residual.format_plain())
     mo.vstack(
         [
             mo.md("**Generated decay diagram and chiral current**"),

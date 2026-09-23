@@ -55,6 +55,7 @@ def _(mo):
     are checked exactly. The event rates add native flux and two-body phase
     space. An angular cut excludes the poles from massless gluon exchange.
     """)
+    return
 
 
 @app.cell
@@ -73,8 +74,8 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         )
         ports = S("qscatter::i0", "qscatter::i1", "qscatter::i2", "qscatter::i3")
         conj, wrapped = S("spenso::conj", "qscatter::adjoint")
-        flavors = [model.particle_by_pdg(i) for i in (5, 6)]
-        gluon = model.particle_by_pdg(21)
+        flavors = [model.particle(_name) for _name in ("b", "t")]
+        gluon = model.particle("g")
         vertices = [
             v
             for v in model.vertex_rules
@@ -83,18 +84,18 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         ]
         assert len(vertices) == 2
         results = {}
-        for name, pdgs in [
-            ("qq_prime", [5, 6, 5, 6]),
-            ("qaq_prime", [5, -6, 5, -6]),
-            ("qq", [5, 5, 5, 5]),
-            ("qaq", [5, -5, 5, -5]),
+        for name, particle_names in [
+            ("qq_prime", ["b", "t", "b", "t"]),
+            ("qaq_prime", ["b", "t~", "b", "t~"]),
+            ("qq", ["b", "b", "b", "b"]),
+            ("qaq", ["b", "b~", "b", "b~"]),
         ]:
             same = name in ("qq", "qaq")
             masses = [m**2, (m if same else M) ** 2] * 2
             kin = hep.Kinematics.mandelstam([P(i) for i in range(4)], masses, [s, t, u])
             generation = model.generate_diagrams(
-                pdgs[:2],
-                pdgs[2:],
+                particle_names[:2],
+                particle_names[2:],
                 max_vertices=2,
                 maximum_bridges=None,
                 vertex_allow=vertices,
@@ -149,8 +150,8 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
             colors = E("1")
             spins = E("1")
             initial_colors = 1
-            for position, pdg in enumerate(pdgs):
-                particle = model.particle_by_pdg(pdg)
+            for position, particle_name in enumerate(particle_names):
+                particle = model.particle(particle_name)
                 if position < 2:
                     initial_colors *= abs(particle.color)
                 # Signed particle representations choose quark/antiquark duals.
@@ -161,7 +162,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
                     else (ports[position], wrapped(ports[position]))
                 )
                 colors *= particle.color_sum(ci, cj, average=position < 2)
-                column = (position < 2) == (pdg > 0)
+                column = (position < 2) == (not particle.is_antiparticle)
                 i, j = (
                     (ports[position], wrapped(ports[position]))
                     if column
@@ -416,6 +417,7 @@ def _(mo, rate_checks):
     Masses are fractions of $\sqrt{s}$; for identical flavors both masses are equal.
     """)
     assert len(rate_checks) == 216
+    return
 
 
 @app.cell
@@ -459,6 +461,7 @@ def _(RenderConfig, channel, mo, results):
             for diagram in results[channel.value]["diagrams"]
         ]
     )
+    return
 
 
 @app.cell
@@ -480,6 +483,7 @@ def _(channel, mo, results):
             )
         }
     )
+    return
 
 
 @app.cell
@@ -559,6 +563,7 @@ def _(
             mo.ui.table(angular_rows, selection=None),
         ]
     )
+    return
 
 
 if __name__ == "__main__":

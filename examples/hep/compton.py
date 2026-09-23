@@ -81,9 +81,7 @@ def _(CookSettings, E, S, TensorExpression, hep, mo, qed_model):
                 _match[_rep](4, _match[_index]),
                 _match[_rep](4, _ports[_edge.external_index]),
             )
-        _denominator = _diagram.denominator_expression(
-            dimension=4, in_lmb=True
-        )
+        _denominator = _diagram.denominator_expression(dimension=4, in_lmb=True)
         _denominator = _kin.apply(
             _denominator.replace(S("gammalooprs::denom")(_a, _b, _c, _inv), _inv)
         )
@@ -102,13 +100,13 @@ def _(CookSettings, E, S, TensorExpression, hep, mo, qed_model):
         _real_adjoint = _real_adjoint.replace(_conj(_real), _real)
     _wrapped = TensorExpression(_real_adjoint).wrap_indices(_wrapper)
     _spins = E("1")
-    for _pdg, _momentum, _left, _right, _average in [
-        (11, _P(0), _ports[0], _wrapper(_ports[2]), True),
-        (11, _P(2), _wrapper(_ports[0]), _ports[2], False),
-        (22, _P(1), _ports[1], _wrapper(_ports[1]), True),
-        (22, _P(3), _ports[3], _wrapper(_ports[3]), False),
+    for _name, _momentum, _left, _right, _average in [
+        ("e-", _P(0), _ports[0], _wrapper(_ports[2]), True),
+        ("e-", _P(2), _wrapper(_ports[0]), _ports[2], False),
+        ("a", _P(1), _ports[1], _wrapper(_ports[1]), True),
+        ("a", _P(3), _ports[3], _wrapper(_ports[3]), False),
     ]:
-        _spins *= qed_model.particle_by_pdg(_pdg).spin_sum(
+        _spins *= qed_model.particle(_name).spin_sum(
             _momentum, _left, _right, average=_average
         )
     _product = _operator.to_expression() * _wrapped * _spins

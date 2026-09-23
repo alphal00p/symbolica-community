@@ -45,7 +45,7 @@ def _(mo):
 @app.cell
 def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
     _model = hep.Model.standard_model()
-    _muon, _electron = (_model.particle_by_pdg(13), _model.particle_by_pdg(11))
+    _muon, _electron = (_model.particle("mu-"), _model.particle("e-"))
     _vertices = [
         _v
         for _v in _model.vertex_rules
@@ -114,8 +114,8 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
     _projector = (
         _muon.spin_sum(P(0), _ports[0], _wrapped(_ports[3]), average=True)
         * _electron.spin_sum(P(1), _wrapped(_ports[2]), _ports[1])
-        * _model.particle_by_pdg(-12).spin_sum(P(2), _ports[2], _wrapped(_ports[1]))
-        * _model.particle_by_pdg(14).spin_sum(P(3), _wrapped(_ports[0]), _ports[3])
+        * _model.particle("ve~").spin_sum(P(2), _ports[2], _wrapped(_ports[1]))
+        * _model.particle("vm").spin_sum(P(3), _wrapped(_ports[0]), _ports[3])
     )
     _contracted = (
         TensorExpression(

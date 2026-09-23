@@ -78,7 +78,7 @@ def _(E, Model, S, TensorExpression, hep, mo):
     )
     _projector = qed_diagram.projector_expression()
     for _edge in qed_diagram.external_edges:
-        _projector = qed_model.particle_by_pdg(_edge.particle_pdg).sum_spins(
+        _projector = qed_model.particle(_edge.particle_name).sum_spins(
             _projector,
             _Q(_edge.id),
             edge=_edge.id,
@@ -90,10 +90,7 @@ def _(E, Model, S, TensorExpression, hep, mo):
         )
     )
     _contracted = (
-        TensorExpression(_numerator.expand())
-        .simplify_gamma()
-        .expand()
-        .to_dots()
+        TensorExpression(_numerator.expand()).simplify_gamma().expand().to_dots()
     )
     _contracted = _kin.apply(
         qed_diagram.loop_momentum_basis.route_expression(_contracted).replace(
@@ -277,7 +274,7 @@ def _(
     _Q = S("gammalooprs::Q")
     _projector = qed_diagram.projector_expression()
     for _edge in qed_diagram.external_edges:
-        _projector = qed_model.particle_by_pdg(_edge.particle_pdg).sum_spins(
+        _projector = qed_model.particle(_edge.particle_name).sum_spins(
             _projector, _Q(_edge.id), edge=_edge.id
         )
     _numerator = qed_model.expand_couplings(
@@ -316,11 +313,15 @@ def _(
         )
     )
     qed_polarized = (
-        qed_diagram.overall_factor_expression(evaluate=True)
-        * qed_diagram.numerator_prefactor_expression()
-        * _contracted
-        / _denominator
-    ).replace(qed_t, 2 * qed_me**2 + 2 * qed_mm**2 - qed_s - qed_u).factor()
+        (
+            qed_diagram.overall_factor_expression(evaluate=True)
+            * qed_diagram.numerator_prefactor_expression()
+            * _contracted
+            / _denominator
+        )
+        .replace(qed_t, 2 * qed_me**2 + 2 * qed_mm**2 - qed_s - qed_u)
+        .factor()
+    )
     assert (
         qed_polarized - 4 * qed_e**4 * (qed_me**2 + qed_mm**2 - qed_u) ** 2 / qed_s**2
     ).replace(qed_u, 2 * qed_me**2 + 2 * qed_mm**2 - qed_s - qed_t).together() == E("0")

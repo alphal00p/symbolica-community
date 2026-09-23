@@ -69,7 +69,7 @@ def _(E, S, Symbol, TensorExpression, hep, json):
                 "/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
             )
     model = hep.Model.from_json(json.dumps(specification))
-    _electron, _photon = (model.particle_by_pdg(pdg) for pdg in (11, 22))
+    _electron, _photon = (model.particle(_name) for _name in ("e-", "a"))
     assert _electron.mass_parameter == "Me"
     _vertices = [
         v

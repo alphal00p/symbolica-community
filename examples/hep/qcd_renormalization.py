@@ -142,7 +142,7 @@ def _(
     gmunu = metric(mink(D, mu), mink(D, nu))
     ppmunu = P(0, mink(D, mu)) * P(0, mink(D, nu))
     zero, one = E("0"), E("1")
-    quark, gluon, ghost = (model.particle_by_pdg(pdg) for pdg in (5, 21, 9000005))
+    quark, gluon, ghost = (model.particle(_name) for _name in ("b", "g", "ghG"))
     interaction_rules = {}
     for _label, _particles in [
         ("qqg", [quark.antiname, quark.name, gluon.name]),
@@ -714,7 +714,7 @@ def _(
     _spec["vertex_rules"].append(_ct_vertex)
     _ct_model = hep.Model.from_json(json.dumps(_spec))
     _ct_quark, _ct_gluon, _ct_ghost = (
-        _ct_model.particle_by_pdg(pdg) for pdg in (5, 21, 9000005)
+        _ct_model.particle(_name) for _name in ("b", "g", "ghG")
     )
     _ct_vertices = [v for v in _ct_model.vertex_rules if v.name.startswith("CT_")]
     ct_diagrams, ct_coefficients = {}, {}

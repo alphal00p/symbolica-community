@@ -127,9 +127,9 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         )
         _diagram_terms[_pdg] = _term
     _polar_ports = S("ww::physical2", "ww::physical3")
-    _projection = model.particle_by_pdg(-24).spin_sum(
+    _projection = model.particle("W-").spin_sum(
         _P(2), _ports[2], _polar_ports[0]
-    ) * model.particle_by_pdg(24).spin_sum(_P(3), _ports[3], _polar_ports[1])
+    ) * model.particle("W+").spin_sum(_P(3), _ports[3], _polar_ports[1])
     _longitudinal = (_diagram_terms[23] * (s - mz**2)).expand().coefficient(
         mz ** (-2)
     ) * mz ** (-2)
@@ -148,14 +148,14 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
     _diagram_terms[23] = (
         (_diagram_terms[23] - _longitudinal / (s - mz**2)).together().expand()
     )
-    _spins = model.particle_by_pdg(11).spin_sum(
+    _spins = model.particle("e-").spin_sum(
         _P(0), _ports[0], _wrapped(_ports[1]), average=True
-    ) * model.particle_by_pdg(-11).spin_sum(
+    ) * model.particle("e+").spin_sum(
         _P(1), _wrapped(_ports[0]), _ports[1], average=True
     )
-    _density = model.particle_by_pdg(-24).spin_sum(
+    _density = model.particle("W-").spin_sum(
         _P(2), _ports[2], _wrapped(_ports[2])
-    ) * model.particle_by_pdg(24).spin_sum(_P(3), _ports[3], _wrapped(_ports[3]))
+    ) * model.particle("W+").spin_sum(_P(3), _ports[3], _wrapped(_ports[3]))
     _operators = {}
     _adjoints = {}
     for _pdg, _term in _diagram_terms.items():

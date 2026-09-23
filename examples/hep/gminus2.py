@@ -116,7 +116,7 @@ def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
     ).together()
     assert (tree_coupling - Symbol.I * charge).expand() == E("0")
     vertex = (Symbol.I * operators[1] / (tree_coupling * charge**2)).expand()
-    particle = model.particle_by_pdg(11)
+    particle = model.particle("e-")
     incoming = particle.spin_sum(P(0), b, c)
     outgoing = particle.spin_sum(P(2), d, a).replace(
         P(2, slot), P(0, slot) - P(1, slot)

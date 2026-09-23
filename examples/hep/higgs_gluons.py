@@ -83,7 +83,7 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
     Nc, dA = S("hgg::Nc", "hgg::dA")
     # The SM UFO stores yt=sqrt(2)*m/v separately from the propagator pole mass.
     # Define y=yt/sqrt(2); the comparison later imposes y=m/v explicitly.
-    top, higgs, gluon = (model.particle_by_pdg(pdg) for pdg in (6, 25, 21))
+    top, higgs, gluon = (model.particle(_name) for _name in ("t", "H", "g"))
     yukawa_vertices = [
         v
         for v in model.vertex_rules

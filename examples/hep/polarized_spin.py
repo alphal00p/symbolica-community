@@ -53,9 +53,8 @@ def _(fk, mo):
 
 @app.cell
 def _(E, GammaSimplifySettings, S, TensorExpression, fk, mo, species, spin_model):
-    _pdg = 15 if species.value == "Tau" else -15
-    _sign = 1 if _pdg > 0 else -1
-    _particle = spin_model.particle_by_pdg(_pdg)
+    _particle = spin_model.particle("ta-" if species.value == "Tau" else "ta+")
+    _sign = -1 if _particle.is_antiparticle else 1
     spin_momentum, spin_vector, spin_mass = S(
         "polarized_spin::p", "polarized_spin::s", "UFO::MTA"
     )

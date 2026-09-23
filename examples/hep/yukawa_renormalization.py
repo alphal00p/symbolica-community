@@ -52,7 +52,7 @@ def _(E, S, copy, hep, json, oneloop):
     specification = json.loads(hep.Model.phi4().to_json())
     _standard = json.loads(hep.Model.standard_model().to_json())
     specification["particles"] += [
-        _p for _p in _standard["particles"] if abs(_p["pdg_code"]) == 11
+        _p for _p in _standard["particles"] if _p["name"] in ("e-", "e+")
     ]
     _fermion_names = {
         _p["name"] for _p in specification["particles"] if _p["spin"] == 2

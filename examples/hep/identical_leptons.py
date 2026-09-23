@@ -64,12 +64,12 @@ def _(
     t, u, mass, charge = S(
         "lepton_scattering::t", "lepton_scattering::u", "UFO::Me", "UFO::ee"
     )
-    _pdgs = [11, -11, 11, -11] if reaction.value == "Bhabha" else [11] * 4
+    _names = ["e-", "e+", "e-", "e+"] if reaction.value == "Bhabha" else ["e-"] * 4
     _kinematics = fk.Kinematics.mandelstam(
         [P(_position) for _position in range(4)], [mass**2] * 4, [s, t, u]
     )
     lepton_generated = fk.Generator(lepton_model).generate(
-        fk.Process.amplitude(_pdgs[:2], _pdgs[2:]).with_loop_count(0, 0),
+        fk.Process.amplitude(_names[:2], _names[2:]).with_loop_count(0, 0),
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=["V_98"],
@@ -122,16 +122,15 @@ def _(
     assert set(_denominators) == ({s, t} if reaction.value == "Bhabha" else {t, u})
 
     _spins = E("1")
-    for _position, _pdg in enumerate(_pdgs):
-        _column = (_position < 2) == (_pdg > 0)
+    for _position, _name in enumerate(_names):
+        _particle = lepton_model.particle(_name)
+        _column = (_position < 2) == (not _particle.is_antiparticle)
         _left, _right = (
             (_ports[_position], _wrapped(_ports[_position]))
             if _column
             else (_wrapped(_ports[_position]), _ports[_position])
         )
-        _spins *= lepton_model.particle_by_pdg(_pdg).spin_sum(
-            P(_position), _left, _right, average=_position < 2
-        )
+        _spins *= _particle.spin_sum(P(_position), _left, _right, average=_position < 2)
     _squares = []
     # Adjoint the full amplitude in the first pass; isolate the channel squares
     # in the second pass so their difference exposes the interference.

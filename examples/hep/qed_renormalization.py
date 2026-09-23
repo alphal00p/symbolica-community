@@ -82,7 +82,7 @@ def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
                 "-1𝑖*(UFO::Metric(UFO::idx(1,1),UFO::idx(1,2))-(1-qed_ren::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
             )
     model = hep.Model.from_json(json.dumps(_specification))
-    electron, photon = (model.particle_by_pdg(pdg) for pdg in (11, 22))
+    electron, photon = (model.particle(_name) for _name in ("e-", "a"))
     vertices = [
         vertex
         for vertex in model.vertex_rules
@@ -502,7 +502,7 @@ def _(
             }
         )
     _ct_model = hep.Model.from_json(json.dumps(_specification))
-    _ct_electron, _ct_photon = (_ct_model.particle_by_pdg(pdg) for pdg in (11, 22))
+    _ct_electron, _ct_photon = (_ct_model.particle(_name) for _name in ("e-", "a"))
     _ct_vertices = [
         vertex for vertex in _ct_model.vertex_rules if vertex.name.startswith("CT_")
     ]
@@ -803,11 +803,11 @@ def _(
     # Reference: https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/RenormalizationMassless
     _massless_specification = json.loads(model.to_json())
     for _particle in _massless_specification["particles"]:
-        if abs(_particle["pdg_code"]) == 11:
+        if _particle["name"] in ("e-", "e+"):
             _particle["mass"] = "ZERO"
     _massless_model = hep.Model.from_json(json.dumps(_massless_specification))
     _massless_electron, _massless_photon = (
-        _massless_model.particle_by_pdg(pdg) for pdg in (11, 22)
+        _massless_model.particle(_name) for _name in ("e-", "a")
     )
     _massless_vertices = [
         vertex

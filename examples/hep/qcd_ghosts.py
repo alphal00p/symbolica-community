@@ -58,12 +58,12 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
     ghost_results = []
     ghost_generated = []
     for _outgoing, _vertices, _count in (
-        ([9000005, -9000005], ["V_76", "V_35"], 1),
-        ([-9000005, 9000005], ["V_76", "V_35"], 1),
-        ([21, 21], ["V_76", "V_36"], 3),
+        (["ghG", "ghG~"], ["V_76", "V_35"], 1),
+        (["ghG~", "ghG"], ["V_76", "V_35"], 1),
+        (["g", "g"], ["V_76", "V_36"], 3),
     ):
         _generated = hep.Generator(ghost_model).generate(
-            hep.Process.amplitude([5, -5], _outgoing).with_loop_count(0, 0),
+            hep.Process.amplitude(["b", "b~"], _outgoing).with_loop_count(0, 0),
             max_vertices=2,
             maximum_bridges=None,
             vertex_allow=_vertices,
@@ -119,8 +119,8 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
         _left, _right, _metric = S("left_", "right_", "spenso::g")
         _color_projector = E("1")
         _initial_colors = 1
-        for _position, _pdg in enumerate((5, -5, *_outgoing)):
-            _particle = ghost_model.particle_by_pdg(_pdg)
+        for _position, _name in enumerate(("b", "b~", *_outgoing)):
+            _particle = ghost_model.particle(_name)
             if _position < 2:
                 _initial_colors *= abs(_particle.color)
             _matches = []
@@ -169,9 +169,9 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
 
         # Dirac adjunction exchanges the two endpoints of the open fermion chain.
         # Reduce the fermion trace before introducing the physical gluon projectors.
-        _spin_projector = ghost_model.particle_by_pdg(5).spin_sum(
+        _spin_projector = ghost_model.particle("b").spin_sum(
             _P(0), _ports[0], _adjoint_index(_ports[1]), average=True
-        ) * ghost_model.particle_by_pdg(-5).spin_sum(
+        ) * ghost_model.particle("b~").spin_sum(
             _P(1), _adjoint_index(_ports[0]), _ports[1], average=True
         )
         _spin_summed = (
@@ -187,7 +187,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
         _polarizations = E("1")
         if _count == 3:
             for _position in (2, 3):
-                _polarizations *= ghost_model.particle_by_pdg(21).spin_sum(
+                _polarizations *= ghost_model.particle("g").spin_sum(
                     _P(_position),
                     _ports[_position],
                     _adjoint_index(_ports[_position]),

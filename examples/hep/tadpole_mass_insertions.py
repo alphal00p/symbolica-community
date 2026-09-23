@@ -62,7 +62,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep):
         "gammalooprs::K", "spenso::mink", "spenso::cof", "spenso::g"
     )
     _index, _left, _right = S("index_", "left_", "right_")
-    _top, _higgs = (model.particle_by_pdg(_pdg) for _pdg in (6, 25))
+    _top, _higgs = (model.particle(_name) for _name in ("t", "H"))
     _vertices = [
         _vertex
         for _vertex in model.vertex_rules

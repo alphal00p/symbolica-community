@@ -113,8 +113,8 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
     _left, _right, _metric = S("left_", "right_", "spenso::g")
     gluon_color_projector = E("1")
     _initial_colors = 1
-    for _position, _pdg in enumerate((5, -5, 21, 21)):
-        _particle = qcd_model.particle_by_pdg(_pdg)
+    for _position, _name in enumerate(("b", "b~", "g", "g")):
+        _particle = qcd_model.particle(_name)
         if _position < 2:
             _initial_colors *= abs(_particle.color)
         _matches = []
@@ -160,9 +160,9 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
 
     # Dirac adjunction exchanges the two endpoints of the open fermion chain.
     # Reduce the fermion trace before introducing the physical gluon projectors.
-    _spin_projector = qcd_model.particle_by_pdg(5).spin_sum(
+    _spin_projector = qcd_model.particle("b").spin_sum(
         _P(0), _ports[0], _adjoint_index(_ports[1]), average=True
-    ) * qcd_model.particle_by_pdg(-5).spin_sum(
+    ) * qcd_model.particle("b~").spin_sum(
         _P(1), _adjoint_index(_ports[0]), _ports[1], average=True
     )
     _spin_summed = (
@@ -196,7 +196,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
     for _references in ((_P(3), _P(2)), (_P(0), _P(0))):
         _polarizations = E("1")
         for _position, _reference in zip((2, 3), _references):
-            _polarizations *= qcd_model.particle_by_pdg(21).spin_sum(
+            _polarizations *= qcd_model.particle("g").spin_sum(
                 _P(_position),
                 _ports[_position],
                 _adjoint_index(_ports[_position]),

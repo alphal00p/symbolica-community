@@ -47,7 +47,7 @@ def _(E, S, TensorExpression, fk):
     _s, _t, _u, _me, _mm, _e = S("s", "t", "u", "UFO::Me", "UFO::MM", "UFO::ee")
     _k1, _k2, _index = S("k1", "k2", "index_")
     _a, _b, _c, _inverse = S("a_", "b_", "c_", "inverse_")
-    _electron, _muon, _photon = (_model.particle_by_pdg(pdg) for pdg in (11, 13, 22))
+    _electron, _muon, _photon = (_model.particle(_name) for _name in ("e-", "mu-", "a"))
     _vertices = [
         v
         for v in _model.vertex_rules
@@ -143,7 +143,7 @@ def _(E, S, TensorExpression, fk):
                 _orientation = _cut.orientations[_coordinate]
                 _projector = _diagram.projector_expression()
                 for _edge in _diagram.external_edges:
-                    _projector = _model.particle_by_pdg(_edge.particle_pdg).sum_spins(
+                    _projector = _model.particle(_edge.particle_name).sum_spins(
                         _projector,
                         _Q(_edge.id),
                         edge=_edge.id,

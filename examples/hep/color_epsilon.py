@@ -44,7 +44,7 @@ def _(fk, json):
     _source = json.loads(fk.Model.standard_model().to_json())
     _source["name"] = "triplet_scalar_epsilon_example"
     epsilon_base = max(abs(_p["pdg_code"]) for _p in _source["particles"]) + 10
-    _scalar = next(_p for _p in _source["particles"] if _p["pdg_code"] == 251)
+    _scalar = next(_p for _p in _source["particles"] if _p["name"] == "G+")
     for _flavor in range(1, 4):
         for _sign in (1, -1):
             _name = f"X{_flavor}" + ("~" if _sign < 0 else "")
@@ -140,10 +140,10 @@ def _(E, S, TensorExpression, epsilon_diagrams, mo):
 
 
 @app.cell
-def _(E, S, TensorExpression, epsilon_base, epsilon_model, epsilon_norms, mo):
+def _(E, S, TensorExpression, epsilon_model, epsilon_norms, mo):
     averaged_epsilon_norms = []
-    for _sign, _norm in zip((1, -1), epsilon_norms):
-        _particle = epsilon_model.particle_by_pdg(_sign * (epsilon_base + 1))
+    for _name, _norm in zip(("X1", "X1~"), epsilon_norms):
+        _particle = epsilon_model.particle(_name)
         # The trace of the shared completeness tensor counts initial color states.
         _states = (
             TensorExpression(_particle.color_sum(S("i"), S("i")))

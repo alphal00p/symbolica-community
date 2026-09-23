@@ -60,19 +60,19 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
     H, x, y = (S("weak_decay::" + _name, is_positive=True) for _name in ("H", "x", "y"))
     zero, _one, _pi = (E("0"), E("1"), Symbol.PI)
     results, diagrams = ({}, {})
-    for _label, _pdgs, _masses, _ckm_name in [
-        ("W- leptons", (-24, 11, -12), (_mw, _me, zero), None),
-        ("W+ leptons", (24, -11, 12), (_mw, _me, zero), None),
-        ("W- quarks", (-24, -4, 5), (_mw, _mc, _mb), "CKM2x3"),
-        ("W+ quarks", (24, 4, -5), (_mw, _mc, _mb), "CKM2x3"),
-        ("W- light quarks", (-24, -2, 1), (_mw, zero, zero), "CKM1x1"),
-        ("W+ light quarks", (24, 2, -1), (_mw, zero, zero), "CKM1x1"),
-        ("Top", (6, 5, 24), (_mt, _mb, _mw), "CKM3x3"),
-        ("Antitop", (-6, -5, -24), (_mt, _mb, _mw), "CKM3x3"),
+    for _label, _names, _masses, _ckm_name in [
+        ("W- leptons", ("W-", "e-", "ve~"), (_mw, _me, zero), None),
+        ("W+ leptons", ("W+", "e+", "ve"), (_mw, _me, zero), None),
+        ("W- quarks", ("W-", "c~", "b"), (_mw, _mc, _mb), "CKM2x3"),
+        ("W+ quarks", ("W+", "c", "b~"), (_mw, _mc, _mb), "CKM2x3"),
+        ("W- light quarks", ("W-", "u~", "d"), (_mw, zero, zero), "CKM1x1"),
+        ("W+ light quarks", ("W+", "u", "d~"), (_mw, zero, zero), "CKM1x1"),
+        ("Top", ("t", "b", "W+"), (_mt, _mb, _mw), "CKM3x3"),
+        ("Antitop", ("t~", "b~", "W-"), (_mt, _mb, _mw), "CKM3x3"),
     ]:
         _generated = _model.generate_diagrams(
-            [_pdgs[0]],
-            list(_pdgs[1:]),
+            [_names[0]],
+            list(_names[1:]),
             max_vertices=1,
             numerator_grouping=None,
             progress=None,
@@ -81,7 +81,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
         _diagram = _generated.diagrams[0]
         diagrams[_label] = _diagram
         assert _diagram.denominator_expression(dimension=4).to_expression() == _one
-        _particles = [_model.particle_by_pdg(_pdg) for _pdg in _pdgs]
+        _particles = [_model.particle(_name) for _name in _names]
         _numerator = _model.expand_couplings(
             _diagram.numerator_expression().to_expression()
         )
@@ -113,12 +113,16 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
         for _real in (_charge, _sw, _mw, _me, _mc, _mb, _mt, Vr, Vi):
             _adjoint = _adjoint.replace(_conjugate(_real), _real)
         _adjoint = TensorExpression(_adjoint).wrap_indices(_wrapped)
-        _is_top = abs(_pdgs[0]) == 6
+        _is_top = _names[0] in ("t", "t~")
         _vector_position = 2 if _is_top else 0
         if _is_top:
-            _left_position, _right_position = (1, 0) if _pdgs[0] > 0 else (0, 1)
+            _left_position, _right_position = (
+                (1, 0) if not _particles[0].is_antiparticle else (0, 1)
+            )
         else:
-            _left_position = next(_i for _i in (1, 2) if _pdgs[_i] > 0)
+            _left_position = next(
+                _i for _i in (1, 2) if not _particles[_i].is_antiparticle
+            )
             _right_position = 3 - _left_position
         _spin_projector = (
             _particles[_left_position].spin_sum(
