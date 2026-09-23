@@ -28,7 +28,7 @@ def _(mo):
     mo.md(r"""
     # Different-flavor QCD annihilation
 
-    [Browse all notebooks](/)
+    [Browse all notebooks](/) · [Elastic quark scattering](/?file=hep/quark_scattering.py)
 
     Generate $b\bar b\to t\bar t$ through gluon exchange, retaining both
     quark masses. Initial spins and colors are averaged; final spins and colors
@@ -39,7 +39,6 @@ def _(mo):
     [FeynCalc reference](https://feyncalc.github.io/FeynCalcExamples/QCD/Tree/QiQibar-QjQjbar).
     The massless $SU(3)$ limit is carried through two-body phase space below.
     """)
-    return
 
 
 @app.cell
