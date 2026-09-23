@@ -1,0 +1,132 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "f5e4481bec7acb000970b1bfcdcb4353",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "86826553a494b2ce36c246f726e8588e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"electronpositron-annihilation-into-two-photons\">Electron\u2013positron annihilation into two photons</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/compton.py\">Compton scattering</a></span>\n<span class=\"paragraph\">Generate both diagrams for <marimo-tex class=\"arithmatex\">||(e^-e^+\\to\\gamma\\gamma||)</marimo-tex>, retaining the electron\nmass and their interference. Average the two incoming spins and sum the\nphoton polarizations using shared Feynkit, Spenso and Idenso operations.\nThe result agrees with the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/Tree/ElAel-GaGa\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc example</a>.\nThe kinematics obey <marimo-tex class=\"arithmatex\">||(s+t+u=2m_e^2||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "1cc02084272c7005487b79ce05e4b02a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "feaa40a10190c9e37715ec237d1e3416",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "cc96f20ca43b1cf416a28dccb55cdf6f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='lEQa-0' random-id='36d6935b-c096-c836-ecb7-537b02fa8f95'><marimo-dropdown data-initial-value='[&quot;Covariant&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003ePhoton polarization reference&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Covariant&quot;,&quot;Other photon&quot;,&quot;Incoming electron&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "27f20d9b4ab73e02baaa6e6600d5acdc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massive, spin-averaged squared matrix element</strong> \u2014 all three polarization choices give the same result.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-ee\u2074\u00b7t\u00b7u\u00b3+7\u00b7ee\u2074\u00b7Me\u00b2\u00b7t\u00b7u\u00b2+7\u00b7ee\u2074\u00b7Me\u00b2\u00b7t\u00b2\u00b7u+ee\u2074\u00b7Me\u00b2\u00b7t\u00b3+ee\u2074\u00b7Me\u00b2\u00b7u\u00b3\n    -14\u00b7ee\u2074\u00b7Me\u2074\u00b7t\u00b7u-3\u00b7ee\u2074\u00b7Me\u2074\u00b7t\u00b2-3\u00b7ee\u2074\u00b7Me\u2074\u00b7u\u00b2+6\u00b7ee\u2074\u00b7Me\u2078-ee\u2074\u00b7t\u00b3\u00b7u\n<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(0, 95, 175)\">(</span>t-Me\u00b2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-u+Me\u00b2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "2a34a6246699122f5a96976d8592347b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"identical-photons-and-angular-acceptance\">Identical photons and angular acceptance</h2>\n<span class=\"paragraph\">Let <marimo-tex class=\"arithmatex\">||(c=\\cos\\theta||)</marimo-tex> and accept events with <marimo-tex class=\"arithmatex\">||(|c|&lt;C&lt;1||)</marimo-tex>. The labeled massless\nangular density is <marimo-tex class=\"arithmatex\">||(\\alpha^2(1+c^2)/[s(1-c^2)]||)</marimo-tex>. Integrating it over the\nfull sphere counts both photon assignments; the event rate includes <marimo-tex class=\"arithmatex\">||(1/2!||)</marimo-tex>.\nEquivalently, select the forward photon and integrate over <marimo-tex class=\"arithmatex\">||(0&lt;c&lt;C||)</marimo-tex>.</span>\n<span class=\"paragraph\"><code>Kinematics.flux</code> and <code>two_body_phase_space</code> supply the flux and measure.\nSymbolica integrates the rational angular distribution. The massless result,\n<marimo-tex class=\"arithmatex\">||(\\sigma=2\\pi\\alpha^2[2\\operatorname{atanh}C-C]/s||)</marimo-tex>, also matches\n<a href=\"https://arxiv.org/pdf/hep-ex/0409058\" rel=\"noopener noreferrer\" target=\"_blank\">DELPHI's Born formula, Eq. (2)</a>.\nFor a massive electron, <marimo-tex class=\"arithmatex\">||(\\beta=\\sqrt{1-4m_e^2/s}||)</marimo-tex> is the incoming CM speed.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "1a6ad49a3c466e7757d8174c36d2e83c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massless labeled angular density</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-<span style=\"color: rgb(128, 128, 128)\">(</span>cos_theta\u00b2\u00b7alpha\u00b2+alpha\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-1+cos_theta<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>1+cos_theta<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massless event cross section with angular cut</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b7alpha\u00b2\u00b7cutoff-2\u00b7<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b7alpha\u00b2\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span>/s</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massive event cross section with angular cut</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2\u00b7<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b7alpha\u00b2\n    \u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-2\u00b7cutoff\u00b7beta+2\u00b7cutoff\u00b7beta\u00b3-cutoff\u00b7beta\u2075+3\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>\n        -3\u00b7cutoff\u00b2\u00b7beta\u00b2\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>+cutoff\u00b2\u00b7beta\u2076\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>\n        +cutoff\u00b3\u00b7beta\u00b3-beta\u2074\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7beta\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-1+cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>1+cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "b52e4d7dbc5ac87db98d28068716980f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='f7273c2d-c31f-e2e6-39a1-2825e6a60702'><marimo-slider data-initial-value='0.8' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eAcceptance C&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.1' data-stop='0.95' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='ac69db5a-6be7-c391-6f04-2460003244bd'><marimo-slider data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eIncoming speed beta&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.05' data-stop='1.0' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "281ff44ca2a8f83901f22a1ab8e582fa",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Accepted event rate: <strong>1.03460105538811</strong> \u00d7 <marimo-tex class=\"arithmatex\">||(2\\pi\\alpha^2/s||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "2b6f7c64cb1b72dfe260240552e5fded",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "c5a5d2cc0846e52db5bbce378ca6bc56",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"ghostgluon-vertex-and-ibp\">Ghost\u2013gluon vertex and IBP</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/qcd_renormalization.py\">QCD renormalization</a> \u00b7\n<a href=\"/?file=hep/qcd_ghosts.py\">Ghost subtraction at tree level</a></span>\n<span class=\"paragraph\">Generate both one-loop ghost\u2013gluon vertex diagrams and the ghost self-energy,\nretaining a symbolic covariant-gauge parameter <marimo-tex class=\"arithmatex\">||(\\xi||)</marimo-tex>. Repeat with an\nincoming antighost and check crossing with all external color and Lorentz\nindices open. This reproduces the UV result of the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/OneLoop/GhGl-Gh\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc example</a>.</span>\n<span class=\"paragraph\">Shared UV expansion, color algebra and tensor reduction produce raised\npowers of the single vacuum denominator <marimo-tex class=\"arithmatex\">||(k^2-M||)</marimo-tex>, where <marimo-tex class=\"arithmatex\">||(M=m_{\\rm UV}^2||)</marimo-tex>.\nNative IBP reduces them to the tadpole. Its pole <marimo-tex class=\"arithmatex\">||(I(1)=M/\\epsilon+O(1)||)</marimo-tex>\nis an explicit analytic input, in the <marimo-tex class=\"arithmatex\">||(i/(16\\pi^2)||)</marimo-tex> loop measure.\nWe use <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(a_4=g_s^2/(16\\pi^2)||)</marimo-tex>.</span>\n<span class=\"paragraph\">The model keeps the upstream UFO rule <marimo-tex class=\"arithmatex\">||(P_2+P_3=-P_1||)</marimo-tex> with all vertex\nmomenta incoming. The loop result is normalized against the generated\ntree tensor, including its sign and the ghost momentum convention.\nThe two diagrams give <marimo-tex class=\"arithmatex\">||(C_A\\xi/(8\\epsilon)||)</marimo-tex> and\n<marimo-tex class=\"arithmatex\">||(3C_A\\xi/(8\\epsilon)||)</marimo-tex> times the tree and <marimo-tex class=\"arithmatex\">||(a_4||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "0c45d213bbccb7b5ae79ec0568f20fdc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "c5e680800a8f55290675a021f95e097b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='bkHC-0' random-id='68197e6a-43cb-26ae-6cb2-59a4c43d7046'><marimo-checkbox data-initial-value='false' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eIncoming antighost&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-disabled='false'></marimo-checkbox></marimo-ui-element><marimo-ui-element object-id='bkHC-1' random-id='50835078-22d6-ad46-7fba-ea0553df8374'><marimo-slider data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eGauge parameter \u03be&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.0' data-stop='3.0' data-step='0.25' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='bkHC-2' random-id='98f042bb-01ce-0af8-f74c-f7d532730b3d'><marimo-slider data-initial-value='3' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eColors Nc&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='2' data-stop='5' data-step='1' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='bkHC-3' random-id='43aae653-2a9c-b4ce-2caf-abf57949b643'><marimo-slider data-initial-value='5' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eQuark flavors Nf&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0' data-stop='20' data-step='1' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "d3704bf926d755b1071e7aa4e1c3c61e",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "2274542a10c0cf55cdd2daa54a374ce0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"native-vacuum-ibp\">Native vacuum IBP</h2></span><section class=\"feynkit-integral-family\" style=\"max-width:100%;overflow-x:auto\"><strong>Integral family</strong><div><strong>Loop momenta:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">K<span style=\"color: rgb(0, 95, 175)\">(</span>0<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div><strong>External momenta:</strong> <em>none</em></div><div><strong>Dimension:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">D</div></div><div>Rank: 1 / 1 &middot; complete &middot; independent</div><table style=\"border-collapse:collapse;margin-top:.4rem\"><caption style=\"text-align:left\">Ordered inverse propagators (1)</caption><tbody><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>1</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">-M<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr></tbody></table></section><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>I(2)</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>1/2\u00b7D/M-1/M<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>I(3)</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>-3/4\u00b7D/M\u00b2+1/8\u00b7D\u00b2/M\u00b2+1/M\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><marimo-ui-element object-id='PKri-0' random-id='57977c81-3b85-77e6-41f3-a6a848739c7b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;exact_trace_rows&#92;&quot;:0,&#92;&quot;rows&#92;&quot;:6,&#92;&quot;sectors&#92;&quot;:1,&#92;&quot;seeds&#92;&quot;:6}]&quot;' data-total-rows='1' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Both powers reduce to I(1). The calculation checks that the UV poles have no auxiliary mass dependence, residual loop momentum, or double poles.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "d7a003f672aa9d83349756eaf6fd2d64",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"a-coupling-counterterm-from-the-ghost-vertex\">A coupling counterterm from the ghost vertex</h2>\n<span class=\"paragraph\">Write <marimo-tex class=\"arithmatex\">||(Z=1+a_4\\delta Z||)</marimo-tex>. The generated self-energy determines\n<marimo-tex class=\"arithmatex\">||(\\delta Z_c=C_A(3-\\xi)/(4\\epsilon)||)</marimo-tex>.\nThe ghost\u2013gluon counterterm is\n<marimo-tex class=\"arithmatex\">||(\\delta Z_c+\\delta Z_g+\\delta Z_A/2||)</marimo-tex> times its tree tensor.</span>\n<span class=\"paragraph\">Here the gluon field counterterm\n<marimo-tex class=\"arithmatex\">||(\\delta Z_A=[C_A(13-3\\xi)-4N_f]/(6\\epsilon)||)</marimo-tex> is supplied from the\nseparate QCD renormalization example. Combining it with the calculated\nghost and vertex poles gives\n<marimo-tex class=\"arithmatex\">||(\\delta Z_g=-(11C_A-2N_f)/(6\\epsilon)||)</marimo-tex>, independently of <marimo-tex class=\"arithmatex\">||(\\xi||)</marimo-tex>.\nNo counterterm diagrams are generated here.</span>\n<span class=\"paragraph\">In Landau gauge (<marimo-tex class=\"arithmatex\">||(\\xi=0||)</marimo-tex>), the vertex pole vanishes. Vary the gauge to\ncheck its cancellation against the three counterterms.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "a81c7c8ca6e6369a6587ffc3d7754d20",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Coefficients of <marimo-tex class=\"arithmatex\">||(a_4/\\epsilon||)</marimo-tex></strong></span></span><marimo-ui-element object-id='SFPL-0' random-id='eef8fb09-2515-f300-5f54-e79644f2a459'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Quantity&#92;&quot;:&#92;&quot;Vertex / tree&#92;&quot;,&#92;&quot;Pole coefficient&#92;&quot;:1.5},{&#92;&quot;Quantity&#92;&quot;:&#92;&quot;Zc&#92;&quot;,&#92;&quot;Pole coefficient&#92;&quot;:1.5},{&#92;&quot;Quantity&#92;&quot;:&#92;&quot;ZA (input)&#92;&quot;,&#92;&quot;Pole coefficient&#92;&quot;:1.6666666666666665},{&#92;&quot;Quantity&#92;&quot;:&#92;&quot;Zg&#92;&quot;,&#92;&quot;Pole coefficient&#92;&quot;:-3.833333333333333}]&quot;' data-total-rows='4' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Ghost\u2013gluon counterterm cancellation residual: <strong>0.0e+00</strong></span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

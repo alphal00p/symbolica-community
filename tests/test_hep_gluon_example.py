@@ -37,7 +37,9 @@ def test_tensor_helpers_preserve_external_interface(notebook):
     n = notebook
     for diagram in n.diagrams:
         numerator = n.numerator_in_d(diagram)
-        contracted = n.contract_indices(numerator)
+        contracted = numerator.simplify_gamma().schoonschip_net(
+            expand_contracted_sums=True
+        )
         routed = n.route_numerator(diagram)
         projector = n.external_projector(diagram)
         for tensor in (numerator, contracted, routed, projector):
@@ -45,14 +47,16 @@ def test_tensor_helpers_preserve_external_interface(notebook):
             assert tensor.rank == 4
             assert set(tensor.list_dangling()) == set(numerator.list_dangling())
         projected = n.scalar_products(n.apply_projector(routed, projector))
-        weighted = n.resolve_qcd(as_tensor(projected * n.diagram_weight(diagram, n.model)), n.model)
+        weighted = n.resolve_qcd(
+            as_tensor(projected * n.diagram_weight(diagram)), n.model
+        )
         for tensor in (projected, weighted):
             assert isinstance(tensor, TensorExpression)
             assert tensor.is_scalar
         scalar = n.invariants(weighted)
         assert isinstance(scalar, TensorExpression)
         assert scalar.is_scalar
-        with pytest.raises(ValueError, match='external indices'):
+        with pytest.raises(ValueError, match="external indices"):
             n.invariants(contracted)
 
 
@@ -77,7 +81,7 @@ def test_expression_copy_uv_poles_and_subtraction(notebook):
     total, ward = E('0'), E('0')
     for diagram in n.diagrams:
         original_graph = diagram.to_json()
-        numerator = n.resolve_qcd(n.scalar_products(n.apply_projector(n.route_numerator(diagram), n.external_projector(diagram))) * n.diagram_weight(diagram, n.model), n.model)
+        numerator = n.resolve_qcd(n.scalar_products(n.apply_projector(n.route_numerator(diagram), n.external_projector(diagram))) * n.diagram_weight(diagram), n.model)
         expression = n.invariants(numerator) * n.graph_propagators(diagram, n.model)
         result = n.uv_expansion_data(expression, loop_count=diagram.loop_count)
         for tensor in result.values():
@@ -101,7 +105,7 @@ def test_expression_copy_uv_poles_and_subtraction(notebook):
         assert (ct_tail + averaged_tail).expand().cancel() == E('0')
         assert result['counterterm'].contains(n.mUV)
         total += result['residue']
-        longitudinal = n.resolve_qcd(n.scalar_products(n.apply_projector(n.route_numerator(diagram), n.external_projector(diagram, longitudinal=True))) * n.diagram_weight(diagram, n.model), n.model)
+        longitudinal = n.resolve_qcd(n.scalar_products(n.apply_projector(n.route_numerator(diagram), n.external_projector(diagram, longitudinal=True))) * n.diagram_weight(diagram), n.model)
         ward += n.uv_expansion_data(n.invariants(longitudinal) * n.graph_propagators(diagram, n.model), loop_count=diagram.loop_count)['residue']
     assert total.expand() == E('13/3') * n.p2.replace(n.D, 4) * S('UFO::G')**2
     assert ward.expand() == E('0')

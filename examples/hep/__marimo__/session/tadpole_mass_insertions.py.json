@@ -1,0 +1,119 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "82a99d48130559c952f25e1ad52796c2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "18c77cce1262f6b69cd29241670a57ea",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"tadpole-mass-insertions\">Tadpole mass insertions</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/higgs_gluons.py\">Higgs to gluons</a> \u00b7\n<a href=\"/?file=hep/odd_photons.py\">Odd photons</a> \u00b7\n<a href=\"/?file=hep/ibp_bubble.py\">Unequal-mass bubble</a></span>\n<span class=\"paragraph\">Generate the massive top-quark contribution to the Higgs one-point\nfunction, then differentiate its integrand with respect to the quark mass.\nRaised propagator powers are reduced by native IBP and evaluated with\nOneLOop. A numerical derivative checks the complete finite answer.</span>\n<span class=\"paragraph\">The Yukawa coupling <marimo-tex class=\"arithmatex\">||(y=y_t/\\sqrt2||)</marimo-tex> and the scale <marimo-tex class=\"arithmatex\">||(\\mu^2||)</marimo-tex> are held fixed\nduring differentiation. Although the selected vertex comes from the SM\nmodel, this derivative treats the Yukawa coupling and propagator mass as\nindependent inputs: it does not impose <marimo-tex class=\"arithmatex\">||(y=m/v||)</marimo-tex>.</span>\n<span class=\"paragraph\">Write <marimo-tex class=\"arithmatex\">||(\\Delta=k^2-m^2+i0||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(I_n=\\int_k\\Delta^{-n}||)</marimo-tex> in the OneLOop\nscalar-integral convention, with <marimo-tex class=\"arithmatex\">||(I_1=A_0(m^2;\\mu^2)||)</marimo-tex>.\nAll displayed amplitudes have the common loop measure <marimo-tex class=\"arithmatex\">||(i/(16\\pi^2)||)</marimo-tex>\nstripped off. The finite Laurent coefficient shown here is <strong>not a\nrenormalized tadpole</strong>; no counterterm or vacuum renormalization condition\nhas been imposed.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "e184b27aa174f71e371f211f050b8f75",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "3dd2cf7f9baa2ee38e8f4d0d8b469d59",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "1cd3d8d882181adde1d3a85126164ebe",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Native IBP reductions</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>2<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>D\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>-2\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span>/MT\u00b2</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>3<span style=\"color: rgb(0, 95, 175)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><marimo-tex class=\"arithmatex\">||(\\longrightarrow||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/8\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-6\u00b7D\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>+8\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>+D\u00b2\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span>/MT\u2074</div></div><marimo-ui-element object-id='lEQa-0' random-id='9769600f-b0f6-2310-5ac6-ed454832969f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;exact_trace_rows&#92;&quot;:0,&#92;&quot;rows&#92;&quot;:3,&#92;&quot;sectors&#92;&quot;:1,&#92;&quot;seeds&#92;&quot;:3}]&quot;' data-total-rows='1' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Mass derivative, before and after IBP</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-4\u00b7Nc\u00b7y\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>8\u00b7MT\u00b2\u00b7Nc\u00b7y\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>2<span style=\"color: rgb(0, 95, 175)\">)</span></div><div style=\"white-space: pre-wrap; margin: 0;\">-4\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>D\u00b7Nc\u00b7y\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>-Nc\u00b7y\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Differentiation acts on both the numerator mass and the propagator:\n$<marimo-tex class=\"arithmatex\">||(\\frac{\\partial}{\\partial m}\\frac{m}{\\Delta}\n  =\\frac{1}{\\Delta}+\\frac{2m^2}{\\Delta^2}.||)</marimo-tex>$\nThe coefficients above come from that differentiated integrand.\nThe solver reduces the doubled and tripled propagators to <marimo-tex class=\"arithmatex\">||(I_1||)</marimo-tex>.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "e0d7558f08cbf45fdf7d3da54dd0bc6d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Laurent expansion and its finite rational term</strong></span>\n<span class=\"paragraph\">OneLOop supplies\n$<marimo-tex class=\"arithmatex\">||(A_0=m^2\\left[\\frac1\\epsilon+1-L\\right]+O(\\epsilon),\n  \\qquad L=\\log\\frac{m^2}{\\mu^2},\\quad D=4-2\\epsilon.||)</marimo-tex>$\nRecombine the exact <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex>-dependent coefficients with this pole before\nexpanding. This gives\n$<marimo-tex class=\"arithmatex\">||(I_2=\\frac1\\epsilon-L+O(\\epsilon),\\qquad\n  I_3=-\\frac1{2m^2}+O(\\epsilon),||)</marimo-tex>$\n$<marimo-tex class=\"arithmatex\">||(\\frac{\\partial T}{\\partial m}\n  =-4N_cym^2\\left[\\frac3\\epsilon+1-3L\\right]+O(\\epsilon).||)</marimo-tex>$\nSetting <marimo-tex class=\"arithmatex\">||(D=4||)</marimo-tex> early would miss the <marimo-tex class=\"arithmatex\">||(-2||)</marimo-tex> from\n<marimo-tex class=\"arithmatex\">||((3-2\\epsilon)/\\epsilon||)</marimo-tex>. The resulting finite correction is:</span></span><div style=\"white-space: pre-wrap; margin: 0;\">8\u00b7MT\u00b2\u00b7Nc\u00b7y</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Finite coefficient of <marimo-tex class=\"arithmatex\">||(\\partial T/\\partial m||)</marimo-tex></strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-4\u00b7MT\u00b2\u00b7Nc\u00b7y<span style=\"color: rgb(205, 205, 0)\">+</span>12\u00b7MT\u00b2\u00b7Nc\u00b7y\u00b7L</div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "3c08db670a8cd019148edf45cf928821",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "36d261ccb040e320cad3a8a7e43e4117",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Numerical check:</strong> vary positive mass and scale; <marimo-tex class=\"arithmatex\">||(N_c=3||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(y=0.7||)</marimo-tex>.</span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='SFPL-0' random-id='8b88912b-4ab1-458c-d01f-ca5f2b64d435'><marimo-number data-initial-value='2.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eQuark mass m&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.05' data-stop='500.0' data-step='0.05' data-debounce='false' data-full-width='false' data-disabled='false'></marimo-number></marimo-ui-element><marimo-ui-element object-id='SFPL-1' random-id='3a1b70b7-8eb2-f26c-4258-112d347c66d8'><marimo-number data-initial-value='4.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eScale squared \u03bc\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.01' data-stop='250000.0' data-step='0.05' data-debounce='false' data-full-width='false' data-disabled='false'></marimo-number></marimo-ui-element></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "0f6349b3f35c9276c85f10353c66a3fc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='eef32fd7-429a-4d8a-2600-21b8d83d1df8'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;m&#92;&quot;:2.0,&#92;&quot;\u03bc\u00b2&#92;&quot;:4.0,&#92;&quot;Finite T&#92;&quot;:-67.19999999999999,&#92;&quot;Finite I\u2082&#92;&quot;:-0.0,&#92;&quot;Finite I\u2083&#92;&quot;:-0.125,&#92;&quot;Finite \u2202T/\u2202m (IBP + OneLOop)&#92;&quot;:-33.60000000000001,&#92;&quot;Five-point numerical derivative&#92;&quot;:-33.599999999984455,&#92;&quot;Scaled derivative error&#92;&quot;:4.629101335056127e-13}]&quot;' data-total-rows='1' data-total-columns='8' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The five-point difference varies only <marimo-tex class=\"arithmatex\">||(m||)</marimo-tex>, with step <marimo-tex class=\"arithmatex\">||(10^{-3}m||)</marimo-tex>.\nIts samples all use the full finite tadpole evaluated by OneLOop.\nThe error is divided by <marimo-tex class=\"arithmatex\">||(\\max(1,|\\partial T/\\partial m|,4N_cym^2)||)</marimo-tex>,\nwhich remains meaningful where the derivative crosses zero.\nBoth derivatives include the numerator mass and the mass dependence\nof the scalar master. Changing the scale control changes the finite\ncoefficients, while the mass derivative keeps that chosen scale fixed.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

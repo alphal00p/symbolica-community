@@ -1,0 +1,80 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "c019bf5fef5f3930d1ecf44a8ccfe1bb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "71b72aa136860946780b208cb6f42bdc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"massive-higgs-decays\">Massive Higgs decays</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/z_decay.py\">Chiral Z decays</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(H\\to f\\bar f||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(H\\to W^-W^+||)</marimo-tex> or <marimo-tex class=\"arithmatex\">||(H\\to ZZ||)</marimo-tex> from the Standard\nModel, retaining the final-particle masses. The calculation sums final spins\nand colors, including all three physical polarizations of each massive vector.\nA scalar Higgs needs no initial spin average.</span>\n<span class=\"paragraph\">These are <strong>on-shell two-body decays above threshold</strong>, <marimo-tex class=\"arithmatex\">||(m_H&gt;2m_f||)</marimo-tex> or\n<marimo-tex class=\"arithmatex\">||(m_H&gt;2m_V||)</marimo-tex>. The <marimo-tex class=\"arithmatex\">||(WW||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(ZZ||)</marimo-tex> results describe a Higgs above those thresholds;\nthey do not describe the off-shell <marimo-tex class=\"arithmatex\">||(WW^*||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(ZZ^*||)</marimo-tex> decays at 125 GeV.</span>\n<span class=\"paragraph\">The reference results are FeynCalc's\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/H-FFbar\" rel=\"noopener noreferrer\" target=\"_blank\">fermion</a>,\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/H-WW\" rel=\"noopener noreferrer\" target=\"_blank\">WW</a>, and\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/H-ZZ\" rel=\"noopener noreferrer\" target=\"_blank\">ZZ</a> examples.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "e4297a8719b83d3d70d062f23e264bcb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='vblA-0' random-id='be71e05a-9ec5-0ac9-45d6-82b7beb13edf'><marimo-dropdown data-initial-value='[&quot;Bottom quarks&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eDecay channel&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Electrons&quot;,&quot;Charm quarks&quot;,&quot;Bottom quarks&quot;,&quot;W bosons&quot;,&quot;Z bosons&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "05ac2f83324a481355bf7afc3473172b",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "e3a9cb5f956bdaa19e04a1d0f3f8f730",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"decay-width\">Decay width</h2>\n<span class=\"paragraph\">Write <marimo-tex class=\"arithmatex\">||(M=m_H||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(r=m^2/M^2||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(\\beta=\\sqrt{1-4r}||)</marimo-tex>. The shared two-body\nphase-space measure is <marimo-tex class=\"arithmatex\">||(d\\Phi_2/d\\Omega=\\beta/(32\\pi^2)||)</marimo-tex> and the rest-frame\ndecay flux is <marimo-tex class=\"arithmatex\">||(2M||)</marimo-tex>. Integrating over solid angle gives\n<marimo-tex class=\"arithmatex\">||(\\Gamma=S\\beta\\sum|\\mathcal M|^2/(16\\pi M)||)</marimo-tex>.</span>\n<span class=\"paragraph\">The identical-particle factor is <strong><marimo-tex class=\"arithmatex\">||(S=1/2!||)</marimo-tex> for <marimo-tex class=\"arithmatex\">||(ZZ||)</marimo-tex></strong> and <marimo-tex class=\"arithmatex\">||(S=1||)</marimo-tex> for the\ndistinct <marimo-tex class=\"arithmatex\">||(W^-W^+||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(f\\bar f||)</marimo-tex> final states. It is applied once, to the\nphase-space integral. For the <marimo-tex class=\"arithmatex\">||(ZZ||)</marimo-tex> comparison we use <marimo-tex class=\"arithmatex\">||(m_W=m_Z\\cos\\theta_W||)</marimo-tex>;\nfor fermions we identify the Yukawa mass with the kinematic mass at tree level.</span>\n<span class=\"paragraph\">The gallery widths, with <marimo-tex class=\"arithmatex\">||(\\alpha=e^2/(4\\pi)||)</marimo-tex>, are</span>\n<marimo-tex class=\"arithmatex\">||[\\Gamma_{f\\bar f}=\\frac{N_c\\alpha M m_f^2}{8m_W^2\\sin^2\\theta_W}\\beta^3,||]</marimo-tex><span class=\"paragraph\">$<marimo-tex class=\"arithmatex\">||(\\Gamma_{WW}=\\frac{\\alpha M^3}{16m_W^2\\sin^2\\theta_W}\n  \\beta(1-4r+12r^2),\\qquad\n  \\Gamma_{ZZ}=\\frac{\\alpha M^3}{32m_W^2\\sin^2\\theta_W}\n  \\beta(1-4r+12r^2).||)</marimo-tex>$\nHere <marimo-tex class=\"arithmatex\">||(N_c=1||)</marimo-tex> for leptons and <marimo-tex class=\"arithmatex\">||(3||)</marimo-tex> for quarks; use the selected final-particle\nmass in <marimo-tex class=\"arithmatex\">||(r||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(\\beta||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "11483403f47a966dc32fe0e254ef1b0a",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Total decay width</strong> in terms of <marimo-tex class=\"arithmatex\">||(M=m_H||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(\\beta||)</marimo-tex>, with <marimo-tex class=\"arithmatex\">||(m^2=M^2(1-\\beta^2)/4||)</marimo-tex>.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/32\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>3\u00b7alpha\u00b7M\u00b7beta-2\u00b7alpha\u00b7M\u00b7beta\u00b3+3\u00b7alpha\u00b7M\u00b7beta\u2075<span style=\"color: rgb(128, 128, 128)\">)</span>\n    /<span style=\"color: rgb(128, 128, 128)\">(</span>sw\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-1+sw<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-1+beta<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>1+sw<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>1+beta<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div><marimo-callout-output data-html='&quot;&#92;u003cspan&#92;u003eThe generated massive squared amplitude and integrated decay width agree with the FeynCalc reference.&#92;u003c/span&#92;u003e&quot;' data-kind='&quot;success&quot;'></marimo-callout-output></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

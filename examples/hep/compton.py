@@ -8,9 +8,11 @@ app = marimo.App(width="medium", app_title="Massive Compton scattering")
 def _():
     import marimo as mo
     from symbolica import E, S
+    from symbolica.community import hep
     from symbolica.community.hep import Model
+    from symbolica.community.spenso import CookSettings, TensorExpression
 
-    return E, Model, S, mo
+    return CookSettings, E, Model, S, TensorExpression, hep, mo
 
 
 @app.cell
@@ -49,15 +51,9 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, mo, qed_model):
-    from symbolica.community import hep as _fk
-    from symbolica.community.spenso import (
-        TensorExpression as _TensorExpression,
-        CookSettings as _CookSettings,
-    )
-
-    _result = _fk.Generator(qed_model).generate(
-        _fk.Process.amplitude([11, 22], [11, 22]).with_loop_count(0, 0),
+def _(CookSettings, E, S, TensorExpression, hep, mo, qed_model):
+    _result = hep.Generator(qed_model).generate(
+        hep.Process.amplitude([11, 22], [11, 22]).with_loop_count(0, 0),
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=["V_98"],
@@ -66,7 +62,7 @@ def _(E, S, mo, qed_model):
     )
     _P = S("gammalooprs::P")
     _s, _t, _u, _me, _e = S("s", "t", "u", "UFO::Me", "UFO::ee")
-    _kin = _fk.Kinematics.mandelstam(
+    _kin = hep.Kinematics.mandelstam(
         [_P(0), _P(1), _P(2), _P(3)], [_me**2, E("0"), _me**2, E("0")], [_s, _t, _u]
     )
     _a, _b, _c, _inv = S("a_", "b_", "c_", "inv_")
@@ -101,14 +97,14 @@ def _(E, S, mo, qed_model):
             * _diagram.numerator_prefactor_expression()
             / _denominator
         )
-    _operator = _TensorExpression(_amplitude.expand())
+    _operator = TensorExpression(_amplitude.expand())
     _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0()
     _conj = S("spenso::conj")
     _wrapper = S("conjugate_index")
     _real_adjoint = _adjoint.replace(_conj(_P(_a, _b)), _P(_a, _b))
     for _real in (_me, _e, _s, _t, _u):
         _real_adjoint = _real_adjoint.replace(_conj(_real), _real)
-    _wrapped = _TensorExpression(_real_adjoint).wrap_indices(_wrapper)
+    _wrapped = TensorExpression(_real_adjoint).wrap_indices(_wrapper)
     _spins = E("1")
     for _pdg, _momentum, _left, _right, _average in [
         (11, _P(0), _ports[0], _wrapper(_ports[2]), True),
@@ -122,7 +118,7 @@ def _(E, S, mo, qed_model):
     _product = _operator.to_expression() * _wrapped * _spins
     compton_squared = (
         _kin.apply(
-            _TensorExpression(_product.expand(), cook_indices=_CookSettings.indices())
+            TensorExpression(_product.expand(), cook_indices=CookSettings.indices())
             .simplify_gamma()
             .expand()
             .to_dots()

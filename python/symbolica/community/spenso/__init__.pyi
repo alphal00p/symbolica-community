@@ -741,6 +741,11 @@ class Slot:
     tensor_expression = TensorName("T")(slot1, slot2)
     ```
     """
+    @property
+    def representation(self) -> Representation:
+        r"""
+        The representation carried by this slot, including its dimension and duality.
+        """
     def __eq__(self, other: builtins.object) -> builtins.bool: ...
     def __repr__(self) -> builtins.str: ...
     def __str__(self) -> builtins.str: ...

@@ -8,9 +8,11 @@ app = marimo.App(width="medium", app_title="Gluon ghost subtraction")
 def _():
     import marimo as mo
     from symbolica import E, Replacement, S
+    from symbolica.community import hep
     from symbolica.community.hep import Model
+    from symbolica.community.spenso import CookSettings, TensorExpression
 
-    return E, Replacement, S, Model, mo
+    return CookSettings, E, Model, Replacement, S, TensorExpression, hep, mo
 
 
 @app.cell
@@ -49,15 +51,11 @@ def _(mo):
 
 
 @app.cell
-def _(E, Replacement, S, ghost_model, mo):
-    from symbolica.community import hep as _fk
-    from symbolica.community.spenso import CookSettings as _CookSettings
-    from symbolica.community.spenso import TensorExpression as _TensorExpression
-
+def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
     _P = S("gammalooprs::P")
     _s, _t, _u, _mass, _gs = S("s", "t", "u", "UFO::MB", "UFO::G")
     _Nc, _dA, _cof, _coad = S("spenso::Nc", "dA", "spenso::cof", "spenso::coad")
-    _kinematics = _fk.Kinematics.mandelstam(
+    _kinematics = hep.Kinematics.mandelstam(
         [_P(0), _P(1), _P(2), _P(3)], [_mass**2, _mass**2, E("0"), E("0")], [_s, _t, _u]
     )
     ghost_results = []
@@ -67,8 +65,8 @@ def _(E, Replacement, S, ghost_model, mo):
         ([-9000005, 9000005], ["V_76", "V_35"], 1),
         ([21, 21], ["V_76", "V_36"], 3),
     ):
-        _generated = _fk.Generator(ghost_model).generate(
-            _fk.Process.amplitude([5, -5], _outgoing).with_loop_count(0, 0),
+        _generated = hep.Generator(ghost_model).generate(
+            hep.Process.amplitude([5, -5], _outgoing).with_loop_count(0, 0),
             max_vertices=2,
             maximum_bridges=None,
             vertex_allow=_vertices,
@@ -111,13 +109,13 @@ def _(E, Replacement, S, ghost_model, mo):
             _d in _denominators
             for _d in ((_s, _t - _mass**2, _u - _mass**2) if _count == 3 else (_s,))
         )
-        _operator = _TensorExpression(_amplitude.expand())
+        _operator = TensorExpression(_amplitude.expand())
         assert len(_operator.interface) == (8 if _count == 3 else 6)
         _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
         _adjoint = _adjoint.replace(_conjugate(_P(_a, _b)), _P(_a, _b))
         for _real in (_mass, _gs, _s, _t, _u):
             _adjoint = _adjoint.replace(_conjugate(_real), _real)
-        _adjoint = _TensorExpression(_adjoint).wrap_indices(_adjoint_index)
+        _adjoint = TensorExpression(_adjoint).wrap_indices(_adjoint_index)
 
         # Match the shared completeness tensor against the dual of each external slot.
         # Matching selects color slots and determines the quark/antiquark orientation.
@@ -165,12 +163,12 @@ def _(E, Replacement, S, ghost_model, mo):
             .replace(_coad(8, _index), _coad(_dA, _index))
         )
         _colored = (
-            _TensorExpression(_generic, cook_indices=_CookSettings.indices())
+            TensorExpression(_generic, cook_indices=CookSettings.indices())
             .simplify_color()
             .to_expression()
             .replace(_dA, _Nc**2 - 1)
         )
-        _colored = _TensorExpression(_colored).to_cof_dimension_invariants()
+        _colored = TensorExpression(_colored).to_cof_dimension_invariants()
 
         # Dirac adjunction exchanges the two endpoints of the open fermion chain.
         # Reduce the fermion trace before introducing the physical gluon projectors.
@@ -180,9 +178,9 @@ def _(E, Replacement, S, ghost_model, mo):
             _P(1), _adjoint_index(_ports[0]), _ports[1], average=True
         )
         _spin_summed = (
-            _TensorExpression(
+            TensorExpression(
                 _colored.to_expression() * _spin_projector,
-                cook_indices=_CookSettings.indices(),
+                cook_indices=CookSettings.indices(),
             )
             .expand()
             .simplify_gamma()
@@ -199,9 +197,9 @@ def _(E, Replacement, S, ghost_model, mo):
                     covariant=True,
                 )
         _scalar = (
-            _TensorExpression(
+            TensorExpression(
                 _spin_summed.to_expression() * _polarizations,
-                cook_indices=_CookSettings.indices(),
+                cook_indices=CookSettings.indices(),
             )
             .expand()
             .simplify_metrics()

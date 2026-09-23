@@ -1,0 +1,67 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "85d5eb0f8f894aca28ba252cef255422",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "fc18d941e889de5be7e4310d5f765ae8",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"electron-anomalous-magnetic-moment\">Electron anomalous magnetic moment</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/ibp_bubble.py\">Unequal-mass bubble</a> \u00b7\n<a href=\"/?file=hep/ibp_phi4.py\">Two-loop \u03c6\u2074</a></span>\n<span class=\"paragraph\">Generate the QED vertex and extract its Pauli form factor, reproducing\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/El-GaEl\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc's one-loop g\u22122 example</a>.\nBoth electrons are on shell, <marimo-tex class=\"arithmatex\">||(p^2=p'^2=m^2||)</marimo-tex>, while the photon probes a\nspacelike momentum transfer <marimo-tex class=\"arithmatex\">||(q=p-p'||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(t=q^2&lt;0||)</marimo-tex>.</span>\n<span class=\"paragraph\">Between the external spinors the vertex has the form\n<marimo-tex class=\"arithmatex\">||((F_1+F_2)\\gamma^\\mu-F_2(p+p')^\\mu/(2m)||)</marimo-tex>.\nShared spin sums close the Dirac traces; a two-by-two Symbolica system\nextracts the coefficient of <marimo-tex class=\"arithmatex\">||((p+p')^\\mu/(2m)||)</marimo-tex>.\nWe project at generic <marimo-tex class=\"arithmatex\">||(t||)</marimo-tex> and take <marimo-tex class=\"arithmatex\">||(t\\to0||)</marimo-tex> only after integration because\nthose two projectors become degenerate at zero momentum transfer.</span>\n<span class=\"paragraph\">All generator weights are retained. Normalizing to the generated tree\nvertex fixes the coupling and external-fermion phase convention. The\ncommon loop measure is <marimo-tex class=\"arithmatex\">||(i/(16\\pi^2)||)</marimo-tex> in the OneLOop normalization.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "32b277572820a90ff93655fcd68076cd",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "d21f788e1bec33b9e1e6c94a4e97eb94",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='bkHC-0' random-id='82fa79c6-c86a-8e79-f4fa-8795bc42ef90'><marimo-slider data-initial-value='0.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003elog10(Q\u00b2/m\u00b2), where t = \u2212Q\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='-3.0' data-stop='2.0' data-step='0.25' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "08fa4718da2306ecc52729649b50e4de",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Spacelike form factor beyond the zero-transfer limit</strong></span>\n<span class=\"paragraph\">The independent parameter formula is\n$<marimo-tex class=\"arithmatex\">||(\\frac{F_2(t)}{\\alpha/(2\\pi)}\n  =\\int_0^1\\!dx\\,\\frac{m^2}{m^2-tx(1-x)}\n  =1+t\\,\\frac{dB_0(t,m^2,m^2)}{dt}.||)</marimo-tex>$\nMove the slider to compare the generated reduction with quadrature\nand the shared OneLOop derivative. The normalized result approaches\none as <marimo-tex class=\"arithmatex\">||(Q^2/m^2\\to0||)</marimo-tex>.</span></span><marimo-ui-element object-id='lEQa-0' random-id='ec62f6bd-5342-ec79-dbc9-f2f24334d15a'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Q\u00b2/m\u00b2&#92;&quot;:100.0,&#92;&quot;Generated F\u2082 / (\u03b1/2\u03c0)&#92;&quot;:0.09070129404715303,&#92;&quot;Parameter integral&#92;&quot;:0.09070129404715056,&#92;&quot;Absolute error&#92;&quot;:2.4702462297909733e-15}]&quot;' data-total-rows='1' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

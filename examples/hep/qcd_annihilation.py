@@ -10,9 +10,11 @@ app = marimo.App(
 def _():
     import marimo as mo
     from symbolica import E, S, Symbol
+    from symbolica.community import hep
     from symbolica.community.hep import Model
+    from symbolica.community.spenso import ColorSimplifySettings, TensorExpression
 
-    return E, S, Symbol, Model, mo
+    return ColorSimplifySettings, E, Model, S, Symbol, TensorExpression, hep, mo
 
 
 @app.cell
@@ -44,15 +46,9 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, Symbol, mo, qcd_model):
-    from symbolica.community import hep as _fk
-    from symbolica.community.spenso import (
-        ColorSimplifySettings as _ColorSimplifySettings,
-    )
-    from symbolica.community.spenso import TensorExpression as _TensorExpression
-
-    _result = _fk.Generator(qcd_model).generate(
-        _fk.Process.cross_section([5, -5], [6, -6]).with_loop_count(1, 1),
+def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model):
+    _result = hep.Generator(qcd_model).generate(
+        hep.Process.cross_section([5, -5], [6, -6]).with_loop_count(1, 1),
         max_vertices=4,
         maximum_bridges=None,
         vertex_allow=["V_76", "V_137"],
@@ -69,7 +65,7 @@ def _(E, S, Symbol, mo, qcd_model):
     _s, _t, _u, _mb, _mt, _gs, _k1, _k2 = S(
         "s", "t", "u", "UFO::MB", "UFO::MT", "UFO::G", "k1", "k2"
     )
-    _kinematics = _fk.Kinematics.mandelstam(
+    _kinematics = hep.Kinematics.mandelstam(
         [_P(0), _P(1), _k1, _k2], [_mb**2, _mb**2, _mt**2, _mt**2], [_s, _t, _u]
     )
     _projector = qcd_diagram.projector_expression()
@@ -87,7 +83,7 @@ def _(E, S, Symbol, mo, qcd_model):
     _bis, _wave, _index, _metric, _left, _right = S(
         "spenso::bis", "wave_", "index_", "spenso::g", "left_", "right_"
     )
-    _slots = _TensorExpression(_numerator).interface
+    _slots = TensorExpression(_numerator).interface
     _color_projector = E("1")
     _initial_color_states = 1
     for _edge in qcd_diagram.external_edges:
@@ -121,7 +117,7 @@ def _(E, S, Symbol, mo, qcd_model):
     assert qcd_model.particle_by_pdg(11).color_sum(_i, _j, average=True) == E("1")
     for _pdg in (5, -5, 21):
         _identity = qcd_model.particle_by_pdg(_pdg).color_sum(_i, _i, average=True)
-        assert _TensorExpression(_identity).simplify_metrics().to_expression() == E("1")
+        assert TensorExpression(_identity).simplify_metrics().to_expression() == E("1")
 
     # A named adjoint dimension is required by Spenso. Impose dA=Nc²-1 after
     # contraction, when the dimensions are ordinary scalar expressions.
@@ -132,9 +128,9 @@ def _(E, S, Symbol, mo, qcd_model):
         .replace(_coad(8, _index), _coad(_dA, _index))
     )
     _contracted = (
-        _TensorExpression(_generic.expand())
+        TensorExpression(_generic.expand())
         .simplify_color(
-            _ColorSimplifySettings(substitute_cof_dimension_invariants=True)
+            ColorSimplifySettings(substitute_cof_dimension_invariants=True)
         )
         .simplify_gamma()
         .expand()
@@ -195,7 +191,7 @@ def _(E, S, Symbol, mo, qcd_model):
     _s_physical = S("s_physical", is_positive=True)
     _costheta, _alpha_s = S("costheta", "alpha_s")
     _pi = Symbol.PI
-    _massless_kinematics = _fk.Kinematics.mandelstam(
+    _massless_kinematics = hep.Kinematics.mandelstam(
         [_P(0), _P(1), _k1, _k2], [E("0")] * 4, [_s_physical, _t, _u]
     )
     _angular = (

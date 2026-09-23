@@ -8,10 +8,11 @@ app = marimo.App(width="medium", app_title="Photon vacuum polarization")
 def _():
     import marimo as mo
     from symbolica import E, S
-    from symbolica.community.hep import Model
+    from symbolica.community import hep
+    from symbolica.community.hep import Model, oneloop
     from symbolica.community.spenso import TensorExpression
 
-    return E, Model, S, TensorExpression, mo
+    return E, Model, S, TensorExpression, hep, mo, oneloop
 
 
 @app.cell
@@ -50,12 +51,9 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, TensorExpression, mo, qed_model):
-    from symbolica.community import hep as _fk
-    from symbolica.community.hep import oneloop as _olo
-
-    _generated = _fk.Generator(qed_model).generate(
-        _fk.Process.amplitude([22], [22]).with_loop_count(1, 1),
+def _(E, S, TensorExpression, hep, mo, oneloop, qed_model):
+    _generated = hep.Generator(qed_model).generate(
+        hep.Process.amplitude([22], [22]).with_loop_count(1, 1),
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=["V_98"],
@@ -91,12 +89,12 @@ def _(E, S, TensorExpression, mo, qed_model):
         .to_dots()
         .to_expression()
     )
-    _kin = _fk.Kinematics(_D, momenta=[_K(0), _P(0)]).with_scalar_product(
+    _kin = hep.Kinematics(_D, momenta=[_K(0), _P(0)]).with_scalar_product(
         _P(0), _P(0), _s
     )
     photon_family = _diagram.integral_family(kinematics=_kin)
     _reducer = (
-        _fk.TensorReducer(_D)
+        hep.TensorReducer(_D)
         .with_integrated_vector(_K(0, _mink(_D)))
         .with_external_vector(_P(0, _mink(_D)))
     )
@@ -138,8 +136,8 @@ def _(E, S, TensorExpression, mo, qed_model):
     photon_uv = _laurent.coefficient(_eps**-1)
     assert (photon_uv + 4 * _charge**2 / 3).together() == 0
     _finite = dict(_laurent.expand().coefficient_list(_eps))[E("1")]
-    _a_coeffs = _olo.master_coefficients(S("oneloopmaster::A0")(_mass**2, E("1")))
-    _b_coeffs = _olo.master_coefficients(
+    _a_coeffs = oneloop.master_coefficients(S("oneloopmaster::A0")(_mass**2, E("1")))
+    _b_coeffs = oneloop.master_coefficients(
         S("oneloopmaster::B0")(_s, _mass**2, _mass**2, E("1"))
     )
     _finite = _finite.replace(_af, _a_coeffs[0]).replace(_bf, _b_coeffs[0])

@@ -11,8 +11,9 @@ app = marimo.App(
 def _():
     import marimo as mo
     from symbolica import E, S
+    from symbolica.community import hep
 
-    return E, S, mo
+    return E, S, hep, mo
 
 
 @app.cell(hide_code=True)
@@ -24,9 +25,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, mo):
-    from symbolica.community import hep as _fk
-
+def _(E, S, hep, mo):
     _D, _k, _p, _mink, _dot = S(
         "angular_demo::D",
         "angular_demo::k",
@@ -35,7 +34,7 @@ def _(E, S, mo):
         "spenso::dot",
     )
     _kc, _pc = _k(_mink(_D)), _p(_mink(_D))
-    _reducer = _fk.TensorReducer(_D).with_integrated_vector(_kc)
+    _reducer = hep.TensorReducer(_D).with_integrated_vector(_kc)
     compact_dot_average = _reducer.reduce(_dot(_kc, _pc) ** 2)
     assert _reducer.reduce(_dot(_kc, _pc)) == E("0")
     assert (compact_dot_average - _dot(_kc, _kc) * _dot(_pc, _pc) / _D).together() == E(

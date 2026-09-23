@@ -1,0 +1,171 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "e7e94bc563316ea69452bafaf037ac38",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "e51ba251023ea95b54c2e17388a5d118",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"massive-electron-self-energy\">Massive electron self-energy</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/qed_renormalization.py\">QED UV renormalization</a> \u00b7\n<a href=\"/?file=hep/gminus2.py\">Electron g\u22122</a> \u00b7\n<a href=\"/?file=hep/electron_two_loop.py\">Two-loop electron</a></span>\n<span class=\"paragraph\">Generate the one-loop electron self-energy in a symbolic covariant gauge,\nproject its two Dirac structures, and reduce the integrals with native IBP.\nThe longitudinal photon creates a <strong>squared photon denominator</strong>. Shared\nOneLOop evaluates the remaining masters, including finite terms and the\nphysical branch cut. A separate Feynman-parameter integral checks the answer.</span>\n<span class=\"paragraph\">Use <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(s=p^2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(m&gt;0||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(a_4=e^2/(16\\pi^2)||)</marimo-tex>.\nThe photon numerator convention is <marimo-tex class=\"arithmatex\">||(-i[g^{\\mu\\nu}-(1-\\xi)k^\\mu k^\\nu/k^2]||)</marimo-tex>;\n<marimo-tex class=\"arithmatex\">||(\\xi=1||)</marimo-tex> is Feynman gauge and <marimo-tex class=\"arithmatex\">||(\\xi=0||)</marimo-tex> is Landau gauge.\nWrite the inverse-propagator insertion as</span>\n<marimo-tex class=\"arithmatex\">||[\\Gamma_2^{(1)}=-i\\Sigma=i a_4[V\\,\\not p+S\\,m].||]</marimo-tex><span class=\"paragraph\">The finite coefficient uses the OneLOop normalization and is <strong>unrenormalized</strong>.\nNo on-shell equation is used to project the off-shell numerator.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "044f055af3597e9eb2b36f702577b9d6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "182027282812c2196cbe8d3c98124041",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "13f04303e5967a3f3d86c0bd578f5ad5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "9a250b87fb1356f23e33dcfaa2bb1936",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Projected scalar integrands and native IBP</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-<span style=\"color: rgb(128, 128, 128)\">(</span>D\u00b7s\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,P<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>-2\u00b7D\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,P<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2\n    +D\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,P<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\n    +2\u00b7xi\u00b7s\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>-xi\u00b7s\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,P<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\n    -xi\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,P<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\n    -2\u00b7s\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>-s\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,P<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\n    +4\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,P<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2\n    -dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,P<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\n<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>s+dot<span style=\"color: rgb(135, 95, 175)\">(</span>K<span style=\"color: rgb(0, 175, 135)\">(</span>0,mink<span style=\"color: rgb(0, 175, 215)\">(</span>D<span style=\"color: rgb(0, 175, 215)\">)</span><span style=\"color: rgb(0, 175, 135)\">)</span>,K<span style=\"color: rgb(0, 175, 135)\">(</span>0,mink<span style=\"color: rgb(0, 175, 215)\">(</span>D<span style=\"color: rgb(0, 175, 215)\">)</span><span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>-2\u00b7dot<span style=\"color: rgb(135, 95, 175)\">(</span>K<span style=\"color: rgb(0, 175, 135)\">(</span>0,mink<span style=\"color: rgb(0, 175, 215)\">(</span>D<span style=\"color: rgb(0, 175, 215)\">)</span><span style=\"color: rgb(0, 175, 135)\">)</span>,P<span style=\"color: rgb(0, 175, 135)\">(</span>0,mink<span style=\"color: rgb(0, 175, 215)\">(</span>D<span style=\"color: rgb(0, 175, 215)\">)</span><span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div><div style=\"white-space: pre-wrap; margin: 0;\">-1<span style=\"color: rgb(205, 205, 0)\">+</span>D<span style=\"color: rgb(205, 205, 0)\">+</span>xi</div><marimo-ui-element object-id='PKri-0' random-id='d8a78531-7b77-9fed-36bd-69e5d7e291da'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;electron power&#92;&quot;:-1,&#92;&quot;photon power&#92;&quot;:2,&#92;&quot;reduction&#92;&quot;:&#92;&quot;0&#92;&quot;},{&#92;&quot;electron power&#92;&quot;:0,&#92;&quot;photon power&#92;&quot;:1,&#92;&quot;reduction&#92;&quot;:&#92;&quot;0&#92;&quot;},{&#92;&quot;electron power&#92;&quot;:0,&#92;&quot;photon power&#92;&quot;:2,&#92;&quot;reduction&#92;&quot;:&#92;&quot;0&#92;&quot;},{&#92;&quot;electron power&#92;&quot;:1,&#92;&quot;photon power&#92;&quot;:0,&#92;&quot;reduction&#92;&quot;:&#92;&quot;I(1,0)&#92;&quot;},{&#92;&quot;electron power&#92;&quot;:1,&#92;&quot;photon power&#92;&quot;:1,&#92;&quot;reduction&#92;&quot;:&#92;&quot;I(1,1)&#92;&quot;},{&#92;&quot;electron power&#92;&quot;:1,&#92;&quot;photon power&#92;&quot;:2,&#92;&quot;reduction&#92;&quot;:&#92;&quot;(D/(-2*Me^2*s+Me^4+s^2)-2/(-2*Me^2*s+Me^4+s^2))*I(1,0)+(-D*s/(-2*Me^2*s+Me^4+s^2)+3*s/(-2*Me^2*s+Me^4+s^2)-Me^2*D/(-2*Me^2*s+Me^4+s^2)+3*Me^2/(-2*Me^2*s+Me^4+s^2))*I(1,1)&#92;&quot;}]&quot;' data-total-rows='6' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><marimo-ui-element object-id='PKri-1' random-id='b6aea473-f79b-bcf3-913e-2ac546a23a5b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;exact_trace_rows&#92;&quot;:0,&#92;&quot;rows&#92;&quot;:28,&#92;&quot;sectors&#92;&quot;:2,&#92;&quot;seeds&#92;&quot;:14}]&quot;' data-total-rows='1' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The projectors are <marimo-tex class=\"arithmatex\">||(\\operatorname{tr}(\\not p\\,N)/(4s)||)</marimo-tex> and\n<marimo-tex class=\"arithmatex\">||(\\operatorname{tr}(N)/(4m)||)</marimo-tex>, with <marimo-tex class=\"arithmatex\">||(\\operatorname{tr}1=4||)</marimo-tex>.\nPinches containing only the massless photon are scaleless and vanish in\nthe shared solver. The two masters are <marimo-tex class=\"arithmatex\">||(A=A_0(m^2;\\mu^2)||)</marimo-tex> and\n<marimo-tex class=\"arithmatex\">||(B=B_0(s;m^2,0;\\mu^2)||)</marimo-tex>; their identification is checked by the family's\nSymanzik polynomials.</span>\n<span class=\"paragraph\"><strong>Native ordered coefficients</strong> (divided by <marimo-tex class=\"arithmatex\">||(i a_4||)</marimo-tex>)</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>D\u00b7xi\u00b7A-D\u00b7xi\u00b7s\u00b7B-2\u00b7xi\u00b7A+2\u00b7xi\u00b7s\u00b7B-Me\u00b2\u00b7D\u00b7xi\u00b7B+2\u00b7Me\u00b2\u00b7xi\u00b7B<span style=\"color: rgb(128, 128, 128)\">)</span>/s</div><div style=\"white-space: pre-wrap; margin: 0;\">-B<span style=\"color: rgb(205, 205, 0)\">+</span>D\u00b7B<span style=\"color: rgb(205, 205, 0)\">+</span>xi\u00b7B</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Amputated coefficients</strong> <marimo-tex class=\"arithmatex\">||(V||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(S||)</marimo-tex> (divided by <marimo-tex class=\"arithmatex\">||(i a_4||)</marimo-tex>)</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-D\u00b7xi\u00b7A+D\u00b7xi\u00b7s\u00b7B+2\u00b7xi\u00b7A-2\u00b7xi\u00b7s\u00b7B+Me\u00b2\u00b7D\u00b7xi\u00b7B-2\u00b7Me\u00b2\u00b7xi\u00b7B<span style=\"color: rgb(128, 128, 128)\">)</span>/s</div><div style=\"white-space: pre-wrap; margin: 0;\">-<span style=\"color: rgb(128, 128, 128)\">(</span>-B+D\u00b7B+xi\u00b7B<span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">$<marimo-tex class=\"arithmatex\">||(V=\\frac{\\xi(D-2)}{2s}[(s+m^2)B-A],\\qquad\n  S=-(D-1+\\xi)B.||)</marimo-tex>$\nThe vector coefficient vanishes identically in Landau gauge.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "0c5ab9dfa110444c3dd6f5dd79f83a30",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "0bf91083f7f48d7b8200abc422535c3d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Laurent expansion, before evaluating the masters</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-xi<span style=\"color: rgb(205, 205, 0)\">+</span>xi\u00b7Bf<span style=\"color: rgb(205, 205, 0)\">-</span>xi\u00b7Af/s<span style=\"color: rgb(205, 205, 0)\">+</span>Me\u00b2\u00b7xi\u00b7Bf/s<span style=\"color: rgb(205, 205, 0)\">+</span>xi/eps</div><div style=\"white-space: pre-wrap; margin: 0;\">2<span style=\"color: rgb(205, 205, 0)\">-</span>3\u00b7Bf<span style=\"color: rgb(205, 205, 0)\">-</span>xi\u00b7Bf<span style=\"color: rgb(205, 205, 0)\">-</span>3/eps<span style=\"color: rgb(205, 205, 0)\">-</span>xi/eps</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Put <marimo-tex class=\"arithmatex\">||(A=m^2/\\epsilon+A_f||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(B=1/\\epsilon+B_f||)</marimo-tex>. Keeping <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex> until\nthis step gives\n$<marimo-tex class=\"arithmatex\">||(V_f=\\xi\\left[\\frac{(s+m^2)B_f-A_f}{s}-1\\right],\\qquad\n  S_f=-(3+\\xi)B_f+2.||)</marimo-tex>$\nThe finite rational terms <marimo-tex class=\"arithmatex\">||(-\\xi||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(+2||)</marimo-tex> come from <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex> multiplying\nthe master poles. Setting <marimo-tex class=\"arithmatex\">||(D=4||)</marimo-tex> before the Laurent expansion loses them.</span>\n<span class=\"paragraph\">At <marimo-tex class=\"arithmatex\">||(s=m^2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(V_f+S_f=-4+3\\log(m^2/\\mu^2)||)</marimo-tex> is independent of gauge.\nThis agrees with the conventional on-shell mass shift\n<marimo-tex class=\"arithmatex\">||(\\Sigma/m=a_4[3/\\epsilon+4-3\\log(m^2/\\mu^2)]||)</marimo-tex>.\nThe value is finite after pole removal; its momentum derivative has an\ninfrared singularity. This notebook does not compute on-shell <marimo-tex class=\"arithmatex\">||(Z_2||)</marimo-tex>.</span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Continuous <marimo-tex class=\"arithmatex\">||(s\\to0||)</marimo-tex> limits</strong>, with <marimo-tex class=\"arithmatex\">||(L=\\log(m^2/\\mu^2)||)</marimo-tex></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7xi<span style=\"color: rgb(205, 205, 0)\">-</span>xi\u00b7L</div><div style=\"white-space: pre-wrap; margin: 0;\">-1<span style=\"color: rgb(205, 205, 0)\">+</span>3\u00b7L<span style=\"color: rgb(205, 205, 0)\">-</span>xi<span style=\"color: rgb(205, 205, 0)\">+</span>xi\u00b7L</div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "2b55bf702c8031aa95e764424551502b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Explore the finite amplitude</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='6fcbfe13-a690-095e-c9c5-6446646944fd'><marimo-number data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eMass m&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.05' data-stop='500.0' data-step='0.05' data-debounce='false' data-full-width='false' data-disabled='false'></marimo-number></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='2d34db73-bb91-3ca5-5ba8-d808f27787a4'><marimo-number data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eScale \u03bc\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.01' data-stop='250000.0' data-step='0.1' data-debounce='false' data-full-width='false' data-disabled='false'></marimo-number></marimo-ui-element></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-2' random-id='b9bb144c-2b6d-af36-25fb-d0237d05e8ff'><marimo-number data-initial-value='-1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003ep\u00b2 / m\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='-10.0' data-stop='10.0' data-step='0.1' data-debounce='false' data-full-width='false' data-disabled='false'></marimo-number></marimo-ui-element><marimo-ui-element object-id='BYtC-3' random-id='d734dff4-92f2-79a2-1111-1e6680b12e49'><marimo-number data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eGauge \u03be&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='-2.0' data-stop='5.0' data-step='0.1' data-debounce='false' data-full-width='false' data-disabled='false'></marimo-number></marimo-ui-element></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "f4ec0a220d2f79568474c5c33d36b4b6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "3268337f1f03e78f1279b0e4d78f2ba5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Kclp-0' random-id='558fdb10-670a-2dc2-22d9-eaf35f8900be'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Structure&#92;&quot;:&#92;&quot;V finite&#92;&quot;,&#92;&quot;OneLOop / exact zero-momentum limit&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Parameter integral&#92;&quot;:&#92;&quot;(-1.021405182655144e-14+0j)&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:1.021405182655144e-14},{&#92;&quot;Structure&#92;&quot;:&#92;&quot;S finite&#92;&quot;,&#92;&quot;OneLOop / exact zero-momentum limit&#92;&quot;:&#92;&quot;(-0.4548225555204377+0j)&#92;&quot;,&#92;&quot;Parameter integral&#92;&quot;:&#92;&quot;(-0.45482255552042083+0j)&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:1.687538997430238e-14}]&quot;' data-total-rows='2' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Parameter check: <strong>passed</strong>. Absolute error 1.7e-14; 120/160-point quadrature difference 1.2e-14.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "ddc992979c89618f4259fcd0e05ae6c8",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Independent parameter check.</strong> Let\n<marimo-tex class=\"arithmatex\">||(\\Delta(x)=xm^2-x(1-x)s-i0||)</marimo-tex> and\n$<marimo-tex class=\"arithmatex\">||(L_0=\\int_0^1\\log\\frac{\\Delta(x)}{\\mu^2}\\,dx,\\qquad\nL_1=\\int_0^1(1-x)\\log\\frac{\\Delta(x)}{\\mu^2}\\,dx.||)</marimo-tex>$\nDirect parameter integration gives <marimo-tex class=\"arithmatex\">||(V_f=-\\xi(1+2L_1)||)</marimo-tex> and\n<marimo-tex class=\"arithmatex\">||(S_f=2+(3+\\xi)L_0||)</marimo-tex>. The quadrature splits at the internal root for\n<marimo-tex class=\"arithmatex\">||(s&gt;m^2||)</marimo-tex>, retaining <marimo-tex class=\"arithmatex\">||(\\log(-a-i0)=\\log a-i\\pi||)</marimo-tex>; the bubble then has positive\nimaginary part. At <marimo-tex class=\"arithmatex\">||(s=0||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(s=m^2||)</marimo-tex>, exact parameter limits avoid a\nremovable zero or an endpoint singularity.</span>\n<span class=\"paragraph\">Near <marimo-tex class=\"arithmatex\">||(s=0||)</marimo-tex>, separate double-precision evaluation of <marimo-tex class=\"arithmatex\">||(A_0||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(B_0||)</marimo-tex> loses\naccuracy in their difference divided by <marimo-tex class=\"arithmatex\">||(s||)</marimo-tex>. The comparison tolerance\naccounts for this conditioning, and the exact symbolic limit is used at zero.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "91d79fbc3b8702f97ef96a31a751fb1f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The exact-<marimo-tex class=\"arithmatex\">||(D||)</marimo-tex> check uses the Abelian limit of\n<a href=\"https://arxiv.org/abs/hep-ph/0008171\" rel=\"noopener noreferrer\" target=\"_blank\">Davydychev, Osland and Saks</a>,\nEqs. (2.19)\u2013(2.21), with their gauge parameter <marimo-tex class=\"arithmatex\">||(\\xi_{\\rm paper}=1-\\xi||)</marimo-tex>.\nAppendix C.6 provides a separate analytic check of the scalar bubble.\nThe <a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/Renormalization2\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc QED example</a>\ndisplays the massive electron self-energy and then extracts its UV part;\nthe notebook here retains its finite coefficient as well.</span>\n<span class=\"paragraph\">Generation, tensor algebra, integral families, IBP and scalar master evaluation\nall use the shared components. The parameter integral above is an independent\ncheck, not a second master-integral evaluator in the Feynkit API.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

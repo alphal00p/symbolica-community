@@ -1,0 +1,106 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "9aba03e7863e60966c9dd2ad62d863fa",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "addedfc6a7f13857b8f59c5dced328ef",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"two-loop-electron-self-energy-feynman-gauge\">Two-loop electron self-energy: Feynman gauge</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/photon_self_energy.py\">Photon self-energy</a> \u00b7\n<a href=\"/?file=hep/ibp_phi4.py\">Two-loop <marimo-tex class=\"arithmatex\">||(\\phi^4||)</marimo-tex></a></span>\n<span class=\"paragraph\">Generate all three massless QED self-energy diagrams in <strong><marimo-tex class=\"arithmatex\">||(\\xi=1||)</marimo-tex></strong>, apply\nthe shared UV expansion, and run the native IBP solver. This reproduces the\nbare ultraviolet poles of the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/TwoLoops/Renormalization-LeAle-Massless\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc example</a>.\nThe photon-bubble diagram carries a symbolic flavor count <marimo-tex class=\"arithmatex\">||(N_f||)</marimo-tex>.</span>\n<span class=\"paragraph\">With <marimo-tex class=\"arithmatex\">||(d=4-2\\epsilon||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(a_4=e^2/(16\\pi^2)||)</marimo-tex>, the displayed pole coefficients\nmultiply <marimo-tex class=\"arithmatex\">||(i a_4^2\\,\\not p||)</marimo-tex>. An auxiliary mass <marimo-tex class=\"arithmatex\">||(M=m_{\\rm UV}^2&gt;0||)</marimo-tex> prevents\ninfrared singularities while expanding through first order in <marimo-tex class=\"arithmatex\">||(p||)</marimo-tex>.\nThe projector is <marimo-tex class=\"arithmatex\">||(\\operatorname{tr}(\\not p\\,\\Gamma)/(4p^2)||)</marimo-tex>; its temporary\nassumption <marimo-tex class=\"arithmatex\">||(p^2\\ne0||)</marimo-tex> drops out of the result.</span>\n<span class=\"paragraph\"><strong>Kernel convention.</strong> Native scattering amplitudes include the external\nWick-order factor for legs <marimo-tex class=\"arithmatex\">||([0,1]||)</marimo-tex>. The conventional amputated kernel orders\nthe fermion pair as <marimo-tex class=\"arithmatex\">||([\\bar\\psi,\\psi]=[1,0]||)</marimo-tex>. Remove only the named\n<code>ExternalFermionOrderingSign</code>; the closed-loop minus sign remains.\nIndependently, the one-loop local rules give\n<marimo-tex class=\"arithmatex\">||(-e^2\\gamma_\\mu\\not k\\gamma^\\mu||)</marimo-tex> and hence\n<marimo-tex class=\"arithmatex\">||(-e^2(2-d)B_0/2||)</marimo-tex>, whose pole is <marimo-tex class=\"arithmatex\">||(+e^2/\\epsilon||)</marimo-tex> before the loop measure.</span>\n<span class=\"paragraph\">Analytic vacuum poles and the one-loop counterterm insertion sum below are\nexplicit reference inputs. This notebook does not generate a subtraction\nforest. Arbitrary <marimo-tex class=\"arithmatex\">||(\\xi||)</marimo-tex> and the finite off-shell self-energy remain outside\nthis calculation.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "7c4a25ed9c130c3944a131ebd650e099",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "49242b0c6b80d6a9d561f9e897cac7e9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "1bd7f01eaecd6f6730485b518c286bd1",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "b19176617868b46b091d82b6e68035aa",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"vacuum-family-and-actual-ibp-reduction\">Vacuum family and actual IBP reduction</h2></span><section class=\"feynkit-integral-family\" style=\"max-width:100%;overflow-x:auto\"><strong>Integral family</strong><div><strong>Loop momenta:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">K<span style=\"color: rgb(0, 95, 175)\">(</span>0<span style=\"color: rgb(0, 95, 175)\">)</span></div>, <div style=\"white-space: pre-wrap; margin: 0;\">K<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div><strong>External momenta:</strong> <em>none</em></div><div><strong>Dimension:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">D</div></div><div>Rank: 3 / 3 &middot; complete &middot; independent</div><table style=\"border-collapse:collapse;margin-top:.4rem\"><caption style=\"text-align:left\">Ordered inverse propagators (3)</caption><tbody><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>1</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">-M<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>2</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">-M<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>1,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>1,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>3</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">-M<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(205, 205, 0)\">-</span>2\u00b7dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>1,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>1,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>1,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr></tbody></table></section><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The 22 scalar targets use a depth-two Laporta search (400 rows from 103 seeds). Its four residuals are <strong>not certified masters</strong>. Verified momentum maps identify three as the same disconnected tadpole product; the fourth is the equal-mass sunset.</span></span><marimo-ui-element object-id='PKri-0' random-id='d5f22ed7-8ea2-bdf1-dda8-e6e591609b91'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Residual powers&#92;&quot;:&#92;&quot;[0, 1, 1]&#92;&quot;},{&#92;&quot;Residual powers&#92;&quot;:&#92;&quot;[1, 0, 1]&#92;&quot;},{&#92;&quot;Residual powers&#92;&quot;:&#92;&quot;[1, 1, 0]&#92;&quot;},{&#92;&quot;Residual powers&#92;&quot;:&#92;&quot;[1, 1, 1]&#92;&quot;}]&quot;' data-total-rows='4' data-total-columns='1' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><marimo-accordion data-labels='[&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eReduced scalar expression before loop measures (in i e\u2074 units)&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;]' data-multiple='false'><div><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>140/9\u00b7D\u00b7M\u00b7Nf\u00b7V-566/81\u00b7D\u00b7M\u00b7V+548/27\u00b7D\u00b7Nf\u00b7T2-70/9\u00b7D\u00b7T2-112/9\u00b7M\u00b7Nf\u00b7V+92/27\u00b7M\u00b7V-112/9\u00b7Nf\u00b7T2\n    +92/27\u00b7T2-632/81\u00b7D\u00b2\u00b7M\u00b7Nf\u00b7V+473/81\u00b7D\u00b2\u00b7M\u00b7V-340/27\u00b7D\u00b2\u00b7Nf\u00b7T2+190/27\u00b7D\u00b2\u00b7T2\n    +43/27\u00b7D\u00b3\u00b7M\u00b7Nf\u00b7V-5/2\u00b7D\u00b3\u00b7M\u00b7V+97/27\u00b7D\u00b3\u00b7Nf\u00b7T2-85/27\u00b7D\u00b3\u00b7T2-7/81\u00b7D\u2074\u00b7M\u00b7Nf\u00b7V\n    +89/162\u00b7D\u2074\u00b7M\u00b7V-11/27\u00b7D\u2074\u00b7Nf\u00b7T2+25/36\u00b7D\u2074\u00b7T2-4/81\u00b7D\u2075\u00b7M\u00b7V-13/216\u00b7D\u2075\u00b7T2\n<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>D\u00b7M\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div></div></marimo-accordion></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "d7f8401c70a9630d1db33cd16890a145",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"analytic-inputs-and-normalization\">Analytic inputs and normalization</h2>\n<span class=\"paragraph\">Define <marimo-tex class=\"arithmatex\">||(L_M=\\log M||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(L_{4\\pi}=\\log(4\\pi)||)</marimo-tex> in the reference's scale\nconvention. For its normalized integrals, the supplied poles are\n$<marimo-tex class=\"arithmatex\">||(T^2=M^2\\left[\\frac1{\\epsilon^2}+\\frac{2(1-L_M)}{\\epsilon}\\right],\n\\qquad V=M\\left[\\frac{3}{2\\epsilon^2}+\\frac{9/2-3L_M}{\\epsilon}\\right].||)</marimo-tex>$\nEach loop restores <marimo-tex class=\"arithmatex\">||(i(4\\pi)^{\\epsilon-2}||)</marimo-tex>. Keeping <marimo-tex class=\"arithmatex\">||(d||)</marimo-tex> symbolic until after\nreduction retains the terms from <marimo-tex class=\"arithmatex\">||(O(\\epsilon)||)</marimo-tex> coefficients times double poles.</span>\n<span class=\"paragraph\">The supplied one-loop insertion sum uses\n<marimo-tex class=\"arithmatex\">||(\\delta Z_\\psi=-1/\\epsilon||)</marimo-tex>,\n<marimo-tex class=\"arithmatex\">||(\\delta Z_A=\\delta Z_\\xi=-4N_f/(3\\epsilon)||)</marimo-tex>,\n<marimo-tex class=\"arithmatex\">||(\\delta Z_e=2N_f/(3\\epsilon)||)</marimo-tex> and the auxiliary photon-mass counterterm\n<marimo-tex class=\"arithmatex\">||(\\delta Z_{A m_{\\rm UV}}=-2N_f/\\epsilon||)</marimo-tex>.\nIn the same <marimo-tex class=\"arithmatex\">||(i a_4^2\\not p||)</marimo-tex> units it is\n$<marimo-tex class=\"arithmatex\">||(-\\frac1{\\epsilon^2}+\n\\frac{4N_f/3+2/3-L_{4\\pi}+L_M}{\\epsilon}.||)</marimo-tex>$\nThe auxiliary-mass and normalization logarithms cancel against the generated\nbare result.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "bb383a228843e19cd7fddf7b7a14290c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Generated bare UV poles</strong> (coefficient of <marimo-tex class=\"arithmatex\">||(i a_4^2\\not p||)</marimo-tex>)</span></span><div style=\"white-space: pre-wrap; margin: 0;\">-17/12/eps<span style=\"color: rgb(205, 205, 0)\">-</span>Lm/eps<span style=\"color: rgb(205, 205, 0)\">+</span>L4pi/eps<span style=\"color: rgb(205, 205, 0)\">-</span>7/3\u00b7Nf/eps<span style=\"color: rgb(205, 205, 0)\">+</span>1/2/eps\u00b2</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Reference one-loop counterterm insertion sum</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>2/3+Lm-L4pi+4/3\u00b7Nf<span style=\"color: rgb(128, 128, 128)\">)</span>/eps<span style=\"color: rgb(205, 205, 0)\">-</span>1/eps\u00b2</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Wave-function renormalization, \u03be = 1</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>Nf\u00b7a4\u00b2/eps<span style=\"color: rgb(205, 205, 0)\">-</span>a4/eps<span style=\"color: rgb(205, 205, 0)\">+</span>3/4\u00b7a4\u00b2/eps<span style=\"color: rgb(205, 205, 0)\">+</span>1/2\u00b7a4\u00b2/eps\u00b2</div><span class=\"markdown prose dark:prose-invert contents\"><marimo-tex class=\"arithmatex\">||[Z_\\psi=1-\\frac{a_4}{\\epsilon} +a_4^2\\left[\\frac1{2\\epsilon^2}+\\frac{4N_f+3}{4\\epsilon}\\right].||]</marimo-tex></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

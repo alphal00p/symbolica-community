@@ -1,0 +1,165 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "043b7e665777ff8bde2a880d768da3ce",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "74675d353c14de870665774ec63f811d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"one-loop-qed-renormalization\">One-loop QED renormalization</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7\n<a href=\"/?file=hep/electron_self_energy.py\">Massive electron self-energy</a> \u00b7\n<a href=\"/?file=hep/gminus2.py\">Electron g\u22122</a> \u00b7\n<a href=\"/?file=hep/photon_two_loop.py\">Two-loop photon</a> \u00b7\n<a href=\"/?file=hep/electron_two_loop.py\">Two-loop electron</a></span>\n<span class=\"paragraph\">Generate the massive electron self-energy, photon self-energy and\nelectron-photon vertex with a <strong>symbolic covariant gauge parameter</strong> <marimo-tex class=\"arithmatex\">||(\\xi||)</marimo-tex>.\nGenerate the counterterm diagrams from local model rules as well. Their\nultraviolet poles determine all six constants in the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/Renormalization\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc reference</a>.</span>\n<span class=\"paragraph\">The model's photon numerator is\n<marimo-tex class=\"arithmatex\">||(-i[g^{\\mu\\nu}-(1-\\xi)q^\\mu q^\\nu/q^2]||)</marimo-tex>.\nFeynkit expands each graph at large loop momentum, keeping the mass\ncorrections through its degree of divergence. Shared Dirac traces and\nvacuum tensor reduction feed the native IBP solver.</span>\n<span class=\"paragraph\">We use <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(a_4=e^2/(16\\pi^2)||)</marimo-tex> and\n<marimo-tex class=\"arithmatex\">||(M=m_{\\rm UV}^2&gt;0||)</marimo-tex>. The supplied analytic input is the tadpole pole\n<marimo-tex class=\"arithmatex\">||(I(1)=M/\\epsilon+O(1)||)</marimo-tex> in the <marimo-tex class=\"arithmatex\">||(i/(16\\pi^2)||)</marimo-tex> loop measure.\nThe auxiliary mass cancels from every pole in this full massive UV expansion.\nBelow, compare it with the massless reference's direct massification prescription\nand choose MS or MSbar subtraction. The displayed finite subtraction constants\nare scheme conversions; this UV calculation does not give finite off-shell amplitudes.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "28228be2f597e0544b30de0bc9bb0091",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "00c6f54b43bd2a5bca11369bcc8302f8",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "36c24154418634731970831e8d72add9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Generated QED one-loop: symbolic gauge, four IBP targets, six generated CT diagrams and Ward identities passed {'exact_trace_rows': 0, 'rows': 4, 'sectors': 1, 'seeds': 4}\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "PKri",
+      "code_hash": "7ed522462541fb8d8afae078fd5b3352",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "7e98495efb181826bc25cc0e7cee449b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Massless QED: literal n=0 IRR, full-UV contrast, five generated CT coefficients and Ward identities passed {'exact_trace_rows': 0, 'rows': 4, 'sectors': 1, 'seeds': 4}\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "2291060ec94cda8bfb3748cf092581c2",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "df2033d01de717ad7e05ca391aeffdbb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Generated QED CT amplitudes: MS/MSbar conversion and OneLOop measure checks passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "f98207d85c9f88ee3fd08fcd37336c50",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"ms-and-msbar-at-the-same-scale\">MS and MSbar at the same scale</h2>\n<span class=\"paragraph\">The <a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/Renormalization2\" rel=\"noopener noreferrer\" target=\"_blank\">second QED reference</a>\ncompares <marimo-tex class=\"arithmatex\">||(\\Delta=1/\\epsilon+c_\\Delta||)</marimo-tex> with <marimo-tex class=\"arithmatex\">||(1/\\epsilon||)</marimo-tex>, where\n<marimo-tex class=\"arithmatex\">||(c_\\Delta=\\log(4\\pi)-\\gamma_E||)</marimo-tex>. With <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex>,\n<marimo-tex class=\"arithmatex\">||(-2/(D-4)=1/\\epsilon||)</marimo-tex>.</span>\n<span class=\"paragraph\"><a href=\"https://arxiv.org/abs/1007.4716\" rel=\"noopener noreferrer\" target=\"_blank\">OneLOop, Eq. (2)</a> divides its masters by\n<marimo-tex class=\"arithmatex\">||(r_\\Gamma=\\Gamma(1-\\epsilon)^2\\Gamma(1+\\epsilon)/\\Gamma(1-2\\epsilon)||)</marimo-tex>.\nConverting to <marimo-tex class=\"arithmatex\">||(\\mu^{2\\epsilon}\\int d^D\\ell/(2\\pi)^D||)</marimo-tex>, with the common\n<marimo-tex class=\"arithmatex\">||(i/(16\\pi^2)||)</marimo-tex> stripped off, multiplies the result by</span>\n<marimo-tex class=\"arithmatex\">||[(4\\pi)^\\epsilon r_\\Gamma=1+c_\\Delta\\epsilon+O(\\epsilon^2).||]</marimo-tex><span class=\"paragraph\">Thus a normalized master <marimo-tex class=\"arithmatex\">||(P/\\epsilon+F||)</marimo-tex> becomes\n<marimo-tex class=\"arithmatex\">||(P/\\epsilon+F+c_\\Delta P||)</marimo-tex>. MS subtracts its pole; MSbar subtracts its pole\nand the <marimo-tex class=\"arithmatex\">||(c_\\Delta P||)</marimo-tex> term. Actual OneLOop tadpole and bubble values check this\nconversion independently, and the generated CT amplitudes cancel the\ncorresponding loop terms in both schemes.</span>\n<span class=\"paragraph\">The finite column below is the counterterm's <strong>subtraction constant</strong> at a\ncommon scale. It is not a computed finite loop amplitude.</span></span><marimo-ui-element object-id='RGSE-0' random-id='fd09565e-cfe4-f7be-8794-f01e9221a3db'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Z\u03c8&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;-xi/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;-(eps*xi*cDelta+xi)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zm&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;-3/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;-3*(1+eps*cDelta)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZA&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;-4/3*Nf/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;-4/3*(eps*Nf*cDelta+Nf)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Z\u03be&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;-4/3*Nf/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;-4/3*(eps*Nf*cDelta+Nf)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Ze&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;2/3*Nf/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;2/3*(eps*Nf*cDelta+Nf)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZAm&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;0&#92;&quot;}]&quot;' data-total-rows='6' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "b5e692cc468a501756e369004ad1ea6b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Kclp-0' random-id='f67d2e38-e785-03f9-d406-6626820d6985'><marimo-slider data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eGauge parameter \u03be&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.0' data-stop='3.0' data-step='0.25' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='Kclp-1' random-id='6541875c-d49a-4765-3f63-5e615563309f'><marimo-slider data-initial-value='1' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eIdentical charged flavors Nf&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='1' data-stop='6' data-step='1' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='Kclp-2' random-id='f60dc0fe-8487-c0c3-8b93-86c25ce05d71'><marimo-dropdown data-initial-value='[&quot;MSbar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSubtraction scheme&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;MSbar&quot;,&quot;MS&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "25844b388e755025447e003f45910aef",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Counterterms</strong> <marimo-tex class=\"arithmatex\">||(Z=1+a_4\\delta Z||)</marimo-tex> \u2014 vary gauge, flavor count and scheme.</span></span><div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massive / full UV</strong></span></span><marimo-ui-element object-id='emfo-0' random-id='6975dd0e-41be-5835-bd45-c9177669b216'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Z\u03c8&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-1.0,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-1.953808582067758},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zm&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-3.0,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-5.861425746203274},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZA&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-1.3333333333333333,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-2.605078109423677},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Z\u03be&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-1.3333333333333333,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-2.605078109423677},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Ze&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:0.6666666666666666,&#92;&quot;Finite subtraction coefficient&#92;&quot;:1.3025390547118385},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZAm&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:0.0,&#92;&quot;Finite subtraction coefficient&#92;&quot;:0.0}]&quot;' data-total-rows='6' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div><div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massless / direct massification</strong></span></span><marimo-ui-element object-id='emfo-1' random-id='0863118d-9914-effe-9e4f-732e1803c9a3'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Z\u03c8&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-1.0,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-1.953808582067758},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZA&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-1.3333333333333333,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-2.605078109423677},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Z\u03be&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-1.3333333333333333,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-2.605078109423677},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Ze&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:0.6666666666666666,&#92;&quot;Finite subtraction coefficient&#92;&quot;:1.3025390547118385},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZAm&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-2.0,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-3.907617164135516}]&quot;' data-total-rows='5' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Ward residuals: <strong>0.0e+00</strong> (massive), <strong>0.0e+00</strong> (massless).</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

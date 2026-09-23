@@ -11,6 +11,7 @@ app = marimo.App(
 def _():
     import marimo as mo
     from copy import copy
+    from typing import TypedDict
     from symbolica import S, E, Expression, Symbol
     from symbolica.community.spenso import (
         ColorSimplifySettings,
@@ -23,6 +24,11 @@ def _():
     from symbolica.community.hep import Model, SnailFilterOptions, FeynmanDiagram
     from symbolica.community.hep.oneloop import A0
 
+    class UVRow(TypedDict):
+        loop: str
+        transverse: TensorExpression
+        longitudinal: TensorExpression
+
     return (
         A0,
         ColorSimplifySettings,
@@ -32,10 +38,10 @@ def _():
         Model,
         Representation,
         S,
-        Symbol,
         TensorExpression,
         TensorName,
         TensorPattern,
+        UVRow,
         copy,
         dot,
         mo,
@@ -92,55 +98,89 @@ def _(A0):
 
 
 @app.cell
-def _(ColorSimplifySettings, TensorExpression):
+def _(
+    ColorSimplifySettings,
+    D,
+    E,
+    Expression,
+    FeynmanDiagram,
+    TensorExpression,
+    adjoint,
+):
     color_settings = ColorSimplifySettings(
         substitute_cof_dimension_invariants=True,
     )
 
-    def contract_indices(expression: TensorExpression) -> TensorExpression:
-        """Close internal Dirac, color, and Lorentz indices, retaining external ports."""
-        # Idenso iterates internally, but gamma-chain collection precedes its loop.
-        # The bottom numerator still needs a second call to close newly exposed chains.
-        for _ in range(12):
-            # Scalar Casimirs are currently mistaken for unresolved tensor ports.
-            # Resolve them in Idenso before the typed result re-infers its ports.
-            simplified = (expression.expand().simplify_gamma()
-                          .simplify_color(color_settings).simplify_metrics().expand())
-            if simplified == expression:
-                return simplified
-            expression = simplified
-        raise RuntimeError('Tensor contractions did not reach a fixed point')
+    def project_color(diagram: FeynmanDiagram) -> tuple[Expression, TensorExpression]:
+        """Close color first and return its global factor and the remaining numerator."""
+        numerator = diagram.numerator_expression().with_lorentz_dimension(D)
+        a, b = [slot for slot in numerator.interface if slot.representation == adjoint]
+        color_projector = TensorExpression.g(adjoint)(a, b) / adjoint.dimension
+        color_factor = None
+        stripped = E("0")
+        # Selectively expand color structures, leaving Lorentz/Dirac sums intact.
+        for structure, coefficient in numerator.expand_color():
+            # Multiply explicit Einstein indices without compact-chain inference.
+            color = TensorExpression(structure * color_projector.to_expression())
+            color = color.simplify_color(color_settings)
+            if not color.is_scalar:
+                raise ValueError("Color projection left uncontracted indices")
+            scalar = color.to_expression()
+            if scalar == E("0"):
+                continue
+            if color_factor is None:
+                color_factor = scalar
+            # Four-gluon vertices can have several color structures. Retain their
+            # relative factors inside, while keeping one common factor outside.
+            stripped += (scalar / color_factor).cancel() * coefficient
+        return (
+            E("0") if color_factor is None else color_factor,
+            TensorExpression(stripped),
+        )
 
-    return (contract_indices,)
+    return (project_color,)
 
 
 @app.cell
-def _(D, FeynmanDiagram, P, TensorExpression, adjoint, lorentz, p2):
-    def external_projector(diagram: FeynmanDiagram, *, longitudinal=False) -> TensorExpression:
-        """Color-average the transverse trace (or the longitudinal Ward check).
+def _(D, P, S, TensorExpression, lorentz, p2):
+    def external_projector(
+        numerator: TensorExpression, *, longitudinal=False
+    ) -> TensorExpression:
+        """Project the Lorentz trace after the separate color average.
 
-        P_T = delta_ab (g_mu_nu - p_mu p_nu/p^2) / [8 (D-1)].
-        Thus P_T . [delta_ab (p^2 g_mu_nu - p_mu p_nu) Pi] = p^2 Pi.
+        P_T = (g_mu_nu - p_mu p_nu/p^2) / (D-1).
+        Thus P_T . [(p^2 g_mu_nu - p_mu p_nu) Pi] = p^2 Pi.
         """
-        slots = diagram.numerator_expression().with_lorentz_dimension(D).interface
-        mu, nu = [slot for slot in slots if slot.to_expression().get_name() == 'spenso::mink']
-        a, b = [slot for slot in slots if slot.to_expression().get_name() == 'spenso::coad']
-        color_metric = TensorExpression.g(adjoint)(a, b)
+        if numerator == 0:
+            return numerator
+        mu, nu = [
+            slot for slot in numerator.interface if slot.representation == lorentz
+        ]
         momentum_pair = P(mu).outer(P(nu)) / p2
         if longitudinal:
-            return color_metric.outer(momentum_pair) / 8
+            return momentum_pair
         lorentz_metric = TensorExpression.g(lorentz)(mu, nu)
-        return color_metric.outer(lorentz_metric - momentum_pair) / (8 * (D - 1))
+        return (lorentz_metric - momentum_pair) / (D - 1)
 
-    def apply_projector(numerator: TensorExpression, projector: TensorExpression) -> TensorExpression:
+    def apply_projector(
+        numerator: TensorExpression, projector: TensorExpression
+    ) -> TensorExpression:
         """Contract every named external slot with its matching projector slot."""
+        if numerator == 0:
+            return numerator
         if set(numerator.list_dangling()) != set(projector.list_dangling()):
-            raise ValueError('Numerator and projector must have matching external slots')
-        # Multiple compatible ports make implicit multiplication ambiguous.
-        # Selecting one pair also contracts the remaining matching Einstein indices.
-        right = projector.interface.index(numerator.interface[0])
-        return numerator.contract(projector, left=0, right=right).schoonschip_net(
-            expand_contracted_sums=True,
+            raise ValueError(
+                "Numerator and projector must have matching external slots"
+            )
+        # Preserve the named Einstein indices when attaching the projector.
+        # Contract connected factors first. Only distribute residual metric
+        # structures; scalar coefficients and unrelated sums stay factored.
+        return (
+            TensorExpression(numerator.to_expression() * projector.to_expression())
+            .schoonschip_net(expand_contracted_sums=True)
+            .to_dots()
+            .expand(S("spenso::g"))
+            .schoonschip_net(expand_contracted_sums=True)
         )
 
     return apply_projector, external_projector
@@ -148,35 +188,33 @@ def _(D, FeynmanDiagram, P, TensorExpression, adjoint, lorentz, p2):
 
 @app.cell
 def _(FeynmanDiagram, K, P, S, TensorExpression, TensorPattern, index_):
-    def route_momenta(diagram: FeynmanDiagram, expression: TensorExpression) -> TensorExpression:
+    def route_momenta(
+        diagram: FeynmanDiagram, expression: TensorExpression
+    ) -> TensorExpression:
         """Route edge momenta through the graph, then name the basis vectors k and p."""
         if diagram.loop_count != 1 or len(diagram.external_edges) != 2:
-            raise ValueError('This example requires a one-loop two-point graph')
+            raise ValueError("This example requires a one-loop two-point graph")
         routed = diagram.loop_momentum_basis.route_expression(expression)
         # The wildcard stands for a whole slot or compact representation.
-        routed = routed.replace(S('gammalooprs::K')(0, index_), TensorPattern(K, ports=[index_]))
-        routed = routed.replace(S('gammalooprs::P')(0, index_), TensorPattern(P, ports=[index_]))
-        return TensorExpression(routed.expand())
+        routed = routed.replace(
+            S("gammalooprs::K")(0, index_), TensorPattern(K, ports=[index_])
+        )
+        routed = routed.replace(
+            S("gammalooprs::P")(0, index_), TensorPattern(P, ports=[index_])
+        )
+        return TensorExpression(routed)
 
     return (route_momenta,)
 
 
 @app.cell
-def _(Expression, FeynmanDiagram, Model, S, index_):
-    def diagram_weight(diagram: FeynmanDiagram, model: Model) -> Expression:
-        """Evaluate provenance factors and supply the closed-ghost-loop sign.
-
-        The current closed_fermion_loop_count only counts
-        is_fermion() particles (UFO spin 2), excluding spin -1 FP ghosts.
-        This example therefore includes their Grassmann minus explicitly.
-        """
-        factor = diagram.overall_factor_expression() * diagram.numerator_prefactor_expression()
-        for name in ('AutG', 'CouplingsMultiplicity', 'ExternalFermionOrderingSign',
-                     'InternalFermionLoopSign', 'AntiFermionSpinSumSign'):
-            factor = factor.replace(S('feynkit_generator_factor::' + name)(index_), index_)
-        if all(model.particle(edge.particle_name).spin == -1 for edge in diagram.internal_edges):
-            factor = -factor
-        return factor
+def _(Expression, FeynmanDiagram):
+    def diagram_weight(diagram: FeynmanDiagram) -> Expression:
+        """Evaluate native graph factors, including the closed-ghost-loop sign once."""
+        return (
+            diagram.overall_factor_expression(evaluate=True)
+            * diagram.numerator_prefactor_expression()
+        )
 
     return (diagram_weight,)
 
@@ -228,21 +266,41 @@ def _(Expression, TensorExpression, dot_pattern, k, mUV, mass2_, prop, q_, t):
 
 
 @app.cell
-def _(Expression, FeynmanDiagram, MOMENTUM, TensorExpression, TensorPattern, dot, index_, k, k2, lorentz):
-    def uv_tensor_input(expression: Expression, diagram: FeynmanDiagram) -> TensorExpression:
+def _(
+    Expression,
+    FeynmanDiagram,
+    MOMENTUM,
+    TensorExpression,
+    TensorPattern,
+    dot,
+    index_,
+    k,
+    k2,
+    lorentz,
+):
+    def uv_tensor_input(
+        expression: Expression, diagram: FeynmanDiagram
+    ) -> TensorExpression:
         """Name the loop vector with its graph edge, retaining compact dot products."""
-        loop_edge, = diagram.loop_momentum_basis.loop_edges
+        (loop_edge,) = diagram.loop_momentum_basis.loop_edges
         # The reducer handles mixed dot powers and their independent contractions;
         # radial dot(Q,Q) factors remain scalar coefficients.
         return TensorExpression(expression.replace(k, MOMENTUM(loop_edge, lorentz)))
 
-    def uv_scalar_invariants(expression: Expression, diagram: FeynmanDiagram) -> TensorExpression:
+    def uv_scalar_invariants(
+        expression: Expression, diagram: FeynmanDiagram
+    ) -> TensorExpression:
         """Restore the notebook's loop square after reduction."""
-        loop_edge, = diagram.loop_momentum_basis.loop_edges
+        (loop_edge,) = diagram.loop_momentum_basis.loop_edges
         loop_vector = MOMENTUM(loop_edge, lorentz)
-        reduced = expression.replace(dot(loop_vector, loop_vector), k2).expand()
-        if reduced.replace(TensorPattern(MOMENTUM, args=[loop_edge], ports=[index_]), 0) != reduced:
-            raise ValueError('Tensor reduction left an unreduced loop momentum')
+        reduced = expression.replace(dot(loop_vector, loop_vector), k2)
+        if (
+            reduced.replace(
+                TensorPattern(MOMENTUM, args=[loop_edge], ports=[index_]), 0
+            )
+            != reduced
+        ):
+            raise ValueError("Tensor reduction left an unreduced loop momentum")
         return TensorExpression(reduced)
 
     return uv_scalar_invariants, uv_tensor_input
@@ -252,10 +310,10 @@ def _(Expression, FeynmanDiagram, MOMENTUM, TensorExpression, TensorPattern, dot
 def _(D, TensorExpression, k, k2, uv_probe):
     def uv_pole_residue(expression: TensorExpression) -> TensorExpression:
         """Extract the logarithmic radial tail: its one-loop pole is i/(16*pi^2*eps)."""
-        tail = expression.replace(k, k/uv_probe)
+        tail = expression.replace(k, k / uv_probe)
         # Include the one-loop measure and keep its scale-independent term.
-        logarithmic = (tail/uv_probe**4).series(uv_probe, 0, 0)[0]
-        return TensorExpression((logarithmic*k2**2).expand().cancel().replace(D, 4).expand())
+        logarithmic = (tail / uv_probe**4).series(uv_probe, 0, 0)[0]
+        return TensorExpression((logarithmic * k2**2).replace(D, 4).expand(k2))
 
     return (uv_pole_residue,)
 
@@ -279,17 +337,25 @@ def _(
         """Expand an expression copy, with numerator and massive UV denominators together."""
         uv_copy = copy(expression)
         deformed = uv_deform(uv_copy)
-        measure_factor = t**(-4*diagram.loop_count)
+        measure_factor = t ** (-4 * diagram.loop_count)
         with_measure = evaluate_propagators(deformed) * measure_factor
         # Retain every UV-divergent power, then remove the measure bookkeeping.
-        series = TensorExpression((with_measure.series(t, 0, 0).to_expression()/measure_factor).expand())
-        reduced = uv_scalar_invariants(
-            diagram.tensor_reduce(D, expression=uv_tensor_input(series, diagram)), diagram
+        series = TensorExpression(
+            (with_measure.series(t, 0, 0).to_expression() / measure_factor).expand(t)
         )
-        counterterm = TensorExpression(-reduced.replace(t, 1).expand())
-        return {'copy': uv_copy, 'deformed': deformed, 'series': series,
-                'reduced': reduced, 'counterterm': counterterm,
-                'residue': -uv_pole_residue(counterterm)}
+        reduced = uv_scalar_invariants(
+            diagram.tensor_reduce(D, expression=uv_tensor_input(series, diagram)),
+            diagram,
+        )
+        counterterm = TensorExpression(-reduced.replace(t, 1))
+        return {
+            "copy": uv_copy,
+            "deformed": deformed,
+            "series": series,
+            "reduced": reduced,
+            "counterterm": counterterm,
+            "residue": -uv_pole_residue(counterterm),
+        }
 
     return (uv_expansion_data,)
 
@@ -315,7 +381,7 @@ def _(Model, mo):
     model = Model(model_path)
     g = model.particle("g")
     g
-    return g, model, model_path
+    return g, model
 
 
 @app.cell(hide_code=True)
@@ -426,12 +492,14 @@ def _(diagram, highlight_selection):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""
+    mo.md(r"""
     ## Inspect the numerator
 
-    The Feynman rules return a `TensorExpression`. Below we contract internal
-    Dirac, color, and Lorentz indices, keeping the two external gluon indices.
-    Lorentz slots are continued to symbolic $D$ before contraction.
+    The Feynman rules return a `TensorExpression`. First project the external
+    color indices with $\delta^{ab}/8$ and contract all color tensors. Keep
+    the resulting scalar as a global factor $C_{\rm color}$ throughout.
+    The remaining expressions contain only Lorentz and Dirac tensors, with
+    Lorentz slots continued to symbolic $D$ before contraction.
     """)
     return
 
@@ -477,6 +545,32 @@ def _(mUV, s):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    ### Project and contract color
+
+    Write the color-averaged numerator as $C_{\rm color}\,\widehat N$.
+    All subsequent numerator and UV expressions show $\widehat N$ with
+    $C_{\rm color}$ kept outside. If a vertex has several color structures,
+    their relative coefficients remain in $\widehat N$.
+    """)
+    return
+
+
+@app.cell
+def _(diagram, project_color):
+    color_factor, color_stripped_numerator = project_color(diagram)
+    color_factor
+    return color_factor, color_stripped_numerator
+
+
+@app.cell
+def _(color_stripped_numerator):
+    color_stripped_numerator
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     ### Collect bispinor chains
 
     Choose a diagram containing a bottom-quark line in **Particles in the loop**
@@ -488,10 +582,9 @@ def _(mo):
 
 
 @app.cell
-def _(D, diagram):
+def _(color_stripped_numerator):
     bispinor_numerator = (
-        diagram.numerator_expression()
-        .with_lorentz_dimension(D)
+        color_stripped_numerator
         .schoonschip()
         .collect_gamma_chains()
         # Collection exposes identity factors in the massive propagator terms.
@@ -503,26 +596,32 @@ def _(D, diagram):
 
 
 @app.cell
-def _(D, contract_indices, diagram):
-    # Continue Lorentz slots to D, retaining the external tensor interface.
-    contracted_numerator = contract_indices(
-        diagram.numerator_expression().with_lorentz_dimension(D)
+def _(color_stripped_numerator):
+    # Native simplifiers reach a fixed point internally. The network contracts
+    # connected factors incrementally, leaving unrelated scalar sums factored.
+    contracted_numerator = color_stripped_numerator.simplify_gamma().schoonschip_net(
+        expand_contracted_sums=True
     )
     contracted_numerator
     return (contracted_numerator,)
 
 
+@app.cell
+def _():
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Project the external indices
+    ## Project the external Lorentz indices
 
-    For off-shell $p^2\ne0$, use the transverse, color-averaged projector
-    $$\mathcal P^{ab}_{\mu\nu}=
-    \frac{\delta^{ab}}{8(D-1)}
+    Color has already been averaged. For off-shell $p^2\ne0$, use
+    $$\mathcal P_{\mu\nu}=
+    \frac{1}{D-1}
     \left(g_{\mu\nu}-\frac{p_\mu p_\nu}{p^2}\right).$$
     It extracts $p^2\Pi_T$ from
-    $\delta^{ab}(p^2g^{\mu\nu}-p^\mu p^\nu)\Pi_T$.
+    $(p^2g^{\mu\nu}-p^\mu p^\nu)\Pi_T$.
     This replaces the default external polarization vectors; it is not an
     additional polarization sum. The helper reads the actual external slots.
     """)
@@ -530,8 +629,8 @@ def _(mo):
 
 
 @app.cell
-def _(diagram, external_projector):
-    projector = external_projector(diagram)
+def _(color_stripped_numerator, external_projector):
+    projector = external_projector(color_stripped_numerator)
     projector
     return (projector,)
 
@@ -545,23 +644,22 @@ def _(diagram):
 @app.cell
 def _(
     apply_projector,
-    contract_indices,
     contracted_numerator,
     diagram,
     projector,
     route_momenta,
 ):
     routed_numerator = route_momenta(diagram, contracted_numerator)
-    projected_numerator = contract_indices(apply_projector(routed_numerator, projector)).to_dots().expand()
+    projected_numerator = apply_projector(routed_numerator, projector).to_dots()
     projected_numerator
     return (projected_numerator,)
 
 
 @app.cell
 def _(TensorExpression, diagram, diagram_weight, model, projected_numerator):
-    weighted_projected_numerator = TensorExpression(model.expand_couplings(
-        projected_numerator * diagram_weight(diagram, model)
-    )).expand()
+    weighted_projected_numerator = TensorExpression(
+        model.expand_couplings(projected_numerator * diagram_weight(diagram))
+    )
     weighted_projected_numerator
     return (weighted_projected_numerator,)
 
@@ -570,9 +668,10 @@ def _(TensorExpression, diagram, diagram_weight, model, projected_numerator):
 def _(mo):
     mo.md("""
     The last expression includes the symmetry factor and closed-loop signs,
-    with the model couplings expressed through `UFO::G`.
-    The current generator's loop-sign counter excludes
-    spin −1 ghosts: `diagram_weight` supplies their Grassmann minus explicitly.
+    with the model couplings expressed through `UFO::G`. The global
+    `color_factor` remains separate from this expression and the UV steps.
+    The native graph factor already includes the Grassmann minus for each
+    closed ghost loop; `diagram_weight` evaluates it without an extra sign.
     All algebra functions are defined in the notebook cells above.
 
     The cells below expand an expression copy, apply FeynKit's tensor reduction,
@@ -607,8 +706,9 @@ def _(mo):
 
     Read each internal edge's mass from the model and use
     the graph's momentum routing. Here `prop(q, M2)` denotes $1/(q^2-M^2)$.
-    Copy the full projected integrand and scale $k\to k/t$ in numerator and
-    propagators together. After extracting $t^2$ from each propagator, apply
+    Copy the projected integrand with $C_{\rm color}$ kept outside and scale
+    $k\to k/t$ in numerator and propagators together.
+    After extracting $t^2$ from each propagator, apply
     $$\operatorname{prop}(k+tp,t^2m^2)\longrightarrow
     \operatorname{prop}(k+tp,t^2m^2+(1-t^2)m_{\rm UV}^2).$$
     At $t=1$ this recovers the physical integrand; at $t=0$ the denominator is
@@ -627,8 +727,8 @@ def _(mo):
 def _(diagram, graph_propagators, model, weighted_projected_numerator):
     graph_propagator_product = graph_propagators(diagram, model)
     if not weighted_projected_numerator.is_scalar:
-        raise ValueError('Contract all external indices before taking the UV series')
-    projected_integrand = weighted_projected_numerator.expand() * graph_propagator_product
+        raise ValueError("Contract all external indices before taking the UV series")
+    projected_integrand = weighted_projected_numerator * graph_propagator_product
     projected_integrand
     return (projected_integrand,)
 
@@ -646,7 +746,7 @@ def _(mo):
     The same massive expansion is available directly on a diagram. It retains
     every UV-divergent order automatically and returns the additive local
     counterterm in edge momenta with tagged `denom` propagators. Diagram-wide
-    weights and projectors remain separate. Pass `numerator=` for a prepared
+    weights and Lorentz projectors remain separate. Pass `numerator=` for a prepared
     numerator, or call `diagram.filter(...).uv_counterterm(mUV)` to expand a selected region.
     This is a single UV limit, before forest subtraction and pole integration.
     """)
@@ -654,8 +754,8 @@ def _(mo):
 
 
 @app.cell
-def _(diagram, mUV):
-    diagram_local_uv_counterterm = diagram.uv_counterterm(mUV)
+def _(color_stripped_numerator, diagram, mUV):
+    diagram_local_uv_counterterm = diagram.uv_counterterm(mUV, numerator=color_stripped_numerator)
     diagram_local_uv_counterterm
     return
 
@@ -709,7 +809,7 @@ def _(D, diagram, uv_routed_series):
 @app.cell
 def _(TensorExpression, diagram, t, uv_scalar_invariants, uv_tensor_reduced):
     uv_reduced_series = uv_scalar_invariants(uv_tensor_reduced, diagram)
-    uv_reduced_expression = TensorExpression(uv_reduced_series.replace(t, 1).expand())
+    uv_reduced_expression = TensorExpression(uv_reduced_series.replace(t, 1))
     uv_reduced_expression
     return (uv_reduced_series,)
 
@@ -726,23 +826,24 @@ def _(mo):
     The integrated pole is determined by the coefficient of $1/(k^2)^2$
     in its large-$k$ radial expansion. With $D=4-2\epsilon$ and measure
     $d^Dk/(2\pi)^D$, multiply that coefficient by $i/(16\pi^2\epsilon)$.
-    The auxiliary $m_{\rm UV}$ cancels from this coefficient. Finite parts
-    are not evaluated.
+    The auxiliary $m_{\rm UV}$ cancels from this coefficient. Restore
+    $C_{\rm color}$ once, when assembling the integrated counterterm below.
+    Finite parts are not evaluated.
     """)
     return
 
 
 @app.cell
 def _(TensorExpression, t, uv_reduced_series):
-    uv_counterterm_integrand = TensorExpression(-uv_reduced_series.replace(t, 1).expand())
+    uv_counterterm_integrand = TensorExpression(-uv_reduced_series.replace(t, 1))
     uv_counterterm_integrand
     return (uv_counterterm_integrand,)
 
 
 @app.cell
-def _(E, eps, uv_counterterm_integrand, uv_pole_residue):
+def _(E, color_factor, eps, uv_counterterm_integrand, uv_pole_residue):
     uv_residue = -uv_pole_residue(uv_counterterm_integrand)
-    uv_counterterm = -E('1i') * uv_residue / (16 * E('pi')**2 * eps)
+    uv_counterterm = color_factor * (-E('1i') * uv_residue / (16 * E('pi')**2 * eps))
     uv_counterterm
     return
 
@@ -761,58 +862,67 @@ def _(mo):
 
 @app.cell
 def _(
-    D,
     E,
     TensorExpression,
+    UVRow,
     apply_projector,
-    contract_indices,
     diagram_weight,
     diagrams,
     external_projector,
     graph_propagators,
     mo,
     model,
+    project_color,
     route_momenta,
     uv_expansion_data,
 ):
-    from typing import TypedDict as _TypedDict
-
-    class _UVRow(_TypedDict):
-        loop: str
-        transverse: TensorExpression
-        longitudinal: TensorExpression
-
-    _uv_rows: list[_UVRow] = []
+    _uv_rows: list[UVRow] = []
     for _d in diagrams:
         _propagators = graph_propagators(_d, model)
-        _weight = diagram_weight(_d, model)
+        _weight = diagram_weight(_d)
+        _color_factor, _stripped = project_color(_d)
         _routed = route_momenta(
-            _d, contract_indices(_d.numerator_expression().with_lorentz_dimension(D))
+            _d, _stripped.simplify_gamma().schoonschip_net(expand_contracted_sums=True)
         )
-        _transverse = contract_indices(apply_projector(
-            _routed, external_projector(_d)
-        )).to_dots().expand()
-        _longitudinal = contract_indices(apply_projector(
-            _routed, external_projector(_d, longitudinal=True)
-        )).to_dots().expand()
-        _transverse = TensorExpression(model.expand_couplings(_transverse * _weight)).expand()
-        _longitudinal = TensorExpression(model.expand_couplings(_longitudinal * _weight)).expand()
+        _transverse = apply_projector(_routed, external_projector(_routed)).to_dots()
+        _longitudinal = apply_projector(
+            _routed, external_projector(_routed, longitudinal=True)
+        ).to_dots()
+        _transverse = TensorExpression(model.expand_couplings(_transverse * _weight))
+        _longitudinal = TensorExpression(
+            model.expand_couplings(_longitudinal * _weight)
+        )
         if not _transverse.is_scalar or not _longitudinal.is_scalar:
-            raise ValueError('Contract all external indices before taking the UV series')
-        _uv_rows.append({
-            'loop': ', '.join(_e.particle_name for _e in _d.internal_edges),
-            'transverse': uv_expansion_data(_transverse.expand() * _propagators, _d)['residue'],
-            'longitudinal': uv_expansion_data(_longitudinal.expand() * _propagators, _d)['residue'],
-        })
-    total_uv_residue = sum((_row['transverse'] for _row in _uv_rows), TensorExpression(0)).expand()
-    longitudinal_uv_residue = sum((_row['longitudinal'] for _row in _uv_rows), TensorExpression(0)).expand()
-    assert longitudinal_uv_residue == E('0')
-    mo.ui.table([
-        {'Loop': _row['loop'],
-         'Transverse residue': _row['transverse'].format_tensor(),
-         'Longitudinal residue': _row['longitudinal'].format_tensor()}
-        for _row in _uv_rows
-    ], selection=None)
+            raise ValueError(
+                "Contract all external indices before taking the UV series"
+            )
+        _uv_rows.append(
+            {
+                "loop": ", ".join(_e.particle_name for _e in _d.internal_edges),
+                "transverse": _color_factor
+                * uv_expansion_data(_transverse * _propagators, _d)["residue"],
+                "longitudinal": _color_factor
+                * uv_expansion_data(_longitudinal * _propagators, _d)["residue"],
+            }
+        )
+    total_uv_residue = sum(
+        (_row["transverse"] for _row in _uv_rows), TensorExpression(0)
+    )
+    longitudinal_uv_residue = sum(
+        (_row["longitudinal"] for _row in _uv_rows), TensorExpression(0)
+    ).together()
+    assert longitudinal_uv_residue == E("0")
+    mo.ui.table(
+        [
+            {
+                "Loop": _row["loop"],
+                "Transverse residue": _row["transverse"].format_tensor(),
+                "Longitudinal residue": _row["longitudinal"].format_tensor(),
+            }
+            for _row in _uv_rows
+        ],
+        selection=None,
+    )
     return (total_uv_residue,)
 
 
@@ -825,7 +935,9 @@ def _(E, eps, total_uv_residue):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("[Browse the separate HEP examples](/)")
+    mo.md("""
+    [Browse the separate HEP examples](/)
+    """)
     return
 
 

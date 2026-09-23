@@ -1,0 +1,165 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "8b4624e2a5bd5133ae73d2354629c261",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "a875784a7c1d682ca1c1cced71f2f5cd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"one-loop-qcd-renormalization\">One-loop QCD renormalization</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/qed_renormalization.py\">QED renormalization</a> \u00b7\n<a href=\"/?file=hep/qcd_ghost_vertex.py\">Ghost\u2013gluon vertex</a> \u00b7\n<a href=\"/?file=hep/electron_two_loop.py\">Two-loop electron</a></span>\n<span class=\"paragraph\">Generate the quark, ghost and gluon self-energies and the quark\u2013gluon\nvertex in a <strong>symbolic covariant gauge</strong>. Shared color contractions,\nDirac traces, UV expansion and native IBP give the six physical\nrenormalization constants in the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/OneLoop/Renormalization2\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc MS/MSbar reference</a>.\nThe quark mass remains symbolic throughout.</span>\n<span class=\"paragraph\">We use <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(a_4=g_s^2/(16\\pi^2)||)</marimo-tex>,\n<marimo-tex class=\"arithmatex\">||(T_R=1/2||)</marimo-tex> and the gluon numerator\n<marimo-tex class=\"arithmatex\">||(-i[g^{\\mu\\nu}-(1-\\xi)q^\\mu q^\\nu/q^2]||)</marimo-tex>.\nThe auxiliary squared mass is <marimo-tex class=\"arithmatex\">||(M=m_{\\rm UV}^2&gt;0||)</marimo-tex>.\nThe analytic tadpole pole <marimo-tex class=\"arithmatex\">||(I(1)=M/\\epsilon+O(1)||)</marimo-tex> is a supplied input,\nchecked with OneLOop. IBP determines its rational coefficients.</span>\n<span class=\"paragraph\">The full UV expansion retains the mass correction terms. They cancel\nauxiliary mass poles, so our two auxiliary mass counterterms vanish.\nA second calculation follows the <a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/OneLoop/Renormalization\" rel=\"noopener noreferrer\" target=\"_blank\">selective infrared rearrangement reference</a>\ndirectly, retaining the quark mass and adding an auxiliary mass only to\nmassless propagators. It reproduces the nonzero gluon auxiliary counterterm;\nthe six physical constants agree between prescriptions. Here <strong>eight generated counterterm diagrams</strong> supply the\nmatching equations, and the controls compare MS and MSbar subtraction.\nThe finite column contains subtraction constants, not finite loop amplitudes.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "6767a40620c12d7c73b5bd02da4afa45",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "5de525679a8778715d6f0b24bf3cf9fa",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "6897317c0dd73f3848221453610a5338",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"one-shared-vacuum-family\">One shared vacuum family</h2></span><section class=\"feynkit-integral-family\" style=\"max-width:100%;overflow-x:auto\"><strong>Integral family</strong><div><strong>Loop momenta:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">K<span style=\"color: rgb(0, 95, 175)\">(</span>0<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div><strong>External momenta:</strong> <em>none</em></div><div><strong>Dimension:</strong> <div style=\"white-space: pre-wrap; margin: 0;\">D</div></div><div>Rank: 1 / 1 &middot; complete &middot; independent</div><table style=\"border-collapse:collapse;margin-top:.4rem\"><caption style=\"text-align:left\">Ordered inverse propagators (1)</caption><tbody><tr><th scope=\"row\" style=\"padding:.3rem .65rem;text-align:right\">D<sub>1</sub></th><td style=\"padding:.3rem .65rem;text-align:left\"><div style=\"white-space: pre-wrap; margin: 0;\">-M<span style=\"color: rgb(205, 205, 0)\">+</span>dot<span style=\"color: rgb(0, 95, 175)\">(</span>K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span>,K<span style=\"color: rgb(135, 95, 175)\">(</span>0,mink<span style=\"color: rgb(0, 175, 135)\">(</span>D<span style=\"color: rgb(0, 175, 135)\">)</span><span style=\"color: rgb(135, 95, 175)\">)</span><span style=\"color: rgb(0, 95, 175)\">)</span></div></td></tr></tbody></table></section><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The longitudinal gluon denominators cancel after tensor projection. All scalar terms belong to this family; the calculation rejects hidden loop momenta in their coefficients. Native IBP reduces <marimo-tex class=\"arithmatex\">||(I(1),\\ldots,I(4)||)</marimo-tex> to <marimo-tex class=\"arithmatex\">||(I(1)||)</marimo-tex>:</span></span><div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>I(1)</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>I(2)</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>1/2\u00b7D/M-1/M<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>I(3)</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>-3/4\u00b7D/M\u00b2+1/8\u00b7D\u00b2/M\u00b2+1/M\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>I(4)</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\"><span style=\"color: rgb(128, 128, 128)\">(</span>11/12\u00b7D/M\u00b3-1/4\u00b7D\u00b2/M\u00b3+1/48\u00b7D\u00b3/M\u00b3-1/M\u00b3<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span></div></div></div><marimo-ui-element object-id='lEQa-0' random-id='c10082b8-187f-5f61-adf6-1860a9624af3'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;exact_trace_rows&#92;&quot;:0,&#92;&quot;rows&#92;&quot;:4,&#92;&quot;sectors&#92;&quot;:1,&#92;&quot;seeds&#92;&quot;:4}]&quot;' data-total-rows='1' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The tadpole pole is an analytic input. A finite-depth IBP residual alone does not certify a minimal master basis.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "667f9fcdad26a0052f786c4e7cc36858",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Generated QCD one-loop: symbolic gauge, four IBP targets, eight generated counterterms passed {'exact_trace_rows': 0, 'rows': 4, 'sectors': 1, 'seeds': 4}\nGenerated QCD CT amplitudes: complete MS/MSbar tensor cancellation passed\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "Xref",
+      "code_hash": "de627fdc3835954cd995c84662dedf05",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "2c1a298867b80e9ad91433a6848ad31e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"ms-and-msbar-at-the-same-scale\">MS and MSbar at the same scale</h2>\n<span class=\"paragraph\">Use <marimo-tex class=\"arithmatex\">||(\\Delta=1/\\epsilon+c_\\Delta||)</marimo-tex> with\n<marimo-tex class=\"arithmatex\">||(c_\\Delta=\\log(4\\pi)-\\gamma_E||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(D=4-2\\epsilon||)</marimo-tex>.\n<a href=\"https://arxiv.org/abs/1007.4716\" rel=\"noopener noreferrer\" target=\"_blank\">OneLOop</a> divides its master integrals by\n<marimo-tex class=\"arithmatex\">||(r_\\Gamma=\\Gamma(1-\\epsilon)^2\\Gamma(1+\\epsilon)/\\Gamma(1-2\\epsilon)||)</marimo-tex>.\nThe conventional loop measure restores <marimo-tex class=\"arithmatex\">||((4\\pi)^\\epsilon r_\\Gamma=\n1+c_\\Delta\\epsilon+O(\\epsilon^2)||)</marimo-tex>, with <marimo-tex class=\"arithmatex\">||(i/(16\\pi^2)||)</marimo-tex> stripped off.</span>\n<span class=\"paragraph\">If a normalized loop coefficient is <marimo-tex class=\"arithmatex\">||(P/\\epsilon+F||)</marimo-tex>, this measure gives\n<marimo-tex class=\"arithmatex\">||(P/\\epsilon+F+c_\\Delta P||)</marimo-tex>. MS subtracts its pole; MSbar also subtracts\n<marimo-tex class=\"arithmatex\">||(c_\\Delta P||)</marimo-tex>. The actual generated CT amplitudes cancel the corresponding\nterms in every sector. The finite scheme shift left in MS is checked too.</span>\n<span class=\"paragraph\">The reference extracts UV terms after tensor reduction. Shared UV expansion\nprovides those same local coefficients here; no full finite vertex is needed\nfor this comparison. The direct selective-IRR calculation below derives the original reference's\nnonzero auxiliary gluon mass separately. Its physical pole constants agree.</span></span><marimo-ui-element object-id='SFPL-0' random-id='b11c8c9e-6d5b-ee3a-9b0c-ef59e966db34'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zq&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;-xi*CF/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;-(eps*xi*CF*cDelta+xi*CF)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zm&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;-3*CF/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;-3*(eps*CF*cDelta+CF)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZA&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;-1/6*(3*xi*CA+4*Nf-13*CA)/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;-1/6*(3*eps*xi*CA*cDelta+4*eps*Nf*cDelta-13*eps*CA*cDelta+3*xi*CA+4*Nf-13*CA)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Z\u03be&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;-1/6*(3*xi*CA+4*Nf-13*CA)/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;-1/6*(3*eps*xi*CA*cDelta+4*eps*Nf*cDelta-13*eps*CA*cDelta+3*xi*CA+4*Nf-13*CA)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zc&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;-1/4*(xi*CA-3*CA)/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;-1/4*(eps*xi*CA*cDelta-3*eps*CA*cDelta+xi*CA-3*CA)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zg&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;1/6*(2*Nf-11*CA)/eps&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;1/6*(2*eps*Nf*cDelta-11*eps*CA*cDelta+2*Nf-11*CA)/eps&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZAm&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;0&#92;&quot;},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zcm&#92;&quot;,&#92;&quot;MS&#92;&quot;:&#92;&quot;0&#92;&quot;,&#92;&quot;MSbar&#92;&quot;:&#92;&quot;0&#92;&quot;}]&quot;' data-total-rows='8' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "f935169ec247a29d1d91724697b4e7de",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Direct massive QCD IRR: two tadpole masses, five IBP targets, eight generated CT equations passed {'exact_trace_rows': 0, 'rows': 5, 'sectors': 1, 'seeds': 5}\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "56e349906b8b5b94a9059dd967aaea49",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"direct-infrared-rearrangement-with-a-massive-quark\">Direct infrared rearrangement with a massive quark</h2>\n<span class=\"paragraph\">The original reference replaces each <strong>massless</strong> propagator <marimo-tex class=\"arithmatex\">||(q^2||)</marimo-tex> by\n<marimo-tex class=\"arithmatex\">||(q^2-M||)</marimo-tex>, then Taylor-expands the external momenta to the superficial degree\nof divergence. The massive quark denominators <marimo-tex class=\"arithmatex\">||(q^2-m_q^2||)</marimo-tex> remain intact.\nThis is calculated independently of the full UV expansion above.</span>\n<span class=\"paragraph\">Each internal gluon's longitudinal numerator contains an additional <marimo-tex class=\"arithmatex\">||(1/q^2||)</marimo-tex>.\nThe calculation isolates these factors before massification, including both\ninternal gluons of the non-Abelian vertex and gluon loop. Recombining the\npieces reproduces the original generated numerator exactly. Their powers\nare passed to the graph's existing denominator API.</span>\n<span class=\"paragraph\">After tensor reduction, Symbolica partial fractions separate tadpoles at\n<marimo-tex class=\"arithmatex\">||(M||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(m_q^2||)</marimo-tex>. Reconstructing the rational integrand checks the decomposition\nbefore IBP. Five powers reduce to one tadpole per mass, with the shared\nOneLOop pole <marimo-tex class=\"arithmatex\">||(A_0(m^2)=m^2/\\epsilon||)</marimo-tex>.</span></span><span>IBPSolution(rules=4, residuals=1)</span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The physical poles agree with the full UV expansion. The extra local gluon\npole is <marimo-tex class=\"arithmatex\">||(C_A(1+3\\xi)M g^{\\mu\\nu}/(4\\epsilon)||)</marimo-tex>. Solving the same matrix\nfrom the eight generated CT diagrams therefore gives</span>\n<marimo-tex class=\"arithmatex\">||[\\delta Z_{Am}=-\\frac{C_A(1+3\\xi)}{8\\epsilon},\\qquad \\delta Z_{cm}=0.||]</marimo-tex><span class=\"paragraph\">The complete projected tensor amplitudes cancel against those CT insertions.\nThe quark loop contributes no auxiliary-mass term because its physical mass\nwas retained. This result is for massive quarks; massifying an initially\nmassless quark loop is a different prescription.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">[[-xi\u00b7CF/eps],\n [-3\u00b7CF/eps],\n [(-4\u00b7Nf+13\u00b7CA-3\u00b7xi\u00b7CA)/(6\u00b7eps)],\n [(-4\u00b7Nf+13\u00b7CA-3\u00b7xi\u00b7CA)/(6\u00b7eps)],\n [(3\u00b7CA-xi\u00b7CA)/(4\u00b7eps)],\n [(2\u00b7Nf-11\u00b7CA)/(6\u00b7eps)],\n [(-CA-3\u00b7xi\u00b7CA)/(8\u00b7eps)],\n [0]]</div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "2d84fb4016f6468961f1e01660bea2e3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Kclp-0' random-id='acb14cde-7f04-f0b5-b086-5f62e212c9e6'><marimo-slider data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eGauge parameter \u03be&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.0' data-stop='3.0' data-step='0.25' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='Kclp-1' random-id='715f1de2-2af6-70a0-a4b2-17f04ebc79b3'><marimo-slider data-initial-value='5' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eQuark flavors Nf&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0' data-stop='20' data-step='1' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='Kclp-2' random-id='506f91f8-002b-a39c-442d-113a707d1979'><marimo-slider data-initial-value='3' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eColors Nc&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='2' data-stop='5' data-step='1' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Kclp-3' random-id='a2e5a6eb-ecb0-44f4-f94f-1af52750aed3'><marimo-dropdown data-initial-value='[&quot;MSbar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSubtraction scheme&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;MSbar&quot;,&quot;MS&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='Kclp-4' random-id='1cb8e359-2b7d-10b5-b788-5cf2003bba7f'><marimo-dropdown data-initial-value='[&quot;Full UV expansion&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eRearrangement&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Full UV expansion&quot;,&quot;Direct massive IRR&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "775b9362ec6ddc27214e7752c5c8d724",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Counterterms</strong> \u2014 vary gauge, flavor count, SU(Nc) color group and subtraction scheme.</span></span><marimo-ui-element object-id='emfo-0' random-id='c9d84d56-088f-5a97-0a9f-c429e4c08d50'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zq&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-1.3333333333333333,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-2.605078109423677},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zm&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-4.0,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-7.815234328271032},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZA&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:1.6666666666666665,&#92;&quot;Finite subtraction coefficient&#92;&quot;:3.2563476367795965},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Z\u03be&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:1.6666666666666665,&#92;&quot;Finite subtraction coefficient&#92;&quot;:3.2563476367795965},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zc&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:1.5,&#92;&quot;Finite subtraction coefficient&#92;&quot;:2.930712873101637},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zg&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-3.833333333333333,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-7.489599564593072},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZAm&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:0.0,&#92;&quot;Finite subtraction coefficient&#92;&quot;:0.0},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zcm&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:0.0,&#92;&quot;Finite subtraction coefficient&#92;&quot;:0.0}]&quot;' data-total-rows='8' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Quark\u2013gluon vertex cancellation residual: <strong>0.0e+00</strong>.  One-loop <marimo-tex class=\"arithmatex\">||(\\beta_0||)</marimo-tex>: <strong>7.66667</strong>.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

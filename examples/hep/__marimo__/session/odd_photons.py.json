@@ -1,0 +1,132 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "78c41e4b0f7dbc71ada58ff85b9e86b9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "c5768a76405b008e4170bb6954f8b6bf",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"odd-photons-and-furry-cancellation\">Odd photons and Furry cancellation</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/photon_self_energy.py\">Photon self-energy</a> \u00b7\n<a href=\"/?file=hep/higgs_gluons.py\">Higgs to gluons with IBP</a></span>\n<span class=\"paragraph\">A massive charged-fermion loop coupled to an odd number of photons gives\nzero. Generate the diagrams, retain their native weights, and verify the\ncancellation with shared Dirac algebra and integral-family momentum maps.\nThis follows FeynCalc's\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/Ga\" rel=\"noopener noreferrer\" target=\"_blank\">one-photon</a>,\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/Ga-GaGa\" rel=\"noopener noreferrer\" target=\"_blank\">three-photon</a>\nand <a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/OneLoop/Ga-GaGaGaGa\" rel=\"noopener noreferrer\" target=\"_blank\">five-photon</a>\nexamples.</span>\n<span class=\"paragraph\">The external momenta are generic and off shell, the electron mass remains\nsymbolic, and the Lorentz dimension is <marimo-tex class=\"arithmatex\">||(D||)</marimo-tex> with <marimo-tex class=\"arithmatex\">||(\\operatorname{tr}(1)=4||)</marimo-tex>.\nIndependent probe vectors contract every external Lorentz index; no\ntransversality or physical polarization sum is imposed. Thus an exact\ncancellation in all probes also establishes the open-tensor identity.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "7b2c23e40e5d68ef2ee36c40d3053828",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='vblA-0' random-id='2523c046-3f05-d1cc-9a5f-1c6e0e9a9cb0'><marimo-dropdown data-initial-value='[&quot;Three photons: triangle pair&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eExternal photons&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;One photon: odd tadpole&quot;,&quot;Three photons: triangle pair&quot;,&quot;Five photons: twelve pentagon pairs&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "An exception was raised by a UIElement's on_change handler:\n",
+          "mimetype": "text/plain"
+        },
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_runtime/runtime.py\"</span>, line <span class=\"m\">2030</span>, in <span class=\"n\">set_ui_element_value</span>\n<span class=\"w\">    </span><span class=\"n\">component</span><span class=\"o\">.</span><span class=\"n\">_update</span><span class=\"p\">(</span><span class=\"n\">value</span><span class=\"p\">)</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_plugins/ui/_core/ui_element.py\"</span>, line <span class=\"m\">468</span>, in <span class=\"n\">_update</span>\n<span class=\"w\">    </span><span class=\"bp\">self</span><span class=\"o\">.</span><span class=\"n\">_value</span> <span class=\"o\">=</span> <span class=\"bp\">self</span><span class=\"o\">.</span><span class=\"n\">_convert_value</span><span class=\"p\">(</span><span class=\"n\">value</span><span class=\"p\">)</span>\n<span class=\"w\">                  </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_plugins/ui/_impl/input.py\"</span>, line <span class=\"m\">1114</span>, in <span class=\"n\">_convert_value</span>\n<span class=\"w\">    </span><span class=\"k\">assert</span> <span class=\"nb\">len</span><span class=\"p\">(</span><span class=\"n\">value</span><span class=\"p\">)</span> <span class=\"o\">==</span> <span class=\"mi\">1</span><span class=\"p\">,</span> <span class=\"s2\">\"Dropdowns only support a single value\"</span>\n<span class=\"w\">           </span><span class=\"pm\">^^^^^^^^^^^^^^^</span>\n<span class=\"gr\">AssertionError</span>: <span class=\"n\">Dropdowns only support a single value</span>\n</pre></div>\n</span>",
+          "mimetype": "application/vnd.marimo+traceback"
+        }
+      ]
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "2c260f10d7165529e3975ee09f1ceb33",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "3e4bf1e8b28649bc5dea87058bbbf5c7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "59a529d7b530e72346fdf58f40b7e21e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>2 generated diagrams; 1 orientation pairs.</strong> Select a pair to compute its exact cancellation. A pentagon pair takes about twenty seconds.</span></span><marimo-ui-element object-id='PKri-0' random-id='f70ed67b-6ef2-45b0-432a-7f024782cc48'><marimo-dropdown data-initial-value='[&quot;Diagrams 1 and 2&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eEvaluate orientation pair&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Diagrams 1 and 2&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "78b4fed146b116b0127679ba1d9789fc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "6c9b970627f5b2fb21a5c2e147df0406",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "d71e7b4ec292726826647395e0fd0dbb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The one-photon graph has a nonzero numerator odd in the loop momentum;\nvacuum tensor reduction gives zero. For three and five photons, each\nnonzero numerator has an opposite-orientation partner. The verified map\npreserves the integration measure and permutes the unit-power\ndenominators. Their numerator sum is exactly zero in a common routing.</span>\n<span class=\"paragraph\">This check happens before IBP or scalar-master evaluation. The\n<a href=\"/?file=hep/higgs_gluons.py\">Higgs-to-gluons notebook</a> follows a nonzero\nfermion loop through those later steps. Here the generator's tadpole and\nbridge filters are explicitly relaxed so the one-point graph is retained;\nevery generated graph keeps its original fermion and symmetry factors.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

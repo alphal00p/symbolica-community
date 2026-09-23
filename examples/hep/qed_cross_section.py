@@ -11,10 +11,11 @@ app = marimo.App(
 def _():
     import marimo as mo
     from symbolica import E, S, Symbol
+    from symbolica.community import hep
     from symbolica.community.hep import Model
-    from symbolica.community.spenso import TensorExpression
+    from symbolica.community.spenso import Representation, TensorExpression, chain
 
-    return E, Model, S, Symbol, TensorExpression, mo
+    return E, Model, Representation, S, Symbol, TensorExpression, chain, hep, mo
 
 
 @app.cell
@@ -49,12 +50,10 @@ def _(mo):
 
 
 @app.cell
-def _(E, Model, S, TensorExpression, mo, model_path):
-    from symbolica.community import hep as qed_hep
-
+def _(E, Model, S, TensorExpression, hep, mo, model_path):
     qed_model = Model(model_path)
-    _process = qed_hep.Process.cross_section([11, -11], [13, -13]).with_loop_count(1, 1)
-    _result = qed_hep.Generator(qed_model).generate(
+    _process = hep.Process.cross_section([11, -11], [13, -13]).with_loop_count(1, 1)
+    _result = hep.Generator(qed_model).generate(
         _process,
         max_vertices=4,
         maximum_bridges=None,
@@ -81,7 +80,7 @@ def _(E, Model, S, TensorExpression, mo, model_path):
     qed_s = S("qed_example::s", is_positive=True)
     qed_t, qed_u = S("qed_example::t", "qed_example::u")
     qed_me, qed_mm, qed_e = S("UFO::Me", "UFO::MM", "UFO::ee")
-    _kin = qed_hep.Kinematics.mandelstam(
+    _kin = hep.Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
         [qed_me**2, qed_me**2, qed_mm**2, qed_mm**2],
         [qed_s, qed_t, qed_u],
@@ -95,7 +94,9 @@ def _(E, Model, S, TensorExpression, mo, model_path):
             average=True,
         )
     _numerator = qed_model.expand_couplings(
-        qed_diagram.numerator_expression().to_expression() * _projector
+        (qed_diagram.numerator_expression() * _projector).schoonschip_net(
+            expand_contracted_sums=True,
+        )
     )
     _contracted = (
         TensorExpression(_numerator.expand())
@@ -152,7 +153,6 @@ def _(E, Model, S, TensorExpression, mo, model_path):
     return (
         qed_diagram,
         qed_e,
-        qed_hep,
         qed_k1,
         qed_k2,
         qed_loop_pattern,
@@ -174,9 +174,9 @@ def _(
     E,
     S,
     Symbol,
+    hep,
     mo,
     qed_e,
-    qed_hep,
     qed_k1,
     qed_k2,
     qed_me,
@@ -190,7 +190,7 @@ def _(
 ):
     qed_cos_theta, qed_alpha = S("qed_example::cos_theta", "qed_example::alpha")
     _pi = Symbol.PI
-    _kin = qed_hep.Kinematics.mandelstam(
+    _kin = hep.Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
         [E("0")] * 4,
         [qed_s, qed_t, qed_u],
@@ -249,11 +249,14 @@ def _(mo):
 @app.cell
 def _(
     E,
+    Representation,
     S,
+    TensorExpression,
+    chain,
+    hep,
     mo,
     qed_diagram,
     qed_e,
-    qed_hep,
     qed_k1,
     qed_k2,
     qed_loop_pattern,
@@ -267,39 +270,39 @@ def _(
     qed_t,
     qed_u,
 ):
-    from symbolica.community.spenso import Representation as _Rep
-    from symbolica.community.spenso import TensorExpression as _Tensor
-    from symbolica.community.spenso import chain as _chain
-
     _a, _b, _ell = S("chiral::a_", "chiral::b_", "chiral::ell_")
-    _pattern = _Tensor.gamma(4)(_a, _b, _ell)
-    _right_current = _chain(
-        _Rep.bis(4)(_a),
-        _Rep.bis(4)(_b),
-        _Tensor.gamma(4)(_a, "middle", _ell),
-        _Tensor.projp(4)("middle", _b),
+    _pattern = TensorExpression.gamma(4)(_a, _b, _ell)
+    _right_current = chain(
+        Representation.bis(4)(_a),
+        Representation.bis(4)(_b),
+        TensorExpression.gamma(4)(_a, "middle", _ell),
+        TensorExpression.projp(4)("middle", _b),
     )
-    _numerator = E("1")
+    _numerator = TensorExpression(1)
     for _vertex in qed_diagram.vertices:
         _numerator *= _vertex.numerator_expression().replace(_pattern, _right_current)
     for _edge in qed_diagram.internal_edges:
-        _numerator *= _edge.numerator_expression().to_expression()
+        _numerator *= _edge.numerator_expression()
     _Q = S("gammalooprs::Q")
     _projector = qed_diagram.projector_expression()
     for _edge in qed_diagram.external_edges:
         _projector = qed_model.particle_by_pdg(_edge.particle_pdg).sum_spins(
             _projector, _Q(_edge.id), edge=_edge.id
         )
-    _numerator = qed_model.expand_couplings(_numerator * _projector)
+    _numerator = qed_model.expand_couplings(
+        (_numerator * _projector).schoonschip_net(
+            expand_contracted_sums=True,
+        )
+    )
     _contracted = (
-        _Tensor(_numerator.expand())
+        TensorExpression(_numerator.expand())
         .simplify_gamma()
         .expand()
         .simplify_epsilon()
         .expand()
         .to_dots()
     )
-    _kin = qed_hep.Kinematics.mandelstam(
+    _kin = hep.Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
         [qed_me**2, qed_me**2, qed_mm**2, qed_mm**2],
         [qed_s, qed_t, qed_u],

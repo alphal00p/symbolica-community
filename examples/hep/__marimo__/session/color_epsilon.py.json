@@ -1,0 +1,80 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "1de692b23fbd37fa6f9d2ce7b883ecc1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "a8292a03892be9e93e8d1752254df35b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"antisymmetric-ufo-color-tensors\">Antisymmetric UFO color tensors</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/color_algebra.py\">Color algebra</a> \u00b7\n<a href=\"/?file=hep/symmetric_color_vertex.py\">Symmetric color tensor</a></span>\n<span class=\"paragraph\">The UFO rules <code>Epsilon(1,2,3)</code> and <code>EpsilonBar(1,2,3)</code> describe the\nantisymmetric invariants of three SU(3) triplets and antitriplets.\nThis toy model couples three <strong>distinct complex scalar species</strong>,\n<marimo-tex class=\"arithmatex\">||(X_1,X_2,X_3||)</marimo-tex>. Using the same bosonic field three times would make\nthis antisymmetric interaction vanish.</span>\n<span class=\"paragraph\">We reuse scalar parameter and Lorentz records from the stored model,\nadd the three new species, and retain only the two conjugate cubic\nvertices. These are toy color interactions, not Standard Model processes.\nThe calculation below removes the scalar coupling and compares their\ncolor factors; it does not compute a decay rate.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "91f9ef504de0ce5d2e3b6d3d1c742c57",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "9269cf17fc0b648ecebd1417475d8c89",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "d472b93228493bdeb69386a472b82660",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-callout-output data-html='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;text-error&#92;&quot;&#92;u003e&#92;u003cstrong&#92;u003eYour output is too large&#92;u003c/strong&#92;u003e&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&#92;n&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eYour output is too large for marimo to show. It has a size&#92;nof 11828056 bytes. Did you output this object by accident?&#92;u003c/span&#92;u003e&#92;n&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eIf this limitation is a problem for you, you can configure&#92;nthe max output size by adding (eg)&#92;u003c/span&#92;u003e&#92;n&#92;u003cdiv class=&#92;&quot;language-ini codehilite&#92;&quot;&#92;u003e&#92;u003cpre&#92;u003e&#92;u003cspan&#92;u003e&#92;u003c/span&#92;u003e&#92;u003ccode&#92;u003e&#92;u003cspan class=&#92;&quot;k&#92;&quot;&#92;u003e[tool.marimo.runtime]&#92;u003c/span&#92;u003e&#92;n&#92;u003cspan class=&#92;&quot;na&#92;&quot;&#92;u003eoutput_max_bytes&#92;u003c/span&#92;u003e&#92;u003cspan class=&#92;&quot;w&#92;&quot;&#92;u003e &#92;u003c/span&#92;u003e&#92;u003cspan class=&#92;&quot;o&#92;&quot;&#92;u003e=&#92;u003c/span&#92;u003e&#92;u003cspan class=&#92;&quot;w&#92;&quot;&#92;u003e &#92;u003c/span&#92;u003e&#92;u003cspan class=&#92;&quot;s&#92;&quot;&#92;u003e10_000_000&#92;u003c/span&#92;u003e&#92;n&#92;u003c/code&#92;u003e&#92;u003c/pre&#92;u003e&#92;u003c/div&#92;u003e&#92;n&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eto your pyproject.toml, or with the environment variable&#92;n&#92;u003ccode&#92;u003eMARIMO_OUTPUT_MAX_BYTES&#92;u003c/code&#92;u003e:&#92;u003c/span&#92;u003e&#92;n&#92;u003cdiv class=&#92;&quot;language-gdscript codehilite&#92;&quot;&#92;u003e&#92;u003cpre&#92;u003e&#92;u003cspan&#92;u003e&#92;u003c/span&#92;u003e&#92;u003ccode&#92;u003e&#92;u003cspan class=&#92;&quot;k&#92;&quot;&#92;u003eexport&#92;u003c/span&#92;u003e&#92;u003cspan class=&#92;&quot;w&#92;&quot;&#92;u003e &#92;u003c/span&#92;u003e&#92;u003cspan class=&#92;&quot;n&#92;&quot;&#92;u003eMARIMO_OUTPUT_MAX_BYTES&#92;u003c/span&#92;u003e&#92;u003cspan class=&#92;&quot;o&#92;&quot;&#92;u003e=&#92;u003c/span&#92;u003e&#92;u003cspan class=&#92;&quot;mi&#92;&quot;&#92;u003e10&#92;u003c/span&#92;u003e&#92;u003cspan class=&#92;&quot;n&#92;&quot;&#92;u003e_000_000&#92;u003c/span&#92;u003e&#92;n&#92;u003c/code&#92;u003e&#92;u003c/pre&#92;u003e&#92;u003c/div&#92;u003e&#92;n&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eIncreasing the max output size may cause performance issues.&#92;nIf you run into problems, please reach out&#92;nto us on &#92;u003ca href=&#92;&quot;https://marimo.io/discord?ref=app&#92;&quot; rel=&#92;&quot;noopener noreferrer&#92;&quot; target=&#92;&quot;_blank&#92;&quot;&#92;u003eDiscord&#92;u003c/a&#92;u003e or&#92;n&#92;u003ca href=&#92;&quot;https://github.com/marimo-team/marimo/issues&#92;&quot; rel=&#92;&quot;noopener noreferrer&#92;&quot; target=&#92;&quot;_blank&#92;&quot;&#92;u003eGitHub&#92;u003c/a&#92;u003e.&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-kind='&quot;warn&quot;'></marimo-callout-output>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "80e66136c9d463151509c07492b7d3c4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>One incoming color average</strong></span>\n<span class=\"paragraph\"><code>Particle.color_sum</code> counts three incoming color states, and its averaged identity has unit trace. Summing the two outgoing colors and averaging the incoming color gives <marimo-tex class=\"arithmatex\">||(6/3=2||)</marimo-tex> for either vertex. The outgoing species are distinct, so no identical-particle factor is required.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">2</div><div style=\"white-space: pre-wrap; margin: 0;\">2</div></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

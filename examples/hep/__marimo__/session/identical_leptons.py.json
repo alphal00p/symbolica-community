@@ -1,0 +1,106 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "c019bf5fef5f3930d1ecf44a8ccfe1bb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "f2f6a38ca56a992e9d6684287c3afe4b",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"bhabha-and-mller-scattering\">Bhabha and M\u00f8ller scattering</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/qed_cross_section.py\">QED production</a> \u00b7\n<a href=\"/?file=hep/diphoton.py\">Diphoton annihilation</a></span>\n<span class=\"paragraph\">Generate the two tree diagrams for either <strong>Bhabha scattering</strong>,\n<marimo-tex class=\"arithmatex\">||(e^-e^+\\to e^-e^+||)</marimo-tex>, or <strong>M\u00f8ller scattering</strong>, <marimo-tex class=\"arithmatex\">||(e^-e^-\\to e^-e^-||)</marimo-tex>.\nThe calculation retains the electron mass and the interference between\nchannels. It averages both incoming spins and sums both outgoing spins,\nwith <marimo-tex class=\"arithmatex\">||(s+t+u=4m_e^2||)</marimo-tex>.</span>\n<span class=\"paragraph\">The default generated amplitudes retain the labeled external particles\nand their relative fermion signs. In particular, M\u00f8ller scattering\nrequires both exchange diagrams before squaring the amplitude.</span>\n<span class=\"paragraph\">Reference calculations: <a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/Tree/ElAel-ElAel\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc Bhabha scattering</a>\nand <a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/Tree/ElEl-ElEl\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc M\u00f8ller scattering</a>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "2f4c7b8dc6720499cfa93f75556dc288",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='vblA-0' random-id='fd0b30eb-3392-57e6-14f3-5841a026ba49'><marimo-dropdown data-initial-value='[&quot;Bhabha&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eScattering process&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Bhabha&quot;,&quot;M\u00f8ller&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "ee71352fe9c2578f28068fe5456e80c3",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "aedf1c65ad5fbfd3a54a4294f8667f0e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"angular-distribution\">Angular distribution</h2>\n<span class=\"paragraph\">In the center-of-mass frame let <marimo-tex class=\"arithmatex\">||(x=\\cos\\theta||)</marimo-tex> and\n<marimo-tex class=\"arithmatex\">||(\\beta=\\sqrt{1-4m_e^2/s}||)</marimo-tex>. Then\n<marimo-tex class=\"arithmatex\">||(t=-s\\beta^2(1-x)/2||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(u=-s\\beta^2(1+x)/2||)</marimo-tex>.\nThe shared flux and phase-space methods give\n<marimo-tex class=\"arithmatex\">||(d\\Phi_2/(d\\Omega\\,\\mathrm{flux})=1/(64\\pi^2s)||)</marimo-tex>.</span>\n<span class=\"paragraph\">For Bhabha scattering, <marimo-tex class=\"arithmatex\">||(\\theta||)</marimo-tex> labels the outgoing electron.\nFor M\u00f8ller scattering either outgoing electron can carry that label:\nthe displayed <strong>event density includes <marimo-tex class=\"arithmatex\">||(1/2!||)</marimo-tex> on the full sphere</strong>.\nEquivalently, integrate the labeled density over one hemisphere.\nThis factor belongs to phase-space counting; both interfering exchange\namplitudes remain in the squared matrix element.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "7c079c4953ba31c02c6d667e3c90e467",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Event angular density <marimo-tex class=\"arithmatex\">||(d\\sigma/d\\Omega||)</marimo-tex></strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>3\u00b7cos_theta\u00b2\u00b7alpha\u00b2+alpha\u00b2+6\u00b7beta\u00b2\u00b7cos_theta\u00b2\u00b7alpha\u00b2+2\u00b7beta\u00b2\u00b7alpha\u00b2\n    -3\u00b7beta\u2074\u00b7cos_theta\u00b2\u00b7alpha\u00b2+beta\u2074\u00b7cos_theta\u2074\u00b7alpha\u00b2+6\u00b7beta\u2074\u00b7alpha\u00b2\n<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7beta\u2074\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-1+cos_theta<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>1+cos_theta<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massless limit, in units of <marimo-tex class=\"arithmatex\">||(\\alpha^2/s||)</marimo-tex></strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>3+cos_theta\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b2/<span style=\"color: rgb(128, 128, 128)\">(</span>1-cos_theta\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>\u00b2</div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "0b8d863432b19426929d8f227b141e01",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='Xref-0' random-id='08e6d7dc-1fd4-af79-3f33-6dabe600906b'><marimo-slider data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eCM speed beta (1 = massless limit)&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.1' data-stop='1.0' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='Xref-1' random-id='46205d36-8a87-076b-d1ef-37f0833b401e'><marimo-slider data-initial-value='0.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eScattering angle cos(theta)&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='-0.95' data-stop='0.95' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "9184cd91b2454a41c285be30260a92c1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Event density: <strong>14.7693759809632</strong> \u00d7 <marimo-tex class=\"arithmatex\">||(\\alpha^2/s||)</marimo-tex>. The interference contributes <strong>1.26885896685624</strong> \u00d7 <marimo-tex class=\"arithmatex\">||(\\alpha^2/s||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

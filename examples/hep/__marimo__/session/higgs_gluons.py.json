@@ -1,0 +1,93 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "45ec2224b9cda55d86758ea00fa09958",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "400ba900f3ec11bb9fc65ca76dc15c6d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"higgs-to-gluons-a-finite-quark-triangle\">Higgs to gluons: a finite quark triangle</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse notebooks</a> \u00b7 <a href=\"/?file=hep/higgs_decay.py\">Tree-level Higgs decays</a> \u00b7\n<a href=\"/?file=hep/gminus2.py\">Electron anomalous moment</a> \u00b7\n<a href=\"/?file=hep/odd_photons.py\">Odd photons</a> \u00b7\n<a href=\"/?file=hep/tadpole_mass_insertions.py\">Tadpole mass insertions</a></span>\n<span class=\"paragraph\">Generate both orientations of the massive top-quark loop in <marimo-tex class=\"arithmatex\">||(H\\to gg||)</marimo-tex>,\nreduce the open Lorentz tensor and its scalar integrals with native IBP,\nand evaluate the remaining triangle with OneLOop. This follows\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/OneLoop/H-GlGl\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc's Higgs-to-gluons example</a>.</span>\n<span class=\"paragraph\">Both outgoing gluons are on shell. Write <marimo-tex class=\"arithmatex\">||(s=m_H^2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(m=m_q||)</marimo-tex> and\n<marimo-tex class=\"arithmatex\">||(T^{\\mu\\nu}=(s/2)g^{\\mu\\nu}-k_2^\\mu k_1^\\nu||)</marimo-tex>.\nThe two orientations retain their fermion-loop signs and color traces.\nThe calculation checks both Ward identities and the full tensor's UV poles.\nPhysical gluon polarization sums then remove the tensor terms that vanish\nagainst transverse external states.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "032d5524b1d1150a8b2bfbaa01459cd7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "8fd6089b87ad249127f5815da8ee80d2",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "3517d7c256c74bd1a0b5edd241eb9bdd",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "edcb9b79592dfbeba4b4f7146f4d7ec3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-0' random-id='ee1c0929-d6a1-e122-0f65-1cfed305487b'><marimo-slider data-initial-value='0.35' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eHiggs mass / (2 \u00d7 loop-quark mass)&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.05' data-stop='5.0' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='PKri-1' random-id='dbf65189-0794-b4fd-e7fe-6f6427082598'><marimo-number data-initial-value='172.5' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eLoop-quark mass [GeV]&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='1.0' data-stop='500.0' data-step='0.5' data-debounce='false' data-full-width='false' data-disabled='false'></marimo-number></marimo-ui-element><marimo-ui-element object-id='PKri-2' random-id='f8be99b6-77c5-8b49-54d0-8e38534cbd49'><marimo-number data-initial-value='0.118' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003e\u03b1s&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.01' data-stop='0.5' data-step='0.001' data-debounce='false' data-full-width='false' data-disabled='false'></marimo-number></marimo-ui-element></div></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "9530834589b6164f584b0494fe305b49",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Through the quark-production threshold</strong></span>\n<span class=\"paragraph\">The triangle acquires an imaginary part for <marimo-tex class=\"arithmatex\">||(m_H&gt;2m||)</marimo-tex>.\nWith <marimo-tex class=\"arithmatex\">||(\\tau=4m^2/s||)</marimo-tex>, the independent analytic reference is\n$<marimo-tex class=\"arithmatex\">||(A=\\frac32\\tau[1+(1-\\tau)f(\\tau)],\\quad\nf(\\tau)=\\begin{cases}\n\\arcsin^2(1/\\sqrt\\tau),&amp;\\tau\\ge1,\\\\\n-\\frac14\\left[\\log\\frac{1+\\sqrt{1-\\tau}}{1-\\sqrt{1-\\tau}}-i\\pi\\right]^2,&amp;0&lt;\\tau&lt;1.\n\\end{cases}||)</marimo-tex>$\nThe width uses <marimo-tex class=\"arithmatex\">||(|A|^2||)</marimo-tex>, including the imaginary part above threshold.\nNumerical values use <marimo-tex class=\"arithmatex\">||(N_c=3||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(v=246.22||)</marimo-tex> GeV. This is the single\nquark-loop contribution with <marimo-tex class=\"arithmatex\">||(y=m/v||)</marimo-tex>; additional flavors and higher-order\ncorrections are separate contributions.</span></span><marimo-ui-element object-id='Xref-0' random-id='6a1f3691-f4e0-e22a-b6b4-f8edd1e7cc63'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;mH [GeV]&#92;&quot;:120.74999999999999,&#92;&quot;Re A (generated + IBP + OneLOop)&#92;&quot;:1.030110774438303,&#92;&quot;Im A&#92;&quot;:0.0,&#92;&quot;|A|\u00b2&#92;&quot;:1.0611282076138802,&#92;&quot;Analytic comparison error&#92;&quot;:2.531308496145357e-14,&#92;&quot;Scale variation error&#92;&quot;:0.0,&#92;&quot;\u0393(H\u2192gg) [GeV]&#92;&quot;:0.00019220493035919286}]&quot;' data-total-rows='1' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

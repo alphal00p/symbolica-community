@@ -1,0 +1,87 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "4feced36689177359ef1ce4b6afc9b3e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "f5cd9c08728d3e5dfb6cfc3c9848c819",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"massless-qcd-infrared-rearrangement-and-counterterms\">Massless QCD: infrared rearrangement and counterterms</h1>\n<span class=\"paragraph\">Set the quark mass to zero <strong>before</strong> adding the auxiliary mass. This is the\norder used by the <a href=\"https://feyncalc.github.io/FeynCalcExamples/QCD/OneLoop/RenormalizationMassless\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc massless reference</a>.\nIt changes which propagators are massified and therefore changes the\nauxiliary gluon mass counterterm. The physical field and coupling constants\nremain the same.</span>\n<span class=\"paragraph\">This notebook reuses the symbolic calculation in the\n<a href=\"?file=hep/qcd_renormalization.py\">massive QCD notebook</a>. Marimo's notebook\ncomposition supplies the generated diagrams, tensor reduction, native IBP\nsolution and counterterm equations; the physics implementation is shared.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "5203b8fc42f1523f940973bbef3a59b3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stdout",
+          "text": "Generated QCD one-loop: symbolic gauge, four IBP targets, eight generated counterterms passed {'exact_trace_rows': 0, 'rows': 4, 'sectors': 1, 'seeds': 4}\nGenerated QCD CT amplitudes: complete MS/MSbar tensor cancellation passed\nDirect massive QCD IRR: 5 IBP targets and 8 generated CT equations passed {'exact_trace_rows': 0, 'rows': 5, 'sectors': 1, 'seeds': 5}\nDirect massless QCD IRR: 5 IBP targets and 7 generated CT equations passed {'exact_trace_rows': 0, 'rows': 5, 'sectors': 1, 'seeds': 5}\n",
+          "mimetype": "text/plain"
+        }
+      ]
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "4329f81194f998a0fdba99b418a9282c",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "63447e48c51b2ea090dd10ab26440ebb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='lEQa-0' random-id='6c189517-e46b-cd28-3b72-aef93e5a4c41'><marimo-slider data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eGauge parameter \u03be&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.0' data-stop='3.0' data-step='0.25' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='lEQa-1' random-id='14f986bf-e36e-3e77-fed7-4c3f89cb7f8a'><marimo-slider data-initial-value='5' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eQuark flavors Nf&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0' data-stop='20' data-step='1' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='lEQa-2' random-id='72e43a23-6e66-3ada-a0ee-004ec18ca420'><marimo-slider data-initial-value='3' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eColors Nc&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='2' data-stop='5' data-step='1' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div><marimo-ui-element object-id='lEQa-3' random-id='4b1bcd79-4f94-f6bc-a4c9-db0bfc869420'><marimo-dropdown data-initial-value='[&quot;MSbar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSubtraction scheme&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;MSbar&quot;,&quot;MS&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "83150cc54b52315a145eec4ecd7d140e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The pole column gives coefficients of <marimo-tex class=\"arithmatex\">||(a_4/\\epsilon||)</marimo-tex>. In MSbar the finite subtraction column gives <marimo-tex class=\"arithmatex\">||(c_\\Delta||)</marimo-tex> times the residue, with <marimo-tex class=\"arithmatex\">||(c_\\Delta=\\log(4\\pi)-\\gamma_E||)</marimo-tex> in the common loop measure. It is a subtraction constant, not a finite loop amplitude.</span></span><marimo-ui-element object-id='PKri-0' random-id='7e22bad9-df4c-47fb-db92-9f65dee2b3e0'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zq&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-1.3333333333333333,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-2.605078109423677},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZA&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:1.6666666666666665,&#92;&quot;Finite subtraction coefficient&#92;&quot;:3.2563476367795965},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Z\u03be&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:1.6666666666666665,&#92;&quot;Finite subtraction coefficient&#92;&quot;:3.2563476367795965},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zc&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:1.5,&#92;&quot;Finite subtraction coefficient&#92;&quot;:2.930712873101637},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zg&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-3.833333333333333,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-7.489599564593072},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;ZAm&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:-6.5,&#92;&quot;Finite subtraction coefficient&#92;&quot;:-12.699755783440427},{&#92;&quot;Constant&#92;&quot;:&#92;&quot;Zcm&#92;&quot;,&#92;&quot;1/\u03b5 coefficient&#92;&quot;:0.0,&#92;&quot;Finite subtraction coefficient&#92;&quot;:0.0}]&quot;' data-total-rows='7' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Auxiliary residue shift from the massive prescription: <strong>-5</strong>.  Vertex cancellation residual: <strong>0.0e+00</strong>.  One-loop <marimo-tex class=\"arithmatex\">||(\\beta_0||)</marimo-tex>: <strong>7.66667</strong>.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

@@ -10,7 +10,7 @@ def _():
     from symbolica import E, S
     from symbolica.community.spenso import AUTO, Representation, TensorExpression, chain
 
-    return AUTO, E, S, Representation, TensorExpression, chain, mo
+    return AUTO, E, Representation, S, TensorExpression, chain, mo
 
 
 @app.cell(hide_code=True)
@@ -34,7 +34,7 @@ def _(mo):
 
 
 @app.cell
-def _(Representation, TensorExpression, mo):
+def _(Representation, TensorExpression):
     generator = TensorExpression.t(8, 3)
     fundamental = Representation.cof(3)
     explicit_word = generator("a", "i", "k") * generator("b", "k", "j")
@@ -51,6 +51,13 @@ def _(Representation, TensorExpression, mo):
         explicit_word.spenso_conjugate().simplify_color().to_expression()
     )
     assert color_word.dirac_adjoint().to_expression() == color_conjugate.to_expression()
+
+
+    return color_conjugate, color_word, explicit_word, fundamental, generator
+
+
+@app.cell
+def _(color_conjugate, color_word, explicit_word, mo):
     mo.vstack(
         [
             mo.md("**Explicit indexed network**"),
@@ -61,7 +68,7 @@ def _(Representation, TensorExpression, mo):
             color_conjugate,
         ]
     )
-    return color_conjugate, color_word, fundamental, generator
+    return
 
 
 @app.cell
@@ -82,7 +89,7 @@ def _(E, color_conjugate, color_word, mo):
             color_norm,
         ]
     )
-    return (color_norm,)
+    return
 
 
 @app.cell
@@ -156,7 +163,7 @@ def _(E, S, TensorExpression, color_trace, color_trace_conjugate, mo):
             antisymmetric_color_trace.spenso_conjugate(),
         ]
     )
-    return antisymmetric_color_trace, symmetric_color_trace
+    return
 
 
 @app.cell
@@ -202,7 +209,7 @@ def _(AUTO, E, S, TensorExpression, chain, fundamental, generator, mo):
             weighted_numeric_norm,
         ]
     )
-    return weighted_color_conjugate, weighted_color_word, weighted_numeric_norm
+    return
 
 
 if __name__ == "__main__":

@@ -1,0 +1,80 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.24.0",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "c019bf5fef5f3930d1ecf44a8ccfe1bb",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "1be9db35ae1033ef96347c773108ec3e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"chiral-z-decays\">Chiral Z decays</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/diphoton.py\">Two-photon annihilation</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(Z\\to f\\bar f||)</marimo-tex> from the Standard Model and retain the fermion mass,\nleft- and right-chiral couplings, and the Z's longitudinal polarization.\nChoose a neutrino, charged lepton, up-type quark or down-type quark to reproduce\nthe four classes in the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/Z-FFbar\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc example</a>.</span>\n<span class=\"paragraph\">The three initial Z polarizations are averaged; final spins and colors are\nsummed. Fermion and antifermion are distinct, so no identical-particle factor\nis needed.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "8ad8f017391efb1fd7c61e916c48a29d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='vblA-0' random-id='1ecc28aa-610b-011b-6908-74ab0ada9618'><marimo-dropdown data-initial-value='[&quot;Electrons&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eDecay channel&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Electron neutrinos&quot;,&quot;Electrons&quot;,&quot;Charm quarks&quot;,&quot;Bottom quarks&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "4bfc2512fb46d7c937e8b2020503c3de",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "1a5ce103ceba33a3797618561e213122",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"physical-phase-space\">Physical phase space</h2>\n<span class=\"paragraph\">With <marimo-tex class=\"arithmatex\">||(r=m_f^2/m_Z^2||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(\\beta=\\sqrt{1-4r}||)</marimo-tex>, the decay width is\n$<marimo-tex class=\"arithmatex\">||(\\Gamma=\\frac{N_c G_F m_Z^3\\beta}{6\\pi\\sqrt2}\n\\left[c_V^2(1+2r)+c_A^2(1-4r)\\right],||)</marimo-tex>$\nwhere <marimo-tex class=\"arithmatex\">||(c_V=T_3-2Q_f\\sin^2\\theta_W||)</marimo-tex> and <marimo-tex class=\"arithmatex\">||(c_A=T_3||)</marimo-tex>.\nHere <marimo-tex class=\"arithmatex\">||(N_c=1||)</marimo-tex> for leptons and <marimo-tex class=\"arithmatex\">||(3||)</marimo-tex> for quarks. The expression applies above\nthreshold, <marimo-tex class=\"arithmatex\">||(m_Z&gt;2m_f||)</marimo-tex>.</span>\n<span class=\"paragraph\">Feynkit supplies the two-body measure and rest-frame decay flux.\nIntegrating the isotropic spin-averaged density over solid angle gives the\ntotal width. In the massless neutrino channel it reduces to\n<marimo-tex class=\"arithmatex\">||(G_Fm_Z^3/(12\\pi\\sqrt2)||)</marimo-tex>.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "8efc4e6c22bfad6bf4ed5c8c9c01c078",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Total decay width</strong> in terms of <marimo-tex class=\"arithmatex\">||(M=m_Z||)</marimo-tex> and the final-particle speed <marimo-tex class=\"arithmatex\">||(\\beta||)</marimo-tex>. The massless neutrino channel has <marimo-tex class=\"arithmatex\">||(\\beta=1||)</marimo-tex>.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">-1/96\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>24\u00b72^<span style=\"color: rgb(0, 95, 175)\">(</span>1/2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7sw\u00b2\u00b7M\u00b3\u00b7beta\u00b7G_F-8\u00b72^<span style=\"color: rgb(0, 95, 175)\">(</span>1/2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7sw\u00b2\u00b7M\u00b3\u00b7beta\u00b3\u00b7G_F-48\u00b72^<span style=\"color: rgb(0, 95, 175)\">(</span>1/2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7sw\u2074\u00b7M\u00b3\u00b7beta\u00b7G_F\n    +16\u00b72^<span style=\"color: rgb(0, 95, 175)\">(</span>1/2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7sw\u2074\u00b7M\u00b3\u00b7beta\u00b3\u00b7G_F-3\u00b72^<span style=\"color: rgb(0, 95, 175)\">(</span>1/2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7M\u00b3\u00b7beta\u00b7G_F-2^<span style=\"color: rgb(0, 95, 175)\">(</span>1/2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7M\u00b3\u00b7beta\u00b3\u00b7G_F\n<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span></div><marimo-callout-output data-html='&quot;&#92;u003cspan&#92;u003eThe generated squared amplitude, phase-space normalization and massless limit agree with the FeynCalc reference.&#92;u003c/span&#92;u003e&quot;' data-kind='&quot;success&quot;'></marimo-callout-output></div>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}
