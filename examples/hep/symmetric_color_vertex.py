@@ -56,7 +56,7 @@ def _(fk, json):
 @app.cell
 def _(adjoint_model, fk, mo):
     symmetric_generated = fk.Generator(adjoint_model).generate(
-        fk.Process.amplitude([25, 25], [25]).with_loop_count(0, 0),
+        fk.Process.amplitude(["H", "H"], ["H"]).with_loop_count(0, 0),
         max_vertices=1,
         maximum_bridges=None,
         numerator_grouping=None,

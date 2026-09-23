@@ -52,8 +52,8 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         if set(_v.particles) <= {"e-", "e+", "a", "Z", "W-", "W+", "ve", "ve~", "H"}
     ]
     generated = model.generate_diagrams(
-        [11, -11],
-        [-24, 24],
+        ["e-", "e+"],
+        ["W-", "W+"],
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=_vertices,
@@ -61,11 +61,11 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         progress=None,
     )
     assert len(generated.diagrams) == 4
-    assert {_d.internal_edges[0].particle_pdg for _d in generated.diagrams} == {
-        22,
-        23,
-        25,
-        12,
+    assert {_d.internal_edges[0].particle_name for _d in generated.diagrams} == {
+        "a",
+        "Z",
+        "H",
+        "ve",
     }
     _P = S("gammalooprs::P")
     charge, sw, cw, mw, mz, mh, me, _ye, _vev, _yme = S(
@@ -118,19 +118,19 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
             .to_expression()
             .replace(S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse)
         ).expand()
-        _pdg = _diagram.internal_edges[0].particle_pdg
+        _particle_name = _diagram.internal_edges[0].particle_name
         _term = (
             _numerator
             * _diagram.overall_factor_expression(evaluate=True)
             * _diagram.numerator_prefactor_expression()
             / _denominator
         )
-        _diagram_terms[_pdg] = _term
+        _diagram_terms[_particle_name] = _term
     _polar_ports = S("ww::physical2", "ww::physical3")
     _projection = model.particle("W-").spin_sum(
         _P(2), _ports[2], _polar_ports[0]
     ) * model.particle("W+").spin_sum(_P(3), _ports[3], _polar_ports[1])
-    _longitudinal = (_diagram_terms[23] * (s - mz**2)).expand().coefficient(
+    _longitudinal = (_diagram_terms["Z"] * (s - mz**2)).expand().coefficient(
         mz ** (-2)
     ) * mz ** (-2)
     _transverse_test = (_longitudinal * _projection).replace(
@@ -145,8 +145,8 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         .expand()
     )
     assert _transverse_test == zero
-    _diagram_terms[23] = (
-        (_diagram_terms[23] - _longitudinal / (s - mz**2)).together().expand()
+    _diagram_terms["Z"] = (
+        (_diagram_terms["Z"] - _longitudinal / (s - mz**2)).together().expand()
     )
     _spins = model.particle("e-").spin_sum(
         _P(0), _ports[0], _wrapped(_ports[1]), average=True
@@ -158,7 +158,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
     ) * model.particle("W+").spin_sum(_P(3), _ports[3], _wrapped(_ports[3]))
     _operators = {}
     _adjoints = {}
-    for _pdg, _term in _diagram_terms.items():
+    for _particle_name, _term in _diagram_terms.items():
         _operator = TensorExpression(_term.expand())
         _adjoint = (
             _operator.dirac_adjoint()
@@ -169,8 +169,8 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         )
         for _real in (charge, sw, cw, mw, mz, mh, me, s, t, u, H):
             _adjoint = _adjoint.replace(_conjugate(_real), _real)
-        _operators[_pdg] = _operator
-        _adjoints[_pdg] = TensorExpression(_adjoint).wrap_indices(_wrapped)
+        _operators[_particle_name] = _operator
+        _adjoints[_particle_name] = TensorExpression(_adjoint).wrap_indices(_wrapped)
     squared = zero
     pair_results = {}
     for _left, _left_operator in _operators.items():
@@ -214,7 +214,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
                 .together()
             )
             pair_results[_left, _right] = _result
-            squared += _result * H ** (int(_left == 25) + int(_right == 25))
+            squared += _result * H ** (int(_left == "H") + int(_right == "H"))
         print("Contracted interference row", _left, flush=True)
     squared = squared.together()
     for (_left, _right), _result in pair_results.items():
@@ -562,7 +562,7 @@ def _(
     selected_total = complex(total.evaluate(_parameters)).real * _pb_per_GeV2
     assert selected_squared > 0 and selected_total > 0
     pair_table = []
-    _labels = {22: "γ", 23: "Z", 12: "νₑ", 25: "Higgs"}
+    _labels = {"a": "γ", "Z": "Z", "ve": "νₑ", "H": "Higgs"}
     for _left, _left_label in _labels.items():
         for _right, _right_label in _labels.items():
             if _left > _right:

@@ -103,16 +103,16 @@ def _(E, S, Symbol, TensorExpression, hep, json):
     reducer = hep.TensorReducer(D).with_integrated_vector(K(0, mink(D)))
     color = f(coad(dA, a), coad(dA, b), coad(dA, c))
     terms_by_diagram, trees, generated_diagrams = {}, {}, {}
-    for pdg in (9000005, -9000005):
+    for particle_name in ("ghG", "ghG~"):
         for kind, outgoing, loops, count in (
-            ("tree", [21, pdg], 0, 1),
-            ("vertex", [21, pdg], 1, 2),
-            ("self", [pdg], 1, 1),
+            ("tree", ["g", particle_name], 0, 1),
+            ("vertex", ["g", particle_name], 1, 2),
+            ("self", [particle_name], 1, 1),
         ):
             diagrams = (
                 hep.Generator(model)
                 .generate(
-                    hep.Process.amplitude([pdg], outgoing).with_loop_count(
+                    hep.Process.amplitude([particle_name], outgoing).with_loop_count(
                         loops, loops
                     ),
                     max_vertices=len(outgoing) - 1 + 2 * loops,
@@ -126,8 +126,8 @@ def _(E, S, Symbol, TensorExpression, hep, json):
                 )
                 .diagrams
             )
-            assert len(diagrams) == count, (pdg, kind, len(diagrams))
-            generated_diagrams[pdg, kind] = diagrams
+            assert len(diagrams) == count, (particle_name, kind, len(diagrams))
+            generated_diagrams[particle_name, kind] = diagrams
             for diagram in diagrams:
                 topology = tuple(
                     sorted(vertex.interaction for vertex in diagram.vertices)
@@ -193,28 +193,28 @@ def _(E, S, Symbol, TensorExpression, hep, json):
                 assert not scalar.matches(hedge(arguments))
                 if not loops:
                     expected_momentum = P(0, mink(D, b))
-                    if pdg < 0:
+                    if particle_name == "ghG~":
                         expected_momentum -= P(1, mink(D, b))
                     assert (scalar + gs * expected_momentum * color).expand() == zero
-                    trees[pdg] = scalar
+                    trees[particle_name] = scalar
                     continue
                 terms = []
                 for monomial, coefficient in scalar.coefficient_list(x):
                     power = -int((monomial.derivative(x) * x / monomial).together())
                     assert monomial == x**-power
                     terms.append(([power], coefficient))
-                key = (pdg, kind, topology)
+                key = (particle_name, kind, topology)
                 assert key not in terms_by_diagram
                 terms_by_diagram[key] = terms
 
     # Crossing exchanges ghost color slots and sends its incoming momentum to
     # minus the outgoing antighost momentum; both sides retain the open gluon slot.
     crossed_tree = (
-        trees[9000005]
+        trees["ghG"]
         .replace(P(0, mink(D, b)), -P(0, mink(D, b)) + P(1, mink(D, b)))
         .replace(color, f(coad(dA, c), coad(dA, b), coad(dA, a)))
     )
-    assert (crossed_tree - trees[-9000005]).expand() == zero
+    assert (crossed_tree - trees["ghG~"]).expand() == zero
 
     targets = sorted(
         {tuple(p) for terms in terms_by_diagram.values() for p, _ in terms}
@@ -223,9 +223,9 @@ def _(E, S, Symbol, TensorExpression, hep, json):
         [list(target) for target in targets], max_depth=2
     )
     assert solution.residuals == [[1]]
-    vertex_poles = {9000005: zero, -9000005: zero}
+    vertex_poles = {"ghG": zero, "ghG~": zero}
     self_poles = {}
-    for (pdg, kind, topology), terms in terms_by_diagram.items():
+    for (particle_name, kind, topology), terms in terms_by_diagram.items():
         reduced = sum(
             (
                 coefficient * solution.reduce(powers, integral=integral)
@@ -246,7 +246,7 @@ def _(E, S, Symbol, TensorExpression, hep, json):
         assert pole.coefficient(eps**-2) == zero
         assert not pole.matches(integral(arguments))
         if kind == "self":
-            self_poles[pdg] = pole
+            self_poles[particle_name] = pole
             expected = CA * (xi - 3) * s * metric(coad(dA, a), coad(dA, b)) / (4 * eps)
             assert (pole - expected).expand() == zero
             assert pole.replace(s, 0) == zero  # No auxiliary ghost mass pole.
@@ -254,31 +254,37 @@ def _(E, S, Symbol, TensorExpression, hep, json):
             assert topology in (("V_35", "V_35", "V_35"), ("V_35", "V_35", "V_36"))
             multiplicity = 3 if "V_36" in topology else 1
             expected_ratio = multiplicity * CA * xi / (8 * eps)
-            tree = trees[pdg].replace(D, 4)
+            tree = trees[particle_name].replace(D, 4)
             physical_pole = (Symbol.I * pole).expand()
             assert (physical_pole - tree * expected_ratio).expand() == zero
             ratio = (physical_pole / tree).together()
             assert ratio == expected_ratio
-            vertex_poles[pdg] += physical_pole
-    for pdg, pole in vertex_poles.items():
-        assert (pole - trees[pdg].replace(D, 4) * CA * xi / (2 * eps)).expand() == zero
+            vertex_poles[particle_name] += physical_pole
+    for particle_name, pole in vertex_poles.items():
+        assert (
+            pole - trees[particle_name].replace(D, 4) * CA * xi / (2 * eps)
+        ).expand() == zero
 
     # The gluon field counterterm is an explicit reference input from the separate
     # generated QCD renormalization calculation. The ghost kinetic pole is computed
     # here; combining it with the vertex supplies an independent coupling check.
     Nf = S("ghost_uv::Nf")
     vertex_ratios = {
-        pdg: (pole / trees[pdg].replace(D, 4)).together()
-        for pdg, pole in vertex_poles.items()
+        particle_name: (pole / trees[particle_name].replace(D, 4)).together()
+        for particle_name, pole in vertex_poles.items()
     }
     ghost_ct = {
-        pdg: -pole.coefficient(metric(coad(dA, a), coad(dA, b))).coefficient(s)
-        for pdg, pole in self_poles.items()
+        particle_name: -pole.coefficient(metric(coad(dA, a), coad(dA, b))).coefficient(
+            s
+        )
+        for particle_name, pole in self_poles.items()
     }
     gluon_ct = ((13 - 3 * xi) * CA - 4 * Nf) / (6 * eps)
     coupling_ct = {
-        pdg: (-vertex_ratios[pdg] - ghost_ct[pdg] - gluon_ct / 2).together()
-        for pdg in trees
+        particle_name: (
+            -vertex_ratios[particle_name] - ghost_ct[particle_name] - gluon_ct / 2
+        ).together()
+        for particle_name in trees
     }
     for counterterm in coupling_ct.values():
         assert (counterterm + (11 * CA - 2 * Nf) / (6 * eps)).together() == zero
@@ -321,20 +327,20 @@ def _(mo):
 
 @app.cell
 def _(antighost, generated_diagrams, mo, trees, vertex_poles):
-    selected_pdg = -9000005 if antighost.value else 9000005
+    selected_particle = "ghG~" if antighost.value else "ghG"
     mo.vstack(
         [
             mo.md("## Generated tree and loop tensors"),
-            mo.hstack(generated_diagrams[selected_pdg, "tree"]),
-            trees[selected_pdg],
-            mo.hstack(generated_diagrams[selected_pdg, "vertex"]),
-            vertex_poles[selected_pdg],
+            mo.hstack(generated_diagrams[selected_particle, "tree"]),
+            trees[selected_particle],
+            mo.hstack(generated_diagrams[selected_particle, "vertex"]),
+            vertex_poles[selected_particle],
             mo.md(
                 r"The displayed loop pole multiplies $a_4$. Its entire tensor is proportional to the tree: no contraction with a polarization or momentum is used to hide extra structures."
             ),
         ]
     )
-    return (selected_pdg,)
+    return (selected_particle,)
 
 
 @app.cell
@@ -387,7 +393,7 @@ def _(
     ghost_ct,
     gluon_ct,
     mo,
-    selected_pdg,
+    selected_particle,
     vertex_ratios,
     xi,
 ):
@@ -397,10 +403,10 @@ def _(
         xi: gauge_parameter.value,
     }
     _expressions = [
-        vertex_ratios[selected_pdg],
-        ghost_ct[selected_pdg],
+        vertex_ratios[selected_particle],
+        ghost_ct[selected_particle],
         gluon_ct,
-        coupling_ct[selected_pdg],
+        coupling_ct[selected_particle],
     ]
     selected_residues = [
         complex((eps * _expression).together().evaluate(_parameters)).real

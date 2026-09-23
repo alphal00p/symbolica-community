@@ -117,7 +117,7 @@ def _(E, Replacement, S, TensorExpression, hep, qed_model):
     zpsi_one = -one / eps
 
     result = hep.Generator(qed_model).generate(
-        hep.Process.amplitude([11], [11]).with_loop_count(2, 2),
+        hep.Process.amplitude(["e-"], ["e-"]).with_loop_count(2, 2),
         max_vertices=4,
         maximum_bridges=0,
         vertex_allow=["V_98"],

@@ -43,7 +43,9 @@ def _(mo):
 @app.cell
 def _(E, Model, S, TensorExpression, hep, mo):
     qed_model = Model.standard_model()
-    _process = hep.Process.cross_section([11, -11], [13, -13]).with_loop_count(1, 1)
+    _process = hep.Process.cross_section(["e-", "e+"], ["mu-", "mu+"]).with_loop_count(
+        1, 1
+    )
     _result = hep.Generator(qed_model).generate(
         _process,
         max_vertices=4,
@@ -60,11 +62,11 @@ def _(E, Model, S, TensorExpression, hep, mo):
     qed_k1, qed_k2 = S("qed_example::k1", "qed_example::k2")
     _loop_edge = qed_diagram.loop_momentum_basis.loop_edges[0]
     _loop_particle = next(
-        _particle.pdg_code
+        _particle.name
         for _edge, _particle in zip(_cut.edges, _cut.particles)
         if _edge.id == _loop_edge
     )
-    _physical_momentum = qed_k1 if _loop_particle == 13 else qed_k2
+    _physical_momentum = qed_k1 if _loop_particle == "mu-" else qed_k2
     _index = S("qed_example::index_")
     qed_loop_pattern = _K(0, _index)
     qed_loop_replacement = _cut.orientations[_loop_edge] * _physical_momentum(_index)

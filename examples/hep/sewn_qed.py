@@ -61,10 +61,10 @@ def _(E, S, TensorExpression, fk):
     assert len(_vertices) == 2
 
     for _name, _incoming, _outgoing in [
-        ("electron Compton", [11, 22], [11, 22]),
-        ("positron Compton", [-11, 22], [-11, 22]),
-        ("annihilation", [11, -11], [13, -13]),
-        ("electron-muon scattering", [11, 13], [11, 13]),
+        ("electron Compton", ["e-", "a"], ["e-", "a"]),
+        ("positron Compton", ["e+", "a"], ["e+", "a"]),
+        ("annihilation", ["e-", "e+"], ["mu-", "mu+"]),
+        ("electron-muon scattering", ["e-", "mu-"], ["e-", "mu-"]),
     ]:
         _compton = _name.endswith("Compton")
         _masses = (
@@ -132,11 +132,11 @@ def _(E, S, TensorExpression, fk):
             for _diagram in _result.diagrams:
                 assert len(_diagram.cuts) == 1
                 _cut = _diagram.cuts[0]
-                assert sorted(p.pdg_code for p in _cut.particles) == sorted(_outgoing)
+                assert sorted(p.name for p in _cut.particles) == sorted(_outgoing)
                 _coordinate = next(
                     _edge.id
                     for _edge, particle in zip(_cut.edges, _cut.particles)
-                    if particle.pdg_code == _outgoing[0]
+                    if particle.name == _outgoing[0]
                 )
                 _diagram = _diagram.with_loop_momentum_edges([_coordinate])
                 _cut = _diagram.cuts[0]

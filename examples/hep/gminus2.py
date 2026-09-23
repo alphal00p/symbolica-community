@@ -77,7 +77,7 @@ def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
     operators, diagrams = [], []
     for loops in (0, 1):
         generated = hep.Generator(model).generate(
-            hep.Process.amplitude([11], [22, 11]).with_loop_count(loops, loops),
+            hep.Process.amplitude(["e-"], ["a", "e-"]).with_loop_count(loops, loops),
             max_vertices=1 + 2 * loops,
             maximum_bridges=0,
             vertex_allow=["V_98"],

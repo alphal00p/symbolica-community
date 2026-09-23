@@ -50,7 +50,7 @@ def _(CookSettings, E, S, TensorExpression, fk, mo, model):
         [P(0), P(1), P(2), P(3)], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
     )
     generated = fk.Generator(model).generate(
-        fk.Process.amplitude([11, -11], [22, 22]).with_loop_count(0, 0),
+        fk.Process.amplitude(["e-", "e+"], ["a", "a"]).with_loop_count(0, 0),
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=["V_98"],

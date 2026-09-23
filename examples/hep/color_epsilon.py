@@ -43,7 +43,7 @@ def _(mo):
 def _(fk, json):
     _source = json.loads(fk.Model.standard_model().to_json())
     _source["name"] = "triplet_scalar_epsilon_example"
-    epsilon_base = max(abs(_p["pdg_code"]) for _p in _source["particles"]) + 10
+    _epsilon_base = max(abs(_p["pdg_code"]) for _p in _source["particles"]) + 10
     _scalar = next(_p for _p in _source["particles"] if _p["name"] == "G+")
     for _flavor in range(1, 4):
         for _sign in (1, -1):
@@ -56,7 +56,7 @@ def _(fk, json):
                     antiname=_antiname,
                     texname=_name,
                     antitexname=_antiname,
-                    pdg_code=_sign * (epsilon_base + _flavor),
+                    pdg_code=_sign * (_epsilon_base + _flavor),
                     color=_sign * 3,
                     charge=0.0,
                 )
@@ -74,18 +74,18 @@ def _(fk, json):
         for _conjugate in (False, True)
     ]
     epsilon_model = fk.Model.from_json(json.dumps(_source))
-    return epsilon_base, epsilon_model
+    return (epsilon_model,)
 
 
 @app.cell
-def _(epsilon_base, epsilon_model, fk, mo):
+def _(epsilon_model, fk, mo):
     epsilon_diagrams = []
-    for _sign in (1, -1):
+    for _incoming, _outgoing in (
+        (["X1"], ["X2~", "X3~"]),
+        (["X1~"], ["X2", "X3"]),
+    ):
         _generated = fk.Generator(epsilon_model).generate(
-            fk.Process.amplitude(
-                [_sign * (epsilon_base + 1)],
-                [-_sign * (epsilon_base + 2), -_sign * (epsilon_base + 3)],
-            ).with_loop_count(0, 0),
+            fk.Process.amplitude(_incoming, _outgoing).with_loop_count(0, 0),
             max_vertices=1,
             maximum_bridges=None,
             numerator_grouping=None,

@@ -110,7 +110,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     Qg, Qpp = S("photon_2l::metric_basis", "photon_2l::momentum_basis")
     Q, dot = S("gammalooprs::Q", "spenso::dot")
     result = hep.Generator(model).generate(
-        hep.Process.amplitude([22], [22]).with_loop_count(2, 2),
+        hep.Process.amplitude(["a"], ["a"]).with_loop_count(2, 2),
         max_vertices=4,
         maximum_bridges=0,
         vertex_allow=["V_98"],
@@ -130,7 +130,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
             diagram.numerator_expression().to_expression()
         ).replace(mass, zero)
         photon = next(
-            edge for edge in diagram.internal_edges if edge.particle_pdg == 22
+            edge for edge in diagram.internal_edges if edge.particle_name == "a"
         )
         # Selective mass replacement acts on the two propagator terms separately.
         # Clearing q² across the Feynman term would instead introduce an extra
@@ -315,7 +315,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     # Physical electron mass is zero, so its mass counterterm contributes nothing.
     # These explicit local insertions are not automatic CT/forest generation.
     one_loop_generated = hep.Generator(model).generate(
-        hep.Process.amplitude([22], [22]).with_loop_count(1, 1),
+        hep.Process.amplitude(["a"], ["a"]).with_loop_count(1, 1),
         max_vertices=2,
         maximum_bridges=0,
         vertex_allow=["V_98"],
@@ -333,7 +333,9 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     )
     assert factor == -one  # Preserve the native closed-fermion-loop sign.
     fermions = [edge for edge in one_loop_diagram.edges if not edge.is_external]
-    assert len(fermions) == 2 and all(abs(edge.particle_pdg) == 11 for edge in fermions)
+    assert len(fermions) == 2 and all(
+        edge.particle_name in ("e-", "e+") for edge in fermions
+    )
     ports = {
         edge.external_index: dict(
             next(

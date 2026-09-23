@@ -44,7 +44,7 @@ def _(mo):
 @app.cell
 def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model):
     _result = hep.Generator(qcd_model).generate(
-        hep.Process.cross_section([5, -5], [6, -6]).with_loop_count(1, 1),
+        hep.Process.cross_section(["b", "b~"], ["t", "t~"]).with_loop_count(1, 1),
         max_vertices=4,
         maximum_bridges=None,
         vertex_allow=["V_76", "V_137"],
@@ -55,7 +55,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
     qcd_diagram = _result.diagrams[0]
     assert len(qcd_diagram.cuts) == 1
     _cut = qcd_diagram.cuts[0]
-    assert sorted(_p.pdg_code for _p in _cut.particles) == [-6, 6]
+    assert sorted(_p.name for _p in _cut.particles) == ["t", "t~"]
     assert all(_side.loop_count == 0 for _side in (_cut.left, _cut.right))
     _Q, _P, _K = S("gammalooprs::Q", "gammalooprs::P", "gammalooprs::K")
     _s, _t, _u, _mb, _mt, _gs, _k1, _k2 = S(
@@ -133,11 +133,11 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
     assert _contracted.is_scalar
     _loop_edge = qcd_diagram.loop_momentum_basis.loop_edges[0]
     _loop_particle = next(
-        _p.pdg_code
+        _p.name
         for _edge, _p in zip(_cut.edges, _cut.particles)
         if _edge.id == _loop_edge
     )
-    _physical_momentum = _k1 if _loop_particle == 6 else _k2
+    _physical_momentum = _k1 if _loop_particle == "t" else _k2
     _routed = qcd_diagram.loop_momentum_basis.route_expression(
         _contracted.to_expression()
     ).replace(_K(0, _index), _cut.orientations[_loop_edge] * _physical_momentum(_index))

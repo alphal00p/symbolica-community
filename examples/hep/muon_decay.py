@@ -54,8 +54,8 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
     ]
     assert len(_vertices) == 4
     _generated = _model.generate_diagrams(
-        [13],
-        [11, -12, 14],
+        ["mu-"],
+        ["e-", "ve~", "vm"],
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=_vertices,
@@ -65,7 +65,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
     assert len(_generated.diagrams) == 1
     diagram = _generated.diagrams[0]
     assert len(diagram.internal_edges) == 1
-    assert abs(diagram.internal_edges[0].particle_pdg) == 24
+    assert diagram.internal_edges[0].particle_name in ("W-", "W+")
     P = S("gammalooprs::P")
     _charge, _sw, _mw, _mm, _me = S(
         "UFO::ee", "UFO::sw", "UFO::MW", "UFO::MM", "UFO::Me"

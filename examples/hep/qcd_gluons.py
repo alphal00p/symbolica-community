@@ -55,7 +55,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
         [_P(0), _P(1), _P(2), _P(3)], [_mass**2, _mass**2, E("0"), E("0")], [_s, _t, _u]
     )
     gluon_generated = hep.Generator(qcd_model).generate(
-        hep.Process.amplitude([5, -5], [21, 21]).with_loop_count(0, 0),
+        hep.Process.amplitude(["b", "b~"], ["g", "g"]).with_loop_count(0, 0),
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=["V_76", "V_36"],

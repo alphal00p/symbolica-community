@@ -49,7 +49,7 @@ def _(mo):
 @app.cell
 def _(E, S, TensorExpression, hep, mo, oneloop, qed_model):
     _generated = hep.Generator(qed_model).generate(
-        hep.Process.amplitude([22], [22]).with_loop_count(1, 1),
+        hep.Process.amplitude(["a"], ["a"]).with_loop_count(1, 1),
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=["V_98"],
