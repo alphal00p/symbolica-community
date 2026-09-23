@@ -40,10 +40,7 @@ def _(mo):
 
 @app.cell
 def _(fk, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    lepton_model = fk.Model(_location.parent / "hep_sm.json")
+    lepton_model = fk.Model.standard_model()
     reaction = mo.ui.dropdown(
         ["Bhabha", "Møller"], value="Bhabha", label="Scattering process"
     )

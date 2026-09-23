@@ -30,7 +30,7 @@ def _(mo):
     $X_1,X_2,X_3$. Using the same bosonic field three times would make
     this antisymmetric interaction vanish.
 
-    We reuse scalar parameter and Lorentz records from the stored model,
+    We reuse scalar parameter and Lorentz records from the embedded Standard Model,
     add the three new species, and retain only the two conjugate cubic
     vertices. These are toy color interactions, not Standard Model processes.
     The calculation below removes the scalar coupling and compares their
@@ -40,11 +40,8 @@ def _(mo):
 
 
 @app.cell
-def _(fk, json, mo):
-    _directory = mo.notebook_location()
-    if _directory is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    _source = json.loads((_directory.parent / "hep_sm.json").read_text())
+def _(fk, json):
+    _source = json.loads(fk.Model.standard_model().to_json())
     _source["name"] = "triplet_scalar_epsilon_example"
     epsilon_base = max(abs(_p["pdg_code"]) for _p in _source["particles"]) + 10
     _scalar = next(_p for _p in _source["particles"] if _p["pdg_code"] == 251)

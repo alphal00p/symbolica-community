@@ -57,11 +57,8 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(E, S, Symbol, TensorExpression, hep, json, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    model = hep.Model(_location.parent / "hep_sm.json")
+def _(E, S, Symbol, TensorExpression, hep, json):
+    model = hep.Model.standard_model()
     D, eps, xi, s = S("qed_full::D", "qed_full::eps", "qed_full::xi", "qed_full::s")
     specification = json.loads(model.to_json())
     for _propagator in specification["propagators"]:

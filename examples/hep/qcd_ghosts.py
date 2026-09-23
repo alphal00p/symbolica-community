@@ -16,11 +16,8 @@ def _():
 
 
 @app.cell
-def _(Model, mo):
-    _notebook_dir = mo.notebook_location()
-    if _notebook_dir is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    ghost_model = Model(_notebook_dir.parent / "hep_sm.json")
+def _(Model):
+    ghost_model = Model.standard_model()
     return (ghost_model,)
 
 

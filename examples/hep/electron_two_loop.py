@@ -53,11 +53,8 @@ def _(mo):
 
 
 @app.cell
-def _(hep, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate the notebook directory to load hep_sm.json")
-    qed_model = hep.Model(_location.parent / "hep_sm.json")
+def _(hep):
+    qed_model = hep.Model.standard_model()
     return (qed_model,)
 
 

@@ -62,11 +62,8 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, Symbol, TensorExpression, hep, json, mo, oneloop):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    model = hep.Model(_location.parent / "hep_sm.json")
+def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
+    model = hep.Model.standard_model()
     D, epsilon, M, mUV, coordinate, integral, xi, s, Nf = S(
         "qed_ren::D",
         "qed_ren::eps",

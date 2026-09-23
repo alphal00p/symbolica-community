@@ -45,11 +45,8 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(E, S, Symbol, TensorExpression, hep, json, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    model = hep.Model(_location.parent / "hep_sm.json")
+def _(E, S, Symbol, TensorExpression, hep, json):
+    model = hep.Model.standard_model()
     spec = json.loads(model.to_json())
     for propagator in spec["propagators"]:
         if propagator["particle"] == "g":

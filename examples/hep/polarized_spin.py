@@ -45,10 +45,7 @@ def _(mo):
 
 @app.cell
 def _(fk, mo):
-    _directory = mo.notebook_location()
-    if _directory is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    spin_model = fk.Model(_directory.parent / "hep_sm.json")
+    spin_model = fk.Model.standard_model()
     species = mo.ui.dropdown(["Tau", "Antitau"], value="Tau", label="Physical particle")
     mo.vstack([species])
     return species, spin_model

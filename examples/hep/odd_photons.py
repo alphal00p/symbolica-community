@@ -42,10 +42,7 @@ def _(mo):
 
 @app.cell
 def _(hep, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    model = hep.Model(_location.parent / "hep_sm.json")
+    model = hep.Model.standard_model()
     photons = mo.ui.dropdown(
         {
             "One photon: odd tadpole": 1,

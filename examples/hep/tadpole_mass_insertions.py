@@ -46,11 +46,8 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    model = hep.Model(_location.parent / "hep_sm.json")
+def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep):
+    model = hep.Model.standard_model()
     D, eps, m, Nc, y, L, scale2 = S(
         "tadinsert::D",
         "tadinsert::eps",

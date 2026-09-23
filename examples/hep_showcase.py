@@ -373,12 +373,8 @@ def _(mo):
 
 
 @app.cell
-def _(Model, mo):
-    _notebook_dir = mo.notebook_location()
-    if _notebook_dir is None:
-        raise RuntimeError("Cannot locate the notebook directory to load hep_sm.json")
-    model_path = _notebook_dir / "hep_sm.json"
-    model = Model(model_path)
+def _(Model):
+    model = Model.standard_model()
     g = model.particle("g")
     g
     return g, model

@@ -24,7 +24,7 @@ def _(mo):
     [Browse all notebooks](/) · [Color algebra](/?file=hep/color_algebra.py)
 
     Generate a cubic interaction of adjoint scalar fields with color tensor
-    $d^{abc}$. The model below reuses the stored scalar mass and coupling
+    $d^{abc}$. The model below reuses the embedded Standard Model scalar mass and coupling
     records, restricts the interactions to one cubic vertex, and gives the
     scalar an adjoint color index. The label `H` refers here to this toy field.
 
@@ -39,11 +39,8 @@ def _(mo):
 
 
 @app.cell
-def _(fk, json, mo):
-    _directory = mo.notebook_location()
-    if _directory is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    _source = json.loads((_directory.parent / "hep_sm.json").read_text())
+def _(fk, json):
+    _source = json.loads(fk.Model.standard_model().to_json())
     _source["name"] = "adjoint_scalar_example"
     for _particle in _source["particles"]:
         if _particle["pdg_code"] == 25:

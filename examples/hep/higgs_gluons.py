@@ -1,7 +1,10 @@
 import marimo
 
 __generated_with = "0.24.0"
-app = marimo.App(width="medium", app_title="Higgs to gluons: a finite triangle")
+app = marimo.App(
+    width="medium",
+    app_title="Higgs to gluons: a finite triangle",
+)
 
 
 @app.cell
@@ -50,23 +53,12 @@ def _(mo):
     Physical gluon polarization sums then remove the tensor terms that vanish
     against transverse external states.
     """)
+    return
 
 
 @app.cell(hide_code=True)
-def _(
-    ColorSimplifySettings,
-    E,
-    Replacement,
-    S,
-    Symbol,
-    TensorExpression,
-    hep,
-    mo,
-):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    model = hep.Model(_location.parent / "hep_sm.json")
+def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
+    model = hep.Model.standard_model()
     D, s, m, gs, y, mu, nu, ca, cb, eps = S(
         "hgg::D",
         "hgg::s",
@@ -442,32 +434,37 @@ def _(
         width
         - (Nc**2 - 1) * alpha_s**2 * MH**3 * A * Abar / (576 * Symbol.PI**3 * vev**2)
     ).together() == E("0")
-
     return (
-        result,
-        yukawa_tree_result,
-        family,
-        solution,
-        form_factor,
-        finite_factor,
-        normalized,
-        heavy_series,
-        width,
-        Nc,
-        s,
-        m,
-        Cf,
-        alpha_s,
-        vev,
         A,
         Abar,
+        Cf,
         MH,
+        Nc,
+        alpha_s,
+        family,
+        form_factor,
+        heavy_series,
+        m,
+        normalized,
+        result,
+        s,
+        solution,
+        vev,
+        width,
+        yukawa_tree_result,
     )
 
 
 @app.cell(hide_code=True)
 def _(
-    family, form_factor, heavy_series, mo, result, solution, width, yukawa_tree_result
+    family,
+    form_factor,
+    heavy_series,
+    mo,
+    result,
+    solution,
+    width,
+    yukawa_tree_result,
 ):
     mo.vstack(
         [
@@ -513,6 +510,7 @@ def _(
             width,
         ]
     )
+    return
 
 
 @app.cell(hide_code=True)
@@ -642,13 +640,7 @@ def _(
             ),
         ]
     )
-    return (
-        analytic_form_factor,
-        decay_width,
-        form_factor_error,
-        form_factor_value,
-        scale_error,
-    )
+    return
 
 
 if __name__ == "__main__":

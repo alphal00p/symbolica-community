@@ -18,15 +18,6 @@ def _():
     return E, Model, Representation, S, Symbol, TensorExpression, chain, hep, mo
 
 
-@app.cell
-def _(mo):
-    _notebook_dir = mo.notebook_location()
-    if _notebook_dir is None:
-        raise RuntimeError("Cannot locate the notebook directory to load hep_sm.json")
-    model_path = _notebook_dir.parent / "hep_sm.json"
-    return (model_path,)
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
@@ -50,8 +41,8 @@ def _(mo):
 
 
 @app.cell
-def _(E, Model, S, TensorExpression, hep, mo, model_path):
-    qed_model = Model(model_path)
+def _(E, Model, S, TensorExpression, hep, mo):
+    qed_model = Model.standard_model()
     _process = hep.Process.cross_section([11, -11], [13, -13]).with_loop_count(1, 1)
     _result = hep.Generator(qed_model).generate(
         _process,

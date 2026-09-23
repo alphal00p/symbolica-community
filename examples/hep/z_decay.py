@@ -35,10 +35,7 @@ def _(mo):
 
 @app.cell
 def _(fk, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json beside the notebook directory")
-    model = fk.Model(_location.parent / "hep_sm.json")
+    model = fk.Model.standard_model()
     channel = mo.ui.dropdown(
         ["Electron neutrinos", "Electrons", "Charm quarks", "Bottom quarks"],
         value="Electrons",

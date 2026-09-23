@@ -41,11 +41,8 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(E, Replacement, S, TensorExpression, hep, json, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    model = hep.Model(_location.parent / "hep_sm.json")
+def _(E, Replacement, S, TensorExpression, hep, json):
+    model = hep.Model.standard_model()
     d, s, mass_squared, uv_mass, eps, log_mass, log_4pi, flavors = S(
         "photon_2l::D",
         "photon_2l::s",

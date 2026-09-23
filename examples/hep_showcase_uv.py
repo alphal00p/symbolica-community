@@ -323,8 +323,8 @@ def _(mo):
 
 
 @app.cell
-def _(Model, mo):
-    model = Model(mo.notebook_location() / "hep_sm.json")
+def _(Model):
+    model = Model.standard_model()
     g = model.particle("g")
     g
     return g, model

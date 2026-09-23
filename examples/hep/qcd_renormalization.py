@@ -66,6 +66,7 @@ def _(mo):
     matching equations, and the controls compare MS and MSbar subtraction.
     The finite column contains subtraction constants, not finite loop amplitudes.
     """)
+    return
 
 
 @app.cell(hide_code=True)
@@ -78,13 +79,9 @@ def _(
     TensorExpression,
     hep,
     json,
-    mo,
     oneloop,
 ):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    model = hep.Model(_location.parent / "hep_sm.json")
+    model = hep.Model.standard_model()
     D, epsilon, M, _mUV, coordinate, integral, xi, s, Nf = S(
         "qcd_ren::D",
         "qcd_ren::eps",
@@ -504,6 +501,7 @@ def _(diagrams, mo, uv_poles):
             ),
         ]
     )
+    return
 
 
 @app.cell
@@ -532,6 +530,7 @@ def _(family, integral, mo, solution):
             ),
         ]
     )
+    return
 
 
 @app.cell
@@ -1054,6 +1053,7 @@ def _(ct_coefficients, ct_diagrams, ct_matrix, deltas, mo):
     """),
         ]
     )
+    return
 
 
 @app.cell(hide_code=True)
@@ -1094,6 +1094,7 @@ def _(counterterm_names, counterterms_by_scheme, mo):
             ),
         ]
     )
+    return
 
 
 @app.cell
@@ -1533,6 +1534,7 @@ def _(irr_deltas, irr_solution, mo):
             irr_deltas,
         ]
     )
+    return
 
 
 @app.cell
@@ -1630,6 +1632,7 @@ def _(
             ),
         ]
     )
+    return
 
 
 if __name__ == "__main__":

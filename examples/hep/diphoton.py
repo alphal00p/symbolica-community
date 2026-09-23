@@ -2,7 +2,8 @@ import marimo
 
 __generated_with = "0.24.0"
 app = marimo.App(
-    width="medium", app_title="Electron–positron annihilation into photons"
+    width="medium",
+    app_title="Electron–positron annihilation into photons",
 )
 
 
@@ -34,11 +35,8 @@ def _(mo):
 
 
 @app.cell
-def _(fk, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json beside the notebook directory")
-    model = fk.Model(_location.parent / "hep_sm.json")
+def _(fk):
+    model = fk.Model.standard_model()
     return (model,)
 
 
@@ -357,7 +355,7 @@ def _(
         .to_float(16)
     )
     mo.md(rf"Accepted event rate: **{accepted_rate}** × $2\pi\alpha^2/s$.")
-    return (accepted_rate,)
+    return
 
 
 if __name__ == "__main__":

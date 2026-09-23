@@ -46,10 +46,7 @@ def _(mo):
 
 @app.cell
 def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
-    _location = mo.notebook_location()
-    if _location is None:
-        raise RuntimeError("Cannot locate hep_sm.json")
-    model = hep.Model(_location.parent / "hep_sm.json")
+    model = hep.Model.standard_model()
     dimension, transfer, mass, charge, mu = S(
         "gminus2::D", "gminus2::t", "UFO::Me", "UFO::ee", "gminus2::mu"
     )
