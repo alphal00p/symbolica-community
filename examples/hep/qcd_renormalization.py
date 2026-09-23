@@ -412,7 +412,6 @@ def _(
         ("quark_p", "quark_m", "ghost", "gluon", "vertex"), _expected, strict=True
     ):
         assert (uv_poles[_label] - _reference).together() == zero
-
     return (
         CA,
         CF,
@@ -952,13 +951,13 @@ def _(
     # The completed MS/MSbar reference only needs the local UV poles. Use the
     # OneLOop measure conversion (4*pi)^eps*rGamma=1+cDelta*eps+O(eps²), where
     # cDelta=log(4*pi)-EulerGamma, with D=4-2eps. Keep it symbolic in exact checks.
-    _cDelta = S("qcd_ct::cDelta")
+    cDelta = S("qcd_ct::cDelta")
     assert (-2 / (D - 4)).replace(D, 4 - 2 * epsilon) == 1 / epsilon
     counterterms_by_scheme = {
         "MS": [deltas[_row, 0].to_expression().together() for _row in range(8)],
         "MSbar": [
             (
-                epsilon * deltas[_row, 0].to_expression() * (1 / epsilon + _cDelta)
+                epsilon * deltas[_row, 0].to_expression() * (1 / epsilon + cDelta)
             ).together()
             for _row in range(8)
         ],
@@ -968,15 +967,15 @@ def _(
             for _delta, _constant in zip(unknowns, _constants, strict=True):
                 _generated_ct = _generated_ct.replace(_delta, _constant)
             _subtraction_part = uv_poles[_label] * (
-                one + epsilon * _cDelta if _scheme == "MSbar" else one
+                one + epsilon * cDelta if _scheme == "MSbar" else one
             )
             assert (_generated_ct + _subtraction_part).together() == zero
             # In one common conventional measure MS retains the finite cDelta*P.
             _remainder = (
-                uv_poles[_label] * (one + epsilon * _cDelta) + _generated_ct
+                uv_poles[_label] * (one + epsilon * cDelta) + _generated_ct
             ).together()
             _expected_remainder = (
-                epsilon * _cDelta * uv_poles[_label] if _scheme == "MS" else zero
+                epsilon * cDelta * uv_poles[_label] if _scheme == "MS" else zero
             )
             assert (_remainder - _expected_remainder).together() == zero
     print("Generated QCD CT amplitudes: complete MS/MSbar tensor cancellation passed")
@@ -986,8 +985,8 @@ def _(
         (epsilon * deltas[_row, 0].to_expression()).together() for _row in range(8)
     ]
     vertex_residue = (epsilon * uv_poles["vertex"]).together()
-
     return (
+        cDelta,
         counterterm_names,
         counterterms_by_scheme,
         ct_coefficients,
@@ -1110,6 +1109,7 @@ def _(
     S,
     Symbol,
     TensorExpression,
+    cDelta,
     coordinate,
     ct_coefficients,
     ct_matrix,
@@ -1158,105 +1158,122 @@ def _(
     _irr_kin = hep.Kinematics(D, momenta=[K(0), P(0), P(1)]).with_scalar_product(
         P(0), P(0), s
     )
-    _irr_scalars = {}
-    for (_kind, _number), (
-        _diagram,
-        _raw,
-        _ports,
-        _probes,
-        _factor,
-    ) in irr_inputs.items():
-        # Separate every primitive longitudinal 1/q² before changing propagators.
-        # A common squared denominator would spuriously massify the Feynman term.
-        _tags = {
-            edge.id: S(f"qcd_irr::gluon_{edge.id}")
-            for edge in _diagram.internal_edges
-            if edge.particle_name == gluon.name
-        }
-        _tagged = _raw
-        for _edge_id, _tag in _tags.items():
-            _tagged = _tagged.replace(
-                _dot(_Q(_edge_id, mink(4)), _Q(_edge_id, mink(4))), _tag
-            )
-        _components = (
-            _tagged.expand().coefficient_list(*_tags.values())
-            if _tags
-            else [(one, _tagged)]
-        )
-        _reconstructed = zero
-        for _monomial, _numerator in _components:
-            _powers = {}
+    irr_results = {}
+    _beyond_uv = S("qcd_irr::beyond_uv")
+    for _scenario in ("massive", "massless"):
+        _massless = _scenario == "massless"
+        _irr_scalars = {}
+        # Match the reference's order of operations: set mq=0 before massification.
+        # It is not the massless limit of an already rearranged massive integral.
+        _active_indices = [i for i in range(8) if not (_massless and i == 1)]
+        _active_unknowns = [unknowns[i] for i in _active_indices]
+        for (_kind, _number), (
+            _diagram,
+            _raw,
+            _ports,
+            _probes,
+            _factor,
+        ) in irr_inputs.items():
+            if _massless:
+                _raw = _raw.replace(mass, zero)
+            # Separate every primitive longitudinal 1/q² before changing propagators.
+            # A common squared denominator would spuriously massify the Feynman term.
+            _tags = {
+                edge.id: S(f"qcd_irr::gluon_{edge.id}")
+                for edge in _diagram.internal_edges
+                if edge.particle_name == gluon.name
+            }
+            _tagged = _raw
             for _edge_id, _tag in _tags.items():
-                _exponent = int(
-                    (_monomial.derivative(_tag) * _tag / _monomial).together()
+                _tagged = _tagged.replace(
+                    _dot(_Q(_edge_id, mink(4)), _Q(_edge_id, mink(4))), _tag
                 )
-                assert _exponent in (0, -1), (_kind, _exponent, _monomial)
-                _powers[_edge_id] = 1 - _exponent
-                _monomial = _monomial.replace(
-                    _tag, _dot(_Q(_edge_id, mink(4)), _Q(_edge_id, mink(4)))
-                )
-            _reconstructed += _monomial * _numerator
-            if any(_power == 2 for _power in _powers.values()):
-                assert _numerator.replace(xi, one).expand() == zero
-            _denominator = (
-                _diagram.denominator_expression(in_lmb=True, edge_powers=_powers)
-                .to_expression()
-                .replace(mink(dim, index), mink(D, index))
-                .replace(mink(dim), mink(D))
+            _components = (
+                _tagged.expand().coefficient_list(*_tags.values())
+                if _tags
+                else [(one, _tagged)]
             )
-            # Keep massive quark denominators intact; only massless ones get M.
-            for _match in list(_denominator.match(den(edge_, mom_, mass_, quad_))):
-                _vals = dict(_match)
-                _denominator = _denominator.replace(
-                    den(_vals[edge_], _vals[mom_], _vals[mass_], _vals[quad_]),
-                    _vals[quad_] - (M if _vals[mass_] == zero else zero),
-                )
-            _numerator = (
-                _diagram.momentum_basis()
-                .route_expression(_numerator)
-                .replace(mink(dim, index), mink(D, index))
-                .replace(mink(dim), mink(D))
-            )
-            if _kind in ("gluon_loop", "ghost_loop", "quark_loop", "tadpole"):
-                _numerator = _numerator.replace(
-                    mink(D, _ports[0]), mink(D, mu)
-                ).replace(mink(D, _ports[1]), mink(D, nu))
-            for _label, _projector in _probes:
-                _traced = (
-                    TensorExpression((_numerator * _projector).expand())
-                    .simplify_gamma()
-                    .expand()
-                    .simplify_metrics()
-                    .to_dots()
+            _reconstructed = zero
+            for _monomial, _numerator in _components:
+                _powers = {}
+                for _edge_id, _tag in _tags.items():
+                    _exponent = int(
+                        (_monomial.derivative(_tag) * _tag / _monomial).together()
+                    )
+                    assert _exponent in (0, -1), (_kind, _exponent, _monomial)
+                    _powers[_edge_id] = 1 - _exponent
+                    _monomial = _monomial.replace(
+                        _tag, _dot(_Q(_edge_id, mink(4)), _Q(_edge_id, mink(4)))
+                    )
+                _reconstructed += _monomial * _numerator
+                if any(_power == 2 for _power in _powers.values()):
+                    assert _numerator.replace(xi, one).expand() == zero
+                _denominator = (
+                    _diagram.denominator_expression(in_lmb=True, edge_powers=_powers)
                     .to_expression()
+                    .replace(mink(dim, index), mink(D, index))
+                    .replace(mink(dim), mink(D))
                 )
-                _direct = _irr_kin.apply(_traced / _denominator).replace(
-                    vacuum.scalar_product(K(0), K(0)), _x
+                # Keep massive quark denominators intact; only massless ones get M.
+                for _match in list(_denominator.match(den(edge_, mom_, mass_, quad_))):
+                    _vals = dict(_match)
+                    _propagator_mass = (
+                        _vals[mass_].replace(mass, zero) if _massless else _vals[mass_]
+                    )
+                    _quadratic = (
+                        _vals[quad_].replace(mass, zero) if _massless else _vals[quad_]
+                    )
+                    _denominator = _denominator.replace(
+                        den(_vals[edge_], _vals[mom_], _vals[mass_], _vals[quad_]),
+                        _quadratic - (M if _propagator_mass == zero else zero),
+                    )
+                _numerator = (
+                    _diagram.momentum_basis()
+                    .route_expression(_numerator)
+                    .replace(mink(dim, index), mink(D, index))
+                    .replace(mink(dim), mink(D))
                 )
-                _direct = _direct.replace_multiple(
-                    [
-                        Replacement(
-                            _dot(K(0, mink(D)), P(_a, mink(D))),
-                            _t * _dot(K(0, mink(D)), P(_a, mink(D))),
-                        ),
-                        Replacement(
-                            _dot(P(_a, mink(D)), K(0, mink(D))),
-                            _t * _dot(P(_a, mink(D)), K(0, mink(D))),
-                        ),
-                        Replacement(
-                            _dot(P(_a, mink(D)), P(_b, mink(D))),
-                            _t**2 * _dot(P(_a, mink(D)), P(_b, mink(D))),
-                        ),
-                        Replacement(P(_a, mink(D, index)), _t * P(_a, mink(D, index))),
-                        Replacement(s, _t**2 * s),
-                    ]
-                )
-                # The pslash projector lowers the quark external degree by one.
-                # Two-point gluon/ghost tensors need degree two; the vertex needs zero.
-                _direct = (
-                    _direct.series(
-                        _t,
-                        0,
+                if _kind in ("gluon_loop", "ghost_loop", "quark_loop", "tadpole"):
+                    _numerator = _numerator.replace(
+                        mink(D, _ports[0]), mink(D, mu)
+                    ).replace(mink(D, _ports[1]), mink(D, nu))
+                for _label, _projector in _probes:
+                    if _massless and _label == "quark_m":
+                        continue
+                    _traced = (
+                        TensorExpression((_numerator * _projector).expand())
+                        .simplify_gamma()
+                        .expand()
+                        .simplify_metrics()
+                        .to_dots()
+                        .to_expression()
+                    )
+                    _direct = _irr_kin.apply(_traced / _denominator).replace(
+                        vacuum.scalar_product(K(0), K(0)), _x
+                    )
+                    _direct = _direct.replace_multiple(
+                        [
+                            Replacement(
+                                _dot(K(0, mink(D)), P(_a, mink(D))),
+                                _t * _dot(K(0, mink(D)), P(_a, mink(D))),
+                            ),
+                            Replacement(
+                                _dot(P(_a, mink(D)), K(0, mink(D))),
+                                _t * _dot(P(_a, mink(D)), K(0, mink(D))),
+                            ),
+                            Replacement(
+                                _dot(P(_a, mink(D)), P(_b, mink(D))),
+                                _t**2 * _dot(P(_a, mink(D)), P(_b, mink(D))),
+                            ),
+                            Replacement(
+                                P(_a, mink(D, index)), _t * P(_a, mink(D, index))
+                            ),
+                            Replacement(s, _t**2 * s),
+                        ]
+                    )
+                    # The pslash projector lowers the quark external degree by one.
+                    # Two-point gluon/ghost tensors need degree two; the vertex needs zero.
+                    _degree = (
                         2
                         if _kind
                         in (
@@ -1266,138 +1283,215 @@ def _(
                             "tadpole",
                             "ghost",
                         )
-                        else 0,
+                        else 0
                     )
+                    _taylor = (
+                        _direct.series(_t, 0, _degree + int(_massless))
+                        .to_expression()
+                        .expand()
+                    )
+                    _direct = _taylor.replace(_t, one)
+                    if _massless:
+                        # The reference tags the first term beyond the divergence
+                        # degree; prove that it contributes no UV pole after IBP.
+                        _direct += (_beyond_uv - one) * _taylor.coefficient(
+                            _t ** (_degree + 1)
+                        )
+                    _scalar = _irr_kin.apply(reducer.reduce(_direct)).replace(
+                        vacuum.scalar_product(K(0), K(0)), _x
+                    )
+                    _scalar = (
+                        (
+                            _scalar
+                            * _factor
+                            / gs**2
+                            * (Symbol.I / tree if _kind == "vertex" else one)
+                            * (Nf if _kind == "quark_loop" else one)
+                        )
+                        .together()
+                        .expand()
+                    )
+                    _irr_scalars[_label] = (
+                        _irr_scalars.get(_label, zero) + _scalar
+                    ).together()
+            assert (_reconstructed - _raw).together() == zero
+        _irr_terms, _irr_targets = {}, set()
+        for _label, _scalar in _irr_scalars.items():
+            # Symbolica partial fractions separate the physical and auxiliary tadpoles.
+            # Their principal parts must reconstruct the complete projected integrand.
+            _apart = _scalar.apart(_x)
+            assert (_apart - _scalar).together() == zero
+            _reconstructed = zero
+            _terms = []
+            for _squared_mass in (M,) if _massless else (M, mass**2):
+                _principal = (
+                    _apart.replace(_x, coordinate + _squared_mass)
+                    .series(coordinate, 0, -1)
                     .to_expression()
-                    .replace(_t, one)
-                )
-                _scalar = _irr_kin.apply(reducer.reduce(_direct)).replace(
-                    vacuum.scalar_product(K(0), K(0)), _x
-                )
-                _scalar = (
-                    (
-                        _scalar
-                        * _factor
-                        / gs**2
-                        * (Symbol.I / tree if _kind == "vertex" else one)
-                        * (Nf if _kind == "quark_loop" else one)
-                    )
-                    .together()
                     .expand()
                 )
-                _irr_scalars[_label] = (
-                    _irr_scalars.get(_label, zero) + _scalar
-                ).together()
-        assert (_reconstructed - _raw).together() == zero
-    _irr_terms, _irr_targets = {}, set()
-    for _label, _scalar in _irr_scalars.items():
-        # Symbolica partial fractions separate the physical and auxiliary tadpoles.
-        # Their principal parts must reconstruct the complete projected integrand.
-        _apart = _scalar.apart(_x)
-        assert (_apart - _scalar).together() == zero
-        _reconstructed = zero
-        _terms = []
-        for _squared_mass in (M, mass**2):
-            _principal = (
-                _apart.replace(_x, coordinate + _squared_mass)
-                .series(coordinate, 0, -1)
+                _reconstructed += _principal.replace(coordinate, _x - _squared_mass)
+                for _monomial, _coefficient in _principal.coefficient_list(coordinate):
+                    if _coefficient == zero:
+                        continue
+                    _power = -int(
+                        (
+                            _monomial.derivative(coordinate) * coordinate / _monomial
+                        ).together()
+                    )
+                    assert _monomial == coordinate ** (-_power) and _power > 0
+                    _terms.append((_squared_mass, _power, _coefficient))
+                    _irr_targets.add((_power,))
+            assert (_scalar - _reconstructed).together() == zero, _label
+            _irr_terms[_label] = _terms
+        irr_solution = hep.IBPFamily(
+            family, name="qcd_direct_irr_" + _scenario
+        ).reduce_laporta([list(p) for p in sorted(_irr_targets)], max_depth=2)
+        assert irr_solution.residuals == [[1]]
+        _irr_poles = {}
+        for _label, _terms in _irr_terms.items():
+            _expression = sum(
+                (
+                    _coefficient
+                    * irr_solution.reduce([_power], integral=integral)
+                    .replace(M, _squared_mass)
+                    .replace(integral(1), _squared_mass / epsilon)
+                    for _squared_mass, _power, _coefficient in _terms
+                ),
+                zero,
+            ).together()
+            _pole = (
+                _expression.replace(D, 4 - 2 * epsilon)
+                .series(epsilon, 0, -1)
                 .to_expression()
                 .expand()
+                .replace(mink(4, index), mink(D, index))
             )
-            _reconstructed += _principal.replace(coordinate, _x - _squared_mass)
-            for _monomial, _coefficient in _principal.coefficient_list(coordinate):
-                if _coefficient == zero:
-                    continue
-                _power = -int(
-                    (
-                        _monomial.derivative(coordinate) * coordinate / _monomial
-                    ).together()
-                )
-                assert _monomial == coordinate ** (-_power) and _power > 0
-                _terms.append((_squared_mass, _power, _coefficient))
-                _irr_targets.add((_power,))
-        assert (_scalar - _reconstructed).together() == zero, _label
-        _irr_terms[_label] = _terms
-    irr_solution = hep.IBPFamily(family, name="qcd_direct_irr").reduce_laporta(
-        [list(p) for p in sorted(_irr_targets)], max_depth=2
-    )
-    assert irr_solution.residuals == [[1]]
-    _irr_poles = {}
-    for _label, _terms in _irr_terms.items():
-        _expression = sum(
+            _irr_poles[_label] = _pole.together().expand()
+            assert _pole.coefficient(epsilon**-2) == zero
+            assert _pole.derivative(mass).together() == zero
+            assert _pole.derivative(_beyond_uv).together() == zero
+        _irr_poles["gluon"] = sum(
             (
-                _coefficient
-                * irr_solution.reduce([_power], integral=integral)
-                .replace(M, _squared_mass)
-                .replace(integral(1), _squared_mass / epsilon)
-                for _squared_mass, _power, _coefficient in _terms
+                _irr_poles[k]
+                for k in ("gluon_loop", "ghost_loop", "quark_loop", "tadpole")
             ),
             zero,
-        ).together()
-        _pole = (
-            _expression.replace(D, 4 - 2 * epsilon)
-            .series(epsilon, 0, -1)
-            .to_expression()
-            .expand()
-            .replace(mink(4, index), mink(D, index))
-        )
-        _irr_poles[_label] = _pole.together().expand()
-        assert _pole.coefficient(epsilon**-2) == zero
-        assert _pole.derivative(mass).together() == zero
-    _irr_poles["gluon"] = sum(
-        (_irr_poles[k] for k in ("gluon_loop", "ghost_loop", "quark_loop", "tadpole")),
-        zero,
-    ).expand()
-    _irr_poles["vertex"] = (_irr_poles["vertex_0"] + _irr_poles["vertex_1"]).expand()
+        ).expand()
+        _irr_poles["vertex"] = (
+            _irr_poles["vertex_0"] + _irr_poles["vertex_1"]
+        ).expand()
 
-    # Physical UV constants agree, but the auxiliary mass does depend on the
-    # rearrangement prescription. The reference's quark loop retains its true mass.
-    for _label in ("quark_p", "quark_m", "ghost", "vertex"):
-        assert (_irr_poles[_label] - uv_poles[_label]).together() == zero
-    _irr_auxiliary_pole = CA * (1 + 3 * xi) * M * gmunu / (4 * epsilon)
-    assert (
-        _irr_poles["gluon"] - uv_poles["gluon"] - _irr_auxiliary_pole
-    ).together() == zero
-    assert _irr_poles["quark_loop"].derivative(M) == zero
-    _irr_gluon_g = _irr_poles["gluon"].coefficient(gmunu)
-    _irr_gluon_pp = _irr_poles["gluon"].coefficient(ppmunu)
-    _irr_rhs = Matrix.vec(
-        [
-            -_irr_poles["quark_p"],
-            -_irr_poles["quark_m"],
-            -_irr_gluon_g.coefficient(s),
-            -xi * _irr_gluon_pp,
-            -_irr_poles["ghost"].coefficient(s),
-            -_irr_poles["vertex"],
-            -_irr_gluon_g.replace(s, zero) / M,
-            -_irr_poles["ghost"].replace(s, zero) / M,
-        ]
-    )
-    irr_deltas = ct_matrix.solve(_irr_rhs)
-    for _row in range(8):
-        _reference = (
-            -CA * (1 + 3 * xi) / (8 * epsilon)
-            if _row == 6
-            else deltas[_row, 0].to_expression()
+        # Physical UV constants agree, but the auxiliary mass does depend on the
+        # rearrangement prescription. The reference's quark loop retains its true mass.
+        for _label in (
+            ["quark_p", "ghost", "vertex"]
+            if _massless
+            else ["quark_p", "quark_m", "ghost", "vertex"]
+        ):
+            assert (_irr_poles[_label] - uv_poles[_label]).together() == zero
+        _irr_auxiliary_pole = (
+            (CA * (1 + 3 * xi) + (8 * Nf if _massless else zero))
+            * M
+            * gmunu
+            / (4 * epsilon)
         )
-        assert (irr_deltas[_row, 0].to_expression() - _reference).together() == zero
-    _irr_ct_rules = [
-        Replacement(delta, irr_deltas[_row, 0].to_expression())
-        for _row, delta in enumerate(unknowns)
-    ]
-    for _label, _generated_ct in ct_coefficients.items():
         assert (
-            _irr_poles[_label] + _generated_ct.replace_multiple(_irr_ct_rules)
+            _irr_poles["gluon"] - uv_poles["gluon"] - _irr_auxiliary_pole
         ).together() == zero
-    print(
-        "Direct massive QCD IRR: two tadpole masses, five IBP targets, eight generated CT equations passed",
-        irr_solution.stats,
-    )
+        if _massless:
+            assert (
+                _irr_poles["quark_loop"]
+                - uv_poles["quark_loop"]
+                - 2 * Nf * M * gmunu / epsilon
+            ).together() == zero
+        else:
+            assert _irr_poles["quark_loop"].derivative(M) == zero
+        _irr_gluon_g = _irr_poles["gluon"].coefficient(gmunu)
+        _irr_gluon_pp = _irr_poles["gluon"].coefficient(ppmunu)
+        _irr_rhs = Matrix.vec(
+            [
+                -_irr_poles["quark_p"],
+                -_irr_poles.get("quark_m", zero),
+                -_irr_gluon_g.coefficient(s),
+                -xi * _irr_gluon_pp,
+                -_irr_poles["ghost"].coefficient(s),
+                -_irr_poles["vertex"],
+                -_irr_gluon_g.replace(s, zero) / M,
+                -_irr_poles["ghost"].replace(s, zero) / M,
+            ]
+        )
+        _active_matrix = Matrix.from_linear(
+            len(_active_indices),
+            len(_active_indices),
+            [
+                ct_matrix[i, j].to_expression()
+                for i in _active_indices
+                for j in _active_indices
+            ],
+        )
+        _active_rhs = Matrix.vec(
+            [_irr_rhs[i, 0].to_expression() for i in _active_indices]
+        )
+        irr_deltas = _active_matrix.solve(_active_rhs)
+        for _row, _original_row in enumerate(_active_indices):
+            _reference = (
+                -(CA * (1 + 3 * xi) + (8 * Nf if _massless else zero)) / (8 * epsilon)
+                if _original_row == 6
+                else deltas[_original_row, 0].to_expression()
+            )
+            assert (irr_deltas[_row, 0].to_expression() - _reference).together() == zero
+        _irr_schemes = {}
+        for _scheme, _measure in (("MS", one), ("MSbar", one + epsilon * cDelta)):
+            _constants = [
+                (irr_deltas[_row, 0].to_expression() * _measure).together()
+                for _row in range(len(_active_indices))
+            ]
+            _irr_schemes[_scheme] = _constants
+            _irr_ct_rules = [
+                Replacement(delta, constant)
+                for delta, constant in zip(_active_unknowns, _constants, strict=True)
+            ]
+            for _label, _generated_ct in ct_coefficients.items():
+                if _massless and _label == "quark_m":
+                    continue
+                if _massless:
+                    assert _generated_ct.derivative(unknowns[1]) == zero
+                _actual_ct = _generated_ct.replace_multiple(_irr_ct_rules)
+                assert (_measure * _irr_poles[_label] + _actual_ct).together() == zero
+                _common_measure_remainder = (
+                    (one + epsilon * cDelta) * _irr_poles[_label] + _actual_ct
+                ).together()
+                _expected_remainder = (
+                    epsilon * cDelta * _irr_poles[_label] if _scheme == "MS" else zero
+                )
+                assert (
+                    _common_measure_remainder - _expected_remainder
+                ).together() == zero
+        irr_results[_scenario] = {
+            "poles": _irr_poles,
+            "schemes": _irr_schemes,
+            "constants": irr_deltas,
+            "indices": _active_indices,
+            "matrix": _active_matrix,
+            "solution": irr_solution,
+            "residues": [
+                (epsilon * irr_deltas[_row, 0].to_expression()).together()
+                for _row in range(len(_active_indices))
+            ],
+        }
+        print(
+            f"Direct {_scenario} QCD IRR: {len(_irr_targets)} IBP targets and {len(_active_indices)} generated CT equations passed",
+            irr_solution.stats,
+        )
+
+    # Keep the massive result available for the notebook's original comparison.
+    irr_deltas = irr_results["massive"]["constants"]
+    irr_solution = irr_results["massive"]["solution"]
 
     irr_residues = [
         (epsilon * irr_deltas[_row, 0].to_expression()).together() for _row in range(8)
     ]
-
     return irr_deltas, irr_residues, irr_solution
 
 
@@ -1432,8 +1526,9 @@ def _(irr_deltas, irr_solution, mo):
     $$\delta Z_{Am}=-\frac{C_A(1+3\xi)}{8\epsilon},\qquad \delta Z_{cm}=0.$$
     The complete projected tensor amplitudes cancel against those CT insertions.
     The quark loop contributes no auxiliary-mass term because its physical mass
-    was retained. This result is for massive quarks; massifying an initially
-    massless quark loop is a different prescription.
+    was retained. The [massless QCD notebook](?file=hep/qcd_massless_renormalization.py)
+    sets the quark mass to zero before massification and displays the distinct
+    result. Both calculations share this notebook's symbolic workflow.
     """),
             irr_deltas,
         ]
