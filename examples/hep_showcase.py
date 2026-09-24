@@ -533,6 +533,9 @@ def _(Representation, mo):
             mo.as_html(_display_rep),
             mo.as_html(_display_rep(1)),
         ],
+        justify="start",
+        align="start",
+        gap=2,
         wrap=True,
     )
     return
