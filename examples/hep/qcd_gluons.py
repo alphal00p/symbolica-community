@@ -104,7 +104,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
         )
     assert all(_d in _denominators for _d in (_s, _t - _mass**2, _u - _mass**2))
     _operator = TensorExpression(_amplitude.expand())
-    assert len(_operator.interface) == 8
+    assert len(_operator.structure.slots) == 8
     _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
     _adjoint = _adjoint.replace(_conjugate(_P(_a, _b)), _P(_a, _b))
     for _real in (_mass, _gs, _s, _t, _u):
@@ -121,7 +121,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
         if _position < 2:
             _initial_colors *= abs(_particle.color)
         _matches = []
-        for _slot in _operator.interface:
+        for _slot in _operator.structure.slots:
             _original = _slot.to_expression()
             if _original.replace(_ports[_position], E("0")) == _original:
                 continue

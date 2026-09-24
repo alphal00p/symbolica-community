@@ -1,7 +1,10 @@
 import marimo
 
 __generated_with = "0.24.0"
-app = marimo.App(width="medium", app_title="Photon–gluon currents and crossing")
+app = marimo.App(
+    width="medium",
+    app_title="Photon–gluon currents and crossing",
+)
 
 
 @app.cell
@@ -14,8 +17,7 @@ def _():
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("photon_gluon")
-
-    return mo, np, E, S, Symbol, hep, CookSettings, TensorExpression
+    return CookSettings, E, S, Symbol, TensorExpression, hep, mo, np
 
 
 @app.cell(hide_code=True)
@@ -47,7 +49,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, Symbol, hep, CookSettings, TensorExpression, np):
+def _(CookSettings, E, S, Symbol, TensorExpression, hep, np):
     def calculate_channels():
         model = hep.Model.standard_model()
         P = S("gammalooprs::P")
@@ -142,7 +144,7 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression, np):
                     initial_colors *= abs(particle.color)
                     generic_initial_colors *= dA if name == "g" else Nc
                 matches = []
-                for slot in operator.interface:
+                for slot in operator.structure.slots:
                     original = slot.to_expression()
                     if original.replace(ports[position], E("0")) == original:
                         continue
@@ -534,7 +536,7 @@ def _(mo):
     mo.vstack(
         [mo.hstack([channel, colors]), mo.hstack([mass_ratio, virtuality_ratio, angle])]
     )
-    return channel, colors, mass_ratio, virtuality_ratio, angle
+    return angle, channel, colors, mass_ratio, virtuality_ratio
 
 
 @app.cell
@@ -557,7 +559,16 @@ def _(calculation, channel, mo):
 
 
 @app.cell
-def _(calculation, channel, colors, mass_ratio, virtuality_ratio, angle, np, mo):
+def _(
+    angle,
+    calculation,
+    channel,
+    colors,
+    mass_ratio,
+    mo,
+    np,
+    virtuality_ratio,
+):
     _r = mass_ratio.value
     signed_virtuality = virtuality_ratio.value * (
         1 if channel.value == "annihilation" else -1
@@ -664,7 +675,7 @@ def _(calculation, channel, colors, mass_ratio, virtuality_ratio, angle, np, mo)
             mo.ui.table(angular_rows, selection=None),
         ]
     )
-    return angular_rows, selected_current, selected_density, cut_rate, signed_virtuality
+    return
 
 
 if __name__ == "__main__":

@@ -125,7 +125,7 @@ def _(CookSettings, E, S, TensorExpression, hep):
             TensorExpression(amplitude).expand().simplify_metrics().to_dots()
         )
         amplitude = operator.to_expression()
-        assert len(operator.interface) == 8
+        assert len(operator.structure.slots) == 8
         adjoint = (
             operator.spenso_conjugate().to_expression().replace(conj(P(a, b)), P(a, b))
         )

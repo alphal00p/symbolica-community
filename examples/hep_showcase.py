@@ -124,7 +124,9 @@ def _(
     def project_color(diagram: FeynmanDiagram) -> tuple[Expression, TensorExpression]:
         """Route momenta, then close color and retain its global factor separately."""
         numerator = diagram.numerator_expression(in_lmb=True).with_lorentz_dimension(D)
-        a, b = [slot for slot in numerator.interface if slot.representation == adjoint]
+        a, b = [
+            slot for slot in numerator.structure.slots if slot.representation == adjoint
+        ]
         color_projector = TensorExpression.g(adjoint)(a, b) / adjoint.dimension
         color_factor = None
         stripped = E("0")
@@ -161,7 +163,7 @@ def _(D, P, S, TensorExpression, contraction_settings, lorentz, p2):
         if numerator == 0:
             return numerator
         mu, nu = [
-            slot for slot in numerator.interface if slot.representation == lorentz
+            slot for slot in numerator.structure.slots if slot.representation == lorentz
         ]
         momentum_pair = P(mu) * P(nu) / p2
         if longitudinal:
@@ -518,7 +520,27 @@ def _(TensorExpression):
 
 @app.cell
 def _(r):
-    r.interface[0].to_expression()
+    r.structure
+    return
+
+
+@app.cell
+def _(Representation, mo):
+    _display_rep = Representation.mink(4)
+    mo.hstack(
+        [
+            mo.as_html(_display_rep.name),
+            mo.as_html(_display_rep),
+            mo.as_html(_display_rep(1)),
+        ],
+        wrap=True,
+    )
+    return
+
+
+@app.cell
+def _(TensorExpression):
+    TensorExpression.gamma(4)(1, 2, 1).structure
     return
 
 

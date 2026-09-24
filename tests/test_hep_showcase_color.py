@@ -47,12 +47,14 @@ def test_color_projection_preserves_only_the_lorentz_interface(notebook):
         color, stripped = n.project_color(diagram)
         assert isinstance(color, Expression)
         assert TensorExpression(color).is_scalar
-        assert color != E('0')
+        assert color != E("0")
         assert isinstance(stripped, TensorExpression)
         assert stripped.rank == 2
-        assert all(slot.to_expression().get_name() == 'spenso::mink'
-                   for slot in stripped.interface)
-        assert all(structure == E('1') for structure, _ in stripped.expand_color())
+        assert all(
+            slot.to_expression().get_name() == "spenso::mink"
+            for slot in stripped.structure.slots
+        )
+        assert all(structure == E("1") for structure, _ in stripped.expand_color())
         for longitudinal in (False, True):
             projector = n.external_projector(stripped, longitudinal=longitudinal)
             assert projector.rank == 2
@@ -93,7 +95,7 @@ def test_distinct_color_structures_keep_their_relative_coefficients(notebook):
     expected = metric + 3 * momentum_pair
     assert (color * stripped - expected).expand() == E("0")
     assert stripped.rank == 2
-    assert all(structure == E('1') for structure, _ in stripped.expand_color())
+    assert all(structure == E("1") for structure, _ in stripped.expand_color())
 
 
 def test_zero_color_projection_can_pass_through_lorentz_projection(notebook):
@@ -116,7 +118,7 @@ def test_zero_color_projection_can_pass_through_lorentz_projection(notebook):
 
     assert color == E("0")
     assert stripped == E("0")
-    assert n.apply_projector(stripped, n.external_projector(stripped)) == E('0')
+    assert n.apply_projector(stripped, n.external_projector(stripped)) == E("0")
 
 
 def test_global_color_factor_preserves_full_projection_and_uv_residues(notebook):
@@ -149,7 +151,7 @@ def test_global_color_factor_preserves_full_projection_and_uv_residues(notebook)
         full = diagram.numerator_expression().with_lorentz_dimension(n.D)
         a, b = [
             slot
-            for slot in full.interface
+            for slot in full.structure.slots
             if slot.to_expression().get_name() == "spenso::coad"
         ]
         color_projector = TensorExpression.g(n.adjoint)(a, b) / n.adjoint.dimension

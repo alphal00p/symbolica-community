@@ -262,7 +262,7 @@ class TestTensorNetwork:
         assert t is not None
 
         # Test structure
-        structure = t.structure()
+        structure = t.expression()
         assert structure is not None
 
 
@@ -312,13 +312,11 @@ class TestTensorEvaluation:
         assert e is not None
 
         # Test evaluation without compilation
-        e_params = [
-            random.random() + 1j * random.random() for _ in range(len(params))
-        ]
+        e_params = [random.random() + 1j * random.random() for _ in range(len(params))]
         eval_res = e.evaluate_complex([e_params])[0]
 
         assert eval_res is not None
-        assert eval_res.structure() is not None
+        assert eval_res.expression() is not None
 
     def test_tensor_compilation(self):
         """Test tensor compilation"""
@@ -351,7 +349,7 @@ class TestLibraryTensors:
 
         t = Tensor.sparse(N("sparse_test")(custom, custom), type(mq))
         # Note that the structure is a list of representations, not slots
-        structure = t.structure()
+        structure = t.expression()
         assert structure is not None
 
         # Set individual elements
@@ -381,12 +379,12 @@ class TestLibraryTensors:
         # Test element assignment
         t[[1, 2]] = 3 / 34
         assert t is not None
-        assert t.structure() is not None
+        assert t.expression() is not None
 
         lib = TensorLibrary.hep_lib()
         lib.register(t)
 
-        new_t = t.structure()
+        new_t = t.expression()
 
         x = new_t(1, 2) * new_t(2, 3) * new_t(3, 1)
         n = TensorNetwork(x, library=lib)
@@ -520,7 +518,9 @@ class TestIdensoSimplifications:
 
     def test_simplify_color_structure(self):
         """Test color structure simplification"""
-        result = TensorExpression(self.f_func(1, 2, 3) * self.f_func(3, 2, 1)).simplify_color()
+        result = TensorExpression(
+            self.f_func(1, 2, 3) * self.f_func(3, 2, 1)
+        ).simplify_color()
         assert result is not None
 
 

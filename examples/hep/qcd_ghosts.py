@@ -110,7 +110,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
             for _d in ((_s, _t - _mass**2, _u - _mass**2) if _count == 3 else (_s,))
         )
         _operator = TensorExpression(_amplitude.expand())
-        assert len(_operator.interface) == (8 if _count == 3 else 6)
+        assert len(_operator.structure.slots) == (8 if _count == 3 else 6)
         _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
         _adjoint = _adjoint.replace(_conjugate(_P(_a, _b)), _P(_a, _b))
         for _real in (_mass, _gs, _s, _t, _u):
@@ -127,7 +127,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
             if _position < 2:
                 _initial_colors *= abs(_particle.color)
             _matches = []
-            for _slot in _operator.interface:
+            for _slot in _operator.structure.slots:
                 _original = _slot.to_expression()
                 if _original.replace(_ports[_position], E("0")) == _original:
                     continue

@@ -117,7 +117,7 @@ def _(E, S, TensorExpression, epsilon_diagrams, mo):
     ]
     epsilon_norms = []
     for _color in epsilon_colors:
-        assert len(_color.interface) == 3
+        assert len(_color.structure.slots) == 3
         _conjugate = _color.spenso_conjugate()
         assert _conjugate.spenso_conjugate().to_expression() == _color.to_expression()
         # Explicit matching indices contract the tensor with its dual conjugate.

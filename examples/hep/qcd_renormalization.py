@@ -231,7 +231,7 @@ def _(
                 )
                 _color_slots = [
                     slot.dual().to_expression()
-                    for slot in TensorExpression(_numerator).interface
+                    for slot in TensorExpression(_numerator).structure.slots
                     if slot.to_expression().matches(_rep(_numeric_dim, index))
                 ]
                 assert len(_color_slots) == 2
@@ -803,7 +803,7 @@ def _(
                 )
                 _color_slots = [
                     slot.dual().to_expression()
-                    for slot in TensorExpression(_numerator).interface
+                    for slot in TensorExpression(_numerator).structure.slots
                     if slot.to_expression().matches(_rep(_numeric_dim, index))
                 ]
                 assert len(_color_slots) == 2, (_kind, _numerator)

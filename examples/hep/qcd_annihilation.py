@@ -82,7 +82,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
     _bis, _wave, _index, _metric, _left, _right = S(
         "spenso::bis", "wave_", "index_", "spenso::g", "left_", "right_"
     )
-    _slots = TensorExpression(_numerator).interface
+    _slots = TensorExpression(_numerator).structure.slots
     _color_projector = E("1")
     _initial_color_states = 1
     for _edge in qcd_diagram.external_edges:

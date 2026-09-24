@@ -202,7 +202,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
                 if _particle.color == 1:
                     continue
                 _matches = []
-                for _slot in _operator.interface:
+                for _slot in _operator.structure.slots:
                     _original = _slot.to_expression()
                     if _original.replace(_ports[_position], zero) == _original:
                         continue
