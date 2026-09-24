@@ -7,7 +7,7 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "c019bf5fef5f3930d1ecf44a8ccfe1bb",
+      "code_hash": "fb1e3ee357cf5b95d9c36beb283830d2",
       "outputs": [
         {
           "type": "data",
@@ -20,12 +20,12 @@
     },
     {
       "id": "MJUe",
-      "code_hash": "1be9db35ae1033ef96347c773108ec3e",
+      "code_hash": "928c38427c9d827695eebc4959ecbb2e",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"chiral-z-decays\">Chiral Z decays</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/diphoton.py\">Two-photon annihilation</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(Z\\to f\\bar f||)</marimo-tex> from the Standard Model and retain the fermion mass,\nleft- and right-chiral couplings, and the Z's longitudinal polarization.\nChoose a neutrino, charged lepton, up-type quark or down-type quark to reproduce\nthe four classes in the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/Z-FFbar\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc example</a>.</span>\n<span class=\"paragraph\">The three initial Z polarizations are averaged; final spins and colors are\nsummed. Fermion and antifermion are distinct, so no identical-particle factor\nis needed.</span></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"chiral-z-decays\">Chiral Z decays</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/weak_decays.py\">W and top decays</a> \u00b7 <a href=\"/?file=hep/diphoton.py\">Two-photon annihilation</a></span>\n<span class=\"paragraph\">Generate <marimo-tex class=\"arithmatex\">||(Z\\to f\\bar f||)</marimo-tex> from the Standard Model and retain the fermion mass,\nleft- and right-chiral couplings, and the Z's longitudinal polarization.\nChoose a neutrino, charged lepton, up-type quark or down-type quark to reproduce\nthe four classes in the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/EW/Tree/Z-FFbar\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc example</a>.</span>\n<span class=\"paragraph\">The three initial Z polarizations are averaged; final spins and colors are\nsummed. Fermion and antifermion are distinct, so no identical-particle factor\nis needed.</span></span>"
           }
         }
       ],
@@ -33,12 +33,12 @@
     },
     {
       "id": "vblA",
-      "code_hash": "8ad8f017391efb1fd7c61e916c48a29d",
+      "code_hash": "d9bec9d9a353ea52437a41636529893b",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='vblA-0' random-id='1ecc28aa-610b-011b-6908-74ab0ada9618'><marimo-dropdown data-initial-value='[&quot;Electrons&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eDecay channel&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Electron neutrinos&quot;,&quot;Electrons&quot;,&quot;Charm quarks&quot;,&quot;Bottom quarks&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='vblA-0' random-id='980fbf6b-0ffe-1983-d85e-016449035a15'><marimo-dropdown data-initial-value='[&quot;Electrons&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eDecay channel&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Electron neutrinos&quot;,&quot;Electrons&quot;,&quot;Charm quarks&quot;,&quot;Bottom quarks&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
           }
         }
       ],
@@ -46,7 +46,7 @@
     },
     {
       "id": "bkHC",
-      "code_hash": "4bfc2512fb46d7c937e8b2020503c3de",
+      "code_hash": "6b5741faaec4e5d928aa54966445b5db",
       "outputs": [],
       "console": []
     },
@@ -65,7 +65,7 @@
     },
     {
       "id": "PKri",
-      "code_hash": "8efc4e6c22bfad6bf4ed5c8c9c01c078",
+      "code_hash": "98d58fd338fcf5ad6f85ce54917d4d3a",
       "outputs": [
         {
           "type": "data",

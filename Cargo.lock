@@ -976,6 +976,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "feynkit-amplitude"
+version = "0.1.0"
+dependencies = [
+ "feynkit-graph",
+ "feynkit-model",
+ "idenso",
+ "linnet",
+ "spenso",
+ "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "thiserror",
+]
+
+[[package]]
 name = "feynkit-cff"
 version = "0.1.0"
 dependencies = [
@@ -996,6 +1009,7 @@ version = "0.1.0"
 dependencies = [
  "bincode",
  "bincode-trait-derive",
+ "feynkit-amplitude",
  "feynkit-graph",
  "feynkit-model",
  "idenso",
@@ -1056,6 +1070,7 @@ dependencies = [
 name = "feynkit-py"
 version = "0.1.0"
 dependencies = [
+ "feynkit-amplitude",
  "feynkit-cff",
  "feynkit-generator",
  "feynkit-graph",
@@ -1376,6 +1391,7 @@ dependencies = [
 name = "idenso"
 version = "0.3.0"
 dependencies = [
+ "ahash 0.8.12",
  "base64",
  "blake3",
  "delegate 0.13.5",
@@ -3168,6 +3184,7 @@ dependencies = [
  "eyre",
  "idenso",
  "itertools 0.14.0",
+ "linnet",
  "pyo3",
  "pyo3-stub-gen",
  "pyo3-stub-gen-derive",

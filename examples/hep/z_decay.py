@@ -56,13 +56,17 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     ports = S("z", "fermion", "antifermion")
     wave, rep, index, left, right = S("wave_", "rep_", "index_", "left_", "right_")
     metric = S("spenso::g")
-    particle_name, mass, weak_isospin, electric_charge = {
-        "Electron neutrinos": ("ve", E("0"), E("1/2"), E("0")),
-        "Electrons": ("e-", S("UFO::Me"), E("-1/2"), E("-1")),
-        "Charm quarks": ("c", S("UFO::MC"), E("1/2"), E("2/3")),
-        "Bottom quarks": ("b", S("UFO::MB"), E("-1/2"), E("-1/3")),
+    particle_name = {
+        "Electron neutrinos": "ve",
+        "Electrons": "e-",
+        "Charm quarks": "c",
+        "Bottom quarks": "b",
     }[channel.value]
     fermion = model.particle(particle_name)
+    mass = fermion.mass_expression
+    weak_isospin = fermion.weak_isospin
+    electric_charge = fermion.charge
+    assert weak_isospin is not None
     antifermion = fermion.antiparticle
     generated = fk.Generator(model).generate(
         fk.Process.amplitude(["Z"], [fermion, antifermion]),
@@ -169,6 +173,7 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
             mo.md("**Generated decay diagram and chiral current**"),
             diagram,
             operator,
+            operator.to_expression(),
             mo.md("**Spin-averaged squared matrix element**"),
             squared.together(),
         ]

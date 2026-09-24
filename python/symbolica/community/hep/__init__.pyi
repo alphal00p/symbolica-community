@@ -4407,7 +4407,7 @@ class Model:
     @staticmethod
     def standard_model() -> Model:
         r"""
-        Load the embedded, unrestricted Standard Model with default parameters.
+        Load the complete embedded Standard Model with default parameters.
         No model files or UFO installation are required.
 
         Examples
@@ -5417,14 +5417,61 @@ class Particle:
         >>> width = model.parameter(particle.width_parameter)
         """
     @property
-    def charge(self) -> builtins.float:
+    def mass_expression(self) -> Expression:
         r"""
-        Return the particle's electric charge.
+        Exact symbolic mass, with the UFO ZERO parameter represented as zero.
+        Other parameters remain symbolic, even when their current value is zero.
 
         Examples
         --------
-        >>> model.particle_by_pdg(11).charge
-        -1.0
+        >>> model.particle("c").mass_expression
+        """
+    @property
+    def charge(self) -> Expression:
+        r"""
+        Electric charge in units of e, as an exact Symbolica expression.
+
+        Examples
+        --------
+        >>> model.particle("c").charge
+        """
+    @property
+    def y_charge(self) -> typing.Optional[Expression]:
+        r"""
+        Hypercharge in Q = T3 + Y/2; left-handed for fermions.
+        None means absent, undefined, or unspecified, rather than zero.
+
+        Examples
+        --------
+        >>> model.particle("c").y_charge
+        """
+    @property
+    def y_charge_right(self) -> typing.Optional[Expression]:
+        r"""
+        Right-handed fermion hypercharge in Q = T3 + Y/2, if specified.
+
+        Examples
+        --------
+        >>> model.particle("c").y_charge_right
+        """
+    @property
+    def weak_isospin(self) -> typing.Optional[Expression]:
+        r"""
+        Third weak-isospin component Q - Y/2; left-handed for fermions.
+        Antiparticle chiralities are exchanged by charge conjugation.
+
+        Examples
+        --------
+        >>> model.particle("c").weak_isospin
+        """
+    @property
+    def weak_isospin_right(self) -> typing.Optional[Expression]:
+        r"""
+        Right-handed fermion third weak-isospin component, if specified.
+
+        Examples
+        --------
+        >>> model.particle("c").weak_isospin_right
         """
     @property
     def is_antiparticle(self) -> builtins.bool:

@@ -4242,12 +4242,12 @@ class Expression:
 
     def map(
         self,
-        transformations: Transformer,
-        n_cores: int | None = 1,
+        op: Transformer,
+        n_cores: int | None = None,
         stats_to_file: str | None = None,
     ) -> Expression:
         """
-        Map the transformations to every term in the expression.
+        Map the transformer to every term in the expression.
         The execution happens in parallel using `n_cores`.
 
         Examples
@@ -4259,7 +4259,7 @@ class Expression:
 
         Parameters
         ----------
-        transformations: Transformer
+        op: Transformer
             The transformations to apply.
         n_cores: int, optional
             The number of CPU cores used for parallel execution.
