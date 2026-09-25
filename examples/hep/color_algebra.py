@@ -16,6 +16,13 @@ def _():
     return AUTO, E, Representation, S, TensorExpression, chain, mo
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -124,9 +131,12 @@ def _(fundamental, generator, mo):
 
 
 @app.cell
-def _(E, S, TensorExpression, color_trace, color_trace_conjugate, mo):
-    _cyclic, _sym, _antisym, _factors = S(
-        "spenso::cyclic", "spenso::sym", "spenso::antisym", "factors__"
+def _(Symbols, E, S, TensorExpression, color_trace, color_trace_conjugate, mo):
+    _cyclic, _sym, _antisym, _factors = (
+        Symbols.cyclic,
+        Symbols.symmetric,
+        Symbols.antisymmetric,
+        S("factors__"),
     )
     symmetric_color_trace = TensorExpression(
         color_trace.to_expression().replace(_cyclic(_factors), _sym(_factors))

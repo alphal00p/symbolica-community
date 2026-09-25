@@ -47,6 +47,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -84,6 +91,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(
+    Symbols,
     ColorCasimirSettings,
     E,
     IBPFamily,
@@ -115,17 +123,33 @@ def _(
     for _propagator in _specification["propagators"]:
         if _propagator["particle"] == "g":
             _propagator["numerator"] = (
-                "-1𝑖*(UFO::Metric(UFO::idx(1,1),UFO::idx(1,2))"
-                "-(1-qcd_ren::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))"
-                "/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
-            )
+                E("-1𝑖")
+                * (
+                    Symbols.ufo_metric(Symbols.ufo_index(1, 1), Symbols.ufo_index(1, 2))
+                    - (1 - S("xi"))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 1))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 2))
+                    / Symbols.dot(
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                    )
+                )
+            ).format_plain()
     model = Model.from_json(json.dumps(_specification))
-    K, P, mass, gs = S("gammalooprs::K", "gammalooprs::P", "UFO::MB", "UFO::G")
-    mink, bis, gamma, metric = S(
-        "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
+    K, P = Symbols.loop_momentum, Symbols.external_momentum
+    mass = model.particle("b").mass_expression
+    gs = model.parameter("G").symbol
+    mink, bis, gamma, metric = (
+        Symbols.lorentz,
+        Symbols.spinor,
+        Symbols.gamma,
+        Symbols.metric,
     )
-    cof, coad, cas, trace_index = S(
-        "spenso::cof", "spenso::coad", "spenso::cas", "spenso::idx"
+    cof, coad, cas, trace_index = (
+        Symbols.color_fundamental,
+        Symbols.color_adjoint,
+        Symbols.casimir,
+        Symbols.color_index,
     )
     index, dim, wave, mu, nu, left, right = S(
         "index_",
@@ -136,12 +160,12 @@ def _(
         "left_",
         "right_",
     )
-    den, edge_, mom_, mass_, quad_ = S(
-        "gammalooprs::denom",
-        "edge_",
-        "mom_",
-        "mass_",
-        "quad_",
+    den, edge_, mom_, mass_, quad_ = (
+        Symbols.denominator,
+        S("edge_"),
+        S("mom_"),
+        S("mass_"),
+        S("quad_"),
     )
     _ordering, _value, _arguments = S(
         "feynkit_generator_factor::ExternalFermionOrderingSign",
@@ -288,7 +312,7 @@ def _(
             _numerator = (
                 TensorExpression(_numerator)
                 .with_lorentz_dimension(D)
-                .replace(S("gammalooprs::dim"), D)
+                .replace(Symbols.dimension, D)
                 .replace(_mUV**2, M)
             )
             if _incoming == [gluon]:
@@ -713,7 +737,7 @@ def _(
         for _col, _coupling in enumerate(_couplings):
             if _coupling is None:
                 continue
-            _dressed = model.expand_couplings(S("UFO::" + _coupling)) * (
+            _dressed = model.expand_couplings(model.coupling(_coupling).symbol) * (
                 _Zq * _Zg * _ZA.sqrt() - one
             )
             _name = f"CT_qqg_{_row}_{_col}"
@@ -1114,6 +1138,7 @@ def _(counterterm_names, counterterms_by_scheme, mo):
 
 @app.cell
 def _(
+    Symbols,
     CA,
     D,
     IBPFamily,
@@ -1164,13 +1189,13 @@ def _(
     # Direct n=0 infrared rearrangement: massify only massless propagators, then
     # Taylor-expand external momenta to the superficial divergence degree. This
     # follows the original massive reference independently of graph.uv_expansion.
-    _Q, _dot, _x, _t, _a, _b = S(
-        "gammalooprs::Q",
-        "spenso::dot",
-        "qcd_irr::x",
-        "qcd_irr::t",
-        "qcd_irr::a_",
-        "qcd_irr::b_",
+    _Q, _dot, _x, _t, _a, _b = (
+        Symbols.edge_momentum,
+        Symbols.dot,
+        S("qcd_irr::x"),
+        S("qcd_irr::t"),
+        S("qcd_irr::a_"),
+        S("qcd_irr::b_"),
     )
     _irr_kin = Kinematics(D, momenta=[K(0), P(0), P(1)]).with_scalar_product(
         P(0), P(0), s

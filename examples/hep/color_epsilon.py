@@ -106,12 +106,12 @@ def _(epsilon_model, mo):
 
 
 @app.cell
-def _(E, S, TensorExpression, epsilon_diagrams, mo):
+def _(epsilon_model, E, S, TensorExpression, epsilon_diagrams, mo):
     epsilon_colors = [
         TensorExpression(
             _diagram.numerator_expression()
             .to_expression()
-            .replace(S("UFO::GC_69"), E("1"))
+            .replace(epsilon_model.coupling("GC_69").symbol, E("1"))
         )
         for _diagram in epsilon_diagrams
     ]

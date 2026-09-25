@@ -17,6 +17,13 @@ def _():
 
 
 @app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
+@app.cell
 def _(Model):
     qed_model = Model.standard_model()
     return (qed_model,)
@@ -48,7 +55,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, Kinematics, S, TensorReducer, mo, oneloop, qed_model):
+def _(Symbols, E, Kinematics, S, TensorReducer, mo, oneloop, qed_model):
     _generated = qed_model.process(
         ["a"], ["a"], vertex_allow=["V_98"]
     ).generate_diagrams(
@@ -60,9 +67,15 @@ def _(E, Kinematics, S, TensorReducer, mo, oneloop, qed_model):
     )
     assert len(_generated.diagrams) == 1
     _diagram = _generated.diagrams[0]
-    _D, _s, _mass, _charge, _mu, _nu = S("D", "s", "UFO::Me", "UFO::ee", "mu", "nu")
-    _K, _P, _mink, _metric = S(
-        "gammalooprs::K", "gammalooprs::P", "spenso::mink", "spenso::g"
+    _D, _s = S("D", "s")
+    _mass = qed_model.particle("e-").mass_expression
+    _charge = qed_model.parameter("ee").symbol
+    _mu, _nu = S("mu", "nu")
+    _K, _P, _mink, _metric = (
+        Symbols.loop_momentum,
+        Symbols.external_momentum,
+        Symbols.lorentz,
+        Symbols.metric,
     )
     _index, _wave = S("index_", "wave_")
     _numerator = qed_model.expand_couplings(

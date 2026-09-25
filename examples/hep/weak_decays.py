@@ -30,6 +30,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -45,12 +52,27 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpression):
-    _model = Model.standard_model()
-    _P = S("gammalooprs::P")
-    _charge, _sw, _mw = S("UFO::ee", "UFO::sw", "UFO::MW")
-    _me, _mc, _mb, _mt = S("UFO::Me", "UFO::MC", "UFO::MB", "UFO::MT")
-    _conjugate, _wrapped = S("spenso::conj", "adjoint_index")
+def _(
+    Symbols,
+    CookSettings,
+    E,
+    Kinematics,
+    Model,
+    Replacement,
+    S,
+    Symbol,
+    TensorExpression,
+):
+    model = Model.standard_model()
+    _P = Symbols.external_momentum
+    _charge = model.parameter("ee").symbol
+    _sw = model.parameter("sw").symbol
+    _mw = model.particle("W+").mass_expression
+    _me = model.particle("e-").mass_expression
+    _mc = model.particle("c").mass_expression
+    _mb = model.particle("b").mass_expression
+    _mt = model.particle("t").mass_expression
+    _conjugate, _wrapped = (Symbols.conjugate, S("adjoint_index"))
     _ports = S("parent", "first", "second")
     _wave, _rep, _index, _left, _right = S(
         "wave_",
@@ -59,7 +81,7 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpressi
         "left_",
         "right_",
     )
-    _metric = S("spenso::g")
+    _metric = Symbols.metric
     Vr, Vi, GF = S("Vr", "Vi", "GF")
     H, x, y = (S(_name, is_positive=True) for _name in ("H", "x", "y"))
     zero, _one, _pi = (E("0"), E("1"), Symbol.PI)
@@ -74,20 +96,20 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpressi
         ("Top", ("t", "b", "W+"), (_mt, _mb, _mw), "CKM3x3"),
         ("Antitop", ("t~", "b~", "W-"), (_mt, _mb, _mw), "CKM3x3"),
     ]:
-        _generated = _model.process([_names[0]], list(_names[1:])).generate_diagrams(
+        _generated = model.process([_names[0]], list(_names[1:])).generate_diagrams(
             max_vertices=1, numerator_grouping=None, progress=None
         )
         assert len(_generated.diagrams) == 1
         _diagram = _generated.diagrams[0]
         diagrams[_label] = _diagram
         assert _diagram.denominator_expression(dimension=4) == _one
-        _particles = [_model.particle(_name) for _name in _names]
-        _numerator = _model.expand_couplings(_diagram.numerator_expression())
+        _particles = [model.particle(_name) for _name in _names]
+        _numerator = model.expand_couplings(_diagram.numerator_expression())
         _mixing = _one
         if _ckm_name is not None:
-            _ckm = S("UFO::" + _ckm_name)
+            _ckm = model.parameter(_ckm_name).symbol
             _numerator = _numerator.replace(
-                S("UFO::complexconjugate")(_ckm), Vr - Symbol.I * Vi
+                Symbols.model_conjugate(_ckm), Vr - Symbol.I * Vi
             ).replace(_ckm, Vr + Symbol.I * Vi)
             _mixing = Vr**2 + Vi**2
         for _edge in _diagram.external_edges:
@@ -297,7 +319,7 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpressi
                 results[_negative, _convention]["width"]
                 - results[_positive, _convention]["width"]
             ).together() == zero
-    return GF, H, Vi, Vr, diagrams, results, x, y, zero
+    return (GF, H, Vi, Vr, diagrams, results, x, y, zero, model)
 
 
 @app.cell(hide_code=True)

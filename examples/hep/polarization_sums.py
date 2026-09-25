@@ -17,6 +17,13 @@ def _():
     return (E, Kinematics, Model, S, TensorExpression, mo)
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -65,7 +72,15 @@ def _(mo):
 
 @app.cell
 def _(
-    E, Kinematics, Model, S, TensorExpression, dimension_choice, normalization, species
+    Symbols,
+    E,
+    Kinematics,
+    Model,
+    S,
+    TensorExpression,
+    dimension_choice,
+    normalization,
+    species,
 ):
     model = Model.standard_model()
     particle = model.particle(species.value)
@@ -78,10 +93,8 @@ def _(
         "chi",
         "zeta",
     )
-    mink, metric = S("spenso::mink", "spenso::g")
-    mass_squared = (
-        E("0") if particle.is_massless else S("UFO::" + particle.mass_parameter) ** 2
-    )
+    mink, metric = (Symbols.lorentz, Symbols.metric)
+    mass_squared = particle.mass_expression**2
     kinematics = (
         Kinematics(D)
         .with_scalar_product(p, p, mass_squared)
@@ -158,8 +171,8 @@ def _(density, mo, particle, state_count, trace, transverse):
 
 
 @app.cell
-def _(D, E, S, i, j, mink, mo, options, p, particle, projector, scale):
-    _ket, _bra = S("gammalooprs::ϵ", "gammalooprs::ϵbar")
+def _(Symbols, D, E, S, i, j, mink, mo, options, p, particle, projector, scale):
+    _ket, _bra = (Symbols.polarization, Symbols.polarization_conjugate)
     _pair = _ket(7, mink(D, i)) * _bra(7, mink(D, j))
     _spectator = _ket(8, mink(D, i))
     sewn = scale * particle.sum_spins(_pair + _spectator, p, edge=7, **options)

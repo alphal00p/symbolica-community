@@ -16,6 +16,13 @@ def _():
     return (CookSettings, E, Expression, Kinematics, Model, S, TensorExpression, mo)
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -49,13 +56,16 @@ def _(Model, mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, S, TensorExpression, channel, mo, model):
-    P = S("gammalooprs::P")
-    charge, sw, cw, mz = S("UFO::ee", "UFO::sw", "UFO::cw", "UFO::MZ")
-    conjugate, wrapped = S("spenso::conj", "adjoint_index")
+def _(Symbols, CookSettings, E, Kinematics, S, TensorExpression, channel, mo, model):
+    P = Symbols.external_momentum
+    charge = model.parameter("ee").symbol
+    sw = model.parameter("sw").symbol
+    cw = model.parameter("cw").symbol
+    mz = model.particle("Z").mass_expression
+    conjugate, wrapped = (Symbols.conjugate, S("adjoint_index"))
     ports = S("z", "fermion", "antifermion")
     wave, rep, index, left, right = S("wave_", "rep_", "index_", "left_", "right_")
-    metric = S("spenso::g")
+    metric = Symbols.metric
     particle_name = {
         "Electron neutrinos": "ve",
         "Electrons": "e-",

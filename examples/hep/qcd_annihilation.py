@@ -29,6 +29,13 @@ def _():
 
 
 @app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
+@app.cell
 def _(Model):
     qcd_model = Model.standard_model()
     return (qcd_model,)
@@ -53,7 +60,17 @@ def _(mo):
 
 
 @app.cell
-def _(ColorSimplifySettings, E, Kinematics, S, Symbol, TensorExpression, mo, qcd_model):
+def _(
+    Symbols,
+    ColorSimplifySettings,
+    E,
+    Kinematics,
+    S,
+    Symbol,
+    TensorExpression,
+    mo,
+    qcd_model,
+):
     _result = qcd_model.process(
         ["b", "b~"], ["t", "t~"], vertex_allow=["V_76", "V_137"]
     ).generate_cross_section(
@@ -69,10 +86,16 @@ def _(ColorSimplifySettings, E, Kinematics, S, Symbol, TensorExpression, mo, qcd
     _cut = qcd_diagram.cuts[0]
     assert sorted(_p.name for _p in _cut.particles) == ["t", "t~"]
     assert all(_side.loop_count == 0 for _side in (_cut.left, _cut.right))
-    _Q, _P, _K = S("gammalooprs::Q", "gammalooprs::P", "gammalooprs::K")
-    _s, _t, _u, _mb, _mt, _gs, _k1, _k2 = S(
-        "s", "t", "u", "UFO::MB", "UFO::MT", "UFO::G", "k1", "k2"
+    _Q, _P, _K = (
+        Symbols.edge_momentum,
+        Symbols.external_momentum,
+        Symbols.loop_momentum,
     )
+    _s, _t, _u = S("s", "t", "u")
+    _mb = qcd_model.particle("b").mass_expression
+    _mt = qcd_model.particle("t").mass_expression
+    _gs = qcd_model.parameter("G").symbol
+    _k1, _k2 = S("k1", "k2")
     _kinematics = Kinematics.mandelstam(
         [_P(0), _P(1), _k1, _k2], [_mb**2, _mb**2, _mt**2, _mt**2], [_s, _t, _u]
     )
@@ -88,8 +111,13 @@ def _(ColorSimplifySettings, E, Kinematics, S, Symbol, TensorExpression, mo, qcd
     # Associate open color slots with the generated external wavefunction indices.
     # Slot duals determine the closure orientation, including the antiquark; no
     # fixed half-edge numbering or hand-written SU(3) averaging factor is needed.
-    _bis, _wave, _index, _metric, _left, _right = S(
-        "spenso::bis", "wave_", "index_", "spenso::g", "left_", "right_"
+    _bis, _wave, _index, _metric, _left, _right = (
+        Symbols.spinor,
+        S("wave_"),
+        S("index_"),
+        Symbols.metric,
+        S("left_"),
+        S("right_"),
     )
     _slots = TensorExpression(_numerator).structure.slots
     _color_projector = E("1")
@@ -129,7 +157,12 @@ def _(ColorSimplifySettings, E, Kinematics, S, Symbol, TensorExpression, mo, qcd
 
     # A named adjoint dimension is required by Spenso. Impose dA=Nc²-1 after
     # contraction, when the dimensions are ordinary scalar expressions.
-    _Nc, _dA, _cof, _coad = S("Nc", "dA", "spenso::cof", "spenso::coad")
+    _Nc, _dA, _cof, _coad = (
+        S("Nc"),
+        S("dA"),
+        Symbols.color_fundamental,
+        Symbols.color_adjoint,
+    )
     _generic = (
         (_numerator * _color_projector * _initial_color_states / _Nc**2)
         .replace(_cof(3, _index), _cof(_Nc, _index))
@@ -153,7 +186,13 @@ def _(ColorSimplifySettings, E, Kinematics, S, Symbol, TensorExpression, mo, qcd
     _routed = qcd_diagram.loop_momentum_basis.route_expression(_contracted).replace(
         _K(0, _index), _cut.orientations[_loop_edge] * _physical_momentum(_index)
     )
-    _a, _b, _c, _inverse, _denom = S("a_", "b_", "c_", "inverse_", "gammalooprs::denom")
+    _a, _b, _c, _inverse, _denom = (
+        S("a_"),
+        S("b_"),
+        S("c_"),
+        S("inverse_"),
+        Symbols.denominator,
+    )
     _denominator = _kinematics.apply(
         qcd_diagram.denominator_expression(
             edge_powers={_edge.id: 0 for _edge in _cut.edges}, dimension=4, in_lmb=True

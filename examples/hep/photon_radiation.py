@@ -18,6 +18,13 @@ def _():
     return (CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression, mo, np)
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -46,13 +53,20 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
+def _(Symbols, CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
     def calculate_radiation():
         model = Model.standard_model()
-        P = S("gammalooprs::P")
-        mass, ee, gs = S("UFO::MB", "UFO::ee", "UFO::G")
+        P = Symbols.external_momentum
+        mass = model.particle("b").mass_expression
+        ee = model.parameter("ee").symbol
+        gs = model.parameter("G").symbol
         A, B, C = S("A", "B", "C")
-        Nc, dA, cof, coad = S("Nc", "dA", "spenso::cof", "spenso::coad")
+        Nc, dA, cof, coad = (
+            S("Nc"),
+            S("dA"),
+            Symbols.color_fundamental,
+            Symbols.color_adjoint,
+        )
         QQ = S("QQ", is_positive=True)
         x1, x2, x3 = S("x1", "x2", "x3")
 
@@ -80,25 +94,25 @@ def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
             a, b, c, inv, index, left, right = S(
                 "a_", "b_", "c_", "inv_", "index_", "left_", "right_"
             )
-            conj, wrap, metric = S("spenso::conj", "adjoint", "spenso::g")
+            conj, wrap, metric = (Symbols.conjugate, S("adjoint"), Symbols.metric)
             terms = []
             for diagram in generated.diagrams:
                 numerator = model.expand_couplings(
                     diagram.numerator_expression(in_lmb=True)
-                ).replace(S("UFO::MM"), mass)
+                ).replace(model.particle("mu-").mass_expression, mass)
                 for half in diagram.half_edges:
                     edge = half.edge.data
                     if edge.is_external:
                         numerator = numerator.rename_indices(
                             {
-                                S("gammalooprs::hedge")(half.data, 1): ports[
+                                Symbols.half_edge(half.data, 1): ports[
                                     edge.external_index
                                 ]
                             }
                         )
                 denominator = kin.apply(
                     diagram.denominator_expression(dimension=4, in_lmb=True).replace(
-                        S("gammalooprs::denom")(a, b, c, inv), inv
+                        Symbols.denominator(a, b, c, inv), inv
                     )
                 ).expand()
                 assert denominator in (E("1"), B, C), denominator
@@ -159,7 +173,8 @@ def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
             ) * model.particle(outgoing[1]).spin_sum(P(2), ports[2], wrap(ports[1]))
             traced = (
                 TensorExpression(
-                    colored.to_expression() * spins.replace(S("UFO::MM"), mass),
+                    colored.to_expression()
+                    * spins.replace(model.particle("mu-").mass_expression, mass),
                     cook_indices=CookSettings.indices(),
                 )
                 .expand()
@@ -203,12 +218,12 @@ def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
                     else E("1")
                 )
                 if mode == "gluon Ward":
-                    gluon = P(3, S("spenso::mink")(4, ports[3])) * P(
-                        3, S("spenso::mink")(4, wrap(ports[3]))
+                    gluon = P(3, Symbols.lorentz(4, ports[3])) * P(
+                        3, Symbols.lorentz(4, wrap(ports[3]))
                     )
                 if mode == "photon Ward":
-                    photon = P(0, S("spenso::mink")(4, ports[0])) * P(
-                        0, S("spenso::mink")(4, wrap(ports[0]))
+                    photon = P(0, Symbols.lorentz(4, ports[0])) * P(
+                        0, Symbols.lorentz(4, wrap(ports[0]))
                     )
                 contractions = []
                 for tensor, coeff in pieces:

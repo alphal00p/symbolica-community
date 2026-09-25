@@ -32,6 +32,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -45,10 +52,13 @@ def _(mo):
 
 
 @app.cell
-def _(E, IntegralFamily, Kinematics, Model, Replacement, S, Symbol, mo, oneloop):
+def _(
+    Symbols, E, IntegralFamily, Kinematics, Model, Replacement, S, Symbol, mo, oneloop
+):
     model = Model.phi4()
     particle = model.particle("phi")
-    mass, coupling = S("UFO::mass", "UFO::lam")
+    mass = model.parameter("mass").symbol
+    coupling = model.parameter("lam").symbol
     M, s, t, u, mu2, p2, eps = S(
         "M",
         "s",
@@ -58,7 +68,7 @@ def _(E, IntegralFamily, Kinematics, Model, Replacement, S, Symbol, mo, oneloop)
         "p2",
         "eps",
     )
-    Q, K, P = S("gammalooprs::Q", "gammalooprs::K", "gammalooprs::P")
+    Q, K, P = (Symbols.edge_momentum, Symbols.loop_momentum, Symbols.external_momentum)
     _dimension = S("D")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
     _kinematics = Kinematics.mandelstam([P(_i) for _i in range(4)], [M] * 4, [s, t, u])

@@ -45,7 +45,14 @@ def _():
 
 
 @app.cell
-def _(S):
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
+@app.cell
+def _(Symbols, S):
     D, eps, p2, ell2 = S(
         "hep_gluon::D",
         "hep_gluon::eps",
@@ -53,11 +60,11 @@ def _(S):
         "hep_gluon::ell2",
     )
     x = S("hep_gluon::x", is_scalar=True)
-    P, K = S("hep_gluon::P", "hep_gluon::K", tags=["spenso::tensor", "spenso::rank1"])
+    P, K = S("hep_gluon::P", "hep_gluon::K", tags=Symbols.external_momentum.get_tags())
     L = S("hep_gluon::L")
     RED_P = S("hep_gluon::reduction_P")
     index_ = S("hep_gluon::index_")
-    mink, metric, dot = S("spenso::mink", "spenso::g", "spenso::dot")
+    mink, metric, dot = (Symbols.lorentz, Symbols.metric, Symbols.dot)
     k2, kp, t, Muv2 = S(
         "hep_gluon::k2", "hep_gluon::kp", "hep_gluon::t", "hep_gluon::Muv2"
     )
@@ -97,6 +104,7 @@ def _(ColorSimplifySettings):
 
 @app.cell
 def _(
+    Symbols,
     contraction_settings,
     D,
     FeynmanDiagram,
@@ -121,8 +129,12 @@ def _(
             slot.replace(mink(4, index_), mink(D, index_))
             for slot in diagram.numerator_expression().list_dangling()
         ]
-        mu, nu = [slot for slot in slots if slot.get_name() == "spenso::mink"]
-        a, b = [slot for slot in slots if slot.get_name() == "spenso::coad"]
+        mu, nu = [slot for slot in slots if slot.get_name() == mink.get_name()]
+        a, b = [
+            slot
+            for slot in slots
+            if slot.get_name() == Symbols.color_adjoint.get_name()
+        ]
         if longitudinal:
             return as_tensor(metric(a, b) * P(mu) * P(nu) / (8 * p2))
         return as_tensor(
@@ -172,11 +184,21 @@ def _(FeynmanDiagram):
 
 
 @app.cell
-def _(FeynmanDiagram, K, P, S, TensorExpression, as_tensor, index_, numerator_in_d):
+def _(
+    Symbols,
+    FeynmanDiagram,
+    K,
+    P,
+    S,
+    TensorExpression,
+    as_tensor,
+    index_,
+    numerator_in_d,
+):
     def route_numerator(diagram: FeynmanDiagram) -> TensorExpression:
         expression = numerator_in_d(diagram)
-        expression = expression.replace(S("gammalooprs::K")(0, index_), K(index_))
-        expression = expression.replace(S("gammalooprs::P")(0, index_), P(index_))
+        expression = expression.replace(Symbols.loop_momentum(0, index_), K(index_))
+        expression = expression.replace(Symbols.external_momentum(0, index_), P(index_))
         return as_tensor(expression)
 
     return (route_numerator,)
@@ -204,12 +226,12 @@ def _(Expression, FeynmanDiagram):
 
 
 @app.cell
-def _(E, Model, S, TensorExpression):
+def _(Symbols, E, Model, S, TensorExpression):
     def qcd_color_factors(expression: TensorExpression) -> TensorExpression:
         """Evaluate the scalar SU(3) invariants used by this example."""
-        return expression.replace(S("spenso::cas")(2, S("spenso::coad")(8)), 3).replace(
-            S("spenso::idx")(2, S("spenso::cof")(3)), E("1/2")
-        )
+        return expression.replace(
+            Symbols.casimir(2, Symbols.color_adjoint(8)), 3
+        ).replace(Symbols.color_index(2, Symbols.color_fundamental(3)), E("1/2"))
 
     def resolve_qcd(expression: TensorExpression, model: Model) -> TensorExpression:
         """Resolve QCD couplings and scalar SU(3) factors, preserving tensor type."""
@@ -268,11 +290,7 @@ def _(
         ]
         if masses[0] != masses[1]:
             raise ValueError("This example requires equal propagator masses")
-        mass2 = (
-            E("0")
-            if model.particle(first.particle_name).is_massless
-            else S("UFO::" + masses[0]) ** 2
-        )
+        mass2 = model.particle(first.particle_name).mass_expression ** 2
         delta = mass2 - x * (1 - x) * p2
         shift_sign = external // loop
         projector = external_projector(copy, longitudinal=longitudinal)
@@ -348,7 +366,7 @@ def _(mo):
 
 
 @app.cell
-def _(fk, SnailFilterOptions, g, model):
+def _(SnailFilterOptions, g, model):
     diagrams = model.process(
         [g], [g], particle_veto=["c", "t", "s", "u", "d"]
     ).generate_diagrams(
@@ -470,7 +488,7 @@ def _(as_tensor, diagram, diagram_weight, model, projected_numerator, resolve_qc
 def _(mo):
     mo.md("""
     The last expression includes the symmetry factor and closed-loop signs,
-    with the model couplings expressed through `UFO::G`.
+    with the model couplings expressed through the model’s strong coupling.
     The native graph factor already includes the Grassmann minus for each
     closed ghost loop; `diagram_weight` evaluates it without an extra sign.
     All algebra functions are defined in the notebook cells above.

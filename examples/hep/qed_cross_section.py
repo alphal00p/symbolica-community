@@ -30,6 +30,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
@@ -53,7 +60,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, Kinematics, Model, S, mo):
+def _(Symbols, E, Kinematics, Model, S, mo):
     qed_model = Model.standard_model()
     _process = qed_model.process(
         ["e-", "e+"], ["mu-", "mu+"], vertex_allow=["V_98", "V_99"]
@@ -68,7 +75,11 @@ def _(E, Kinematics, Model, S, mo):
     assert len(_result.diagrams) == 1
     qed_diagram = _result.diagrams[0]
     _cut = qed_diagram.cuts[0]
-    _Q, _P, _K = S("gammalooprs::Q", "gammalooprs::P", "gammalooprs::K")
+    _Q, _P, _K = (
+        Symbols.edge_momentum,
+        Symbols.external_momentum,
+        Symbols.loop_momentum,
+    )
     qed_p1, qed_p2 = _P(0), _P(1)
     qed_k1, qed_k2 = S("k1", "k2")
     _loop_edge = qed_diagram.loop_momentum_basis.loop_edges[0]
@@ -83,7 +94,9 @@ def _(E, Kinematics, Model, S, mo):
     qed_loop_replacement = _cut.orientations[_loop_edge] * _physical_momentum(_index)
     qed_s = S("s", is_positive=True)
     qed_t, qed_u = S("t", "u")
-    qed_me, qed_mm, qed_e = S("UFO::Me", "UFO::MM", "UFO::ee")
+    qed_me = qed_model.particle("e-").mass_expression
+    qed_mm = qed_model.particle("mu-").mass_expression
+    qed_e = qed_model.parameter("ee").symbol
     _kin = Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
         [qed_me**2, qed_me**2, qed_mm**2, qed_mm**2],
@@ -115,7 +128,7 @@ def _(E, Kinematics, Model, S, mo):
     )
     _a, _b, _c, _inverse = S("a_", "b_", "c_", "inverse_")
     _denominator = _kin.apply(
-        _denominator.replace(S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse)
+        _denominator.replace(Symbols.denominator(_a, _b, _c, _inverse), _inverse)
     )
     qed_squared = (
         qed_diagram.overall_factor_expression(evaluate=True)
@@ -262,6 +275,7 @@ def _(mo):
 
 @app.cell
 def _(
+    Symbols,
     E,
     Kinematics,
     Representation,
@@ -297,7 +311,7 @@ def _(
         _numerator *= _vertex.numerator_expression().replace(_pattern, _right_current)
     for _edge in qed_diagram.internal_edges:
         _numerator *= _edge.numerator_expression()
-    _Q = S("gammalooprs::Q")
+    _Q = Symbols.edge_momentum
     _projector = qed_diagram.projector_expression()
     for _edge in qed_diagram.external_edges:
         _projector = qed_model.particle(_edge.particle_name).sum_spins(
@@ -334,9 +348,7 @@ def _(
         "chiral::q_", "chiral::m_", "chiral::power_", "chiral::inverse_"
     )
     _denominator = _kin.apply(
-        _denominator.replace(
-            S("gammalooprs::denom")(_q, _m, _power, _inverse), _inverse
-        )
+        _denominator.replace(Symbols.denominator(_q, _m, _power, _inverse), _inverse)
     )
     qed_polarized = (
         (

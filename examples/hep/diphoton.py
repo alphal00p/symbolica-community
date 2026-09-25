@@ -18,6 +18,13 @@ def _():
     return E, Kinematics, Model, S, Symbol, mo
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -49,10 +56,12 @@ def _(model):
 
 
 @app.cell
-def _(E, Kinematics, S, mo, model):
-    P = S("gammalooprs::P")
+def _(Symbols, E, Kinematics, S, model):
+    P = Symbols.external_momentum
     s = S("s", is_positive=True)
-    t, u, mass, charge = S("t", "u", "UFO::Me", "UFO::ee")
+    t, u = S("t", "u")
+    mass = model.particle("e-").mass_expression
+    charge = model.parameter("ee").symbol
     kin = Kinematics.mandelstam(
         [P(0), P(1), P(2), P(3)], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
     )
@@ -63,16 +72,14 @@ def _(E, Kinematics, S, mo, model):
     assert amplitude.expression().rank == 4
     spin_summed = amplitude.squared().sum_spins([0, 1], average_initial=True)
 
-    mo.vstack([mo.hstack(amplitude.diagrams), amplitude])
+    amplitude
     return P, amplitude, charge, kin, mass, process, s, spin_summed, t, u
 
 
-app._unparsable_cell(
-    r"""
-    amplitude.diagrams[0].edges[0].
-    """,
-    name="_"
-)
+@app.cell
+def _(amplitude):
+    amplitude.diagrams[0].edges[4].denominator_expression(in_lmb=True)
+    return
 
 
 @app.cell
@@ -305,6 +312,11 @@ def _(
         .to_float(16)
     )
     mo.md(rf"Accepted event rate: **{accepted_rate}** × $2\pi\alpha^2/s$.")
+    return
+
+
+@app.cell
+def _():
     return
 
 

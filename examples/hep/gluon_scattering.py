@@ -18,6 +18,13 @@ def _():
     return (CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression, mo, np)
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -45,13 +52,14 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, Model, S, TensorExpression):
+def _(Symbols, CookSettings, E, Kinematics, Model, S, TensorExpression):
     def calculate_scattering():
         model = Model.standard_model()
-        P = S("gammalooprs::P")
+        P = Symbols.external_momentum
         s = S("s", is_positive=True)
-        t, u, D, N, dA, gs = S("t", "u", "D", "N", "dA", "UFO::G")
-        coad, conj = S("spenso::coad", "spenso::conj")
+        t, u, D, N, dA = S("t", "u", "D", "N", "dA")
+        gs = model.parameter("G").symbol
+        coad, conj = (Symbols.color_adjoint, Symbols.conjugate)
         index, a, b, c, inv, wave, rep = S(
             "index_", "a_", "b_", "c_", "inv_", "wave_", "rep_"
         )
@@ -105,7 +113,7 @@ def _(CookSettings, E, Kinematics, Model, S, TensorExpression):
             numerator = numerator.with_lorentz_dimension(D)
             denominator = kin.apply(
                 diagram.denominator_expression(dimension=D, in_lmb=True).replace(
-                    S("gammalooprs::denom")(a, b, c, inv), inv
+                    Symbols.denominator(a, b, c, inv), inv
                 )
             ).expand()
             denominators.append(denominator)

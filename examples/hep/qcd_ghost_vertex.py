@@ -37,6 +37,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -67,6 +74,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(
+    Symbols,
     E,
     IBPFamily,
     IntegralFamily,
@@ -83,10 +91,18 @@ def _(
     for propagator in spec["propagators"]:
         if propagator["particle"] == "g":
             propagator["numerator"] = (
-                "-1𝑖*(UFO::Metric(UFO::idx(1,1),UFO::idx(1,2))"
-                "-(1-ghost_uv::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))"
-                "/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
-            )
+                E("-1𝑖")
+                * (
+                    Symbols.ufo_metric(Symbols.ufo_index(1, 1), Symbols.ufo_index(1, 2))
+                    - (1 - S("xi"))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 1))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 2))
+                    / Symbols.dot(
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                    )
+                )
+            ).format_plain()
     model = Model.from_json(json.dumps(spec))
     D, eps, M, mUV, x, integral, xi, s, dA, CA = S(
         "D",
@@ -100,14 +116,15 @@ def _(
         "dA",
         "CA",
     )
-    K, P, gs = S("gammalooprs::K", "gammalooprs::P", "UFO::G")
-    mink, coad, metric, hedge, f, cas = S(
-        "spenso::mink",
-        "spenso::coad",
-        "spenso::g",
-        "gammalooprs::hedge",
-        "spenso::f",
-        "spenso::cas",
+    K, P = Symbols.loop_momentum, Symbols.external_momentum
+    gs = model.parameter("G").symbol
+    mink, coad, metric, hedge, f, cas = (
+        Symbols.lorentz,
+        Symbols.color_adjoint,
+        Symbols.metric,
+        Symbols.half_edge,
+        Symbols.color_f,
+        Symbols.casimir,
     )
     idx, dim, a, b, c, arguments = S(
         "idx_",
@@ -117,12 +134,12 @@ def _(
         "c",
         "arguments___",
     )
-    den, ed, mom, ms, quad = S(
-        "gammalooprs::denom",
-        "ed_",
-        "mom_",
-        "ms_",
-        "quad_",
+    den, ed, mom, ms, quad = (
+        Symbols.denominator,
+        S("ed_"),
+        S("mom_"),
+        S("ms_"),
+        S("quad_"),
     )
     zero, one = E("0"), E("1")
     kinematics = Kinematics(D, momenta=[K(0), P(0), P(1)]).with_scalar_product(

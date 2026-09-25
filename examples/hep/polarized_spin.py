@@ -79,7 +79,8 @@ def _(
 ):
     _particle = spin_model.particle("ta-" if species.value == "Tau" else "ta+")
     _sign = -1 if _particle.is_antiparticle else 1
-    spin_momentum, spin_vector, spin_mass = S("p", "s", "UFO::MTA")
+    spin_momentum, spin_vector = S("p", "s")
+    spin_mass = spin_model.particle("ta-").mass_expression
     _i, _j, _k, _slot = S(
         "i",
         "j",

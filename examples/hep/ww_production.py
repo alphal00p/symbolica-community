@@ -33,6 +33,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -48,7 +55,7 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
+def _(Symbols, CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
     model = Model.standard_model()
     _vertices = [
         _v
@@ -67,19 +74,17 @@ def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
         "H",
         "ve",
     }
-    _P = S("gammalooprs::P")
-    charge, sw, cw, mw, mz, mh, me, _ye, _vev, _yme = S(
-        "UFO::ee",
-        "UFO::sw",
-        "UFO::cw",
-        "UFO::MW",
-        "UFO::MZ",
-        "UFO::MH",
-        "UFO::Me",
-        "UFO::ye",
-        "UFO::vev",
-        "UFO::yme",
-    )
+    _P = Symbols.external_momentum
+    charge = model.parameter("ee").symbol
+    sw = model.parameter("sw").symbol
+    cw = model.parameter("cw").symbol
+    mw = model.particle("W+").mass_expression
+    mz = model.particle("Z").mass_expression
+    mh = model.particle("H").mass_expression
+    me = model.particle("e-").mass_expression
+    _ye = model.parameter("ye").symbol
+    _vev = model.parameter("vev").symbol
+    _yme = model.parameter("yme").symbol
     s, t, u, H = S("s", "t", "u", "Higgs")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
     _kin = Kinematics.mandelstam(
@@ -89,7 +94,7 @@ def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
     _a, _b, _c, _inverse, _wave, _rep, _index = S(
         "a_", "b_", "c_", "inverse_", "wave_", "rep_", "index_"
     )
-    _conjugate, _wrapped = S("spenso::conj", "adjoint")
+    _conjugate, _wrapped = (Symbols.conjugate, S("adjoint"))
     _diagram_terms = {}
     for _diagram in generated.diagrams:
         _numerator = model.expand_couplings(
@@ -115,7 +120,7 @@ def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
             )
         _denominator = _kin.apply(
             _diagram.denominator_expression(dimension=4, in_lmb=True).replace(
-                S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse
+                Symbols.denominator(_a, _b, _c, _inverse), _inverse
             )
         ).expand()
         _particle_name = _diagram.internal_edges[0].particle_name
@@ -337,6 +342,7 @@ def _(mo):
 
 @app.cell
 def _(
+    Symbols,
     H,
     Kinematics,
     S,
@@ -367,7 +373,7 @@ def _(
     assert (primitive.derivative(t) - full).together() == zero
     primitive = primitive.replace(t.log(), (-t).log())
     print("PASS full massive antiderivative", flush=True)
-    _P = S("gammalooprs::P")
+    _P = Symbols.external_momentum
     _kin = Kinematics.mandelstam(
         [_P(_i) for _i in range(4)], [me**2, me**2, mw**2, mw**2], [s, t, u]
     )

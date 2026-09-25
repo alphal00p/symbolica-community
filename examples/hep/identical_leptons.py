@@ -17,6 +17,13 @@ def _():
     return (CookSettings, E, Expression, Kinematics, Model, S, TensorExpression, mo)
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -52,10 +59,22 @@ def _(Model, mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, S, TensorExpression, lepton_model, mo, reaction):
-    P = S("gammalooprs::P")
+def _(
+    Symbols,
+    CookSettings,
+    E,
+    Kinematics,
+    S,
+    TensorExpression,
+    lepton_model,
+    mo,
+    reaction,
+):
+    P = Symbols.external_momentum
     s = S("s", is_positive=True)
-    t, u, mass, charge = S("t", "u", "UFO::Me", "UFO::ee")
+    t, u = S("t", "u")
+    mass = lepton_model.particle("e-").mass_expression
+    charge = lepton_model.parameter("ee").symbol
     _names = ["e-", "e+", "e-", "e+"] if reaction.value == "Bhabha" else ["e-"] * 4
     _kinematics = Kinematics.mandelstam(
         [P(_position) for _position in range(4)], [mass**2] * 4, [s, t, u]
@@ -79,7 +98,7 @@ def _(CookSettings, E, Kinematics, S, TensorExpression, lepton_model, mo, reacti
     _a, _b, _c, _inverse, _wave, _rep, _index = S(
         "a_", "b_", "c_", "inverse_", "wave_", "rep_", "index_"
     )
-    _conjugate, _wrapped = S("spenso::conj", "adjoint_index")
+    _conjugate, _wrapped = (Symbols.conjugate, S("adjoint_index"))
     _operators, _denominators = [], []
     for _diagram in lepton_generated.diagrams:
         _numerator = lepton_model.expand_couplings(
@@ -99,7 +118,7 @@ def _(CookSettings, E, Kinematics, S, TensorExpression, lepton_model, mo, reacti
             )
         _denominator = _kinematics.apply(
             _diagram.denominator_expression(dimension=4, in_lmb=True).replace(
-                S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse
+                Symbols.denominator(_a, _b, _c, _inverse), _inverse
             )
         ).expand()
         _denominators.append(_denominator)

@@ -20,6 +20,13 @@ def _():
     return (CookSettings, E, Kinematics, Model, Replacement, S, TensorExpression, mo)
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -47,7 +54,7 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, Model, Replacement, S, TensorExpression):
+def _(Symbols, CookSettings, E, Kinematics, Model, Replacement, S, TensorExpression):
     def calculate_sewn_diphotons():
         model = Model.standard_model()
         electron, photon = (model.particle(name) for name in ("e-", "a"))
@@ -68,11 +75,17 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, TensorExpression):
             progress=None,
         )
         assert len(result.diagrams) == 2
-        Q, P, K = S("gammalooprs::Q", "gammalooprs::P", "gammalooprs::K")
-        s, t, u, mass, charge = S("s", "t", "u", "UFO::Me", "UFO::ee")
+        Q, P, K = (
+            Symbols.edge_momentum,
+            Symbols.external_momentum,
+            Symbols.loop_momentum,
+        )
+        s, t, u = S("s", "t", "u")
+        mass = model.particle("e-").mass_expression
+        charge = model.parameter("ee").symbol
         k1, k2, index = S("k1", "k2", "index_")
         a, b, c, inverse = S("a_", "b_", "c_", "inverse_")
-        metric, mink = S("spenso::g", "spenso::mink")
+        metric, mink = (Symbols.metric, Symbols.lorentz)
         kin = Kinematics.mandelstam(
             [P(0), P(1), k1, k2], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
         )
@@ -173,7 +186,7 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, TensorExpression):
                             dimension=4,
                             in_lmb=True,
                         )
-                        .replace(S("gammalooprs::denom")(a, b, c, inverse), inverse)
+                        .replace(Symbols.denominator(a, b, c, inverse), inverse)
                         .replace(K(0, index), orientation * k1(index))
                     )
                     total += (
@@ -205,17 +218,17 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, TensorExpression):
             flush=True,
         )
 
-        return results, result.diagrams, routing_rows, expected, mass, charge, t, u
+        return results, result, routing_rows, expected, mass, charge, t, u
 
-    results, diagrams, routing_rows, expected, mass, charge, t, u = (
+    results, cross_section, routing_rows, expected, mass, charge, t, u = (
         calculate_sewn_diphotons()
     )
-    return charge, diagrams, expected, mass, results, routing_rows, t, u
+    return charge, cross_section, expected, mass, results, routing_rows, t, u
 
 
 @app.cell
-def _(diagrams, mo):
-    mo.hstack(diagrams, justify="space-around")
+def _(cross_section):
+    cross_section
     return
 
 

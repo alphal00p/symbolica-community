@@ -26,6 +26,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -69,7 +76,7 @@ def _(Model, mo):
 
 
 @app.cell
-def _(IntegralFamily, Kinematics, S, model, photons):
+def _(Symbols, IntegralFamily, Kinematics, S, model, photons):
     count = photons.value
     electron, photon = (model.particle(_name) for _name in ("e-", "a"))
     vertices = [
@@ -80,7 +87,7 @@ def _(IntegralFamily, Kinematics, S, model, photons):
     ]
     assert len(vertices) == 1
     D = S("D")
-    K, P, mink = S("gammalooprs::K", "gammalooprs::P", "spenso::mink")
+    K, P, mink = (Symbols.loop_momentum, Symbols.external_momentum, Symbols.lorentz)
     generated = model.process(
         [photon], [photon] * (count - 1), vertex_allow=vertices
     ).generate_diagrams(

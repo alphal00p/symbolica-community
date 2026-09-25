@@ -17,6 +17,13 @@ def _():
     return (E, Kinematics, Model, S, TensorExpression, mo)
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -44,17 +51,24 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(E, Kinematics, Model, S, TensorExpression):
-    _model = Model.standard_model()
+def _(Symbols, E, Kinematics, Model, S, TensorExpression):
+    model = Model.standard_model()
     sewn_results = {}
-    _Q, _P, _K = S("gammalooprs::Q", "gammalooprs::P", "gammalooprs::K")
-    _s, _t, _u, _me, _mm, _e = S("s", "t", "u", "UFO::Me", "UFO::MM", "UFO::ee")
+    _Q, _P, _K = (
+        Symbols.edge_momentum,
+        Symbols.external_momentum,
+        Symbols.loop_momentum,
+    )
+    _s, _t, _u = S("s", "t", "u")
+    _me = model.particle("e-").mass_expression
+    _mm = model.particle("mu-").mass_expression
+    _e = model.parameter("ee").symbol
     _k1, _k2, _index = S("k1", "k2", "index_")
     _a, _b, _c, _inverse = S("a_", "b_", "c_", "inverse_")
-    _electron, _muon, _photon = (_model.particle(_name) for _name in ("e-", "mu-", "a"))
+    _electron, _muon, _photon = (model.particle(_name) for _name in ("e-", "mu-", "a"))
     _vertices = [
         v
-        for v in _model.vertex_rules
+        for v in model.vertex_rules
         if sorted(v.particles)
         in (
             sorted([_electron.antiname, _electron.name, _photon.name]),
@@ -78,7 +92,7 @@ def _(E, Kinematics, Model, S, TensorExpression):
             else [_me**2, _mm**2, _me**2, _mm**2]
         )
         _kin = Kinematics.mandelstam([_P(0), _P(1), _k1, _k2], _masses, [_s, _t, _u])
-        _result = _model.process(
+        _result = model.process(
             _incoming, _outgoing, vertex_allow=_vertices
         ).generate_cross_section(
             loops=1,
@@ -145,7 +159,7 @@ def _(E, Kinematics, Model, S, TensorExpression):
                 _orientation = _cut.orientations[_coordinate]
                 _projector = _diagram.projector_expression()
                 for _edge in _diagram.external_edges:
-                    _projector = _model.particle(_edge.particle_name).sum_spins(
+                    _projector = model.particle(_edge.particle_name).sum_spins(
                         _projector,
                         _Q(_edge.id),
                         edge=_edge.id,
@@ -153,7 +167,7 @@ def _(E, Kinematics, Model, S, TensorExpression):
                         reference=_reference,
                         covariant=_reference is None,
                     )
-                _numerator = _model.expand_couplings(
+                _numerator = model.expand_couplings(
                     _diagram.numerator_expression().to_expression() * _projector
                 )
                 _numerator = (
@@ -175,7 +189,7 @@ def _(E, Kinematics, Model, S, TensorExpression):
                 )
                 _denominator = _kin.apply(
                     _denominator.replace(
-                        S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse
+                        Symbols.denominator(_a, _b, _c, _inverse), _inverse
                     ).replace(_K(0, _index), _orientation * _k1(_index))
                 )
                 _squared += (
@@ -207,7 +221,7 @@ def _(E, Kinematics, Model, S, TensorExpression):
                 flush=True,
             )
 
-    return (sewn_results,)
+    return (sewn_results, model)
 
 
 @app.cell(hide_code=True)

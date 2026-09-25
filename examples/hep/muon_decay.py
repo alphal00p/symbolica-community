@@ -31,6 +31,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -47,17 +54,28 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpression, mo):
-    _model = Model.standard_model()
-    _muon, _electron = (_model.particle("mu-"), _model.particle("e-"))
+def _(
+    Symbols,
+    CookSettings,
+    E,
+    Kinematics,
+    Model,
+    Replacement,
+    S,
+    Symbol,
+    TensorExpression,
+    mo,
+):
+    model = Model.standard_model()
+    _muon, _electron = (model.particle("mu-"), model.particle("e-"))
     _vertices = [
         _v
-        for _v in _model.vertex_rules
+        for _v in model.vertex_rules
         if any(_p in ("W-", "W+") for _p in _v.particles)
         and any(_p in ("e-", "e+", "mu-", "mu+") for _p in _v.particles)
     ]
     assert len(_vertices) == 4
-    _generated = _model.process(
+    _generated = model.process(
         ["mu-"], ["e-", "ve~", "vm"], vertex_allow=_vertices
     ).generate_diagrams(
         max_vertices=2, maximum_bridges=None, numerator_grouping=None, progress=None
@@ -66,18 +84,20 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpressi
     diagram = _generated.diagrams[0]
     assert len(diagram.internal_edges) == 1
     assert diagram.internal_edges[0].particle_name in ("W-", "W+")
-    P = S("gammalooprs::P")
-    _charge, _sw, _mw, _mm, _me = S(
-        "UFO::ee", "UFO::sw", "UFO::MW", "UFO::MM", "UFO::Me"
-    )
+    P = Symbols.external_momentum
+    _charge = model.parameter("ee").symbol
+    _sw = model.parameter("sw").symbol
+    _mw = model.particle("W+").mass_expression
+    _mm = model.particle("mu-").mass_expression
+    _me = model.particle("e-").mass_expression
     GF, s, t, z = S("GF", "s", "t", "inverse_W2")
     M = S("M", is_positive=True)
     mass = S("m", is_positive=True)
-    _conjugate, _wrapped = S("spenso::conj", "adjoint")
+    _conjugate, _wrapped = (Symbols.conjugate, S("adjoint"))
     _ports = S("mu", "e", "antinue", "numu")
     _wave, _rep, _index = S("wave_", "rep_", "index_")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
-    _numerator = _model.expand_couplings(diagram.numerator_expression(in_lmb=True))
+    _numerator = model.expand_couplings(diagram.numerator_expression(in_lmb=True))
     for _edge in diagram.external_edges:
         _matches = list(
             diagram.projector_expression().match(
@@ -104,8 +124,8 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpressi
     _projector = (
         _muon.spin_sum(P(0), _ports[0], _wrapped(_ports[3]), average=True)
         * _electron.spin_sum(P(1), _wrapped(_ports[2]), _ports[1])
-        * _model.particle("ve~").spin_sum(P(2), _ports[2], _wrapped(_ports[1]))
-        * _model.particle("vm").spin_sum(P(3), _wrapped(_ports[0]), _ports[3])
+        * model.particle("ve~").spin_sum(P(2), _ports[2], _wrapped(_ports[1]))
+        * model.particle("vm").spin_sum(P(3), _wrapped(_ports[0]), _ports[3])
     )
     _contracted = (
         TensorExpression(
@@ -134,7 +154,7 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpressi
         (0, 3, (_mm**2 - s) / 2),
     ]:
         _kin = _kin.with_scalar_product(P(_i), P(_j), _value)
-    _den = S("gammalooprs::denom")
+    _den = Symbols.denominator
     _edge_, _momentum_, _mass_, _quad_ = S(
         "edge_",
         "momentum_",
@@ -215,6 +235,7 @@ def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpressi
         t,
         z,
         zero,
+        model,
     )
 
 
@@ -302,6 +323,7 @@ def _(mo):
 
 @app.cell
 def _(
+    model,
     GF,
     M,
     S,
@@ -375,7 +397,7 @@ def _(
             mo.md("**Normalized massless Michel spectrum**"),
             michel_spectrum,
             mo.md("**Massless width through order M²/mW²**"),
-            normalization + W_coefficient / S("UFO::MW") ** 2,
+            normalization + W_coefficient / model.particle("W+").mass_expression ** 2,
         ]
     )
     return W_relative_coefficient, mass_correction, michel_spectrum, r, xE

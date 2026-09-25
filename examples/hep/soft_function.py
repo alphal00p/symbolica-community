@@ -39,6 +39,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -66,6 +73,7 @@ def _(mo):
 
 @app.cell
 def _(
+    Symbols,
     E,
     GammaChainOrdering,
     GammaSimplifySettings,
@@ -87,13 +95,13 @@ def _(
             in [sorted(["b", "b~", "a"]), sorted(["b", "b~", "g"])]
         ]
         assert len(vertices) == 2
-        P = S("gammalooprs::P")
+        P = Symbols.external_momentum
         D, Q, Qbar, kp, km, lam = S("D", "Q", "Qbar", "kp", "km", "lam")
         # Rank-one declarations let Spenso recognize contracted vectors and slashes.
         n, nb, k, ref = [
             TensorName.vector(name).to_expression() for name in ("n", "nb", "k", "r")
         ]
-        mink, bis = S("spenso::mink", "spenso::bis")
+        mink, bis = (Symbols.lorentz, Symbols.spinor)
         zero, one = E("0"), E("1")
         kin = Kinematics(D, momenta=[n, nb, k])
         for vector in (n, nb, k):
@@ -105,7 +113,7 @@ def _(
         )
         ports = S("i0", "i1", "i2", "i3")
         a, b, c, inv, idx = S("a_", "b_", "c_", "inv_", "idx_")
-        gamma, metric = S("spenso::gamma", "spenso::g")
+        gamma, metric = (Symbols.gamma, Symbols.metric)
         si, sj, sx, sy, sm, sn = S("si", "sj", "sx", "sy", "sm", "sn")
         ordering = GammaSimplifySettings(chain_ordering=GammaChainOrdering.Canonical)
 
@@ -205,12 +213,12 @@ def _(
             for diagram in result.diagrams:
                 numerator = model.expand_couplings(
                     diagram.numerator_expression(in_lmb=True).to_expression()
-                ).replace(S("UFO::MB"), zero)
+                ).replace(model.particle("b").mass_expression, zero)
                 for half in diagram.half_edges:
                     edge = half.edge.data
                     if edge.is_external:
                         numerator = numerator.replace(
-                            S("gammalooprs::hedge")(half.data, 1),
+                            Symbols.half_edge(half.data, 1),
                             ports[edge.external_index],
                         )
                 numerator = (
@@ -220,8 +228,8 @@ def _(
                 )
                 denominator = (
                     diagram.denominator_expression(dimension=D, in_lmb=True)
-                    .replace(S("gammalooprs::denom")(a, b, c, inv), inv)
-                    .replace(S("UFO::MB"), zero)
+                    .replace(Symbols.denominator(a, b, c, inv), inv)
+                    .replace(model.particle("b").mass_expression, zero)
                 )
                 # Expand the dot products before substituting linear vector combinations.
                 denominator = TensorExpression(denominator).undo_dots().to_expression()
@@ -267,7 +275,7 @@ def _(
         generator = TensorExpression.t(8, 3)(
             ports[3], ports[2], ports[1]
         ).to_expression()
-        gs = S("UFO::G")
+        gs = model.parameter("G").symbol
         # The generated convention gives a common minus relative to the reference's
         # emission current. Its relative quark/antiquark sign and square agree.
         for emitted, vector, product, sign in zip(

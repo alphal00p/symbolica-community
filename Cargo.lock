@@ -946,7 +946,7 @@ version = "0.1.0"
 dependencies = [
  "pyo3",
  "pyo3-stub-gen",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
 ]
 
 [[package]]
@@ -984,7 +984,7 @@ dependencies = [
  "idenso",
  "linnet",
  "spenso",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "thiserror",
 ]
 
@@ -997,7 +997,7 @@ dependencies = [
  "linnet",
  "serde",
  "spenso",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "thiserror",
  "three-dimensional-reps",
  "typed-index-collections",
@@ -1018,7 +1018,7 @@ dependencies = [
  "serde",
  "spenso",
  "spenso-hep-lib",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "thiserror",
 ]
 
@@ -1034,7 +1034,7 @@ dependencies = [
  "serde",
  "serde_json",
  "spenso",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "symbolica-utils",
  "thiserror",
 ]
@@ -1047,7 +1047,7 @@ dependencies = [
  "numerica",
  "serde",
  "spenso",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "thiserror",
 ]
 
@@ -1061,7 +1061,7 @@ dependencies = [
  "miniz_oxide",
  "serde",
  "serde_json",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "thiserror",
  "vectorize",
 ]
@@ -1084,7 +1084,7 @@ dependencies = [
  "pyo3-stub-gen",
  "pyo3-stub-gen-derive",
  "spynso3",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
 ]
 
 [[package]]
@@ -1095,7 +1095,7 @@ dependencies = [
  "idenso",
  "linnet",
  "spenso",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "thiserror",
 ]
 
@@ -1207,7 +1207,7 @@ dependencies = [
  "serde_spanned",
  "smallvec",
  "smartstring",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=06906976bca24fefc5203aee699d90d62ebe08cd)",
+ "symbolica",
  "syn 2.0.119",
  "time",
  "toml_datetime 1.1.1+spec-1.1.0",
@@ -1401,7 +1401,7 @@ dependencies = [
  "nu-ansi-term",
  "spenso",
  "spenso-macros",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "symbolica-utils",
  "thiserror",
  "tracing",
@@ -1655,7 +1655,7 @@ dependencies = [
  "rkyv",
  "serde",
  "serde_repr",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "symbolica-utils",
  "thiserror",
 ]
@@ -2002,7 +2002,7 @@ dependencies = [
  "feynkit-graph",
  "feynkit-kinematics",
  "oneloop",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "thiserror",
 ]
 
@@ -2014,7 +2014,7 @@ dependencies = [
  "one-loop-reduce",
  "pyo3",
  "pyo3-stub-gen",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
 ]
 
 [[package]]
@@ -2022,7 +2022,7 @@ name = "oneloop"
 version = "0.1.0"
 dependencies = [
  "bincode",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "symjit",
 ]
 
@@ -2032,7 +2032,7 @@ version = "0.1.0"
 dependencies = [
  "oneloop",
  "pyo3",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
 ]
 
 [[package]]
@@ -2846,7 +2846,7 @@ dependencies = [
  "blake3",
  "rand 0.9.5",
  "rayon",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
 ]
 
 [[package]]
@@ -2855,7 +2855,7 @@ version = "0.1.0"
 dependencies = [
  "pyo3",
  "rustred",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
 ]
 
 [[package]]
@@ -3147,8 +3147,8 @@ dependencies = [
  "serde",
  "serde_json",
  "spenso-macros",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
- "symbolica-typst-atom-payload",
+ "symbolica",
+ "symbolica-typst-plugin",
  "symbolica-utils",
  "tabled",
  "thiserror",
@@ -3163,7 +3163,7 @@ dependencies = [
  "idenso",
  "spenso",
  "spenso-macros",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "xpct",
 ]
 
@@ -3191,8 +3191,8 @@ dependencies = [
  "spenso",
  "spenso-hep-lib",
  "spenso-macros",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
- "symbolica-typst-atom-payload",
+ "symbolica",
+ "symbolica-typst-plugin",
  "tabled",
  "thiserror",
  "xpct",
@@ -3234,41 +3234,6 @@ checksum = "2c56e8662b206b9892d7a5a3f2ecdbcb455d3d6b259111373b7e08b8055158a8"
 dependencies = [
  "libc",
  "winapi",
-]
-
-[[package]]
-name = "symbolica"
-version = "3.0.0"
-source = "git+https://github.com/symbolica-dev/symbolica?rev=06906976bca24fefc5203aee699d90d62ebe08cd#06906976bca24fefc5203aee699d90d62ebe08cd"
-dependencies = [
- "ahash 0.8.12",
- "append-only-vec",
- "bincode",
- "bincode-trait-derive",
- "brotli",
- "byteorder",
- "bytes",
- "data-encoding",
- "directories",
- "dyn-clone",
- "ed25519-compact",
- "graphica",
- "inventory",
- "libloading",
- "numerica",
- "once_cell",
- "rand 0.9.5",
- "rayon",
- "rug",
- "self_cell",
- "serde",
- "smallvec",
- "smartstring",
- "symjit",
- "tinyjson",
- "tracing",
- "tracing-subscriber",
- "wide 1.7.1",
 ]
 
 [[package]]
@@ -3319,18 +3284,18 @@ checksum = "47297a53bc31fa4251d562f658915930332bd97d6a273e97f70286a2249a12ba"
 dependencies = [
  "brotli",
  "proc-macro2",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "syn 2.0.119",
 ]
 
 [[package]]
-name = "symbolica-typst-atom-payload"
+name = "symbolica-typst-plugin"
 version = "0.1.0"
-source = "git+https://github.com/symbolica-dev/symbolica-typst-plugin?rev=cf7b9fe59ba3fc7fe9ea70b875f5660ee2addd7a#cf7b9fe59ba3fc7fe9ea70b875f5660ee2addd7a"
+source = "git+https://github.com/symbolica-dev/symbolica-typst-plugin?rev=57b7455b37c30f4f87353c0073e49f5225e937ab#57b7455b37c30f4f87353c0073e49f5225e937ab"
 dependencies = [
  "blake3",
  "ciborium",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
 ]
 
 [[package]]
@@ -3341,7 +3306,7 @@ dependencies = [
  "bincode-trait-derive",
  "itertools 0.14.0",
  "serde",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
 ]
 
 [[package]]
@@ -3357,7 +3322,7 @@ dependencies = [
  "pyo3-stub-gen",
  "rustred-feynkit",
  "spynso3",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "symbolica-integrate",
  "vakint",
 ]
@@ -3527,7 +3492,7 @@ dependencies = [
  "itertools 0.14.0",
  "linnet",
  "serde",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "thiserror",
  "typed-index-collections",
 ]
@@ -3906,7 +3871,7 @@ dependencies = [
  "rug",
  "spenso",
  "string-template-plus",
- "symbolica 3.0.0 (git+https://github.com/symbolica-dev/symbolica?rev=a19c760dd567c239f30d87e4e924ca2f8b8457ab)",
+ "symbolica",
  "thiserror",
  "version-compare",
 ]

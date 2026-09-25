@@ -43,6 +43,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -58,10 +65,11 @@ def _(mo):
 
 
 @app.cell
-def _(E, IBPFamily, IntegralFamily, Kinematics, Model, S, Symbol, mo):
+def _(Symbols, E, IBPFamily, IntegralFamily, Kinematics, Model, S, Symbol, mo):
     model = Model.phi3()
     particle = model.particle("phi")
-    mass, coupling = S("UFO::mass", "UFO::g")
+    mass = model.parameter("mass").symbol
+    coupling = model.parameter("g").symbol
     d, M, p2, mu2, eps, k, coordinate, integral = S(
         "d",
         "M",
@@ -72,7 +80,7 @@ def _(E, IBPFamily, IntegralFamily, Kinematics, Model, S, Symbol, mo):
         "x",
         "I",
     )
-    Q, K, P = S("gammalooprs::Q", "gammalooprs::K", "gammalooprs::P")
+    Q, K, P = (Symbols.edge_momentum, Symbols.loop_momentum, Symbols.external_momentum)
     _index, _external = S("index_", "external_")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
     _kinematics = Kinematics(d, momenta=[k])

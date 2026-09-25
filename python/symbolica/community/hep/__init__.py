@@ -1,4 +1,4 @@
-"""High-energy physics tools from FeynKit.
+"""High-energy physics tools for symbolic and numerical calculations.
 
 Models, Feynman diagrams, generation, CFFs, tensor reduction, and kinematics
 are available directly in this namespace, for example ``hep.FeynmanDiagram``.

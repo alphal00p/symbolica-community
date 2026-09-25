@@ -57,7 +57,14 @@ def _():
 
 
 @app.cell
-def _(Representation, S, TensorName, dot):
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
+@app.cell
+def _(Symbols, Representation, S, TensorName, dot):
     D, eps = S("D", "eps")
     lorentz = Representation.mink(D)
     adjoint = Representation.coad(8)
@@ -71,17 +78,14 @@ def _(Representation, S, TensorName, dot):
     K = loop_momenta[0]
     p, k = P(lorentz), K(lorentz)
     index_ = S("index_")
-    MOMENTUM = TensorName.vector(
-        "gammalooprs::Q",
-        tags=S("gammalooprs::Q").get_tags(),
-    )
+    MOMENTUM = TensorName(Symbols.edge_momentum.get_name())
     t = S("t", is_scalar=True)  # a scale that can move out of dot products
     mUV = S("mUV", is_scalar=True)
     uv_probe = S("uv_probe", is_scalar=True)
     prop = S("prop", is_scalar=True)
     q_, mass2_ = S("q_", "mass2_")
     # Rewrite patterns contain wildcards rather than concrete rank-one tensors.
-    dot_pattern = S("spenso::dot")
+    dot_pattern = Symbols.dot
     # Python aliases for actual dot expressions, not substitute scalar symbols.
     k2, p2 = dot(k, k), dot(p, p)
     return (
@@ -151,7 +155,7 @@ def _(
 
 
 @app.cell
-def _(D, P, S, TensorExpression, contraction_settings, lorentz, p2):
+def _(Symbols, D, P, S, TensorExpression, contraction_settings, lorentz, p2):
     def external_projector(
         numerator: TensorExpression, *, longitudinal=False
     ) -> TensorExpression:
@@ -188,7 +192,7 @@ def _(D, P, S, TensorExpression, contraction_settings, lorentz, p2):
             (numerator * projector)
             .schoonschip_net(contraction_settings)
             .to_dots()
-            .expand(S("spenso::g"))
+            .expand(Symbols.metric)
             .schoonschip_net(contraction_settings)
         )
 
@@ -226,8 +230,7 @@ def _(
             raise ValueError("This example supports two-propagator bubbles only")
         product = E("1")
         for edge in diagram.internal_edges:
-            mass = model.particle(edge.particle_name).mass_parameter
-            mass_squared = E("0") if mass == "ZERO" else S("UFO::" + mass) ** 2
+            mass_squared = model.particle(edge.particle_name).mass_expression ** 2
             momentum = diagram.loop_momentum_basis.route_expression(
                 MOMENTUM(edge.id, lorentz), loop_momenta=[K], external_momenta=[P]
             )
@@ -705,7 +708,7 @@ def _(diagram, diagram_weight, model, projected_numerator):
 def _(mo):
     mo.md("""
     The last expression includes the symmetry factor and closed-loop signs,
-    with the model couplings expressed through `UFO::G`. The global
+    with the model couplings expressed through the model’s strong coupling. The global
     `color_factor` remains separate from this expression and the UV steps.
     The native graph factor already includes the Grassmann minus for each
     closed ghost loop; `diagram_weight` evaluates it without an extra sign.

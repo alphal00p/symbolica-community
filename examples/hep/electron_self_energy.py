@@ -35,6 +35,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -61,17 +68,25 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(E, Kinematics, Model, S, Symbol, TensorExpression, json):
+def _(Symbols, E, Kinematics, Model, S, Symbol, TensorExpression, json):
     model = Model.standard_model()
     D, eps, xi, s = S("D", "eps", "xi", "s")
     specification = json.loads(model.to_json())
     for _propagator in specification["propagators"]:
         if _propagator["particle"] == "a":
             _propagator["numerator"] = (
-                "-1𝑖*(UFO::Metric(UFO::idx(1,1),UFO::idx(1,2))"
-                "-(1-qed_full::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))"
-                "/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
-            )
+                E("-1𝑖")
+                * (
+                    Symbols.ufo_metric(Symbols.ufo_index(1, 1), Symbols.ufo_index(1, 2))
+                    - (1 - S("xi"))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 1))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 2))
+                    / Symbols.dot(
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                    )
+                )
+            ).format_plain()
     model = Model.from_json(json.dumps(specification))
     _electron, _photon = (model.particle(_name) for _name in ("e-", "a"))
     assert _electron.mass_parameter == "Me"
@@ -96,9 +111,14 @@ def _(E, Kinematics, Model, S, Symbol, TensorExpression, json):
     )
     assert len(result.diagrams) == 1
     diagram = result.diagrams[0]
-    K, P, mass, charge = S("gammalooprs::K", "gammalooprs::P", "UFO::Me", "UFO::ee")
-    mink, bis, gamma, metric = S(
-        "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
+    K, P = Symbols.loop_momentum, Symbols.external_momentum
+    mass = model.particle("e-").mass_expression
+    charge = model.parameter("ee").symbol
+    mink, bis, gamma, metric = (
+        Symbols.lorentz,
+        Symbols.spinor,
+        Symbols.gamma,
+        Symbols.metric,
     )
     _index, _wave, _mu, args = S("index_", "wave_", "mu", "args___")
     _ordering, _value = S(

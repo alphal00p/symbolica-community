@@ -17,6 +17,13 @@ def _():
     return (CookSettings, E, Expression, Kinematics, Model, S, TensorExpression, mo)
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -54,19 +61,28 @@ def _(Model, mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, S, TensorExpression, channel, mo, model):
-    P = S("gammalooprs::P")
-    charge, sw, cw, mh, mw, mz, vev = S(
-        "UFO::ee", "UFO::sw", "UFO::cw", "UFO::MH", "UFO::MW", "UFO::MZ", "UFO::vev"
-    )
-    conjugate, wrapped = S("spenso::conj", "adjoint_index")
+def _(Symbols, CookSettings, E, Kinematics, S, TensorExpression, channel, mo, model):
+    P = Symbols.external_momentum
+    charge = model.parameter("ee").symbol
+    sw = model.parameter("sw").symbol
+    cw = model.parameter("cw").symbol
+    mh = model.particle("H").mass_expression
+    mw = model.particle("W+").mass_expression
+    mz = model.particle("Z").mass_expression
+    vev = model.parameter("vev").symbol
+    conjugate, wrapped = (Symbols.conjugate, S("adjoint_index"))
     ports = S("h", "first", "second")
     wave, rep, index, left, right = S("wave_", "rep_", "index_", "left_", "right_")
-    metric = S("spenso::g")
+    metric = Symbols.metric
     particle_names, mass, yukawa, yukawa_mass = {
-        "Electrons": (("e-", "e+"), S("UFO::Me"), "ye", "yme"),
-        "Charm quarks": (("c", "c~"), S("UFO::MC"), "yc", "ymc"),
-        "Bottom quarks": (("b", "b~"), S("UFO::MB"), "yb", "ymb"),
+        "Electrons": (("e-", "e+"), model.particle("e-").mass_expression, "ye", "yme"),
+        "Charm quarks": (("c", "c~"), model.particle("c").mass_expression, "yc", "ymc"),
+        "Bottom quarks": (
+            ("b", "b~"),
+            model.particle("b").mass_expression,
+            "yb",
+            "ymb",
+        ),
         "W bosons": (("W-", "W+"), mw, None, None),
         "Z bosons": (("Z", "Z"), mz, None, None),
     }[channel.value]
@@ -81,11 +97,11 @@ def _(CookSettings, E, Kinematics, S, TensorExpression, channel, mo, model):
     numerator = model.expand_couplings(diagram.numerator_expression())
     if yukawa is not None:
         numerator = numerator.replace(
-            S(f"UFO::{yukawa}"), model.parameter(yukawa).expression
+            model.parameter(yukawa).symbol, model.parameter(yukawa).expression
         )
         # UFO Yukawa masses and pole masses are distinct inputs. The gallery
         # comparison imposes their tree-level equality explicitly.
-        numerator = numerator.replace(S(f"UFO::{yukawa_mass}"), mass)
+        numerator = numerator.replace(model.parameter(yukawa_mass).symbol, mass)
     numerator = numerator.replace(vev, model.parameter("vev").expression)
     for edge in diagram.external_edges:
         if edge.external_index == 0:

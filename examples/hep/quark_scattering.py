@@ -34,6 +34,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -63,17 +70,25 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
+def _(Symbols, CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
     def calculate_amplitudes():
         model = Model.standard_model()
-        P = S("gammalooprs::P")
-        s, t, u, m, M, gs = S("s", "t", "u", "UFO::MB", "UFO::MT", "UFO::G")
-        Nc, dA, cof, coad = S("Nc", "dA", "spenso::cof", "spenso::coad")
+        P = Symbols.external_momentum
+        s, t, u = S("s", "t", "u")
+        m = model.particle("b").mass_expression
+        M = model.particle("t").mass_expression
+        gs = model.parameter("G").symbol
+        Nc, dA, cof, coad = (
+            S("Nc"),
+            S("dA"),
+            Symbols.color_fundamental,
+            Symbols.color_adjoint,
+        )
         a, b, c, inverse, wave, rep, index = S(
             "a_", "b_", "c_", "inverse_", "wave_", "rep_", "index_"
         )
         ports = S("i0", "i1", "i2", "i3")
-        conj, wrapped = S("spenso::conj", "adjoint")
+        conj, wrapped = (Symbols.conjugate, S("adjoint"))
         flavors = [model.particle(_name) for _name in ("b", "t")]
         gluon = model.particle("g")
         vertices = [
@@ -120,7 +135,7 @@ def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
                     )
                 denominator = kin.apply(
                     diagram.denominator_expression(dimension=4, in_lmb=True).replace(
-                        S("gammalooprs::denom")(a, b, c, inverse), inverse
+                        Symbols.denominator(a, b, c, inverse), inverse
                     )
                 ).expand()
                 denominators.append(denominator)

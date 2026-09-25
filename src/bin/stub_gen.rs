@@ -38,12 +38,41 @@ fn main() -> Result<()> {
         )?;
         return Ok(());
     }
-    let reducer = stub
+    let mut reducer = stub
         .modules
         .remove("symbolica.community.hep.oneloop")
         .ok_or_else(|| {
             std::io::Error::other("One-loop reducer did not register its Python stub inventory")
         })?;
+    // PyO3 synthesizes equality, so it has no Rust method docstring to collect.
+    for class in reducer.class.values_mut() {
+        if class.name == "MasterIntegral" {
+            if let Some(methods) = class.methods.get_mut("__eq__") {
+                for method in methods {
+                    method.doc = r#"Compare topology and symbolic kinematic arguments.
+
+Examples
+--------
+>>> from symbolica import S, E
+>>> from symbolica.community import hep
+>>> from symbolica.community.hep import oneloop
+>>> d, k, p, s = S("d", "k", "p", "s")
+>>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
+>>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
+...     kin.scalar_product(k-p, k-p)], kinematics=kin)
+>>> reduction = oneloop.reduce(family, [1, 1])
+>>> coefficient, master = reduction.terms[0]
+>>> assert master == reduction.terms[0][1]
+
+Parameters
+----------
+other : object
+    Object to compare with this master. Equality compares the master
+    topology and its symbolic kinematic arguments."#;
+                }
+            }
+        }
+    }
     let directory = stub.python_root.join("symbolica/community/hep");
     std::fs::create_dir_all(&directory)?;
     let oneloop = format!("{}\n{}", include_str!("../../stubs/oneloop.pyi"), reducer)

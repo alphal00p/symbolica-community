@@ -45,14 +45,32 @@ mod native {
         poly::series::SeriesDepth,
     };
 
-    /// Expand a reduction at d = 4 - 2*eps and return finite, simple-pole,
-    /// and double-pole expressions in OneLoopMaster's normalization.
+    /// Expand a reduction about d=4-2*eps and combine its master coefficients.
     ///
-    /// The squared scale defaults to 1. The returned tagged OneLoopMaster
-    /// symbols evaluate through their registered native Rust hooks using
-    /// Expression.evaluate. Coefficients singular at d=4 require positive powers of
-    /// epsilon from the masters, which OneLoopMaster does not provide, and
-    /// raise ValueError. Kinematic arguments and the scale must not depend on d.
+    /// Returns [finite, simple_pole, double_pole] with native evaluation hooks.
+    /// Raises ValueError for coefficient poles at d=4 requiring unavailable
+    /// positive-order master coefficients, fractional Taylor powers, or
+    /// dimension-dependent kinematics or scale.
+    ///
+    /// Examples
+    /// --------
+    /// >>> from symbolica import S, E
+    /// >>> from symbolica.community import hep
+    /// >>> from symbolica.community.hep import oneloop
+    /// >>> d, k, p, s = S("d", "k", "p", "s")
+    /// >>> kin = hep.Kinematics(d, momenta=[k, p]).with_scalar_product(p, p, s)
+    /// >>> family = hep.IntegralFamily([k], [p], [kin.scalar_product(k, k),
+    /// ...     kin.scalar_product(k-p, k-p)], kinematics=kin)
+    /// >>> reduction = oneloop.reduce(family, [1, 1])
+    /// >>> coefficients = oneloop.reduction_coefficients(reduction)
+    /// >>> assert len(coefficients) == 3
+    ///
+    /// Parameters
+    /// ----------
+    /// reduction : Reduction
+    ///     Symbolic one-loop reduction with dimension dependence retained.
+    /// mu_squared : Expression or None, optional
+    ///     Squared scale; None uses one.
     #[pyfunction]
     #[pyo3(signature = (reduction, mu_squared = None))]
     pub fn reduction_coefficients(

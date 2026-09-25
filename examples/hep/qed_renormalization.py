@@ -41,6 +41,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -76,6 +83,7 @@ def _(mo):
 
 @app.cell
 def _(
+    Symbols,
     E,
     IBPFamily,
     IntegralFamily,
@@ -104,8 +112,18 @@ def _(
     for _propagator in _specification["propagators"]:
         if _propagator["particle"] == "a":
             _propagator["numerator"] = (
-                "-1𝑖*(UFO::Metric(UFO::idx(1,1),UFO::idx(1,2))-(1-qed_ren::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
-            )
+                E("-1𝑖")
+                * (
+                    Symbols.ufo_metric(Symbols.ufo_index(1, 1), Symbols.ufo_index(1, 2))
+                    - (1 - S("xi"))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 1))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 2))
+                    / Symbols.dot(
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                    )
+                )
+            ).format_plain()
     model = Model.from_json(json.dumps(_specification))
     electron, photon = (model.particle(_name) for _name in ("e-", "a"))
     vertices = [
@@ -115,9 +133,14 @@ def _(
         == sorted([electron.antiname, electron.name, photon.name])
     ]
     assert len(vertices) == 1
-    K, P, mass, charge = S("gammalooprs::K", "gammalooprs::P", "UFO::Me", "UFO::ee")
-    mink, bis, gamma, metric = S(
-        "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
+    K, P = Symbols.loop_momentum, Symbols.external_momentum
+    mass = model.particle("e-").mass_expression
+    charge = model.parameter("ee").symbol
+    mink, bis, gamma, metric = (
+        Symbols.lorentz,
+        Symbols.spinor,
+        Symbols.gamma,
+        Symbols.metric,
     )
     index, dim, wave, mu, nu = S(
         "index_",
@@ -126,12 +149,12 @@ def _(
         "mu",
         "nu",
     )
-    den, edge_, mom_, mass_, quad_ = S(
-        "gammalooprs::denom",
-        "edge_",
-        "mom_",
-        "mass_",
-        "quad_",
+    den, edge_, mom_, mass_, quad_ = (
+        Symbols.denominator,
+        S("edge_"),
+        S("mom_"),
+        S("mass_"),
+        S("quad_"),
     )
     _ordering, _value = S(
         "feynkit_generator_factor::ExternalFermionOrderingSign", "value_"
@@ -192,7 +215,7 @@ def _(
         _numerator = (
             TensorExpression(_numerator)
             .with_lorentz_dimension(D)
-            .replace(S("gammalooprs::dim"), D)
+            .replace(Symbols.dimension, D)
             .replace(mUV**2, M)
         )
         if _kind == "photon":
@@ -767,6 +790,7 @@ def _(ct_coefficients, ct_diagrams, ct_matrix, deltas, mo):
 
 @app.cell
 def _(
+    Symbols,
     D,
     IBPFamily,
     K,
@@ -845,13 +869,13 @@ def _(
         )
     ]
     assert len(_massless_vertices) == 1
-    _Q, _dot, _massless_scale, _massless_a, _massless_b, _massless_args = S(
-        "gammalooprs::Q",
-        "spenso::dot",
-        "massless_scale",
-        "massless_a_",
-        "massless_b_",
-        "massless_args___",
+    _Q, _dot, _massless_scale, _massless_a, _massless_b, _massless_args = (
+        Symbols.edge_momentum,
+        Symbols.dot,
+        S("massless_scale"),
+        S("massless_a_"),
+        S("massless_b_"),
+        S("massless_args___"),
     )
     _massless_kinematics = Kinematics(
         D, momenta=[K(0), P(0), P(1)]
@@ -977,7 +1001,7 @@ def _(
                     )
                 )
                 .with_lorentz_dimension(D)
-                .replace(S("gammalooprs::dim"), D)
+                .replace(Symbols.dimension, D)
             )
             _pattern = den(edge_, mom_, mass_, quad_)
             for _match in list(_expanded.match(_pattern)):

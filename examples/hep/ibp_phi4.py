@@ -45,6 +45,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -65,7 +72,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, Expression, Replacement, S, TensorReducer):
+def _(Symbols, E, Expression, Replacement, S, TensorReducer):
     d, k1, k2, mass_squared, p_squared, eps, coupling = S(
         "d",
         "k1",
@@ -80,7 +87,7 @@ def _(E, Expression, Replacement, S, TensorReducer):
     zero = E("0")
     pi = Expression.PI
     _q, _p, _scaling, _denominator = S("q", "p", "scaling", "D3")
-    mink, _dot = S("spenso::mink", "spenso::dot")
+    mink, _dot = (Symbols.lorentz, Symbols.dot)
     _qc, _pc = (_q(mink(d)), _p(mink(d)))
     _shifted_line = 1 / (
         _denominator + 2 * _scaling * _dot(_qc, _pc) + _scaling**2 * _dot(_pc, _pc)
@@ -133,6 +140,7 @@ def _(E, Expression, Replacement, S, TensorReducer):
 
 @app.cell
 def _(
+    Symbols,
     IBPFamily,
     IntegralFamily,
     Kinematics,
@@ -173,15 +181,16 @@ def _(
         progress=None,
     )
     assert len(generated.diagrams) == 2
-    K, P, dim = S("gammalooprs::K", "gammalooprs::P", "gammalooprs::dim")
-    model_mass, model_coupling = S("UFO::mass", "UFO::lam")
+    K, P, dim = (Symbols.loop_momentum, Symbols.external_momentum, Symbols.dimension)
+    model_mass = model.parameter("mass").symbol
+    model_coupling = model.parameter("lam").symbol
     index, dimension = S("index_", "dimension_")
-    den, edge_, mom_, mass_, quad_ = S(
-        "gammalooprs::denom",
-        "edge_",
-        "mom_",
-        "mass_",
-        "quad_",
+    den, edge_, mom_, mass_, quad_ = (
+        Symbols.denominator,
+        S("edge_"),
+        S("mom_"),
+        S("mass_"),
+        S("quad_"),
     )
     coordinates = S("x1", "x2", "x3")
     external_kinematics = _kinematics.with_scalar_product(P(0), P(0), p_squared)

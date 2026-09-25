@@ -34,6 +34,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -80,6 +87,7 @@ def _(Model):
 
 @app.cell
 def _(
+    Symbols,
     E,
     IBPFamily,
     IntegralFamily,
@@ -101,20 +109,27 @@ def _(
         "Nf",
         "a4",
     )
-    k, p, mass, charge = S("gammalooprs::K", "gammalooprs::P", "UFO::Me", "UFO::ee")
-    mink, bis, gamma, wave = S("spenso::mink", "spenso::bis", "spenso::gamma", "wave_")
+    k, p = Symbols.loop_momentum, Symbols.external_momentum
+    mass = qed_model.particle("e-").mass_expression
+    charge = qed_model.parameter("ee").symbol
+    mink, bis, gamma, wave = (
+        Symbols.lorentz,
+        Symbols.spinor,
+        Symbols.gamma,
+        S("wave_"),
+    )
     index, dimension, mu = S("index_", "dimension_", "mu")
     ordering, closed_loop, value = S(
         "feynkit_generator_factor::ExternalFermionOrderingSign",
         "feynkit_generator_factor::InternalFermionLoopSign",
         "value_",
     )
-    denominator, edge_pattern, momentum_pattern, mass_pattern, quadratic_pattern = S(
-        "gammalooprs::denom",
-        "edge_",
-        "momentum_",
-        "mass_",
-        "quadratic_",
+    denominator, edge_pattern, momentum_pattern, mass_pattern, quadratic_pattern = (
+        Symbols.denominator,
+        S("edge_"),
+        S("momentum_"),
+        S("mass_"),
+        S("quadratic_"),
     )
     coordinates = list(S("d0", "d1", "d2"))
     tadpole_squared, sunset, integral = S("T2", "V", "I")

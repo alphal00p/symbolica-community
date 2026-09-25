@@ -31,6 +31,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -60,20 +67,19 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(ColorSimplifySettings, E, Kinematics, Model, S, Symbol, TensorExpression):
+def _(
+    Symbols, ColorSimplifySettings, E, Kinematics, Model, S, Symbol, TensorExpression
+):
     model = Model.standard_model()
-    D, eps, m, Nc, y, L, scale2 = S(
-        "D",
-        "eps",
-        "UFO::MT",
-        "Nc",
-        "y",
-        "L",
-        "mu2",
-    )
+    D, eps = S("D", "eps")
+    m = model.particle("t").mass_expression
+    Nc, y, L, scale2 = S("Nc", "y", "L", "mu2")
     I, Af, coordinate = S("I", "Af", "d0")
-    K, mink, cof, metric = S(
-        "gammalooprs::K", "spenso::mink", "spenso::cof", "spenso::g"
+    K, mink, cof, metric = (
+        Symbols.loop_momentum,
+        Symbols.lorentz,
+        Symbols.color_fundamental,
+        Symbols.metric,
     )
     _index, _left, _right = S("index_", "left_", "right_")
     _top, _higgs = (model.particle(_name) for _name in ("t", "H"))
@@ -92,7 +98,7 @@ def _(ColorSimplifySettings, E, Kinematics, Model, S, Symbol, TensorExpression):
     yukawa_tree = _tree_result.diagrams[0]
     tree_coupling = (
         model.expand_couplings(yukawa_tree.numerator_expression().to_expression())
-        .replace(S("UFO::yt") * E("1/2").sqrt(), y)
+        .replace(model.parameter("yt").symbol * E("1/2").sqrt(), y)
         .replace(metric(_left, _right), E("1"))
     )
     assert (tree_coupling + Symbol.I * y).expand() == E("0")
@@ -124,7 +130,7 @@ def _(ColorSimplifySettings, E, Kinematics, Model, S, Symbol, TensorExpression):
         model.expand_couplings(
             diagram.numerator_expression(in_lmb=True).to_expression()
         )
-        .replace(S("UFO::yt") * E("1/2").sqrt(), y)
+        .replace(model.parameter("yt").symbol * E("1/2").sqrt(), y)
         .replace(cof(3, _index), cof(Nc, _index))
         .replace(mink(4, _index), mink(D, _index))
     )

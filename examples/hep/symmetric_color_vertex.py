@@ -81,7 +81,7 @@ def _(E, S, TensorExpression, adjoint_model, mo, symmetric_generated):
         symmetric_generated.diagrams[0]
         .numerator_expression()
         .to_expression()
-        .replace(S("UFO::GC_69"), E("1"))
+        .replace(adjoint_model.coupling("GC_69").symbol, E("1"))
     )
     assert len(symmetric_color.structure.slots) == 3
     assert (

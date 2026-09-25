@@ -31,6 +31,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -62,6 +69,7 @@ def _(mo):
 
 @app.cell
 def _(
+    Symbols,
     E,
     IBPFamily,
     Kinematics,
@@ -74,14 +82,17 @@ def _(
     mo,
 ):
     model = Model.standard_model()
-    dimension, transfer, mass, charge, mu = S("D", "t", "UFO::Me", "UFO::ee", "mu")
-    K, P, mink, bis, metric, gamma = S(
-        "gammalooprs::K",
-        "gammalooprs::P",
-        "spenso::mink",
-        "spenso::bis",
-        "spenso::g",
-        "spenso::gamma",
+    dimension, transfer = S("D", "t")
+    mass = model.particle("e-").mass_expression
+    charge = model.parameter("ee").symbol
+    mu = S("mu")
+    K, P, mink, bis, metric, gamma = (
+        Symbols.loop_momentum,
+        Symbols.external_momentum,
+        Symbols.lorentz,
+        Symbols.spinor,
+        Symbols.metric,
+        Symbols.gamma,
     )
     a, b, c, d, index, wave, slot = S(
         "a",

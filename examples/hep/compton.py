@@ -18,6 +18,13 @@ def _():
 
 
 @app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
+@app.cell
 def _(Model):
     qed_model = Model.standard_model()
     return (qed_model,)
@@ -49,7 +56,7 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, S, TensorExpression, mo, qed_model):
+def _(Symbols, CookSettings, E, Kinematics, S, TensorExpression, mo, qed_model):
     _result = qed_model.process(
         ["e-", "a"], ["e-", "a"], vertex_allow=["V_98"]
     ).generate_diagrams(
@@ -59,8 +66,10 @@ def _(CookSettings, E, Kinematics, S, TensorExpression, mo, qed_model):
         numerator_grouping=None,
         progress=None,
     )
-    _P = S("gammalooprs::P")
-    _s, _t, _u, _me, _e = S("s", "t", "u", "UFO::Me", "UFO::ee")
+    _P = Symbols.external_momentum
+    _s, _t, _u = S("s", "t", "u")
+    _me = qed_model.particle("e-").mass_expression
+    _e = qed_model.parameter("ee").symbol
     _kin = Kinematics.mandelstam(
         [_P(0), _P(1), _P(2), _P(3)], [_me**2, E("0"), _me**2, E("0")], [_s, _t, _u]
     )
@@ -85,7 +94,7 @@ def _(CookSettings, E, Kinematics, S, TensorExpression, mo, qed_model):
             )
         _denominator = _diagram.denominator_expression(dimension=4, in_lmb=True)
         _denominator = _kin.apply(
-            _denominator.replace(S("gammalooprs::denom")(_a, _b, _c, _inv), _inv)
+            _denominator.replace(Symbols.denominator(_a, _b, _c, _inv), _inv)
         )
         _amplitude += (
             _numerator
@@ -95,7 +104,7 @@ def _(CookSettings, E, Kinematics, S, TensorExpression, mo, qed_model):
         )
     _operator = _amplitude.expand()
     _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0()
-    _conj = S("spenso::conj")
+    _conj = Symbols.conjugate
     _wrapper = S("conjugate_index")
     _real_adjoint = _adjoint.replace(_conj(_P(_a, _b)), _P(_a, _b))
     for _real in (_me, _e, _s, _t, _u):

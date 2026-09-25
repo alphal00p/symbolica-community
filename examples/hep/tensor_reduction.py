@@ -18,6 +18,13 @@ def _():
     return (E, S, TensorReducer, mo)
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
@@ -27,14 +34,8 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, TensorReducer, mo):
-    _D, _k, _p, _mink, _dot = S(
-        "D",
-        "k",
-        "p",
-        "spenso::mink",
-        "spenso::dot",
-    )
+def _(Symbols, E, S, TensorReducer, mo):
+    _D, _k, _p, _mink, _dot = (S("D"), S("k"), S("p"), Symbols.lorentz, Symbols.dot)
     _kc, _pc = _k(_mink(_D)), _p(_mink(_D))
     _reducer = TensorReducer(_D).with_integrated_vector(_kc)
     compact_dot_average = _reducer.reduce(_dot(_kc, _pc) ** 2)

@@ -41,6 +41,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -67,6 +74,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(
+    Symbols,
     E,
     IBPFamily,
     IntegralFamily,
@@ -89,19 +97,21 @@ def _(
         "L4pi",
         "Nf",
     )
-    k, p, mass, charge = S("gammalooprs::K", "gammalooprs::P", "UFO::Me", "UFO::ee")
-    mink, wave = S("spenso::mink", "wave_")
+    k, p = Symbols.loop_momentum, Symbols.external_momentum
+    mass = model.particle("e-").mass_expression
+    charge = model.parameter("ee").symbol
+    mink, wave = (Symbols.lorentz, S("wave_"))
     index, dimension, mu = S("index_", "dimension_", "mu")
     closed_loop, arguments = S(
         "feynkit_generator_factor::InternalFermionLoopSign",
         "arguments___",
     )
-    denominator, edge_pattern, momentum_pattern, mass_pattern, quadratic_pattern = S(
-        "gammalooprs::denom",
-        "edge_",
-        "momentum_",
-        "mass_",
-        "quadratic_",
+    denominator, edge_pattern, momentum_pattern, mass_pattern, quadratic_pattern = (
+        Symbols.denominator,
+        S("edge_"),
+        S("momentum_"),
+        S("mass_"),
+        S("quadratic_"),
     )
     coordinates = list(S("d0", "d1", "d2"))
     tadpole_squared, sunset, integral = S("T2", "V", "I")
@@ -126,7 +136,7 @@ def _(
     )
 
     xi, nu = S("xi", "nu")
-    metric = S("spenso::g")
+    metric = Symbols.metric
     specification = json.loads(model.to_json())
     for particle in specification["particles"]:
         if particle["name"] in ("e-", "e+"):
@@ -134,13 +144,23 @@ def _(
     for propagator in specification["propagators"]:
         if propagator["particle"] == "a":
             propagator["numerator"] = (
-                "-1𝑖*(UFO::Metric(UFO::idx(1,1),UFO::idx(1,2))-(1-photon_2l::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
-            )
+                E("-1𝑖")
+                * (
+                    Symbols.ufo_metric(Symbols.ufo_index(1, 1), Symbols.ufo_index(1, 2))
+                    - (1 - S("xi"))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 1))
+                    * Symbols.ufo_momentum(Symbols.ufo_index(1, 2))
+                    / Symbols.dot(
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                        Symbols.ufo_momentum(Symbols.lorentz(4)),
+                    )
+                )
+            ).format_plain()
     model = Model.from_json(json.dumps(specification))
     gmunu = metric(mink(d, mu), mink(d, nu))
     ppmunu = p(0, mink(d, mu)) * p(0, mink(d, nu))
     Qg, Qpp = S("metric_basis", "momentum_basis")
-    Q, dot = S("gammalooprs::Q", "spenso::dot")
+    Q, dot = (Symbols.edge_momentum, Symbols.dot)
     result = model.process(["a"], ["a"], vertex_allow=["V_98"]).generate_diagrams(
         loops=2,
         max_vertices=4,
@@ -413,7 +433,7 @@ def _(
         )
         uv = (
             uv.with_lorentz_dimension(d)
-            .replace(S("gammalooprs::dim"), d)
+            .replace(Symbols.dimension, d)
             .rename_indices({ports[0]: mu, ports[1]: nu})
         )
         pattern = denominator(

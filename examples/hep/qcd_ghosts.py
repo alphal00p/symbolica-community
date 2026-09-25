@@ -18,6 +18,13 @@ def _():
 
 
 @app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
+@app.cell
 def _(Model):
     ghost_model = Model.standard_model()
     return (ghost_model,)
@@ -50,10 +57,27 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Kinematics, Replacement, S, TensorExpression, ghost_model, mo):
-    _P = S("gammalooprs::P")
-    _s, _t, _u, _mass, _gs = S("s", "t", "u", "UFO::MB", "UFO::G")
-    _Nc, _dA, _cof, _coad = S("spenso::Nc", "dA", "spenso::cof", "spenso::coad")
+def _(
+    Symbols,
+    CookSettings,
+    E,
+    Kinematics,
+    Replacement,
+    S,
+    TensorExpression,
+    ghost_model,
+    mo,
+):
+    _P = Symbols.external_momentum
+    _s, _t, _u = S("s", "t", "u")
+    _mass = ghost_model.particle("b").mass_expression
+    _gs = ghost_model.parameter("G").symbol
+    _Nc, _dA, _cof, _coad = (
+        Symbols.color_number,
+        S("dA"),
+        Symbols.color_fundamental,
+        Symbols.color_adjoint,
+    )
     _kinematics = Kinematics.mandelstam(
         [_P(0), _P(1), _P(2), _P(3)], [_mass**2, _mass**2, E("0"), E("0")], [_s, _t, _u]
     )
@@ -77,7 +101,7 @@ def _(CookSettings, E, Kinematics, Replacement, S, TensorExpression, ghost_model
         ghost_generated.append(_generated)
         _ports = S("external_0", "external_1", "external_2", "external_3")
         _a, _b, _c, _inverse, _index = S("a_", "b_", "c_", "inverse_", "index_")
-        _conjugate, _adjoint_index = S("spenso::conj", "adjoint_index")
+        _conjugate, _adjoint_index = (Symbols.conjugate, S("adjoint_index"))
         _amplitude = E("0")
         _denominators = []
         for _diagram in _generated.diagrams:
@@ -90,15 +114,11 @@ def _(CookSettings, E, Kinematics, Replacement, S, TensorExpression, ghost_model
                 _edge = _half.edge.data
                 if _edge.is_external:
                     _numerator = _numerator.rename_indices(
-                        {
-                            S("gammalooprs::hedge")(_half.data, 1): _ports[
-                                _edge.external_index
-                            ]
-                        }
+                        {Symbols.half_edge(_half.data, 1): _ports[_edge.external_index]}
                     )
             _denominator = _kinematics.apply(
                 _diagram.denominator_expression(dimension=4, in_lmb=True).replace(
-                    S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse
+                    Symbols.denominator(_a, _b, _c, _inverse), _inverse
                 )
             ).expand()
             _denominators.append(_denominator)
@@ -122,7 +142,7 @@ def _(CookSettings, E, Kinematics, Replacement, S, TensorExpression, ghost_model
 
         # Match the shared completeness tensor against the dual of each external slot.
         # Matching selects color slots and determines the quark/antiquark orientation.
-        _left, _right, _metric = S("left_", "right_", "spenso::g")
+        _left, _right, _metric = (S("left_"), S("right_"), Symbols.metric)
         _color_projector = E("1")
         _initial_colors = 1
         for _position, _name in enumerate(("b", "b~", *_outgoing)):

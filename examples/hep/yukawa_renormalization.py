@@ -46,6 +46,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -61,7 +68,9 @@ def _(mo):
 
 
 @app.cell
-def _(E, IntegralFamily, Kinematics, Model, S, TensorReducer, copy, json, oneloop):
+def _(
+    Symbols, E, IntegralFamily, Kinematics, Model, S, TensorReducer, copy, json, oneloop
+):
     specification = json.loads(Model.phi4().to_json())
     _standard = json.loads(Model.standard_model().to_json())
     specification["particles"] += [
@@ -91,19 +100,25 @@ def _(E, IntegralFamily, Kinematics, Model, S, TensorReducer, copy, json, oneloo
         "I",
         "s",
     )
-    K, P, mass, scalar_mass, g, lam = S(
-        "gammalooprs::K", "gammalooprs::P", "UFO::Me", "UFO::mass", "UFO::g", "UFO::lam"
-    )
-    mink, bis, gamma, metric = S(
-        "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
+    _parameter_model = Model.from_json(json.dumps(specification))
+    K, P = Symbols.loop_momentum, Symbols.external_momentum
+    mass = _parameter_model.particle("e-").mass_expression
+    scalar_mass = _parameter_model.parameter("mass").symbol
+    g = _parameter_model.parameter("g").symbol
+    lam = _parameter_model.parameter("lam").symbol
+    mink, bis, gamma, metric = (
+        Symbols.lorentz,
+        Symbols.spinor,
+        Symbols.gamma,
+        Symbols.metric,
     )
     index, dim, wave, mu = S("index_", "dim_", "wave_", "mu")
-    den, edge_, mom_, mass_, quad_ = S(
-        "gammalooprs::denom",
-        "edge_",
-        "mom_",
-        "mass_",
-        "quad_",
+    den, edge_, mom_, mass_, quad_ = (
+        Symbols.denominator,
+        S("edge_"),
+        S("mom_"),
+        S("mass_"),
+        S("quad_"),
     )
     zero, one = (E("0"), E("1"))
     kinematics = Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(P(0), P(0), s)

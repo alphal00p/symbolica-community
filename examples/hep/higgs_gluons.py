@@ -42,6 +42,13 @@ def _():
     )
 
 
+@app.cell
+def _():
+    from symbolica.community.hep import Symbols
+
+    return (Symbols,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -69,6 +76,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(
+    Symbols,
     ColorSimplifySettings,
     E,
     IBPFamily,
@@ -81,25 +89,17 @@ def _(
     TensorReducer,
 ):
     model = Model.standard_model()
-    D, s, m, gs, y, mu, nu, ca, cb, eps = S(
-        "D",
-        "s",
-        "UFO::MT",
-        "UFO::G",
-        "y",
-        "mu",
-        "nu",
-        "ca",
-        "cb",
-        "eps",
-    )
-    K, P, mink, cof, coad, metric = S(
-        "gammalooprs::K",
-        "gammalooprs::P",
-        "spenso::mink",
-        "spenso::cof",
-        "spenso::coad",
-        "spenso::g",
+    D, s = S("D", "s")
+    m = model.particle("t").mass_expression
+    gs = model.parameter("G").symbol
+    y, mu, nu, ca, cb, eps = S("y", "mu", "nu", "ca", "cb", "eps")
+    K, P, mink, cof, coad, metric = (
+        Symbols.loop_momentum,
+        Symbols.external_momentum,
+        Symbols.lorentz,
+        Symbols.color_fundamental,
+        Symbols.color_adjoint,
+        Symbols.metric,
     )
     index, wave, arguments = S("index_", "wave_", "arguments__")
     Nc, dA = S("Nc", "dA")
@@ -124,7 +124,7 @@ def _(
     yukawa_tree = yukawa_tree_result.diagrams[0]
     yukawa_tree_kernel = model.expand_couplings(
         yukawa_tree.numerator_expression().to_expression()
-    ).replace(S("UFO::yt") * E("1/2").sqrt(), y)
+    ).replace(model.parameter("yt").symbol * E("1/2").sqrt(), y)
     assert yukawa_tree.overall_factor_expression(evaluate=True) == E("1")
     assert yukawa_tree.numerator_prefactor_expression() == E("1")
     # Strip only the generated spin/color identity to establish the tree phase.
@@ -166,7 +166,7 @@ def _(
         assert diagram.numerator_prefactor_expression() == E("1")
         numerator = model.expand_couplings(
             diagram.numerator_expression(in_lmb=True).to_expression()
-        ).replace(S("UFO::yt") * E("1/2").sqrt(), y)
+        ).replace(model.parameter("yt").symbol * E("1/2").sqrt(), y)
         for edge in diagram.external_edges:
             if edge.external_index == 0:
                 continue
