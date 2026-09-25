@@ -119,11 +119,8 @@ def _(E, P, charge, gauge, kin, mass, mo, s, spin_summed, t, u):
             },
         )
         .expression()
-        .expand()
         .simplify_gamma()
-        .expand()
-        .simplify_gamma()
-        .simplify_metrics()
+        .schoonschip_net(expand_contracted_sums=True)
         .to_dots()
     )
     assert _scalar.is_scalar
