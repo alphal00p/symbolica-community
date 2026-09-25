@@ -54,7 +54,6 @@ def _(E, S, fk, mo, model):
     generated = fk.Generator(model).generate(
         fk.Process.amplitude(["e-", "e+"], ["a", "a"]).with_loop_count(0, 0),
         max_vertices=2,
-        maximum_bridges=None,
         vertex_allow=["V_98"],
         numerator_grouping=None,
     )

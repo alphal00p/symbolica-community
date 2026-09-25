@@ -33,7 +33,7 @@
     },
     {
       "id": "vblA",
-      "code_hash": "abaca66d6251cf471b015c1426c5a02e",
+      "code_hash": "bcae1fdc2ac6a22eb626bee514673800",
       "outputs": [
         {
           "type": "data",
@@ -129,7 +129,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Choose positive squared masses and scales. For the reduced triangle, <marimo-tex class=\"arithmatex\">||(p_1^2=-Q^2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(p_2^2=-2Q^2||)</marimo-tex>, and <marimo-tex class=\"arithmatex\">||(s=-3Q^2||)</marimo-tex>.</span></span><marimo-ui-element object-id='BYtC-0' random-id='09c68dbc-bbb9-b057-0904-122fcbfc5e8f'><marimo-slider data-initial-value='2' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eMass squared m\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.5' data-stop='5' data-step='0.5' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='ea357aa6-dc84-3866-aa33-6fdc0562010f'><marimo-slider data-initial-value='1' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eScale squared \u03bc\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.5' data-stop='5' data-step='0.5' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='BYtC-2' random-id='375634a8-4bce-0913-33b8-fc44c37a3349'><marimo-slider data-initial-value='1' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSpacelike scale Q\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.5' data-stop='4' data-step='0.5' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Choose positive squared masses and scales. For the reduced triangle, <marimo-tex class=\"arithmatex\">||(p_1^2=-Q^2||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(p_2^2=-2Q^2||)</marimo-tex>, and <marimo-tex class=\"arithmatex\">||(s=-3Q^2||)</marimo-tex>.</span></span><marimo-ui-element object-id='BYtC-0' random-id='88adbb63-f77a-7bf3-ee44-205b0b0173d7'><marimo-slider data-initial-value='2' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eMass squared m\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.5' data-stop='5' data-step='0.5' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='5070f7d5-0326-46b5-51fc-21986077b720'><marimo-slider data-initial-value='1' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eScale squared \u03bc\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.5' data-stop='5' data-step='0.5' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='BYtC-2' random-id='aefac643-6a98-2afc-c0eb-bd46513995cb'><marimo-slider data-initial-value='1' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSpacelike scale Q\u00b2&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.5' data-stop='4' data-step='0.5' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div>"
           }
         }
       ],
@@ -142,7 +142,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Triangle: reduced coefficients evaluated through native symbol hooks</strong></span></span><marimo-ui-element object-id='RGSE-0' random-id='23535fe6-bba4-5790-43e6-c5d9f1812b1a'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;Finite&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;(-0.13391905511020702+3.336446474703022e-16j)&#92;&quot;,&#92;&quot;Master identity&#92;&quot;:&#92;&quot;(-0.13391905511020674-5.551115123125783e-17j)&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:4.77995223238202e-16},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Master identity&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5\u00b2&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Master identity&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The exact numerator identity and all three numerical coefficients agree.</span></span></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Triangle: reduced coefficients evaluated through native symbol hooks</strong></span></span><marimo-ui-element object-id='RGSE-0' random-id='df532e8d-3e56-975f-82a9-77aa11517c31'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;Finite&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;(-0.13391905511020702+3.336446474703022e-16j)&#92;&quot;,&#92;&quot;Master identity&#92;&quot;:&#92;&quot;(-0.13391905511020674-5.551115123125783e-17j)&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:4.77995223238202e-16},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Master identity&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5\u00b2&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Master identity&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">The exact numerator identity and all three numerical coefficients agree.</span></span></div>"
           }
         }
       ],
@@ -162,8 +162,61 @@
       "console": []
     },
     {
+      "id": "WNoJ",
+      "code_hash": "764ee4ce3e66c17e2e18aea599e2e7f9",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "OyEO",
+      "code_hash": "63bcf4460a67d3921417cbcbba2658ae",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "complete expression expansion exceeded max_nodes=1000000; raise the explicit budget or use compact OneLoopExpressions with its FunctionMap",
+          "traceback": null
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/nix-shell.bMGAL4/marimo_368630/__marimo__cell_OyEO_.py\"</span>, line <span class=\"m\">1</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">hs_expr</span><span class=\"o\">=</span><span class=\"n\">oneloop</span><span class=\"o\">.</span><span class=\"n\">get_expression</span><span class=\"p\">(</span><span class=\"n\">inspection_master_hs</span><span class=\"p\">)</span>\n<span class=\"w\">            </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n<span class=\"gr\">ValueError</span>: <span class=\"n\">complete expression expansion exceeded max_nodes=1000000; raise the explicit budget or use compact OneLoopExpressions with its FunctionMap</span>\n</pre></div>\n</span>",
+          "mimetype": "application/vnd.marimo+traceback"
+        }
+      ]
+    },
+    {
+      "id": "lRvw",
+      "code_hash": "fe08d197f679753df1c29aea81b9f2d8",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "complete expression expansion exceeded max_nodes=100000000; raise the explicit budget or use compact OneLoopExpressions with its FunctionMap",
+          "traceback": null
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/nix-shell.bMGAL4/marimo_368630/__marimo__cell_lRvw_.py\"</span>, line <span class=\"m\">7</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">oneloop</span><span class=\"o\">.</span><span class=\"n\">select_branch</span><span class=\"p\">(</span><span class=\"n\">oneloop</span><span class=\"o\">.</span><span class=\"n\">get_expression</span><span class=\"p\">(</span><span class=\"n\">hs_expr2</span><span class=\"p\">,</span><span class=\"n\">max_nodes</span><span class=\"o\">=</span><span class=\"mi\">100000000</span><span class=\"p\">),</span> <span class=\"n\">branch_probe2</span><span class=\"p\">)</span>\n<span class=\"w\">                          </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n<span class=\"gr\">ValueError</span>: <span class=\"n\">complete expression expansion exceeded max_nodes=100000000; raise the explicit budget or use compact OneLoopExpressions with its FunctionMap</span>\n</pre></div>\n</span>",
+          "mimetype": "application/vnd.marimo+traceback"
+        }
+      ]
+    },
+    {
       "id": "emfo",
-      "code_hash": "e6dae0e65c603f18a0c9be169901abb1",
+      "code_hash": "e2a2504d09049da483d11d457cbb022d",
       "outputs": [
         {
           "type": "data",
@@ -181,7 +234,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<marimo-ui-element object-id='Hstk-0' random-id='2873ada6-eb2b-f029-a187-4d7ddb9d832e'><marimo-dropdown data-initial-value='[&quot;Spacelike: s &#92;u003c 0&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eAnalytic region&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Spacelike: s &#92;u003c 0&quot;,&quot;Timelike: s &#92;u003e 0&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element>"
+            "text/html": "<marimo-ui-element object-id='Hstk-0' random-id='30ae31e1-47ba-6b50-d8fc-e1f5638b0ad6'><marimo-dropdown data-initial-value='[&quot;Spacelike: s &#92;u003c 0&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eAnalytic region&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Spacelike: s &#92;u003c 0&quot;,&quot;Timelike: s &#92;u003e 0&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element>"
           }
         }
       ],
@@ -207,7 +260,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Selected exact formula versus primitive native hook</strong>, at <marimo-tex class=\"arithmatex\">||(s=-2.0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(m^2=2.0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(\\mu^2=1||)</marimo-tex>.</span></span><marimo-ui-element object-id='iLit-0' random-id='8e75c1c8-71e8-5c63-7485-abfaa5bd737f'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;Finite&#92;&quot;,&#92;&quot;Selected formula&#92;&quot;:&#92;&quot;(-0.8224670334241131-0j)&#92;&quot;,&#92;&quot;Native C0 hook&#92;&quot;:&#92;&quot;(-0.8224670334241131+0j)&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5&#92;&quot;,&#92;&quot;Selected formula&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Native C0 hook&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5\u00b2&#92;&quot;,&#92;&quot;Selected formula&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Native C0 hook&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Selected exact formula versus primitive native hook</strong>, at <marimo-tex class=\"arithmatex\">||(s=-2.0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(m^2=2.0||)</marimo-tex>, <marimo-tex class=\"arithmatex\">||(\\mu^2=1||)</marimo-tex>.</span></span><marimo-ui-element object-id='iLit-0' random-id='dc91b795-904b-f5f0-89a0-a704c308e872'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;Finite&#92;&quot;,&#92;&quot;Selected formula&#92;&quot;:&#92;&quot;(-0.8224670334241131-0j)&#92;&quot;,&#92;&quot;Native C0 hook&#92;&quot;:&#92;&quot;(-0.8224670334241131+0j)&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5&#92;&quot;,&#92;&quot;Selected formula&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Native C0 hook&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5\u00b2&#92;&quot;,&#92;&quot;Selected formula&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Native C0 hook&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Absolute difference&#92;&quot;:0.0}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
           }
         }
       ],
@@ -246,7 +299,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Squared tadpole: native master hooks versus the analytic answer</strong></span></span><marimo-ui-element object-id='qnkX-0' random-id='2a0231a5-a42a-55a3-850a-b7dd606ddfbb'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;Finite&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;(-0.6931471805599453+0j)&#92;&quot;,&#92;&quot;Analytic answer&#92;&quot;:-0.6931471805599453,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;(1+0j)&#92;&quot;,&#92;&quot;Analytic answer&#92;&quot;:1,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5\u00b2&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Analytic answer&#92;&quot;:0,&#92;&quot;Absolute difference&#92;&quot;:0.0}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Changing the mass or scale above updates the result, including the finite contribution from the epsilon-dependent coefficient.</span></span></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Squared tadpole: native master hooks versus the analytic answer</strong></span></span><marimo-ui-element object-id='qnkX-0' random-id='bdd0fb36-7e35-f005-7ed2-0ebee45338dc'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;Finite&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;(-0.6931471805599453+0j)&#92;&quot;,&#92;&quot;Analytic answer&#92;&quot;:-0.6931471805599453,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;(1+0j)&#92;&quot;,&#92;&quot;Analytic answer&#92;&quot;:1,&#92;&quot;Absolute difference&#92;&quot;:0.0},{&#92;&quot;Coefficient&#92;&quot;:&#92;&quot;1/\u03b5\u00b2&#92;&quot;,&#92;&quot;Reduction&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Analytic answer&#92;&quot;:0,&#92;&quot;Absolute difference&#92;&quot;:0.0}]&quot;' data-total-rows='3' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Changing the mass or scale above updates the result, including the finite contribution from the epsilon-dependent coefficient.</span></span></div>"
           }
         }
       ],

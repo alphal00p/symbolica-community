@@ -7,7 +7,7 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "4cdde1e6f9d59cd870bb6802036d18e2",
+      "code_hash": "3bb84bb78fdf30cb001f3d39a46ef078",
       "outputs": [
         {
           "type": "data",
@@ -33,7 +33,7 @@
     },
     {
       "id": "vblA",
-      "code_hash": "87532aaeefa978f3ddb8ed05f8b3f2c2",
+      "code_hash": "3b00b316e9594da73dd4754739da8bd1",
       "outputs": [
         {
           "type": "data",
@@ -72,7 +72,7 @@
     },
     {
       "id": "PKri",
-      "code_hash": "374d315a0f1710ce9d1ae18684b41352",
+      "code_hash": "d6a61c17a2c740cff4b7c64a79c0ca28",
       "outputs": [
         {
           "type": "data",
@@ -85,21 +85,42 @@
     },
     {
       "id": "Xref",
-      "code_hash": "77dd9e6ea83cbacae4bc7485ac3a005b",
+      "code_hash": "2ef9b39ac5f7329e3dccbdc0700ddca6",
       "outputs": [],
       "console": []
     },
     {
       "id": "setup",
-      "code_hash": null,
-      "outputs": [],
+      "code_hash": "7090516ac51137037afb360120277c13",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "setup-refs",
+          "evalue": "The setup cell cannot have references",
+          "traceback": []
+        }
+      ],
       "console": []
     },
     {
       "id": "Vxnm",
-      "code_hash": null,
-      "outputs": [],
-      "console": []
+      "code_hash": "0a4da976f14ee723bfecb3b175666ccd",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "FeynmanDiagram.integral_family() got an unexpected keyword argument 'independent_dot_products'",
+          "traceback": null
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/nix-shell.bMGAL4/marimo_1782128/__marimo__cell_Vxnm_.py\"</span>, line <span class=\"m\">17</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">diagram_family</span> <span class=\"o\">=</span> <span class=\"n\">sunrise_diagram</span><span class=\"o\">.</span><span class=\"n\">integral_family</span><span class=\"p\">(</span>\n<span class=\"w\">                     </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n<span class=\"gr\">TypeError</span>: <span class=\"n\">FeynmanDiagram.integral_family() got an unexpected keyword argument 'independent_dot_products'</span>\n</pre></div>\n</span>",
+          "mimetype": "application/vnd.marimo+traceback"
+        }
+      ]
     },
     {
       "id": "SFPL",
@@ -116,7 +137,7 @@
     },
     {
       "id": "BYtC",
-      "code_hash": "9c2b648c252f49f04c7ef83666be3d19",
+      "code_hash": "9685a628cf7152c574aa283a1d5e0e27",
       "outputs": [
         {
           "type": "data",
@@ -129,7 +150,7 @@
     },
     {
       "id": "RGSE",
-      "code_hash": "f59b8ad648a8673ffd6ffc7521054629",
+      "code_hash": "1b19f9b939d6d7a50bbfd364ea95cb87",
       "outputs": [],
       "console": []
     },
@@ -153,7 +174,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='emfo-0' random-id='c02bde4f-b19a-6685-1adf-54938b4ce6e2'><marimo-dropdown data-initial-value='[&quot;(1, 2, 2, 0, 0)&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSunrise powers&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;(1, 2, 2, 0, 0)&quot;,&quot;(2, 2, 3, 0, 0)&quot;,&quot;(3, 3, 3, 0, 0)&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='emfo-1' random-id='ff6cb1f9-7fce-4adc-f7cb-26d1a93df617'><marimo-dropdown data-initial-value='[&quot;(1, 1, 1, 1, 1, 2, 0)&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eVertex powers&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;(1, 1, 1, 1, 1, 2, 0)&quot;,&quot;(2, 1, 1, 1, 1, 3, 0)&quot;,&quot;(2, 2, 2, 2, 2, 2, 0)&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='emfo-0' random-id='c714816a-4529-568f-c56d-b3cbf0f9c3bb'><marimo-dropdown data-initial-value='[&quot;(1, 2, 2, 0, 0)&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSunrise powers&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;(1, 2, 2, 0, 0)&quot;,&quot;(2, 2, 3, 0, 0)&quot;,&quot;(3, 3, 3, 0, 0)&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='emfo-1' random-id='34233386-77ce-2acc-dc0d-ac7555925b8f'><marimo-dropdown data-initial-value='[&quot;(1, 1, 1, 1, 1, 2, 0)&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eVertex powers&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;(1, 1, 1, 1, 1, 2, 0)&quot;,&quot;(2, 1, 1, 1, 1, 3, 0)&quot;,&quot;(2, 2, 2, 2, 2, 2, 0)&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
           }
         }
       ],

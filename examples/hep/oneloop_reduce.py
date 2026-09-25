@@ -67,14 +67,14 @@ def _(S, oneloop):
     # the shared Feynkit frontend; only scalar masters use its backend namespace.
     k, q1, q2, d = S("k", "q1", "q2", "D")
     A0, B0, C0 = oneloop.A0, oneloop.B0, oneloop.C0
-    mass2, mu2 = S("mass2", "mu2", is_positive=True)
+    mass2,mu2,mass2B = S("mass2", "mu2","mass2B", is_positive=True)
     p1sq, p2sq, invariant = S(
         "p1sq",
         "p2sq",
         "s",
         is_real=True,
     )
-    return A0, B0, C0, d, invariant, k, mass2, mu2, p1sq, p2sq, q1, q2
+    return A0, B0, C0, d, invariant, k, mass2, mass2B, mu2, p1sq, p2sq, q1, q2
 
 
 @app.cell(hide_code=True)
@@ -332,7 +332,32 @@ def _(mo):
 
 
 @app.cell
+def _():
+    return
+
+
+@app.cell
+def _(inspection_master_hs, oneloop):
+
+    hs_expr=oneloop.select_branch(oneloop.get_expression(inspection_master_hs))
+    return
+
+
+@app.cell
+def _(C0, N, Replacement, mass2, mass2B, mu2, oneloop):
+    branch_probe2 = [
+        Replacement(mass2, N(2)),
+        Replacement(mass2B, N(1)),
+        Replacement(mu2, N(1)),
+    ]
+    hs_expr2 = C0(0, -mass2, mass2, mass2, mass2, mass2B, mu2)
+    oneloop.select_branch(oneloop.get_expression(hs_expr2,max_nodes=100000000), branch_probe2)
+    return
+
+
+@app.cell
 def _(C0, invariant, mass2, mo, oneloop):
+
     inspection_master = C0(0, 0, invariant, 0, mass2, 0, 1)
     all_c0_branches = oneloop.get_expression(inspection_master)
     mo.vstack(

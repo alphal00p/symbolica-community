@@ -15,7 +15,6 @@ def _():
     from symbolica.community import hep
 
     _set_namespace("angular_demo")
-
     return E, S, hep, mo
 
 
@@ -56,6 +55,11 @@ def _(E, S, hep, mo):
             compact_dot_average,
         ]
     )
+    return
+
+
+@app.cell
+def _():
     return
 
 
