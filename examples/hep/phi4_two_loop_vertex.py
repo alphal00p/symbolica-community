@@ -196,7 +196,7 @@ def _(
     zero,
 ):
     vertex_diagrams = (
-        hep.Process(model, [particle] * 2, [particle] * 2)
+        model.process([particle] * 2, [particle] * 2)
         .generate_diagrams(
             loops=2,
             max_vertices=3,
@@ -393,8 +393,8 @@ def _(
     vertex_ct_input, _vertex_tree_ct = (zero, zero)
     _external_index = S("external_")
     for _loops, _order in [(1, 1), (0, 2)]:
-        _result = hep.Process(
-            ct_model, [particle.name] * 2, [particle.name] * 2
+        _result = ct_model.process(
+            [particle.name] * 2, [particle.name] * 2
         ).generate_diagrams(
             loops=_loops,
             max_vertices=3 if _loops else 1,

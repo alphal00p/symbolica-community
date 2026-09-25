@@ -68,7 +68,7 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
         ("tree", 2, 0, 1),
     ]:
         diagrams[_label] = (
-            hep.Process(model, [particle] * _legs, [particle] * _legs)
+            model.process([particle] * _legs, [particle] * _legs)
             .generate_diagrams(loops=_loops, max_vertices=_vertices, **options)
             .diagrams
         )
@@ -291,8 +291,8 @@ def _(
     ct_diagrams, ct_amplitudes = ({}, {})
     _self_kinematics = hep.Kinematics().with_scalar_product(P(0), P(0), p2)
     for _label, _legs, _count in [("self_energy", 1, 2), ("vertex", 2, 1)]:
-        _result = hep.Process(
-            _ct_model, [particle.name] * _legs, [particle.name] * _legs
+        _result = _ct_model.process(
+            [particle.name] * _legs, [particle.name] * _legs
         ).generate_diagrams(
             loops=0, max_vertices=1, coupling_orders={"CT": 1}, **options
         )

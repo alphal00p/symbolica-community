@@ -72,13 +72,14 @@ def _(S, hep, model, photons):
     assert len(vertices) == 1
     D = S("D")
     K, P, mink = S("gammalooprs::K", "gammalooprs::P", "spenso::mink")
-    generated = hep.Process(model, [photon], [photon] * (count - 1)).generate_diagrams(
+    generated = model.process(
+        [photon], [photon] * (count - 1), vertex_allow=vertices
+    ).generate_diagrams(
         loops=1,
         max_vertices=count,
         allow_self_loops=True,
         allow_zero_flow_edges=True,
         maximum_bridges=None,
-        vertex_allow=vertices,
         self_energy=None,
         tadpoles=None,
         zero_snails=None,

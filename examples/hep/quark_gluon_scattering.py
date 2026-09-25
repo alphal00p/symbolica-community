@@ -66,12 +66,11 @@ def _(CookSettings, E, S, TensorExpression, hep):
         results = {}
         generated_channels = {}
         for boson, count in (("ghG", 1), ("ghG~", 1), ("g", 3)):
-            generated = hep.Process(
-                model, ["b", boson], ["b", boson]
+            generated = model.process(
+                ["b", boson], ["b", boson], vertex_allow=allowed
             ).generate_diagrams(
                 max_vertices=2,
                 maximum_bridges=None,
-                vertex_allow=allowed,
                 numerator_grouping=None,
                 progress=None,
             )

@@ -5,10 +5,8 @@ from pathlib import Path
 from symbolica.community import hep
 
 model = hep.Model(str(Path(__file__).with_name("scalar_phi3.json")))
-process = hep.Process(model, ["scalar_0"], ["scalar_0", "scalar_0"]).with_loop_count(
-    1, 1
-)
-result = process.generate_diagrams(max_vertices=3, allow_self_loops=False)
+process = model.process(["scalar_0"], ["scalar_0", "scalar_0"])
+result = process.generate_diagrams(loops=1, max_vertices=3, allow_self_loops=False)
 
 diagram: hep.FeynmanDiagram = result[0]
 diagram.validate()

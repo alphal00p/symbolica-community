@@ -66,12 +66,10 @@ def _(CookSettings, E, S, TensorExpression, hep):
             and len(v.particles) in (3, 4)
         ]
         assert len(vertices) == 2
-        generated = hep.Process(model, ["g", "g"], ["g", "g"]).generate_diagrams(
-            max_vertices=2,
-            maximum_bridges=None,
-            vertex_allow=vertices,
-            numerator_grouping=None,
-            progress=None,
+        generated = model.process(
+            ["g", "g"], ["g", "g"], vertex_allow=vertices
+        ).generate_diagrams(
+            max_vertices=2, maximum_bridges=None, numerator_grouping=None, progress=None
         )
         assert len(generated.diagrams) == 4
         kin = (

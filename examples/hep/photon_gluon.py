@@ -76,8 +76,9 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep, np):
                     sorted(["b", "b~", "g"]),
                 ]
             ]
-            generated = hep.Process(model, names[:2], names[2:]).generate_diagrams(
-                vertex_allow=allowed,
+            generated = model.process(
+                names[:2], names[2:], vertex_allow=allowed
+            ).generate_diagrams(
                 max_vertices=2,
                 maximum_bridges=None,
                 numerator_grouping=None,

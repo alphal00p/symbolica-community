@@ -360,11 +360,10 @@ def _(mo):
 
 @app.cell
 def _(fk, SnailFilterOptions, g, model):
-    diagrams = fk.Process(model, [g], [g]).generate_diagrams(
-        loops=1,
-        coupling_orders={"QCD": 2, "QED": 0},
-        particle_veto=["c", "t", "s", "u", "d"],
-        zero_snails=SnailFilterOptions(),
+    diagrams = model.process(
+        [g], [g], particle_veto=["c", "t", "s", "u", "d"]
+    ).generate_diagrams(
+        loops=1, coupling_orders={"QCD": 2, "QED": 0}, zero_snails=SnailFilterOptions()
     )
     return (diagrams,)
 

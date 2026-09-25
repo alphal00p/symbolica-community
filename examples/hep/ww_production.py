@@ -54,12 +54,10 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         for _v in model.vertex_rules
         if set(_v.particles) <= {"e-", "e+", "a", "Z", "W-", "W+", "ve", "ve~", "H"}
     ]
-    generated = hep.Process(model, ["e-", "e+"], ["W-", "W+"]).generate_diagrams(
-        max_vertices=2,
-        maximum_bridges=None,
-        vertex_allow=_vertices,
-        numerator_grouping=None,
-        progress=None,
+    generated = model.process(
+        ["e-", "e+"], ["W-", "W+"], vertex_allow=_vertices
+    ).generate_diagrams(
+        max_vertices=2, maximum_bridges=None, numerator_grouping=None, progress=None
     )
     assert len(generated.diagrams) == 4
     assert {_d.internal_edges[0].particle_name for _d in generated.diagrams} == {

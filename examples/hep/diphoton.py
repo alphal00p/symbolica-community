@@ -43,6 +43,18 @@ def _(fk):
 
 
 @app.cell
+def _(model):
+    model
+    return
+
+
+@app.cell
+def _(model):
+    model.vertex_rules
+    return
+
+
+@app.cell
 def _(E, S, fk, mo, model):
     P = S("gammalooprs::P")
     s = S("s", is_positive=True)
@@ -51,22 +63,31 @@ def _(E, S, fk, mo, model):
         [P(0), P(1), P(2), P(3)], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
     )
 
-    process = fk.Process(model, ["e-", "e+"], ["a", "a"])
-    amplitude = process.generate_amplitude(max_vertices=2, vertex_allow=["V_98"])
+    process = model.process(["e-", "e+"], ["a", "a"], vertex_allow=["V_98"])
+    amplitude = process.generate_amplitude(max_vertices=2)
     assert len(amplitude.diagrams) == 2
     assert amplitude.expression().rank == 4
     spin_summed = amplitude.squared().sum_spins([0, 1], average_initial=True)
 
     mo.vstack([mo.hstack(amplitude.diagrams), amplitude])
-    return P, charge, kin, mass, s, spin_summed, t, u
+    return P, amplitude, charge, kin, mass, process, s, spin_summed, t, u
 
 
 @app.cell
-def _(fk, mo, model):
-    generated2 = fk.Process(model, ["e-", "e+"], ["a", "a"]).generate_diagrams(
-        maximum_bridges=None
-    )
-    mo.vstack([mo.hstack(generated2.diagrams)])
+def _(amplitude):
+    amplitude
+    return
+
+
+@app.cell
+def _(amplitude):
+    amplitude.squared()
+    return
+
+
+@app.cell
+def _(process):
+    process
     return
 
 

@@ -45,15 +45,88 @@
       "console": []
     },
     {
-      "id": "bkHC",
-      "code_hash": "870325a0b6f7c6158e1e866116878543",
-      "outputs": [],
+      "id": "dZvc",
+      "code_hash": "20f35e630daf44dbfa4c3f68f5399d8c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div class=\"feynkit-model\" style=\"display:inline-block;max-width:100%;overflow-x:auto\"><strong>sm</strong><span style=\"margin-left:.45rem;opacity:.7\">restriction: none</span><table style=\"border-collapse:collapse;margin-top:.35rem\"><thead><tr><th style=\"padding:.2rem .65rem;text-align:right\">particles</th><th style=\"padding:.2rem .65rem;text-align:right\">parameters</th><th style=\"padding:.2rem .65rem;text-align:right\">couplings</th><th style=\"padding:.2rem .65rem;text-align:right\">vertex rules</th><th style=\"padding:.2rem .65rem;text-align:right\">Lorentz structures</th></tr></thead><tbody><tr><td style=\"padding:.2rem .65rem;text-align:right\">43</td><td style=\"padding:.2rem .65rem;text-align:right\">72</td><td style=\"padding:.2rem .65rem;text-align:right\">108</td><td style=\"padding:.2rem .65rem;text-align:right\">153</td><td style=\"padding:.2rem .65rem;text-align:right\">22</td></tr></tbody></table></div>"
+          }
+        }
+      ],
       "console": []
     },
     {
-      "id": "xhhe",
-      "code_hash": "b467c34039e87d538ba65d390d81a201",
-      "outputs": [],
+      "id": "CErM",
+      "code_hash": "d6de558639ee70aefedba60e01a1c6f4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "application/json": "[\"text/plain:VertexRule(name='V_1')\", \"text/plain:VertexRule(name='V_2')\", \"text/plain:VertexRule(name='V_3')\", \"text/plain:VertexRule(name='V_4')\", \"text/plain:VertexRule(name='V_5')\", \"text/plain:VertexRule(name='V_6')\", \"text/plain:VertexRule(name='V_7')\", \"text/plain:VertexRule(name='V_8')\", \"text/plain:VertexRule(name='V_9')\", \"text/plain:VertexRule(name='V_10')\", \"text/plain:VertexRule(name='V_11')\", \"text/plain:VertexRule(name='V_12')\", \"text/plain:VertexRule(name='V_13')\", \"text/plain:VertexRule(name='V_14')\", \"text/plain:VertexRule(name='V_15')\", \"text/plain:VertexRule(name='V_16')\", \"text/plain:VertexRule(name='V_17')\", \"text/plain:VertexRule(name='V_18')\", \"text/plain:VertexRule(name='V_19')\", \"text/plain:VertexRule(name='V_20')\", \"text/plain:VertexRule(name='V_21')\", \"text/plain:VertexRule(name='V_22')\", \"text/plain:VertexRule(name='V_23')\", \"text/plain:VertexRule(name='V_24')\", \"text/plain:VertexRule(name='V_25')\", \"text/plain:VertexRule(name='V_26')\", \"text/plain:VertexRule(name='V_27')\", \"text/plain:VertexRule(name='V_28')\", \"text/plain:VertexRule(name='V_29')\", \"text/plain:VertexRule(name='V_30')\", \"text/plain:VertexRule(name='V_31')\", \"text/plain:VertexRule(name='V_32')\", \"text/plain:VertexRule(name='V_33')\", \"text/plain:VertexRule(name='V_34')\", \"text/plain:VertexRule(name='V_35')\", \"text/plain:VertexRule(name='V_36')\", \"text/plain:VertexRule(name='V_37')\", \"text/plain:VertexRule(name='V_38')\", \"text/plain:VertexRule(name='V_39')\", \"text/plain:VertexRule(name='V_40')\", \"text/plain:VertexRule(name='V_41')\", \"text/plain:VertexRule(name='V_42')\", \"text/plain:VertexRule(name='V_43')\", \"text/plain:VertexRule(name='V_44')\", \"text/plain:VertexRule(name='V_45')\", \"text/plain:VertexRule(name='V_46')\", \"text/plain:VertexRule(name='V_47')\", \"text/plain:VertexRule(name='V_48')\", \"text/plain:VertexRule(name='V_49')\", \"text/plain:VertexRule(name='V_50')\", \"text/plain:VertexRule(name='V_51')\", \"text/plain:VertexRule(name='V_52')\", \"text/plain:VertexRule(name='V_53')\", \"text/plain:VertexRule(name='V_54')\", \"text/plain:VertexRule(name='V_55')\", \"text/plain:VertexRule(name='V_56')\", \"text/plain:VertexRule(name='V_57')\", \"text/plain:VertexRule(name='V_58')\", \"text/plain:VertexRule(name='V_59')\", \"text/plain:VertexRule(name='V_60')\", \"text/plain:VertexRule(name='V_61')\", \"text/plain:VertexRule(name='V_62')\", \"text/plain:VertexRule(name='V_63')\", \"text/plain:VertexRule(name='V_64')\", \"text/plain:VertexRule(name='V_65')\", \"text/plain:VertexRule(name='V_66')\", \"text/plain:VertexRule(name='V_67')\", \"text/plain:VertexRule(name='V_68')\", \"text/plain:VertexRule(name='V_69')\", \"text/plain:VertexRule(name='V_70')\", \"text/plain:VertexRule(name='V_71')\", \"text/plain:VertexRule(name='V_72')\", \"text/plain:VertexRule(name='V_73')\", \"text/plain:VertexRule(name='V_74')\", \"text/plain:VertexRule(name='V_75')\", \"text/plain:VertexRule(name='V_76')\", \"text/plain:VertexRule(name='V_77')\", \"text/plain:VertexRule(name='V_78')\", \"text/plain:VertexRule(name='V_79')\", \"text/plain:VertexRule(name='V_80')\", \"text/plain:VertexRule(name='V_81')\", \"text/plain:VertexRule(name='V_82')\", \"text/plain:VertexRule(name='V_83')\", \"text/plain:VertexRule(name='V_84')\", \"text/plain:VertexRule(name='V_85')\", \"text/plain:VertexRule(name='V_86')\", \"text/plain:VertexRule(name='V_87')\", \"text/plain:VertexRule(name='V_88')\", \"text/plain:VertexRule(name='V_89')\", \"text/plain:VertexRule(name='V_90')\", \"text/plain:VertexRule(name='V_91')\", \"text/plain:VertexRule(name='V_92')\", \"text/plain:VertexRule(name='V_93')\", \"text/plain:VertexRule(name='V_94')\", \"text/plain:VertexRule(name='V_95')\", \"text/plain:VertexRule(name='V_96')\", \"text/plain:VertexRule(name='V_97')\", \"text/plain:VertexRule(name='V_98')\", \"text/plain:VertexRule(name='V_99')\", \"text/plain:VertexRule(name='V_100')\", \"text/plain:VertexRule(name='V_101')\", \"text/plain:VertexRule(name='V_102')\", \"text/plain:VertexRule(name='V_103')\", \"text/plain:VertexRule(name='V_104')\", \"text/plain:VertexRule(name='V_105')\", \"text/plain:VertexRule(name='V_106')\", \"text/plain:VertexRule(name='V_107')\", \"text/plain:VertexRule(name='V_108')\", \"text/plain:VertexRule(name='V_109')\", \"text/plain:VertexRule(name='V_110')\", \"text/plain:VertexRule(name='V_111')\", \"text/plain:VertexRule(name='V_112')\", \"text/plain:VertexRule(name='V_113')\", \"text/plain:VertexRule(name='V_114')\", \"text/plain:VertexRule(name='V_115')\", \"text/plain:VertexRule(name='V_116')\", \"text/plain:VertexRule(name='V_117')\", \"text/plain:VertexRule(name='V_118')\", \"text/plain:VertexRule(name='V_119')\", \"text/plain:VertexRule(name='V_120')\", \"text/plain:VertexRule(name='V_121')\", \"text/plain:VertexRule(name='V_122')\", \"text/plain:VertexRule(name='V_123')\", \"text/plain:VertexRule(name='V_124')\", \"text/plain:VertexRule(name='V_125')\", \"text/plain:VertexRule(name='V_126')\", \"text/plain:VertexRule(name='V_127')\", \"text/plain:VertexRule(name='V_128')\", \"text/plain:VertexRule(name='V_129')\", \"text/plain:VertexRule(name='V_130')\", \"text/plain:VertexRule(name='V_131')\", \"text/plain:VertexRule(name='V_132')\", \"text/plain:VertexRule(name='V_133')\", \"text/plain:VertexRule(name='V_134')\", \"text/plain:VertexRule(name='V_135')\", \"text/plain:VertexRule(name='V_136')\", \"text/plain:VertexRule(name='V_137')\", \"text/plain:VertexRule(name='V_138')\", \"text/plain:VertexRule(name='V_139')\", \"text/plain:VertexRule(name='V_140')\", \"text/plain:VertexRule(name='V_141')\", \"text/plain:VertexRule(name='V_142')\", \"text/plain:VertexRule(name='V_143')\", \"text/plain:VertexRule(name='V_144')\", \"text/plain:VertexRule(name='V_145')\", \"text/plain:VertexRule(name='V_146')\", \"text/plain:VertexRule(name='V_147')\", \"text/plain:VertexRule(name='V_148')\", \"text/plain:VertexRule(name='V_149')\", \"text/plain:VertexRule(name='V_150')\", \"text/plain:VertexRule(name='V_151')\", \"text/plain:VertexRule(name='V_152')\", \"text/plain:VertexRule(name='V_153')\"]"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "8a6a2716a5a13c480d99bce58ce9ca53",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "'symbolica.community.feynkit.Model' object has no attribute 'process'",
+          "traceback": null
+        }
+      ],
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/nix-shell.bMGAL4/marimo_1294352/__marimo__cell_bkHC_.py\"</span>, line <span class=\"m\">8</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">process</span> <span class=\"o\">=</span> <span class=\"n\">model</span><span class=\"o\">.</span><span class=\"n\">process</span><span class=\"p\">([</span><span class=\"s2\">\"e-\"</span><span class=\"p\">,</span> <span class=\"s2\">\"e+\"</span><span class=\"p\">],</span> <span class=\"p\">[</span><span class=\"s2\">\"a\"</span><span class=\"p\">,</span> <span class=\"s2\">\"a\"</span><span class=\"p\">],</span> <span class=\"n\">vertex_allow</span><span class=\"o\">=</span><span class=\"p\">[</span><span class=\"s2\">\"V_98\"</span><span class=\"p\">])</span>\n<span class=\"w\">              </span><span class=\"pm\">^^^^^^^^^^^^^</span>\n<span class=\"gr\">AttributeError</span>: <span class=\"n\">'symbolica.community.feynkit.Model' object has no attribute 'process'</span>\n</pre></div>\n</span>",
+          "mimetype": "application/vnd.marimo+traceback"
+        }
+      ]
+    },
+    {
+      "id": "QLEl",
+      "code_hash": "ddbe18f9e817f99576a6b19f4ef7ea11",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "An ancestor raised an exception (AttributeError): ",
+          "traceback": null
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Tqaf",
+      "code_hash": "0a788911bd873911eaabfc539fb16c12",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "An ancestor raised an exception (AttributeError): ",
+          "traceback": null
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "xzxi",
+      "code_hash": "5075140835d0bc504791c76b04c33d2b",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "An ancestor raised an exception (AttributeError): ",
+          "traceback": null
+        }
+      ],
       "console": []
     },
     {
@@ -74,10 +147,10 @@
       "code_hash": "5ab237c46aee303381f42e1ba0e419fd",
       "outputs": [
         {
-          "type": "data",
-          "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massive, spin-averaged squared matrix element</strong> \u2014 all three polarization choices give the same result.</span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-ee\u2074\u00b7t\u00b7u\u00b3+7\u00b7ee\u2074\u00b7Me\u00b2\u00b7t\u00b7u\u00b2+7\u00b7ee\u2074\u00b7Me\u00b2\u00b7t\u00b2\u00b7u+ee\u2074\u00b7Me\u00b2\u00b7t\u00b3+ee\u2074\u00b7Me\u00b2\u00b7u\u00b3\n    -14\u00b7ee\u2074\u00b7Me\u2074\u00b7t\u00b7u-3\u00b7ee\u2074\u00b7Me\u2074\u00b7t\u00b2-3\u00b7ee\u2074\u00b7Me\u2074\u00b7u\u00b2+6\u00b7ee\u2074\u00b7Me\u2078-ee\u2074\u00b7t\u00b3\u00b7u\n<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(0, 95, 175)\">(</span>t-Me\u00b2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-u+Me\u00b2<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span></div></div>"
-          }
+          "type": "error",
+          "ename": "exception",
+          "evalue": "An ancestor raised an exception (AttributeError): ",
+          "traceback": null
         }
       ],
       "console": []
@@ -100,10 +173,10 @@
       "code_hash": "5f1e8133acb2d8dc44af74472e216193",
       "outputs": [
         {
-          "type": "data",
-          "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massless labeled angular density</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-<span style=\"color: rgb(128, 128, 128)\">(</span>cos_theta\u00b2\u00b7alpha\u00b2+alpha\u00b2<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-1+cos_theta<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>1+cos_theta<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massless event cross section with angular cut</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b7alpha\u00b2\u00b7cutoff-2\u00b7<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b7alpha\u00b2\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span>/s</div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Massive event cross section with angular cut</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-2\u00b7<span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b7alpha\u00b2\n    \u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-2\u00b7cutoff\u00b7beta+2\u00b7cutoff\u00b7beta\u00b3-cutoff\u00b7beta\u2075+3\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>\n        -3\u00b7cutoff\u00b2\u00b7beta\u00b2\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>+cutoff\u00b2\u00b7beta\u2076\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>\n        +cutoff\u00b3\u00b7beta\u00b3-beta\u2074\u00b7<span style=\"color: rgb(205, 0, 205)\">atanh</span><span style=\"color: rgb(0, 95, 175)\">(</span>cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>\n    <span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span>s\u00b7beta\u00b2\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>-1+cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span>\u00b7<span style=\"color: rgb(0, 95, 175)\">(</span>1+cutoff\u00b7beta<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span></div></div>"
-          }
+          "type": "error",
+          "ename": "exception",
+          "evalue": "An ancestor raised an exception (AttributeError): ",
+          "traceback": null
         }
       ],
       "console": []
@@ -126,13 +199,20 @@
       "code_hash": "281ff44ca2a8f83901f22a1ab8e582fa",
       "outputs": [
         {
-          "type": "data",
-          "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Accepted event rate: <strong>1.39722457733622</strong> \u00d7 <marimo-tex class=\"arithmatex\">||(2\\pi\\alpha^2/s||)</marimo-tex>.</span></span>"
-          }
+          "type": "error",
+          "ename": "exception",
+          "evalue": "Name `massive_cross_section` is not defined. It was expected to be defined in ",
+          "traceback": null
         }
       ],
-      "console": []
+      "console": [
+        {
+          "type": "stream",
+          "name": "stderr",
+          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/nix-shell.bMGAL4/marimo_1294352/__marimo__cell_RGSE_.py\"</span>, line <span class=\"m\">1</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">_ratio</span> <span class=\"o\">=</span> <span class=\"p\">(</span><span class=\"n\">massive_cross_section</span> <span class=\"o\">*</span> <span class=\"n\">s</span> <span class=\"o\">/</span> <span class=\"p\">(</span><span class=\"mi\">2</span> <span class=\"o\">*</span> <span class=\"n\">Symbol</span><span class=\"o\">.</span><span class=\"n\">PI</span> <span class=\"o\">*</span> <span class=\"n\">alpha</span><span class=\"o\">**</span><span class=\"mi\">2</span><span class=\"p\">))</span><span class=\"o\">.</span><span class=\"n\">together</span><span class=\"p\">()</span>\n<span class=\"w\">              </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^</span>\n<span class=\"gr\">NameError</span>: <span class=\"n\">name 'massive_cross_section' is not defined</span>\n</pre></div>\n</span>",
+          "mimetype": "application/vnd.marimo+traceback"
+        }
+      ]
     }
   ]
 }

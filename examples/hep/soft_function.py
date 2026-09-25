@@ -190,8 +190,9 @@ def _(
 
         channels, denominators, generated_channels = [], [], []
         for outgoing in (["b", "b~"], ["b", "b~", "g"]):
-            result = hep.Process(model, ["a"], outgoing).generate_diagrams(
-                vertex_allow=vertices,
+            result = model.process(
+                ["a"], outgoing, vertex_allow=vertices
+            ).generate_diagrams(
                 max_vertices=len(outgoing) - 1,
                 maximum_bridges=None,
                 numerator_grouping=None,

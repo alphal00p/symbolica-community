@@ -65,16 +65,14 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
         (["ghG~", "ghG"], ["V_76", "V_35"], 1),
         (["g", "g"], ["V_76", "V_36"], 3),
     ):
-        _generated = (
-            hep.Process(ghost_model, ["b", "b~"], _outgoing)
-            .with_loop_count(0, 0)
-            .generate_diagrams(
-                max_vertices=2,
-                maximum_bridges=None,
-                vertex_allow=_vertices,
-                numerator_grouping=None,
-                progress=None,
-            )
+        _generated = ghost_model.process(
+            ["b", "b~"], _outgoing, vertex_allow=_vertices
+        ).generate_diagrams(
+            loops=0,
+            max_vertices=2,
+            maximum_bridges=None,
+            numerator_grouping=None,
+            progress=None,
         )
         assert len(_generated.diagrams) == _count
         ghost_generated.append(_generated)

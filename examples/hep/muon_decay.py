@@ -56,12 +56,10 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
         and any(_p in ("e-", "e+", "mu-", "mu+") for _p in _v.particles)
     ]
     assert len(_vertices) == 4
-    _generated = hep.Process(_model, ["mu-"], ["e-", "ve~", "vm"]).generate_diagrams(
-        max_vertices=2,
-        maximum_bridges=None,
-        vertex_allow=_vertices,
-        numerator_grouping=None,
-        progress=None,
+    _generated = _model.process(
+        ["mu-"], ["e-", "ve~", "vm"], vertex_allow=_vertices
+    ).generate_diagrams(
+        max_vertices=2, maximum_bridges=None, numerator_grouping=None, progress=None
     )
     assert len(_generated.diagrams) == 1
     diagram = _generated.diagrams[0]

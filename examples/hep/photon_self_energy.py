@@ -51,16 +51,14 @@ def _(mo):
 
 @app.cell
 def _(E, S, TensorExpression, hep, mo, oneloop, qed_model):
-    _generated = (
-        hep.Process(qed_model, ["a"], ["a"])
-        .with_loop_count(1, 1)
-        .generate_diagrams(
-            max_vertices=2,
-            maximum_bridges=None,
-            vertex_allow=["V_98"],
-            numerator_grouping=None,
-            progress=None,
-        )
+    _generated = qed_model.process(
+        ["a"], ["a"], vertex_allow=["V_98"]
+    ).generate_diagrams(
+        loops=1,
+        max_vertices=2,
+        maximum_bridges=None,
+        numerator_grouping=None,
+        progress=None,
     )
     assert len(_generated.diagrams) == 1
     _diagram = _generated.diagrams[0]

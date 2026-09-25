@@ -148,7 +148,7 @@ def _(
     assert family.is_complete and family.is_independent
     model = hep.Model.phi4()
     particle = model.particle("phi")
-    generated = hep.Process(model, [particle], [particle]).generate_diagrams(
+    generated = model.process([particle], [particle]).generate_diagrams(
         loops=2,
         max_vertices=2,
         maximum_bridges=0,
@@ -540,9 +540,7 @@ def _(
     ct_integral, ct_coordinate = S("J", "y")
     ct_input, tree_ct = (zero, zero)
     for _loops, _ct_order in [(1, 1), (0, 2)]:
-        _result = hep.Process(
-            ct_model, [particle.name], [particle.name]
-        ).generate_diagrams(
+        _result = ct_model.process([particle.name], [particle.name]).generate_diagrams(
             loops=_loops,
             max_vertices=2 if _loops else 1,
             coupling_orders={"CT": _ct_order},

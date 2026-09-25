@@ -74,11 +74,9 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep):
     assert len(_vertices) == 1
 
     # Establish the Yukawa phase from the same typed model rule used in the loop.
-    _tree_result = hep.Process(
-        model, [_higgs], [_top, _top.antiparticle]
-    ).generate_diagrams(
-        max_vertices=1, vertex_allow=_vertices, numerator_grouping=None, progress=None
-    )
+    _tree_result = model.process(
+        [_higgs], [_top, _top.antiparticle], vertex_allow=_vertices
+    ).generate_diagrams(max_vertices=1, numerator_grouping=None, progress=None)
     assert len(_tree_result.diagrams) == 1
     yukawa_tree = _tree_result.diagrams[0]
     tree_coupling = (
@@ -90,13 +88,12 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep):
     assert yukawa_tree.overall_factor_expression(evaluate=True) == E("1")
     assert yukawa_tree.numerator_prefactor_expression() == E("1")
 
-    _generated = hep.Process(model, [_higgs], []).generate_diagrams(
+    _generated = model.process([_higgs], [], vertex_allow=_vertices).generate_diagrams(
         loops=1,
         max_vertices=1,
         allow_self_loops=True,
         allow_zero_flow_edges=True,
         maximum_bridges=None,
-        vertex_allow=_vertices,
         tadpoles=None,
         zero_snails=None,
         self_energy=None,

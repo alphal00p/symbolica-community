@@ -73,9 +73,9 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
         ("Top", ("t", "b", "W+"), (_mt, _mb, _mw), "CKM3x3"),
         ("Antitop", ("t~", "b~", "W-"), (_mt, _mb, _mw), "CKM3x3"),
     ]:
-        _generated = hep.Process(
-            _model, [_names[0]], list(_names[1:])
-        ).generate_diagrams(max_vertices=1, numerator_grouping=None, progress=None)
+        _generated = _model.process([_names[0]], list(_names[1:])).generate_diagrams(
+            max_vertices=1, numerator_grouping=None, progress=None
+        )
         assert len(_generated.diagrams) == 1
         _diagram = _generated.diagrams[0]
         diagrams[_label] = _diagram

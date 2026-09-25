@@ -46,13 +46,13 @@ def _(mo):
 @app.cell
 def _(E, Model, S, TensorExpression, hep, mo):
     qed_model = Model.standard_model()
-    _process = hep.Process(qed_model, ["e-", "e+"], ["mu-", "mu+"]).with_loop_count(
-        1, 1
+    _process = qed_model.process(
+        ["e-", "e+"], ["mu-", "mu+"], vertex_allow=["V_98", "V_99"]
     )
     _result = _process.generate_cross_section(
+        loops=1,
         max_vertices=4,
         maximum_bridges=None,
-        vertex_allow=["V_98", "V_99"],
         numerator_grouping=None,
         progress=None,
     )

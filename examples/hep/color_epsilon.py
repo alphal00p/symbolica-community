@@ -87,15 +87,12 @@ def _(epsilon_model, fk, mo):
         (["X1"], ["X2~", "X3~"]),
         (["X1~"], ["X2", "X3"]),
     ):
-        _generated = (
-            fk.Process(epsilon_model, _incoming, _outgoing)
-            .with_loop_count(0, 0)
-            .generate_diagrams(
-                max_vertices=1,
-                maximum_bridges=None,
-                numerator_grouping=None,
-                progress=None,
-            )
+        _generated = epsilon_model.process(_incoming, _outgoing).generate_diagrams(
+            loops=0,
+            max_vertices=1,
+            maximum_bridges=None,
+            numerator_grouping=None,
+            progress=None,
         )
         assert len(_generated.diagrams) == 1
         epsilon_diagrams.append(_generated.diagrams[0])

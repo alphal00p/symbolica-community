@@ -88,8 +88,8 @@ def _(E, S, Symbol, hep, mo):
         ("vertex", 2, 1, 1),
         ("tree", 2, 1, 0),
     ]:
-        _generated = hep.Process(
-            model, [particle] * _incoming, [particle] * _outgoing
+        _generated = model.process(
+            [particle] * _incoming, [particle] * _outgoing
         ).generate_diagrams(
             loops=_loops, max_vertices=_incoming + _outgoing if _loops else 1, **options
         )
@@ -354,8 +354,8 @@ def _(
     ct_diagrams, _counterterms = ({}, {})
     _self_kinematics = hep.Kinematics().with_scalar_product(P(0), P(0), p2)
     for _label, _incoming, _count in [("self_energy", 1, 2), ("vertex", 2, 1)]:
-        _generated = hep.Process(
-            _ct_model, [particle.name] * _incoming, [particle.name]
+        _generated = _ct_model.process(
+            [particle.name] * _incoming, [particle.name]
         ).generate_diagrams(
             loops=0, max_vertices=1, coupling_orders={"CT": 1}, **options
         )

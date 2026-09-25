@@ -68,7 +68,7 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     electric_charge = fermion.charge
     assert weak_isospin is not None
     antifermion = fermion.antiparticle
-    generated = fk.Process(model, ["Z"], [fermion, antifermion]).generate_diagrams(
+    generated = model.process(["Z"], [fermion, antifermion]).generate_diagrams(
         max_vertices=1, numerator_grouping=None, progress=None
     )
     assert len(generated.diagrams) == 1

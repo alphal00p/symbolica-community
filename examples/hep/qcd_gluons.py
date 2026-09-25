@@ -57,16 +57,14 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
     _kinematics = hep.Kinematics.mandelstam(
         [_P(0), _P(1), _P(2), _P(3)], [_mass**2, _mass**2, E("0"), E("0")], [_s, _t, _u]
     )
-    gluon_generated = (
-        hep.Process(qcd_model, ["b", "b~"], ["g", "g"])
-        .with_loop_count(0, 0)
-        .generate_diagrams(
-            max_vertices=2,
-            maximum_bridges=None,
-            vertex_allow=["V_76", "V_36"],
-            numerator_grouping=None,
-            progress=None,
-        )
+    gluon_generated = qcd_model.process(
+        ["b", "b~"], ["g", "g"], vertex_allow=["V_76", "V_36"]
+    ).generate_diagrams(
+        loops=0,
+        max_vertices=2,
+        maximum_bridges=None,
+        numerator_grouping=None,
+        progress=None,
     )
     assert len(gluon_generated.diagrams) == 3
     _ports = S("external_0", "external_1", "external_2", "external_3")
