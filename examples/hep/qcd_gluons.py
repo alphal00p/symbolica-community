@@ -76,7 +76,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
     _denominators = []
     for _diagram in gluon_generated.diagrams:
         _numerator = qcd_model.expand_couplings(
-            _diagram.numerator_expression(in_lmb=True).to_expression()
+            _diagram.numerator_expression(in_lmb=True)
         )
         # Align both spin and color ports using each generated external wavefunction.
         # This preserves interference without depending on internal half-edge numbering.
@@ -88,13 +88,13 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
                     )
                 )
             )
-            _numerator = _numerator.replace(
-                _match[_index], _ports[_edge.external_index]
+            _numerator = _numerator.rename_indices(
+                {_match[_index]: _ports[_edge.external_index]}
             )
         _denominator = _kinematics.apply(
-            _diagram.denominator_expression(dimension=4, in_lmb=True)
-            .to_expression()
-            .replace(S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse)
+            _diagram.denominator_expression(dimension=4, in_lmb=True).replace(
+                S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse
+            )
         ).expand()
         _denominators.append(_denominator)
         _amplitude += (
@@ -104,13 +104,13 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
             / _denominator
         )
     assert all(_d in _denominators for _d in (_s, _t - _mass**2, _u - _mass**2))
-    _operator = TensorExpression(_amplitude.expand())
+    _operator = _amplitude.expand()
     assert len(_operator.structure.slots) == 8
-    _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
+    _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0()
     _adjoint = _adjoint.replace(_conjugate(_P(_a, _b)), _P(_a, _b))
     for _real in (_mass, _gs, _s, _t, _u):
         _adjoint = _adjoint.replace(_conjugate(_real), _real)
-    _adjoint = TensorExpression(_adjoint).wrap_indices(_adjoint_index)
+    _adjoint = _adjoint.wrap_indices(_adjoint_index)
 
     # Match the shared completeness tensor against the dual of each external slot.
     # Matching selects color slots and determines the quark/antiquark orientation.
@@ -217,9 +217,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep, mo, qcd_model):
         )
         assert _scalar.is_scalar
         _squared = (
-            _kinematics.apply(_scalar.to_expression())
-            .replace(_s, 2 * _mass**2 - _t - _u)
-            .together()
+            _kinematics.apply(_scalar).replace(_s, 2 * _mass**2 - _t - _u).together()
         )
         assert (
             _squared - _expected.replace(_s, 2 * _mass**2 - _t - _u)

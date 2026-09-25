@@ -127,9 +127,7 @@ def _(E, P, charge, gauge, kin, mass, mo, s, spin_summed, t, u):
         .to_dots()
     )
     assert _scalar.is_scalar
-    diphoton_squared = (
-        kin.apply(_scalar.to_expression()).replace(s, 2 * mass**2 - t - u).together()
-    )
+    diphoton_squared = kin.apply(_scalar).replace(s, 2 * mass**2 - t - u).together()
     _x, _y = t - mass**2, u - mass**2
     _expected = (
         2

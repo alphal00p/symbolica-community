@@ -137,12 +137,11 @@ def _(
             raise ValueError(
                 "Numerator and projector must have matching external slots"
             )
-        # Multiple compatible ports make typed multiplication ambiguous.
         # The explicit Einstein indices specify all four contractions here.
         # Native fixed-point simplifiers keep color and gamma expansion local.
         # The network contracts connected factors before residual metric expansion.
         return (
-            as_tensor(numerator.to_expression() * projector.to_expression())
+            (numerator * projector)
             .simplify_color(color_settings)
             .simplify_gamma()
             .schoonschip_net(contraction_settings)
@@ -184,14 +183,10 @@ def _(FeynmanDiagram, K, P, S, TensorExpression, as_tensor, index_, numerator_in
 
 
 @app.cell
-def _(D, P, TensorExpression, as_tensor, dot, mink, p2):
+def _(D, P, TensorExpression, dot, mink, p2):
     def scalar_products(expression: TensorExpression) -> TensorExpression:
         """Keep compact scalar products inside the structured tensor expression."""
-        return as_tensor(
-            expression.to_dots()
-            .to_expression()
-            .replace(dot(P(mink(D)), P(mink(D))), p2)
-        )
+        return expression.to_dots().replace(dot(P(mink(D)), P(mink(D))), p2)
 
     return (scalar_products,)
 
@@ -209,8 +204,8 @@ def _(Expression, FeynmanDiagram):
 
 
 @app.cell
-def _(E, Expression, Model, S, TensorExpression, as_tensor):
-    def qcd_color_factors(expression: Expression) -> Expression:
+def _(E, Model, S, TensorExpression):
+    def qcd_color_factors(expression: TensorExpression) -> TensorExpression:
         """Evaluate the scalar SU(3) invariants used by this example."""
         return expression.replace(S("spenso::cas")(2, S("spenso::coad")(8)), 3).replace(
             S("spenso::idx")(2, S("spenso::cof")(3)), E("1/2")
@@ -218,11 +213,7 @@ def _(E, Expression, Model, S, TensorExpression, as_tensor):
 
     def resolve_qcd(expression: TensorExpression, model: Model) -> TensorExpression:
         """Resolve QCD couplings and scalar SU(3) factors, preserving tensor type."""
-        result = as_tensor(expression).to_expression()
-        for coupling in model.couplings:
-            if coupling.name in ("GC_10", "GC_11"):
-                result = result.replace(S("UFO::" + coupling.name), coupling.expression)
-        return as_tensor(qcd_color_factors(result))
+        return qcd_color_factors(model.expand_couplings(expression))
 
     return qcd_color_factors, resolve_qcd
 
@@ -310,9 +301,7 @@ def _(
         residue_x = (2 * delta * a + b).replace(D, 4).expand(x)
         primitive = residue_x.integrate(x)
         residue = primitive.replace(x, 1) - primitive.replace(x, 0)
-        residue = resolve_qcd(
-            as_tensor(residue * diagram_weight(copy)), model
-        ).to_expression()
+        residue = resolve_qcd(as_tensor(residue * diagram_weight(copy)), model)
         return dict(
             diagram=copy,
             delta=delta,

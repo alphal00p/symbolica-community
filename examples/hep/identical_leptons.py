@@ -92,7 +92,7 @@ def _(
     _operators, _denominators = [], []
     for _diagram in lepton_generated.diagrams:
         _numerator = lepton_model.expand_couplings(
-            _diagram.numerator_expression(in_lmb=True).to_expression()
+            _diagram.numerator_expression(in_lmb=True)
         )
         # Align ports through the generated wavefunctions, independent of each
         # channel's half-edge numbering.
@@ -103,24 +103,22 @@ def _(
                 )
             )
             assert len(_matches) == 1
-            _numerator = _numerator.replace(
-                dict(_matches[0])[_index], _ports[_edge.external_index]
+            _numerator = _numerator.rename_indices(
+                {dict(_matches[0])[_index]: _ports[_edge.external_index]}
             )
         _denominator = _kinematics.apply(
-            _diagram.denominator_expression(dimension=4, in_lmb=True)
-            .to_expression()
-            .replace(S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse)
+            _diagram.denominator_expression(dimension=4, in_lmb=True).replace(
+                S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse
+            )
         ).expand()
         _denominators.append(_denominator)
-        _operator = TensorExpression(
-            (
-                _numerator
-                * _diagram.overall_factor_expression(evaluate=True)
-                * _diagram.numerator_prefactor_expression()
-                / _denominator
-            ).expand()
-        )
-        _operators.append(_operator.to_expression())
+        _operator = (
+            _numerator
+            * _diagram.overall_factor_expression(evaluate=True)
+            * _diagram.numerator_prefactor_expression()
+            / _denominator
+        ).expand()
+        _operators.append(_operator)
     assert set(_denominators) == ({s, t} if reaction.value == "Bhabha" else {t, u})
 
     _spins = E("1")
@@ -141,14 +139,10 @@ def _(
         for _term in _terms:
             # Preserve physical external-leg labels under adjunction so different
             # channels share the same completeness tensors in interference terms.
-            _adjoint = (
-                TensorExpression(_term)
-                .dirac_adjoint(preserve_indices=True)
-                .to_expression()
-            )
+            _adjoint = _term.dirac_adjoint(preserve_indices=True)
             for _real in (s, t, u, mass, charge):
                 _adjoint = _adjoint.replace(_conjugate(_real), _real)
-            _raw += _term * TensorExpression(_adjoint).wrap_indices(_wrapped)
+            _raw += _term.to_expression() * _adjoint.wrap_indices(_wrapped)
         _scalar = (
             TensorExpression(_raw * _spins, cook_indices=CookSettings.indices())
             .expand()
@@ -160,9 +154,7 @@ def _(
         )
         assert _scalar.is_scalar
         _squares.append(
-            _kinematics.apply(_scalar.to_expression())
-            .replace(u, 4 * mass**2 - s - t)
-            .together()
+            _kinematics.apply(_scalar).replace(u, 4 * mass**2 - s - t).together()
         )
     lepton_squared = _squares[0]
     lepton_interference = (lepton_squared - _squares[1]).together()

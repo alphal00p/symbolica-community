@@ -11,11 +11,10 @@ def _():
     from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep
     from symbolica.community.hep import Model, oneloop
-    from symbolica.community.spenso import TensorExpression
 
     _set_namespace("photon_self_energy")
 
-    return E, Model, S, TensorExpression, hep, mo, oneloop
+    return E, Model, S, hep, mo, oneloop
 
 
 @app.cell
@@ -50,7 +49,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, TensorExpression, hep, mo, oneloop, qed_model):
+def _(E, S, hep, mo, oneloop, qed_model):
     _generated = qed_model.process(
         ["a"], ["a"], vertex_allow=["V_98"]
     ).generate_diagrams(
@@ -68,8 +67,8 @@ def _(E, S, TensorExpression, hep, mo, oneloop, qed_model):
     )
     _index, _wave = S("index_", "wave_")
     _numerator = qed_model.expand_couplings(
-        _diagram.numerator_expression(in_lmb=True).to_expression()
-    )
+        _diagram.numerator_expression(in_lmb=True)
+    ).with_lorentz_dimension(_D)
     for _edge in _diagram.external_edges:
         _matches = list(
             _diagram.projector_expression().match(
@@ -78,17 +77,10 @@ def _(E, S, TensorExpression, hep, mo, oneloop, qed_model):
         )
         assert len(_matches) == 1
         _port = dict(_matches[0])[_index]
-        _numerator = _numerator.replace(
-            _mink(4, _port), _mink(_D, (_mu, _nu)[_edge.external_index])
+        _numerator = _numerator.rename_indices(
+            {_port: (_mu, _nu)[_edge.external_index]}
         )
-    _numerator = _numerator.replace(_mink(4, _index), _mink(_D, _index))
-    _trace = (
-        TensorExpression(_numerator.expand())
-        .simplify_gamma()
-        .expand()
-        .to_dots()
-        .to_expression()
-    )
+    _trace = _numerator.expand().simplify_gamma().expand().to_dots()
     _kin = hep.Kinematics(_D, momenta=[_K(0), _P(0)]).with_scalar_product(
         _P(0), _P(0), _s
     )

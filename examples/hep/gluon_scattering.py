@@ -89,7 +89,7 @@ def _(CookSettings, E, S, TensorExpression, hep):
         denominators = []
         for diagram in generated.diagrams:
             numerator = model.expand_couplings(
-                diagram.numerator_expression(in_lmb=True).to_expression()
+                diagram.numerator_expression(in_lmb=True)
             )
             for edge in diagram.external_edges:
                 match = dict(
@@ -99,14 +99,14 @@ def _(CookSettings, E, S, TensorExpression, hep):
                         )
                     )
                 )
-                numerator = numerator.replace(match[index], ports[edge.external_index])
-            numerator = (
-                TensorExpression(numerator).with_lorentz_dimension(D).to_expression()
-            )
+                numerator = numerator.rename_indices(
+                    {match[index]: ports[edge.external_index]}
+                )
+            numerator = numerator.with_lorentz_dimension(D)
             denominator = kin.apply(
-                diagram.denominator_expression(dimension=D, in_lmb=True)
-                .to_expression()
-                .replace(S("gammalooprs::denom")(a, b, c, inv), inv)
+                diagram.denominator_expression(dimension=D, in_lmb=True).replace(
+                    S("gammalooprs::denom")(a, b, c, inv), inv
+                )
             ).expand()
             denominators.append(denominator)
             terms.append(
@@ -117,36 +117,29 @@ def _(CookSettings, E, S, TensorExpression, hep):
             )
         assert set(denominators) == {E("1"), s, t, u}
         amplitude = sum(terms, E("0"))
-        operator = kin.apply(
-            TensorExpression(amplitude).expand().simplify_metrics().to_dots()
-        )
-        amplitude = operator.to_expression()
+        operator = kin.apply(amplitude.expand().simplify_metrics().to_dots())
+        amplitude = operator
         assert len(operator.structure.slots) == 8
-        adjoint = (
-            operator.spenso_conjugate().to_expression().replace(conj(P(a, b)), P(a, b))
-        )
+        adjoint = operator.spenso_conjugate().replace(conj(P(a, b)), P(a, b))
         for real in (s, t, u, D, gs):
             adjoint = adjoint.replace(conj(real), real)
-        adjoint = TensorExpression(adjoint).wrap_indices(wrapped)
+        adjoint = adjoint.wrap_indices(wrapped)
         for i in range(4):
             adjoint = adjoint.replace(wrapped(ports[i]), bars[i])
         colors = E("1")
         for i in range(4):
             colors *= gluon.color_sum(ports[i], bars[i], average=i < 2)
-        generic = (amplitude * adjoint * colors * gluon.color**2 / dA**2).replace(
-            coad(8, index), coad(dA, index)
-        )
+        generic = (
+            amplitude.to_expression() * adjoint * colors * gluon.color**2 / dA**2
+        ).replace(coad(8, index), coad(dA, index))
         print("color contraction", flush=True)
         colored = (
             TensorExpression(generic, cook_indices=CookSettings.indices())
             .simplify_color()
-            .to_expression()
             .replace(dA, N**2 - 1)
         )
-        colored = (
-            TensorExpression(colored).to_cof_dimension_invariants().to_expression()
-        )
-        pieces = TensorExpression(colored).expand_mink()
+        colored = colored.to_cof_dimension_invariants()
+        pieces = colored.expand_mink()
         colored = sum(
             (structure * coefficient.together() for structure, coefficient in pieces),
             E("0"),
@@ -162,8 +155,7 @@ def _(CookSettings, E, S, TensorExpression, hep):
             expanded = (result * projector).expand()
             tensor = TensorExpression(expanded)
             tensor = tensor.simplify_metrics().to_dots()
-            result = tensor.to_expression()
-            result = kin.apply(result).replace(u, -s - t)
+            result = kin.apply(tensor).replace(u, -s - t)
             print("polarization", i, "done", flush=True)
         expected = (
             (D - 2) ** 2

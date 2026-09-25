@@ -75,7 +75,7 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
     assert [len(diagrams[_k]) for _k in ("self_energy", "vertex", "tree")] == [1, 3, 1]
     _tree = diagrams["tree"][0]
     tree_amplitude = (
-        model.expand_couplings(_tree.numerator_expression().to_expression())
+        model.expand_couplings(_tree.numerator_expression())
         * _tree.overall_factor_expression(evaluate=True)
         * _tree.numerator_prefactor_expression()
     )
@@ -104,7 +104,7 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
         )
         assert _invariant in (s, t, u) and _invariant not in channel_coefficients
         _coefficient = (
-            model.expand_couplings(_diagram.numerator_expression().to_expression())
+            model.expand_couplings(_diagram.numerator_expression())
             * _diagram.overall_factor_expression(evaluate=True)
             * _diagram.numerator_prefactor_expression()
         )
@@ -141,7 +141,7 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
         vertex_finite += _weight * _coefficients[0]
     _self_diagram = diagrams["self_energy"][0]
     _self_numerator = (
-        model.expand_couplings(_self_diagram.numerator_expression().to_expression())
+        model.expand_couplings(_self_diagram.numerator_expression())
         * _self_diagram.overall_factor_expression(evaluate=True)
         * _self_diagram.numerator_prefactor_expression()
     )
@@ -233,7 +233,6 @@ def _(
     Replacement,
     S,
     Symbol,
-    TensorExpression,
     coupling,
     eps,
     hep,
@@ -300,10 +299,8 @@ def _(
         ct_diagrams[_label] = _result.diagrams
         _amplitude = zero
         for _diagram in _result.diagrams:
-            _numerator = _ct_model.expand_couplings(
-                _diagram.numerator_expression().to_expression()
-            )
-            _numerator = TensorExpression(_numerator.expand()).to_dots().to_expression()
+            _numerator = _ct_model.expand_couplings(_diagram.numerator_expression())
+            _numerator = _numerator.expand().to_dots()
             _numerator = _diagram.momentum_basis().route_expression(_numerator)
             _amplitude += (
                 _self_kinematics.apply(_numerator)

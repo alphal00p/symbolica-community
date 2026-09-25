@@ -218,7 +218,6 @@ def _(
                 )
                 denominator = (
                     diagram.denominator_expression(dimension=D, in_lmb=True)
-                    .to_expression()
                     .replace(S("gammalooprs::denom")(a, b, c, inv), inv)
                     .replace(S("UFO::MB"), zero)
                 )

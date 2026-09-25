@@ -79,11 +79,9 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
         assert len(_generated.diagrams) == 1
         _diagram = _generated.diagrams[0]
         diagrams[_label] = _diagram
-        assert _diagram.denominator_expression(dimension=4).to_expression() == _one
+        assert _diagram.denominator_expression(dimension=4) == _one
         _particles = [_model.particle(_name) for _name in _names]
-        _numerator = _model.expand_couplings(
-            _diagram.numerator_expression().to_expression()
-        )
+        _numerator = _model.expand_couplings(_diagram.numerator_expression())
         _mixing = _one
         if _ckm_name is not None:
             _ckm = S("UFO::" + _ckm_name)
@@ -98,20 +96,18 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
                 )
             )
             assert len(_matches) == 1
-            _numerator = _numerator.replace(
-                dict(_matches[0])[_index], _ports[_edge.external_index]
+            _numerator = _numerator.rename_indices(
+                {dict(_matches[0])[_index]: _ports[_edge.external_index]}
             )
-        _operator = TensorExpression(
-            (
-                _numerator
-                * _diagram.overall_factor_expression(evaluate=True)
-                * _diagram.numerator_prefactor_expression()
-            ).expand()
-        )
-        _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
+        _operator = (
+            _numerator
+            * _diagram.overall_factor_expression(evaluate=True)
+            * _diagram.numerator_prefactor_expression()
+        ).expand()
+        _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0()
         for _real in (_charge, _sw, _mw, _me, _mc, _mb, _mt, Vr, Vi):
             _adjoint = _adjoint.replace(_conjugate(_real), _real)
-        _adjoint = TensorExpression(_adjoint).wrap_indices(_wrapped)
+        _adjoint = _adjoint.wrap_indices(_wrapped)
         _is_top = _names[0] in ("t", "t~")
         _vector_position = 2 if _is_top else 0
         if _is_top:
@@ -238,7 +234,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
             )
             assert _contracted.is_scalar
             _squared = (
-                _kin.apply(_contracted.to_expression())
+                _kin.apply(_contracted)
                 .replace(_charge**2, 4 * E("2").sqrt() * GF * _mw**2 * _sw**2)
                 .replace_multiple(_physical_masses)
                 .together()

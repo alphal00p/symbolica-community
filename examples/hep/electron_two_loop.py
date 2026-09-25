@@ -141,7 +141,7 @@ def _(E, Replacement, S, TensorExpression, hep, qed_model):
             diagram.numerator_expression().to_expression()
         ).replace(mass, zero)
         uv = diagram.momentum_basis().route_expression(
-            diagram.uv_expansion(uv_mass, numerator=numerator).to_expression()
+            diagram.uv_expansion(uv_mass, numerator=numerator)
         )
         uv = (
             uv.replace(mink(dimension, index), mink(d, index))

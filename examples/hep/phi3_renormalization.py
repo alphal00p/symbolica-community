@@ -97,7 +97,7 @@ def _(E, S, Symbol, hep, mo):
         _diagram = _generated.diagrams[0]
         diagrams[_label] = _diagram
         _coefficient = (
-            model.expand_couplings(_diagram.numerator_expression().to_expression())
+            model.expand_couplings(_diagram.numerator_expression())
             * _diagram.overall_factor_expression(evaluate=True)
             * _diagram.numerator_prefactor_expression()
         )
@@ -302,7 +302,6 @@ def _(
     Replacement,
     S,
     Symbol,
-    TensorExpression,
     coupling,
     eps,
     hep,
@@ -363,10 +362,8 @@ def _(
         assert len(_generated.diagrams) == _count
         _amplitude = zero
         for _diagram in _generated.diagrams:
-            _numerator = _ct_model.expand_couplings(
-                _diagram.numerator_expression().to_expression()
-            )
-            _numerator = TensorExpression(_numerator.expand()).to_dots().to_expression()
+            _numerator = _ct_model.expand_couplings(_diagram.numerator_expression())
+            _numerator = _numerator.expand().to_dots()
             _numerator = _diagram.momentum_basis().route_expression(_numerator)
             _amplitude += (
                 _self_kinematics.apply(_numerator)

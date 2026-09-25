@@ -163,9 +163,9 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep):
                     # A cut coordinate is a stored directed edge momentum. Convert it
                     # to the positive-energy outgoing photon before imposing kinematics.
                     contracted = kin.apply(
-                        diagram.loop_momentum_basis.route_expression(
-                            scalar.to_expression()
-                        ).replace(K(0, index), orientation * k1(index))
+                        diagram.loop_momentum_basis.route_expression(scalar).replace(
+                            K(0, index), orientation * k1(index)
+                        )
                     )
                     denominator = kin.apply(
                         diagram.denominator_expression(
@@ -173,7 +173,6 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep):
                             dimension=4,
                             in_lmb=True,
                         )
-                        .to_expression()
                         .replace(S("gammalooprs::denom")(a, b, c, inverse), inverse)
                         .replace(K(0, index), orientation * k1(index))
                     )

@@ -83,21 +83,24 @@ def _(CookSettings, E, S, TensorExpression, hep):
             denominators = []
             for diagram in generated.diagrams:
                 numerator = model.expand_couplings(
-                    diagram.numerator_expression(in_lmb=True).to_expression()
+                    diagram.numerator_expression(in_lmb=True)
                 )
                 # Align external spin and color ports using the graph's native half-edge IDs.
                 # Ghosts have no polarization wavefunctions; these IDs cover them as well.
                 for half in diagram.half_edges:
                     edge = half.edge.data
                     if edge.is_external:
-                        numerator = numerator.replace(
-                            S("gammalooprs::hedge")(half.data, 1),
-                            ports[edge.external_index],
+                        numerator = numerator.rename_indices(
+                            {
+                                S("gammalooprs::hedge")(half.data, 1): ports[
+                                    edge.external_index
+                                ]
+                            }
                         )
                 denominator = kinematics.apply(
-                    diagram.denominator_expression(dimension=4, in_lmb=True)
-                    .to_expression()
-                    .replace(S("gammalooprs::denom")(a, b, c, inverse), inverse)
+                    diagram.denominator_expression(dimension=4, in_lmb=True).replace(
+                        S("gammalooprs::denom")(a, b, c, inverse), inverse
+                    )
                 ).expand()
                 denominators.append(denominator)
                 amplitude += (
@@ -110,15 +113,13 @@ def _(CookSettings, E, S, TensorExpression, hep):
                 d in denominators
                 for d in ((t, s - mass**2, u - mass**2) if count == 3 else (t,))
             )
-            operator = TensorExpression(amplitude.expand())
+            operator = amplitude.expand()
             assert len(operator.structure.slots) == (8 if count == 3 else 6)
-            adjoint = (
-                operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
-            )
+            adjoint = operator.dirac_adjoint().expand().simplify_gamma0()
             adjoint = adjoint.replace(conjugate(P(a, b)), P(a, b))
             for real in (mass, gs, s, t, u):
                 adjoint = adjoint.replace(conjugate(real), real)
-            adjoint = TensorExpression(adjoint).wrap_indices(adjoint_index)
+            adjoint = adjoint.wrap_indices(adjoint_index)
 
             # Match the shared completeness tensor against the dual of each external slot.
             # Matching selects color slots and determines the quark/antiquark orientation.
@@ -226,9 +227,7 @@ def _(CookSettings, E, S, TensorExpression, hep):
                         .to_dots()
                     )
                     assert scalar.is_scalar
-                    contracted.append(
-                        coefficient * kinematics.apply(scalar.to_expression())
-                    )
+                    contracted.append(coefficient * kinematics.apply(scalar))
                 squared = (
                     sum(contracted, E("0")).replace(t, 2 * mass**2 - s - u).together()
                 )

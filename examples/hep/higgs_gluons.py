@@ -347,10 +347,7 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
         )
         assert kinematics.apply(ward).expand() == E("0")
     norm = kinematics.apply(
-        TensorExpression((tensor**2).expand())
-        .simplify_metrics()
-        .to_dots()
-        .to_expression()
+        TensorExpression((tensor**2).expand()).simplify_metrics().to_dots()
     )
     assert (norm - (D - 2) * s**2 / 4).expand() == E("0")
     color_norm = TensorExpression(color**2).simplify_metrics().to_expression()
@@ -379,7 +376,6 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
         )
         .simplify_metrics()
         .to_dots()
-        .to_expression()
     )
     assert (physical_norm - s**2 / 2).together() == E("0")
     # Contract the actual full finite open tensor, including its Q12 coefficient,
@@ -401,7 +397,6 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
         )
         .simplify_metrics()
         .to_dots()
-        .to_expression()
     ).together()
     assert physical_projection_residual == E("0")
     # y=m/v and gs^2=4*pi*alpha_s. Color dimension is specialized after contraction.

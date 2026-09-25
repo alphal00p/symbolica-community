@@ -73,8 +73,8 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     )
     assert len(generated.diagrams) == 1
     diagram = generated.diagrams[0]
-    assert diagram.denominator_expression(dimension=4).to_expression() == E("1")
-    numerator = model.expand_couplings(diagram.numerator_expression().to_expression())
+    assert diagram.denominator_expression(dimension=4) == E("1")
+    numerator = model.expand_couplings(diagram.numerator_expression())
     for edge in diagram.external_edges:
         matches = list(
             diagram.projector_expression().match(
@@ -83,20 +83,18 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
         )
         assert len(matches) == 1
         # Both spin and color ports carry the external half-edge identifier.
-        numerator = numerator.replace(
-            dict(matches[0])[index], ports[edge.external_index]
+        numerator = numerator.rename_indices(
+            {dict(matches[0])[index]: ports[edge.external_index]}
         )
-    operator = TensorExpression(
-        (
-            numerator
-            * diagram.overall_factor_expression(evaluate=True)
-            * diagram.numerator_prefactor_expression()
-        ).expand()
-    )
-    adjoint = operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
+    operator = (
+        numerator
+        * diagram.overall_factor_expression(evaluate=True)
+        * diagram.numerator_prefactor_expression()
+    ).expand()
+    adjoint = operator.dirac_adjoint().expand().simplify_gamma0()
     for real in (charge, sw, cw, mz, mass):
         adjoint = adjoint.replace(conjugate(real), real)
-    adjoint = TensorExpression(adjoint).wrap_indices(wrapped)
+    adjoint = adjoint.wrap_indices(wrapped)
 
     color_projector = E("1")
     for position, particle in enumerate((fermion, antifermion), start=1):
@@ -149,7 +147,7 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
         .with_scalar_product(P(0), P(1), mz**2 / 2)
         .with_scalar_product(P(0), P(2), mz**2 / 2)
     )
-    squared = kin.apply(scalar.to_expression())
+    squared = kin.apply(scalar)
     colors = abs(fermion.color)
     cv, ca = weak_isospin - 2 * electric_charge * sw**2, weak_isospin
     expected = (

@@ -180,9 +180,7 @@ def _(
     bare_terms = []
     _raw_checks = []
     for _diagram in generated.diagrams:
-        _numerator = model.expand_couplings(
-            _diagram.numerator_expression().to_expression()
-        )
+        _numerator = model.expand_couplings(_diagram.numerator_expression())
         _factor = (
             _diagram.overall_factor_expression(evaluate=True)
             * _diagram.numerator_prefactor_expression()
@@ -198,7 +196,7 @@ def _(
         )
         _raw_checks.append(_raw)
         _expanded = _diagram.momentum_basis().route_expression(
-            _diagram.uv_expansion(model_mass, numerator=_numerator).to_expression()
+            _diagram.uv_expansion(model_mass, numerator=_numerator)
         )
         _expanded = (
             _expanded.replace(dim, d)
@@ -450,7 +448,6 @@ def _(
     K,
     S,
     Symbol,
-    TensorExpression,
     d,
     den,
     dimension,
@@ -554,10 +551,8 @@ def _(
         assert len(_result.diagrams) == (3 if _loops else 2)
         ct_diagrams[_loops] = _result.diagrams
         for _diagram in _result.diagrams:
-            _numerator = ct_model.expand_couplings(
-                _diagram.numerator_expression().to_expression()
-            )
-            _numerator = TensorExpression(_numerator.expand()).to_dots().to_expression()
+            _numerator = ct_model.expand_couplings(_diagram.numerator_expression())
+            _numerator = _numerator.expand().to_dots()
             if _loops:
                 _numerator = _diagram.uv_expansion(
                     model_mass, numerator=_numerator

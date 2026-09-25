@@ -81,9 +81,8 @@ def _(CookSettings, E, S, TensorExpression, hep, mo, qed_model):
             )
             assert len(_matches) == 1
             _match = dict(_matches[0])
-            _numerator = _numerator.replace(
-                _match[_rep](4, _match[_index]),
-                _match[_rep](4, _ports[_edge.external_index]),
+            _numerator = _numerator.rename_indices(
+                {_match[_index]: _ports[_edge.external_index]}
             )
         _denominator = _diagram.denominator_expression(dimension=4, in_lmb=True)
         _denominator = _kin.apply(
@@ -95,14 +94,14 @@ def _(CookSettings, E, S, TensorExpression, hep, mo, qed_model):
             * _diagram.numerator_prefactor_expression()
             / _denominator
         )
-    _operator = TensorExpression(_amplitude.expand())
+    _operator = _amplitude.expand()
     _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0()
     _conj = S("spenso::conj")
     _wrapper = S("conjugate_index")
     _real_adjoint = _adjoint.replace(_conj(_P(_a, _b)), _P(_a, _b))
     for _real in (_me, _e, _s, _t, _u):
         _real_adjoint = _real_adjoint.replace(_conj(_real), _real)
-    _wrapped = TensorExpression(_real_adjoint).wrap_indices(_wrapper)
+    _wrapped = _real_adjoint.wrap_indices(_wrapper)
     _spins = E("1")
     for _name, _momentum, _left, _right, _average in [
         ("e-", _P(0), _ports[0], _wrapper(_ports[2]), True),

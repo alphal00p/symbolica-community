@@ -104,7 +104,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
             operators, denominators = [], []
             for diagram in generation.diagrams:
                 numerator = model.expand_couplings(
-                    diagram.numerator_expression(in_lmb=True).to_expression()
+                    diagram.numerator_expression(in_lmb=True)
                 )
                 for edge in diagram.external_edges:
                     match = dict(
@@ -114,13 +114,13 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
                             )
                         )
                     )
-                    numerator = numerator.replace(
-                        match[index], ports[edge.external_index]
+                    numerator = numerator.rename_indices(
+                        {match[index]: ports[edge.external_index]}
                     )
                 denominator = kin.apply(
-                    diagram.denominator_expression(dimension=4, in_lmb=True)
-                    .to_expression()
-                    .replace(S("gammalooprs::denom")(a, b, c, inverse), inverse)
+                    diagram.denominator_expression(dimension=4, in_lmb=True).replace(
+                        S("gammalooprs::denom")(a, b, c, inverse), inverse
+                    )
                 ).expand()
                 denominators.append(denominator)
                 operators.append(
@@ -133,18 +133,14 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
                 {s, t} if name == "qaq" else {t, u} if name == "qq" else {t}
             )
             amplitude = sum(operators, E("0"))
-            operator = TensorExpression(amplitude.expand())
+            operator = amplitude.expand()
             assert len(operator.structure.slots) == 8
             adjoints = []
             for term in operators:
-                adjoint = (
-                    TensorExpression(term)
-                    .dirac_adjoint(preserve_indices=True)
-                    .to_expression()
-                )
+                adjoint = term.dirac_adjoint(preserve_indices=True)
                 for real in (s, t, u, m, M, gs):
                     adjoint = adjoint.replace(conj(real), real)
-                adjoints.append(TensorExpression(adjoint).wrap_indices(wrapped))
+                adjoints.append(adjoint.wrap_indices(wrapped))
             colors = E("1")
             spins = E("1")
             initial_colors = 1
@@ -169,8 +165,14 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
                 spins *= particle.spin_sum(P(position), i, j, average=position < 2)
             evaluated = []
             for raw in (
-                amplitude * sum(adjoints, E("0")),
-                sum((x * y for x, y in zip(operators, adjoints, strict=True)), E("0")),
+                amplitude.to_expression() * sum(adjoints, E("0")),
+                sum(
+                    (
+                        x.to_expression() * y
+                        for x, y in zip(operators, adjoints, strict=True)
+                    ),
+                    E("0"),
+                ),
             ):
                 generic = (
                     (raw * colors * initial_colors / Nc**2)
@@ -200,11 +202,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
                     .to_dots()
                 )
                 assert scalar.is_scalar
-                value = (
-                    kin.apply(scalar.to_expression())
-                    .replace(u, sum(masses) - s - t)
-                    .together()
-                )
+                value = kin.apply(scalar).replace(u, sum(masses) - s - t).together()
                 evaluated.append(value)
             squared, diagonal = evaluated
             if same:

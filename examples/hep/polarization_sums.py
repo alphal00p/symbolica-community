@@ -101,7 +101,6 @@ def _(E, S, TensorExpression, dimension_choice, hep, normalization, species):
         TensorExpression((projector * metric(mink(D, i), mink(D, j))).expand())
         .simplify_metrics()
         .to_dots()
-        .to_expression()
     ).together()
     expected_trace = -scale if options["average"] else -scale * state_count
     assert (trace - expected_trace).together() == E("0")
@@ -109,7 +108,6 @@ def _(E, S, TensorExpression, dimension_choice, hep, normalization, species):
         TensorExpression((projector * p(mink(D, i))).expand())
         .simplify_metrics()
         .to_dots()
-        .to_expression()
     ).together()
     assert transverse == E("0")
     if particle.is_massless:
@@ -117,7 +115,6 @@ def _(E, S, TensorExpression, dimension_choice, hep, normalization, species):
             TensorExpression((projector * n(mink(D, i))).expand())
             .simplify_metrics()
             .to_dots()
-            .to_expression()
         ).together()
         assert axial == E("0")
     return (

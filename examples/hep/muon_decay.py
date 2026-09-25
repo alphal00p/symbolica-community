@@ -76,9 +76,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
     _ports = S("mu", "e", "antinue", "numu")
     _wave, _rep, _index = S("wave_", "rep_", "index_")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
-    _numerator = _model.expand_couplings(
-        diagram.numerator_expression(in_lmb=True).to_expression()
-    )
+    _numerator = _model.expand_couplings(diagram.numerator_expression(in_lmb=True))
     for _edge in diagram.external_edges:
         _matches = list(
             diagram.projector_expression().match(
@@ -86,24 +84,22 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
             )
         )
         assert len(_matches) == 1
-        _numerator = _numerator.replace(
-            dict(_matches[0])[_index], _ports[_edge.external_index]
+        _numerator = _numerator.rename_indices(
+            {dict(_matches[0])[_index]: _ports[_edge.external_index]}
         )
-    _operator = TensorExpression(
-        (
-            _numerator
-            * diagram.overall_factor_expression(evaluate=True)
-            * diagram.numerator_prefactor_expression()
-        ).expand()
-    )
-    _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
+    _operator = (
+        _numerator
+        * diagram.overall_factor_expression(evaluate=True)
+        * diagram.numerator_prefactor_expression()
+    ).expand()
+    _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0()
     _momentum_index = S("momentum_index_")
     _adjoint = _adjoint.replace(
         _conjugate(P(_momentum_index, _index)), P(_momentum_index, _index)
     )
     for _real in (_charge, _sw, _mw, _mm, _me):
         _adjoint = _adjoint.replace(_conjugate(_real), _real)
-    _adjoint = TensorExpression(_adjoint).wrap_indices(_wrapped)
+    _adjoint = _adjoint.wrap_indices(_wrapped)
     _projector = (
         _muon.spin_sum(P(0), _ports[0], _wrapped(_ports[3]), average=True)
         * _electron.spin_sum(P(1), _wrapped(_ports[2]), _ports[1])
@@ -145,12 +141,12 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
         "quad_",
     )
     _denominator = _kin.apply(
-        diagram.denominator_expression(dimension=4, in_lmb=True)
-        .to_expression()
-        .replace(_den(_edge_, _momentum_, _mass_, _quad_), _quad_)
+        diagram.denominator_expression(dimension=4, in_lmb=True).replace(
+            _den(_edge_, _momentum_, _mass_, _quad_), _quad_
+        )
     )
     assert (_denominator - s + _mw**2).expand() == zero
-    squared = (_kin.apply(_contracted.to_expression()) / _denominator**2).together()
+    squared = (_kin.apply(_contracted) / _denominator**2).together()
     squared = (
         squared.replace(_charge**4, 32 * GF**2 * _mw**4 * _sw**4)
         .replace_multiple([Replacement(_mm, M), Replacement(_me, mass)])

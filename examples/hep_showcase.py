@@ -693,9 +693,9 @@ def _(
 
 
 @app.cell
-def _(TensorExpression, diagram, diagram_weight, model, projected_numerator):
-    weighted_projected_numerator = TensorExpression(
-        model.expand_couplings(projected_numerator * diagram_weight(diagram))
+def _(diagram, diagram_weight, model, projected_numerator):
+    weighted_projected_numerator = model.expand_couplings(
+        projected_numerator * diagram_weight(diagram)
     )
     weighted_projected_numerator
     return (weighted_projected_numerator,)
@@ -937,10 +937,8 @@ def _(
         _longitudinal = apply_projector(
             _routed, external_projector(_routed, longitudinal=True)
         ).to_dots()
-        _transverse = TensorExpression(model.expand_couplings(_transverse * _weight))
-        _longitudinal = TensorExpression(
-            model.expand_couplings(_longitudinal * _weight)
-        )
+        _transverse = model.expand_couplings(_transverse * _weight)
+        _longitudinal = model.expand_couplings(_longitudinal * _weight)
         if not _transverse.is_scalar or not _longitudinal.is_scalar:
             raise ValueError(
                 "Contract all external indices before taking the UV series"

@@ -83,21 +83,24 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
         _denominators = []
         for _diagram in _generated.diagrams:
             _numerator = ghost_model.expand_couplings(
-                _diagram.numerator_expression(in_lmb=True).to_expression()
+                _diagram.numerator_expression(in_lmb=True)
             )
             # Align external spin and color ports using the graph's native half-edge IDs.
             # Ghosts have no polarization wavefunctions; these IDs cover them as well.
             for _half in _diagram.half_edges:
                 _edge = _half.edge.data
                 if _edge.is_external:
-                    _numerator = _numerator.replace(
-                        S("gammalooprs::hedge")(_half.data, 1),
-                        _ports[_edge.external_index],
+                    _numerator = _numerator.rename_indices(
+                        {
+                            S("gammalooprs::hedge")(_half.data, 1): _ports[
+                                _edge.external_index
+                            ]
+                        }
                     )
             _denominator = _kinematics.apply(
-                _diagram.denominator_expression(dimension=4, in_lmb=True)
-                .to_expression()
-                .replace(S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse)
+                _diagram.denominator_expression(dimension=4, in_lmb=True).replace(
+                    S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse
+                )
             ).expand()
             _denominators.append(_denominator)
             _amplitude += (
@@ -110,13 +113,13 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
             _d in _denominators
             for _d in ((_s, _t - _mass**2, _u - _mass**2) if _count == 3 else (_s,))
         )
-        _operator = TensorExpression(_amplitude.expand())
+        _operator = _amplitude.expand()
         assert len(_operator.structure.slots) == (8 if _count == 3 else 6)
-        _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
+        _adjoint = _operator.dirac_adjoint().expand().simplify_gamma0()
         _adjoint = _adjoint.replace(_conjugate(_P(_a, _b)), _P(_a, _b))
         for _real in (_mass, _gs, _s, _t, _u):
             _adjoint = _adjoint.replace(_conjugate(_real), _real)
-        _adjoint = TensorExpression(_adjoint).wrap_indices(_adjoint_index)
+        _adjoint = _adjoint.wrap_indices(_adjoint_index)
 
         # Match the shared completeness tensor against the dual of each external slot.
         # Matching selects color slots and determines the quark/antiquark orientation.
@@ -208,9 +211,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
         )
         assert _scalar.is_scalar
         _squared = (
-            _kinematics.apply(_scalar.to_expression())
-            .replace(_s, 2 * _mass**2 - _t - _u)
-            .together()
+            _kinematics.apply(_scalar).replace(_s, 2 * _mass**2 - _t - _u).together()
         )
         ghost_results.append(_squared)
         print("Finished channel", _outgoing, flush=True)

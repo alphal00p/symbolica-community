@@ -206,9 +206,7 @@ def _(
         )
         assert tensor.is_scalar
         trace = (
-            kinematics.apply(
-                diagram.momentum_basis().route_expression(tensor.to_expression())
-            )
+            kinematics.apply(diagram.momentum_basis().route_expression(tensor))
             * diagram.overall_factor_expression(evaluate=True)
             * diagram.numerator_prefactor_expression()
         ).expand()

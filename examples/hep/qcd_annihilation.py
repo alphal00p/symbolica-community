@@ -142,16 +142,14 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
         if _edge.id == _loop_edge
     )
     _physical_momentum = _k1 if _loop_particle == "t" else _k2
-    _routed = qcd_diagram.loop_momentum_basis.route_expression(
-        _contracted.to_expression()
-    ).replace(_K(0, _index), _cut.orientations[_loop_edge] * _physical_momentum(_index))
+    _routed = qcd_diagram.loop_momentum_basis.route_expression(_contracted).replace(
+        _K(0, _index), _cut.orientations[_loop_edge] * _physical_momentum(_index)
+    )
     _a, _b, _c, _inverse, _denom = S("a_", "b_", "c_", "inverse_", "gammalooprs::denom")
     _denominator = _kinematics.apply(
         qcd_diagram.denominator_expression(
             edge_powers={_edge.id: 0 for _edge in _cut.edges}, dimension=4, in_lmb=True
-        )
-        .to_expression()
-        .replace(_denom(_a, _b, _c, _inverse), _inverse)
+        ).replace(_denom(_a, _b, _c, _inverse), _inverse)
     )
     assert (_denominator - _s**2).expand() == E("0")
     qcd_squared = (

@@ -271,17 +271,16 @@ def _(
             _raw_numerator = _numerator
             if _loops:
                 _numerator = _diagram.momentum_basis().route_expression(
-                    _diagram.uv_expansion(_mUV, numerator=_numerator).to_expression()
+                    _diagram.uv_expansion(_mUV, numerator=_numerator)
                 )
             _numerator = (
-                _numerator.replace(mink(dim, index), mink(D, index))
-                .replace(mink(dim), mink(D))
+                TensorExpression(_numerator)
+                .with_lorentz_dimension(D)
+                .replace(S("gammalooprs::dim"), D)
                 .replace(_mUV**2, M)
             )
             if _incoming == [gluon]:
-                _numerator = _numerator.replace(
-                    mink(D, _ports[0]), mink(D, mu)
-                ).replace(mink(D, _ports[1]), mink(D, nu))
+                _numerator = _numerator.rename_indices({_ports[0]: mu, _ports[1]: nu})
             _pattern = den(edge_, mom_, mass_, quad_)
             for _match in list(_numerator.match(_pattern)):
                 _values = dict(_match)
@@ -1215,7 +1214,6 @@ def _(
                     assert _numerator.replace(xi, one).expand() == zero
                 _denominator = (
                     _diagram.denominator_expression(in_lmb=True, edge_powers=_powers)
-                    .to_expression()
                     .replace(mink(dim, index), mink(D, index))
                     .replace(mink(dim), mink(D))
                 )

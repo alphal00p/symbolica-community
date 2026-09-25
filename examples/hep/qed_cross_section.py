@@ -44,7 +44,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, Model, S, TensorExpression, hep, mo):
+def _(E, Model, S, hep, mo):
     qed_model = Model.standard_model()
     _process = qed_model.process(
         ["e-", "e+"], ["mu-", "mu+"], vertex_allow=["V_98", "V_99"]
@@ -93,9 +93,7 @@ def _(E, Model, S, TensorExpression, hep, mo):
             expand_contracted_sums=True,
         )
     )
-    _contracted = (
-        TensorExpression(_numerator.expand()).simplify_gamma().expand().to_dots()
-    )
+    _contracted = _numerator.expand().simplify_gamma().expand().to_dots()
     _contracted = _kin.apply(
         qed_diagram.loop_momentum_basis.route_expression(_contracted).replace(
             qed_loop_pattern, qed_loop_replacement
@@ -302,7 +300,7 @@ def _(
         )
     )
     _contracted = (
-        TensorExpression(_numerator.expand())
+        _numerator.expand()
         .simplify_gamma()
         .expand()
         .simplify_epsilon()

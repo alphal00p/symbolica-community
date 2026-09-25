@@ -84,19 +84,22 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
             terms = []
             for diagram in generated.diagrams:
                 numerator = model.expand_couplings(
-                    diagram.numerator_expression(in_lmb=True).to_expression()
+                    diagram.numerator_expression(in_lmb=True)
                 ).replace(S("UFO::MM"), mass)
                 for half in diagram.half_edges:
                     edge = half.edge.data
                     if edge.is_external:
-                        numerator = numerator.replace(
-                            S("gammalooprs::hedge")(half.data, 1),
-                            ports[edge.external_index],
+                        numerator = numerator.rename_indices(
+                            {
+                                S("gammalooprs::hedge")(half.data, 1): ports[
+                                    edge.external_index
+                                ]
+                            }
                         )
                 denominator = kin.apply(
-                    diagram.denominator_expression(dimension=4, in_lmb=True)
-                    .to_expression()
-                    .replace(S("gammalooprs::denom")(a, b, c, inv), inv)
+                    diagram.denominator_expression(dimension=4, in_lmb=True).replace(
+                        S("gammalooprs::denom")(a, b, c, inv), inv
+                    )
                 ).expand()
                 assert denominator in (E("1"), B, C), denominator
                 terms.append(
@@ -105,17 +108,16 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
                     * diagram.numerator_prefactor_expression()
                     / denominator
                 )
-            operator = TensorExpression(sum(terms, E("0")).expand())
+            operator = sum(terms, E("0")).expand()
             adjoint = (
                 operator.dirac_adjoint()
                 .expand()
                 .simplify_gamma0()
-                .to_expression()
                 .replace(conj(P(a, b)), P(a, b))
             )
             for real in (mass, ee, gs, A, B, C):
                 adjoint = adjoint.replace(conj(real), real)
-            adjoint = TensorExpression(adjoint).wrap_indices(wrap)
+            adjoint = adjoint.wrap_indices(wrap)
             color_projector = E("1")
             for position, name in enumerate(["a", *outgoing]):
                 particle = model.particle(name)
@@ -219,7 +221,7 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
                         .to_dots()
                     )
                     assert contracted.is_scalar
-                    contractions.append(coeff * kin.apply(contracted.to_expression()))
+                    contractions.append(coeff * kin.apply(contracted))
                 results[mode] = sum(contractions, E("0")).together()
             for mode in [name for name in modes if name.endswith("Ward")]:
                 assert results[mode] == E("0")

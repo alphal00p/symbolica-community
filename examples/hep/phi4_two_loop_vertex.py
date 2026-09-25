@@ -212,11 +212,9 @@ def _(
     assert len(vertex_diagrams) == 12
     vertex_input, vertex_terms = (zero, [])
     for _diagram in vertex_diagrams:
-        _numerator = model.expand_couplings(
-            _diagram.numerator_expression().to_expression()
-        )
+        _numerator = model.expand_couplings(_diagram.numerator_expression())
         _expanded = _diagram.momentum_basis().route_expression(
-            _diagram.uv_expansion(model_mass, numerator=_numerator).to_expression()
+            _diagram.uv_expansion(model_mass, numerator=_numerator)
         )
         _expanded = (
             _expanded.replace(dim, d)
@@ -348,7 +346,6 @@ def _(
     P,
     S,
     Symbol,
-    TensorExpression,
     coupling,
     ct_coordinate,
     ct_integral,
@@ -409,15 +406,11 @@ def _(
         vertex_ct_diagrams[_loops] = _result.diagrams
         assert len(_result.diagrams) == (12 if _loops else 1)
         for _diagram in _result.diagrams:
-            _numerator = ct_model.expand_couplings(
-                _diagram.numerator_expression().to_expression()
-            )
-            _numerator = TensorExpression(_numerator.expand()).to_dots().to_expression()
+            _numerator = ct_model.expand_couplings(_diagram.numerator_expression())
+            _numerator = _numerator.expand().to_dots()
             _numerator = _diagram.momentum_basis().route_expression(_numerator)
             if _loops:
-                _numerator /= _diagram.denominator_expression(
-                    dimension=d, in_lmb=True
-                ).to_expression()
+                _numerator /= _diagram.denominator_expression(dimension=d, in_lmb=True)
             _numerator = (
                 _numerator.replace(mink(dimension), mink(d))
                 .replace(P(_external_index, index), zero)

@@ -113,9 +113,9 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
                 _match[_rep](4, _ports[_edge.external_index]),
             )
         _denominator = _kin.apply(
-            _diagram.denominator_expression(dimension=4, in_lmb=True)
-            .to_expression()
-            .replace(S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse)
+            _diagram.denominator_expression(dimension=4, in_lmb=True).replace(
+                S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse
+            )
         ).expand()
         _particle_name = _diagram.internal_edges[0].particle_name
         _term = (
@@ -139,9 +139,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         TensorExpression(_transverse_test).expand().simplify_metrics().to_dots()
     )
     _transverse_test = (
-        _kin.apply(_transverse_test.to_expression())
-        .replace(u, 2 * me**2 + 2 * mw**2 - s - t)
-        .expand()
+        _kin.apply(_transverse_test).replace(u, 2 * me**2 + 2 * mw**2 - s - t).expand()
     )
     assert _transverse_test == zero
     _diagram_terms["Z"] = (
@@ -193,7 +191,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
             )
             assert _scalar.is_scalar
             _result = (
-                _kin.apply(_scalar.to_expression())
+                _kin.apply(_scalar)
                 .replace(u, 2 * me**2 + 2 * mw**2 - s - t)
                 .replace(mz, mw / cw)
                 .replace(cw, (1 - sw**2).sqrt())

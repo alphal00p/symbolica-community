@@ -76,9 +76,9 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     )
     assert len(generated.diagrams) == 1
     diagram = generated.diagrams[0]
-    assert diagram.denominator_expression(dimension=4).to_expression() == E("1")
+    assert diagram.denominator_expression(dimension=4) == E("1")
     assert diagram.overall_factor_expression(evaluate=True) == E("1")
-    numerator = model.expand_couplings(diagram.numerator_expression().to_expression())
+    numerator = model.expand_couplings(diagram.numerator_expression())
     if yukawa is not None:
         numerator = numerator.replace(
             S(f"UFO::{yukawa}"), model.parameter(yukawa).expression
@@ -96,20 +96,18 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
             )
         )
         assert len(matches) == 1
-        numerator = numerator.replace(
-            dict(matches[0])[index], ports[edge.external_index]
+        numerator = numerator.rename_indices(
+            {dict(matches[0])[index]: ports[edge.external_index]}
         )
-    operator = TensorExpression(
-        (
-            numerator
-            * diagram.overall_factor_expression(evaluate=True)
-            * diagram.numerator_prefactor_expression()
-        ).expand()
-    )
-    adjoint = operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
+    operator = (
+        numerator
+        * diagram.overall_factor_expression(evaluate=True)
+        * diagram.numerator_prefactor_expression()
+    ).expand()
+    adjoint = operator.dirac_adjoint().expand().simplify_gamma0()
     for real in (charge, sw, cw, mh, mw, mz, mass):
         adjoint = adjoint.replace(conjugate(real), real)
-    adjoint = TensorExpression(adjoint).wrap_indices(wrapped)
+    adjoint = adjoint.wrap_indices(wrapped)
 
     color_projector = E("1")
     for position, particle in enumerate(particles, start=1):
@@ -164,7 +162,7 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
         .with_scalar_product(P(2), P(2), mass**2)
         .with_scalar_product(P(1), P(2), (mh**2 - 2 * mass**2) / 2)
     )
-    squared = kin.apply(scalar.to_expression())
+    squared = kin.apply(scalar)
     colors = abs(particles[0].color)
     if yukawa is not None:
         expected = (

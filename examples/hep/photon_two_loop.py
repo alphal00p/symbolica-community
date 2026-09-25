@@ -379,13 +379,12 @@ def _(E, Replacement, S, TensorExpression, hep, json):
         uv = one_loop_diagram.momentum_basis().route_expression(
             one_loop_diagram.uv_expansion(
                 uv_mass, numerator=inserted, edge_powers=powers
-            ).to_expression()
+            )
         )
-        uv = uv.replace(mink(dimension, index), mink(d, index)).replace(
-            mink(dimension), mink(d)
-        )
-        uv = uv.replace(mink(d, ports[0]), mink(d, mu)).replace(
-            mink(d, ports[1]), mink(d, nu)
+        uv = (
+            uv.with_lorentz_dimension(d)
+            .replace(S("gammalooprs::dim"), d)
+            .rename_indices({ports[0]: mu, ports[1]: nu})
         )
         pattern = denominator(
             edge_pattern, momentum_pattern, mass_pattern, quadratic_pattern

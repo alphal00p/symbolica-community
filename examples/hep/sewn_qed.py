@@ -172,7 +172,7 @@ def _(E, S, TensorExpression, fk):
                     edge_powers={_edge.id: 0 for _edge in _cut.edges},
                     dimension=4,
                     in_lmb=True,
-                ).to_expression()
+                )
                 _denominator = _kin.apply(
                     _denominator.replace(
                         S("gammalooprs::denom")(_a, _b, _c, _inverse), _inverse
