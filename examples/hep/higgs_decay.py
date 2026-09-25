@@ -9,12 +9,12 @@ def _():
     import marimo as mo
     from symbolica import E, Expression, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep as fk
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("higgs_decay")
 
-    return CookSettings, E, Expression, S, TensorExpression, fk, mo
+    return (CookSettings, E, Expression, Kinematics, Model, S, TensorExpression, mo)
 
 
 @app.cell(hide_code=True)
@@ -42,8 +42,8 @@ def _(mo):
 
 
 @app.cell
-def _(fk, mo):
-    model = fk.Model.standard_model()
+def _(Model, mo):
+    model = Model.standard_model()
     channel = mo.ui.dropdown(
         ["Electrons", "Charm quarks", "Bottom quarks", "W bosons", "Z bosons"],
         value="Bottom quarks",
@@ -54,7 +54,7 @@ def _(fk, mo):
 
 
 @app.cell
-def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
+def _(CookSettings, E, Kinematics, S, TensorExpression, channel, mo, model):
     P = S("gammalooprs::P")
     charge, sw, cw, mh, mw, mz, vev = S(
         "UFO::ee", "UFO::sw", "UFO::cw", "UFO::MH", "UFO::MW", "UFO::MZ", "UFO::vev"
@@ -156,7 +156,7 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     )
     assert scalar.is_scalar
     kin = (
-        fk.Kinematics()
+        Kinematics()
         .with_scalar_product(P(0), P(0), mh**2)
         .with_scalar_product(P(1), P(1), mass**2)
         .with_scalar_product(P(2), P(2), mass**2)
@@ -223,12 +223,12 @@ def _(mo):
 def _(
     E,
     Expression,
+    Kinematics,
     P,
     S,
     charge,
     colors,
     cw,
-    fk,
     mass,
     mh,
     mo,
@@ -247,7 +247,7 @@ def _(
 
     # M>0 and 0<beta<1 select the physical, above-threshold two-body branch.
     physical_kin = (
-        fk.Kinematics()
+        Kinematics()
         .with_scalar_product(P(0), P(0), physical_mass**2)
         .with_scalar_product(P(1), P(1), mass_squared)
         .with_scalar_product(P(2), P(2), mass_squared)

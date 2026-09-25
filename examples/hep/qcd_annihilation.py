@@ -11,13 +11,21 @@ def _():
     import marimo as mo
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import Model
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import ColorSimplifySettings, TensorExpression
 
     _set_namespace("qcd_annihilation")
 
-    return ColorSimplifySettings, E, Model, S, Symbol, TensorExpression, hep, mo
+    return (
+        ColorSimplifySettings,
+        E,
+        Kinematics,
+        Model,
+        S,
+        Symbol,
+        TensorExpression,
+        mo,
+    )
 
 
 @app.cell
@@ -45,7 +53,7 @@ def _(mo):
 
 
 @app.cell
-def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model):
+def _(ColorSimplifySettings, E, Kinematics, S, Symbol, TensorExpression, mo, qcd_model):
     _result = qcd_model.process(
         ["b", "b~"], ["t", "t~"], vertex_allow=["V_76", "V_137"]
     ).generate_cross_section(
@@ -65,7 +73,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
     _s, _t, _u, _mb, _mt, _gs, _k1, _k2 = S(
         "s", "t", "u", "UFO::MB", "UFO::MT", "UFO::G", "k1", "k2"
     )
-    _kinematics = hep.Kinematics.mandelstam(
+    _kinematics = Kinematics.mandelstam(
         [_P(0), _P(1), _k1, _k2], [_mb**2, _mb**2, _mt**2, _mt**2], [_s, _t, _u]
     )
     _projector = qcd_diagram.projector_expression()
@@ -187,7 +195,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model)
     _s_physical = S("s_physical", is_positive=True)
     _costheta, _alpha_s = S("costheta", "alpha_s")
     _pi = Symbol.PI
-    _massless_kinematics = hep.Kinematics.mandelstam(
+    _massless_kinematics = Kinematics.mandelstam(
         [_P(0), _P(1), _k1, _k2], [E("0")] * 4, [_s_physical, _t, _u]
     )
     _angular = (

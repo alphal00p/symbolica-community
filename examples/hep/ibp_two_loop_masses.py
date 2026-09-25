@@ -53,7 +53,7 @@ def _():
     recurrence, and `reduce` applies one step: this notebook does not claim a
     complete reduction of every sector to an independent master basis.
 
-    Run with a community build providing `hep.IBPFamily` and Marimo. The
+    Run with a community build providing `IBPFamily` and Marimo. The
     fully symbolic vertex search can take about a minute on a native build;
     changing the target below reuses the generated rules.
     """)

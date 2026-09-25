@@ -9,12 +9,12 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep as fk
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("sewn_qed")
 
-    return E, S, TensorExpression, fk, mo
+    return (E, Kinematics, Model, S, TensorExpression, mo)
 
 
 @app.cell(hide_code=True)
@@ -44,8 +44,8 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(E, S, TensorExpression, fk):
-    _model = fk.Model.standard_model()
+def _(E, Kinematics, Model, S, TensorExpression):
+    _model = Model.standard_model()
     sewn_results = {}
     _Q, _P, _K = S("gammalooprs::Q", "gammalooprs::P", "gammalooprs::K")
     _s, _t, _u, _me, _mm, _e = S("s", "t", "u", "UFO::Me", "UFO::MM", "UFO::ee")
@@ -77,7 +77,7 @@ def _(E, S, TensorExpression, fk):
             if _name == "annihilation"
             else [_me**2, _mm**2, _me**2, _mm**2]
         )
-        _kin = fk.Kinematics.mandelstam([_P(0), _P(1), _k1, _k2], _masses, [_s, _t, _u])
+        _kin = Kinematics.mandelstam([_P(0), _P(1), _k1, _k2], _masses, [_s, _t, _u])
         _result = _model.process(
             _incoming, _outgoing, vertex_allow=_vertices
         ).generate_cross_section(

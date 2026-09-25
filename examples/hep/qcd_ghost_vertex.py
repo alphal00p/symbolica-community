@@ -11,12 +11,30 @@ def _():
     import marimo as mo
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import (
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        TensorReducer,
+    )
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("ghost_uv")
 
-    return E, S, Symbol, TensorExpression, hep, json, mo
+    return (
+        E,
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        S,
+        Symbol,
+        TensorExpression,
+        TensorReducer,
+        json,
+        mo,
+    )
 
 
 @app.cell(hide_code=True)
@@ -48,8 +66,19 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(E, S, Symbol, TensorExpression, hep, json):
-    model = hep.Model.standard_model()
+def _(
+    E,
+    IBPFamily,
+    IntegralFamily,
+    Kinematics,
+    Model,
+    S,
+    Symbol,
+    TensorExpression,
+    TensorReducer,
+    json,
+):
+    model = Model.standard_model()
     spec = json.loads(model.to_json())
     for propagator in spec["propagators"]:
         if propagator["particle"] == "g":
@@ -58,7 +87,7 @@ def _(E, S, Symbol, TensorExpression, hep, json):
                 "-(1-ghost_uv::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))"
                 "/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
             )
-    model = hep.Model.from_json(json.dumps(spec))
+    model = Model.from_json(json.dumps(spec))
     D, eps, M, mUV, x, integral, xi, s, dA, CA = S(
         "D",
         "eps",
@@ -96,14 +125,14 @@ def _(E, S, Symbol, TensorExpression, hep, json):
         "quad_",
     )
     zero, one = E("0"), E("1")
-    kinematics = hep.Kinematics(D, momenta=[K(0), P(0), P(1)]).with_scalar_product(
+    kinematics = Kinematics(D, momenta=[K(0), P(0), P(1)]).with_scalar_product(
         P(0), P(0), s
     )
-    vacuum = hep.Kinematics(D, momenta=[K(0)])
-    family = hep.IntegralFamily(
+    vacuum = Kinematics(D, momenta=[K(0)])
+    family = IntegralFamily(
         [K(0)], [], [vacuum.scalar_product(K(0), K(0)) - M], kinematics=vacuum
     )
-    reducer = hep.TensorReducer(D).with_integrated_vector(K(0, mink(D)))
+    reducer = TensorReducer(D).with_integrated_vector(K(0, mink(D)))
     color = f(coad(dA, a), coad(dA, b), coad(dA, c))
     terms_by_diagram, trees, generated_diagrams = {}, {}, {}
     for particle_name in ("ghG", "ghG~"):
@@ -219,7 +248,7 @@ def _(E, S, Symbol, TensorExpression, hep, json):
     targets = sorted(
         {tuple(p) for terms in terms_by_diagram.values() for p, _ in terms}
     )
-    solution = hep.IBPFamily(family, name="qcd_ghost_vertex").reduce_laporta(
+    solution = IBPFamily(family, name="qcd_ghost_vertex").reduce_laporta(
         [list(target) for target in targets], max_depth=2
     )
     assert solution.residuals == [[1]]

@@ -10,12 +10,12 @@ def _():
     import numpy as np
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("qg")
 
-    return CookSettings, E, S, Symbol, TensorExpression, hep, mo, np
+    return (CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression, mo, np)
 
 
 @app.cell(hide_code=True)
@@ -42,9 +42,9 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, S, TensorExpression, hep):
+def _(CookSettings, E, Kinematics, Model, S, TensorExpression):
     def calculate_scattering():
-        model = hep.Model.standard_model()
+        model = Model.standard_model()
         quark = model.particle("b")
         allowed = [
             v
@@ -60,7 +60,7 @@ def _(CookSettings, E, S, TensorExpression, hep):
         s = S("s", is_positive=True)
         t, u, mass, gs = S("t", "u", "UFO::MB", "UFO::G")
         Nc, dA, cof, coad = S("spenso::Nc", "dA", "spenso::cof", "spenso::coad")
-        kinematics = hep.Kinematics.mandelstam(
+        kinematics = Kinematics.mandelstam(
             [P(0), P(1), P(2), P(3)], [mass**2, E("0"), mass**2, E("0")], [s, t, u]
         )
         results = {}

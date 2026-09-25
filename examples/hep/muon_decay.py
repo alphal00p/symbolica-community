@@ -13,18 +13,19 @@ def _():
     import numpy as np
     from symbolica import E, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("muon_decay")
     return (
         CookSettings,
         E,
+        Kinematics,
+        Model,
         Replacement,
         S,
         Symbol,
         TensorExpression,
-        hep,
         mo,
         np,
     )
@@ -46,8 +47,8 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
-    _model = hep.Model.standard_model()
+def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpression, mo):
+    _model = Model.standard_model()
     _muon, _electron = (_model.particle("mu-"), _model.particle("e-"))
     _vertices = [
         _v
@@ -121,7 +122,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
         .to_dots()
     )
     assert _contracted.is_scalar
-    _kin = hep.Kinematics()
+    _kin = Kinematics()
     for _i, _mass_squared in enumerate((_mm**2, _me**2, zero, zero)):
         _kin = _kin.with_scalar_product(P(_i), P(_i), _mass_squared)
     for _i, _j, _value in [
@@ -229,16 +230,16 @@ def _(mo):
 
 
 @app.cell
-def _(M, P, S, dalitz_measure, fermi, hep, mass, mo, one, pi, t, zero):
+def _(Kinematics, M, P, S, dalitz_measure, fermi, mass, mo, one, pi, t, zero):
     _Q = S("Q")
     _outer = (
-        hep.Kinematics()
+        Kinematics()
         .with_scalar_product(_Q, _Q, t)
         .with_scalar_product(P(2), P(2), zero)
         .with_scalar_product(_Q, P(2), (M**2 - t) / 2)
     )
     _inner = (
-        hep.Kinematics()
+        Kinematics()
         .with_scalar_product(P(1), P(1), mass**2)
         .with_scalar_product(P(3), P(3), zero)
         .with_scalar_product(P(1), P(3), (t - mass**2) / 2)
@@ -270,7 +271,7 @@ def _(M, P, S, dalitz_measure, fermi, hep, mass, mo, one, pi, t, zero):
     ).together()
     assert (dalitz_measure - _recursive_measure).together() == zero
     assert (dalitz_measure - 1 / (128 * pi**3 * M**2)).together() == zero
-    flux = hep.Kinematics().with_scalar_product(P(0), P(0), M**2).flux(P(0))
+    flux = Kinematics().with_scalar_product(P(0), P(0), M**2).flux(P(0))
     assert flux == 2 * M
     density = (fermi * dalitz_measure / flux).together()
     mo.vstack(

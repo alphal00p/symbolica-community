@@ -13,20 +13,28 @@ def _():
     import numpy as np
     from symbolica import E, Matrix, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import (
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        oneloop,
+    )
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("phi3")
 
     return (
         E,
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
         Matrix,
+        Model,
         Replacement,
         S,
         Symbol,
         TensorExpression,
-        hep,
         json,
         math,
         mo,
@@ -50,8 +58,8 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, Symbol, hep, mo):
-    model = hep.Model.phi3()
+def _(E, IBPFamily, IntegralFamily, Kinematics, Model, S, Symbol, mo):
+    model = Model.phi3()
     particle = model.particle("phi")
     mass, coupling = S("UFO::mass", "UFO::g")
     d, M, p2, mu2, eps, k, coordinate, integral = S(
@@ -67,11 +75,11 @@ def _(E, S, Symbol, hep, mo):
     Q, K, P = S("gammalooprs::Q", "gammalooprs::K", "gammalooprs::P")
     _index, _external = S("index_", "external_")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
-    _kinematics = hep.Kinematics(d, momenta=[k])
-    family = hep.IntegralFamily(
+    _kinematics = Kinematics(d, momenta=[k])
+    family = IntegralFamily(
         [k], [], [_kinematics.scalar_product(k, k) - M], kinematics=_kinematics
     )
-    ibp = hep.IBPFamily(family, name="phi3_tadpole")
+    ibp = IBPFamily(family, name="phi3_tadpole")
     recurrence = ibp.solve_parametric([True], max_depth=1)
     assert recurrence.rules
     options = {
@@ -104,7 +112,7 @@ def _(E, S, Symbol, hep, mo):
         coefficients[_label] = _coefficient
         if not _loops:
             continue
-        _generated_family = _diagram.propagator_family(kinematics=hep.Kinematics(d))
+        _generated_family = _diagram.propagator_family(kinematics=Kinematics(d))
         _denominators = [
             _den.replace(P(_external, _index), zero)
             .replace(K(0, _index), k(_index))
@@ -170,7 +178,9 @@ def _(mo):
 
 @app.cell
 def _(
+    IntegralFamily,
     K,
+    Kinematics,
     M,
     P,
     Q,
@@ -182,7 +192,6 @@ def _(
     diagrams,
     eps,
     family,
-    hep,
     ibp,
     inputs,
     integral,
@@ -236,9 +245,9 @@ def _(
     assert (finite["vertex"] + coupling**3 / (2 * M)).together() == zero
     _self_diagram = diagrams["self_energy"]
     _basis = _self_diagram.momentum_basis()
-    _routed_kinematics = hep.Kinematics(
-        d, momenta=[K(0), P(0), P(1)]
-    ).with_scalar_product(P(0), P(0), p2)
+    _routed_kinematics = Kinematics(d, momenta=[K(0), P(0), P(1)]).with_scalar_product(
+        P(0), P(0), p2
+    )
     _shifts = []
     for _edge in _self_diagram.internal_edges:
         _sign = _basis.edge_signatures[_edge.id].loops[0]
@@ -249,7 +258,7 @@ def _(
         _shifts[0] - _shifts[1], _shifts[0] - _shifts[1]
     )
     assert _invariant == p2
-    _bubble_family = hep.IntegralFamily(
+    _bubble_family = IntegralFamily(
         [K(0)],
         [P(0)],
         [
@@ -296,15 +305,16 @@ def _(mo):
 @app.cell
 def _(
     E,
+    Kinematics,
     M,
     Matrix,
+    Model,
     P,
     Replacement,
     S,
     Symbol,
     coupling,
     eps,
-    hep,
     json,
     mass,
     mo,
@@ -349,9 +359,9 @@ def _(
                 "couplings": [[_name]],
             }
         )
-    _ct_model = hep.Model.from_json(json.dumps(_specification))
+    _ct_model = Model.from_json(json.dumps(_specification))
     ct_diagrams, _counterterms = ({}, {})
-    _self_kinematics = hep.Kinematics().with_scalar_product(P(0), P(0), p2)
+    _self_kinematics = Kinematics().with_scalar_product(P(0), P(0), p2)
     for _label, _incoming, _count in [("self_energy", 1, 2), ("vertex", 2, 1)]:
         _generated = _ct_model.process(
             [particle.name] * _incoming, [particle.name]

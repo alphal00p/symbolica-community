@@ -10,12 +10,12 @@ def _():
     import numpy as np
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("radiation")
 
-    return mo, np, E, S, Symbol, hep, CookSettings, TensorExpression
+    return (CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression, mo, np)
 
 
 @app.cell(hide_code=True)
@@ -46,9 +46,9 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, Symbol, hep, CookSettings, TensorExpression):
+def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
     def calculate_radiation():
-        model = hep.Model.standard_model()
+        model = Model.standard_model()
         P = S("gammalooprs::P")
         mass, ee, gs = S("UFO::MB", "UFO::ee", "UFO::G")
         A, B, C = S("A", "B", "C")
@@ -230,7 +230,7 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
 
             return generated, results
 
-        kin = hep.Kinematics()
+        kin = Kinematics()
         for i, j, value in [
             (1, 1, mass**2),
             (2, 2, mass**2),
@@ -299,7 +299,7 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
             / ((1 - x1) * (1 - x2))
         ).together() == E("0")
 
-        born_kin = hep.Kinematics()
+        born_kin = Kinematics()
         for i, j, value in [
             (0, 0, QQ),
             (1, 1, mass**2),
@@ -339,7 +339,7 @@ def _(E, S, Symbol, hep, CookSettings, TensorExpression):
             "0"
         )
 
-        massless_kin = hep.Kinematics()
+        massless_kin = Kinematics()
         for i, j, value in [
             (0, 0, QQ),
             (1, 1, E("0")),

@@ -11,12 +11,30 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep as fk
+    from symbolica.community.hep import (
+        Boost,
+        FourMomentum,
+        Kinematics,
+        Model,
+        ThreeMomentum,
+    )
     from symbolica.community.spenso import GammaSimplifySettings, TensorExpression
 
     _set_namespace("polarized_spin")
 
-    return E, GammaSimplifySettings, S, TensorExpression, fk, math, mo
+    return (
+        Boost,
+        E,
+        FourMomentum,
+        GammaSimplifySettings,
+        Kinematics,
+        Model,
+        S,
+        TensorExpression,
+        ThreeMomentum,
+        math,
+        mo,
+    )
 
 
 @app.cell(hide_code=True)
@@ -48,15 +66,17 @@ def _(mo):
 
 
 @app.cell
-def _(fk, mo):
-    spin_model = fk.Model.standard_model()
+def _(Model, mo):
+    spin_model = Model.standard_model()
     species = mo.ui.dropdown(["Tau", "Antitau"], value="Tau", label="Physical particle")
     mo.vstack([species])
     return species, spin_model
 
 
 @app.cell
-def _(E, GammaSimplifySettings, S, TensorExpression, fk, mo, species, spin_model):
+def _(
+    E, GammaSimplifySettings, Kinematics, S, TensorExpression, mo, species, spin_model
+):
     _particle = spin_model.particle("ta-" if species.value == "Tau" else "ta+")
     _sign = -1 if _particle.is_antiparticle else 1
     spin_momentum, spin_vector, spin_mass = S("p", "s", "UFO::MTA")
@@ -81,7 +101,7 @@ def _(E, GammaSimplifySettings, S, TensorExpression, fk, mo, species, spin_model
     )
     assert density_trace == _sign * 2 * spin_mass
     _kinematics = (
-        fk.Kinematics()
+        Kinematics()
         .with_scalar_product(spin_momentum, spin_momentum, spin_mass**2)
         .with_scalar_product(spin_momentum, spin_vector, E("0"))
         .with_scalar_product(spin_vector, spin_vector, E("-1"))
@@ -140,12 +160,12 @@ def _(mo):
 
 
 @app.cell
-def _(fk, math, mo, spin_angle, spin_speed):
+def _(Boost, FourMomentum, ThreeMomentum, math, mo, spin_angle, spin_speed):
     _angle = math.radians(spin_angle.value)
-    _boost = fk.Boost(fk.ThreeMomentum(0.0, 0.0, spin_speed.value))
-    boosted_momentum = _boost.apply(fk.FourMomentum(1.0, 0.0, 0.0, 0.0))
+    _boost = Boost(ThreeMomentum(0.0, 0.0, spin_speed.value))
+    boosted_momentum = _boost.apply(FourMomentum(1.0, 0.0, 0.0, 0.0))
     boosted_spin = _boost.apply(
-        fk.FourMomentum(0.0, math.sin(_angle), 0.0, math.cos(_angle))
+        FourMomentum(0.0, math.sin(_angle), 0.0, math.cos(_angle))
     )
     spin_constraints = (
         boosted_momentum.dot(boosted_momentum),

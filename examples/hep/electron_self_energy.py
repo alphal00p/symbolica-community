@@ -13,19 +13,20 @@ def _():
     import numpy as np
     from symbolica import E, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import IBPFamily, Kinematics, Model, oneloop
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("qed_full")
 
     return (
         E,
+        IBPFamily,
+        Kinematics,
+        Model,
         Replacement,
         S,
         Symbol,
         TensorExpression,
-        hep,
         json,
         math,
         mo,
@@ -60,8 +61,8 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(E, S, Symbol, TensorExpression, hep, json):
-    model = hep.Model.standard_model()
+def _(E, Kinematics, Model, S, Symbol, TensorExpression, json):
+    model = Model.standard_model()
     D, eps, xi, s = S("D", "eps", "xi", "s")
     specification = json.loads(model.to_json())
     for _propagator in specification["propagators"]:
@@ -71,7 +72,7 @@ def _(E, S, Symbol, TensorExpression, hep, json):
                 "-(1-qed_full::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))"
                 "/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
             )
-    model = hep.Model.from_json(json.dumps(specification))
+    model = Model.from_json(json.dumps(specification))
     _electron, _photon = (model.particle(_name) for _name in ("e-", "a"))
     assert _electron.mass_parameter == "Me"
     _vertices = [
@@ -104,9 +105,7 @@ def _(E, S, Symbol, TensorExpression, hep, json):
         "feynkit_generator_factor::ExternalFermionOrderingSign", "value_"
     )
     zero, one = E("0"), E("1")
-    kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
-        P(0), P(0), s
-    )
+    kinematics = Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(P(0), P(0), s)
     family = diagram.integral_family(kinematics=kinematics)
     coordinates = S("d0", "d1")
     _q2 = kinematics.scalar_product(K(0), K(0))
@@ -254,6 +253,7 @@ def _(diagram, family, mo, raw_factor, tree_coupling, tree_diagram):
 @app.cell
 def _(
     D,
+    IBPFamily,
     K,
     P,
     Replacement,
@@ -264,7 +264,6 @@ def _(
     coordinates,
     external_ordering,
     family,
-    hep,
     independent_numerators,
     kinematics,
     mass,
@@ -308,7 +307,7 @@ def _(
             _terms.append((_powers, _coefficient))
         terms_by_structure.append(_terms)
     assert (1, 2) in targets
-    solution = hep.IBPFamily(family, name="qed_full").reduce_laporta(
+    solution = IBPFamily(family, name="qed_full").reduce_laporta(
         [list(p) for p in sorted(targets)], max_depth=2
     )
     assert {tuple(p) for p in solution.residuals} == {(1, 0), (1, 1)}

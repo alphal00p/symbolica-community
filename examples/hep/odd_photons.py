@@ -9,12 +9,21 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import IntegralFamily, Kinematics, Model, TensorReducer
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("furry")
 
-    return E, S, TensorExpression, hep, mo
+    return (
+        E,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        S,
+        TensorExpression,
+        TensorReducer,
+        mo,
+    )
 
 
 @app.cell(hide_code=True)
@@ -44,8 +53,8 @@ def _(mo):
 
 
 @app.cell
-def _(hep, mo):
-    model = hep.Model.standard_model()
+def _(Model, mo):
+    model = Model.standard_model()
     photons = mo.ui.dropdown(
         {
             "One photon: odd tadpole": 1,
@@ -60,7 +69,7 @@ def _(hep, mo):
 
 
 @app.cell
-def _(S, hep, model, photons):
+def _(IntegralFamily, Kinematics, S, model, photons):
     count = photons.value
     electron, photon = (model.particle(_name) for _name in ("e-", "a"))
     vertices = [
@@ -88,7 +97,7 @@ def _(S, hep, model, photons):
     )
     assert len(generated.diagrams) == {1: 1, 3: 2, 5: 24}[count]
     probes = [P(100 + i) for i in range(count)]
-    kinematics = hep.Kinematics(
+    kinematics = Kinematics(
         D, momenta=[K(0)] + [P(i) for i in range(count - 1)] + probes
     )
     families = []
@@ -96,7 +105,7 @@ def _(S, hep, model, photons):
         raw = _diagram.propagator_family(kinematics=kinematics)
         # Include probes so the scalar map also transports each loop-probe product.
         families.append(
-            hep.IntegralFamily(
+            IntegralFamily(
                 raw.loop_momenta,
                 raw.external_momenta + probes,
                 raw.denominators,
@@ -169,9 +178,9 @@ def _(
     P,
     S,
     TensorExpression,
+    TensorReducer,
     count,
     generated,
-    hep,
     kinematics,
     mink,
     model,
@@ -214,7 +223,7 @@ def _(
         traces.append(trace)
     if count == 1:
         assert (mapping.apply(traces[0]) + traces[0]).expand() == E("0")
-        vacuum = hep.TensorReducer(D).with_integrated_vector(K(0, mink(D)))
+        vacuum = TensorReducer(D).with_integrated_vector(K(0, mink(D)))
         residual = vacuum.reduce(traces[0]).expand()
     else:
         residual = (traces[0] + mapping.apply(traces[1])).expand()

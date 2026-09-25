@@ -14,7 +14,7 @@ def _():
     from linnet import RenderConfig
     from symbolica import E, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("qscatter")
@@ -22,12 +22,13 @@ def _():
     return (
         CookSettings,
         E,
+        Kinematics,
+        Model,
         RenderConfig,
         Replacement,
         S,
         Symbol,
         TensorExpression,
-        hep,
         mo,
         np,
     )
@@ -62,9 +63,9 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, S, Symbol, TensorExpression, hep):
+def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
     def calculate_amplitudes():
-        model = hep.Model.standard_model()
+        model = Model.standard_model()
         P = S("gammalooprs::P")
         s, t, u, m, M, gs = S("s", "t", "u", "UFO::MB", "UFO::MT", "UFO::G")
         Nc, dA, cof, coad = S("Nc", "dA", "spenso::cof", "spenso::coad")
@@ -91,7 +92,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         ]:
             same = name in ("qq", "qaq")
             masses = [m**2, (m if same else M) ** 2] * 2
-            kin = hep.Kinematics.mandelstam([P(i) for i in range(4)], masses, [s, t, u])
+            kin = Kinematics.mandelstam([P(i) for i in range(4)], masses, [s, t, u])
             generation = model.process(
                 particle_names[:2], particle_names[2:], vertex_allow=vertices
             ).generate_diagrams(

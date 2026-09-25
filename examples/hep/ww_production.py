@@ -14,7 +14,7 @@ def _():
     from linnet import RenderConfig
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("ww")
@@ -22,11 +22,12 @@ def _():
     return (
         CookSettings,
         E,
+        Kinematics,
+        Model,
         RenderConfig,
         S,
         Symbol,
         TensorExpression,
-        hep,
         mo,
         np,
     )
@@ -47,8 +48,8 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, S, Symbol, TensorExpression, hep):
-    model = hep.Model.standard_model()
+def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression):
+    model = Model.standard_model()
     _vertices = [
         _v
         for _v in model.vertex_rules
@@ -81,7 +82,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
     )
     s, t, u, H = S("s", "t", "u", "Higgs")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
-    _kin = hep.Kinematics.mandelstam(
+    _kin = Kinematics.mandelstam(
         [_P(_i) for _i in range(4)], [me**2, me**2, mw**2, mw**2], [s, t, u]
     )
     _ports = S("port0", "port1", "port2", "port3")
@@ -337,10 +338,10 @@ def _(mo):
 @app.cell
 def _(
     H,
+    Kinematics,
     S,
     charge,
     full,
-    hep,
     me,
     mh,
     mo,
@@ -367,7 +368,7 @@ def _(
     primitive = primitive.replace(t.log(), (-t).log())
     print("PASS full massive antiderivative", flush=True)
     _P = S("gammalooprs::P")
-    _kin = hep.Kinematics.mandelstam(
+    _kin = Kinematics.mandelstam(
         [_P(_i) for _i in range(4)], [me**2, me**2, mw**2, mw**2], [s, t, u]
     )
     _flux = _kin.flux(_P(0), _P(1))

@@ -14,12 +14,11 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import IBPFamily, IntegralFamily, Kinematics, oneloop
 
     _set_namespace("formfactor")
 
-    return E, S, hep, math, mo, oneloop
+    return (E, IBPFamily, IntegralFamily, Kinematics, S, math, mo, oneloop)
 
 
 @app.cell(hide_code=True)
@@ -43,7 +42,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, hep, mo):
+def _(E, IBPFamily, IntegralFamily, Kinematics, S, mo):
     D, k, p, q, s, eps, I = S(
         "D",
         "k",
@@ -55,12 +54,12 @@ def _(E, S, hep, mo):
     )
     zero, one = E("0"), E("1")
     kinematics = (
-        hep.Kinematics(D, momenta=[k, p, q])
+        Kinematics(D, momenta=[k, p, q])
         .with_scalar_product(p, p, zero)
         .with_scalar_product(q, q, zero)
         .with_scalar_product(p, q, s / 2)
     )
-    triangle_family = hep.IntegralFamily(
+    triangle_family = IntegralFamily(
         [k],
         [p, q],
         [
@@ -70,7 +69,7 @@ def _(E, S, hep, mo):
         ],
         kinematics=kinematics,
     )
-    triangle_ibp = hep.IBPFamily(triangle_family, name="triangle")
+    triangle_ibp = IBPFamily(triangle_family, name="triangle")
     targets = [(1, 1, 1), (2, 1, 1), (1, 2, 1), (1, 1, 2), (2, 1, 2), (2, 0, 1)]
     solution = triangle_ibp.reduce_laporta([list(t) for t in targets], max_depth=2)
     assert solution.residuals == [[1, 0, 1]]

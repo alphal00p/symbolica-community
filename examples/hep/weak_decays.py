@@ -11,7 +11,7 @@ def _():
     import marimo as mo
     from symbolica import E, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("weak_decay")
@@ -19,11 +19,12 @@ def _():
     return (
         CookSettings,
         E,
+        Kinematics,
+        Model,
         Replacement,
         S,
         Symbol,
         TensorExpression,
-        hep,
         math,
         mo,
     )
@@ -44,8 +45,8 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
-    _model = hep.Model.standard_model()
+def _(CookSettings, E, Kinematics, Model, Replacement, S, Symbol, TensorExpression):
+    _model = Model.standard_model()
     _P = S("gammalooprs::P")
     _charge, _sw, _mw = S("UFO::ee", "UFO::sw", "UFO::MW")
     _me, _mc, _mb, _mt = S("UFO::Me", "UFO::MC", "UFO::MB", "UFO::MT")
@@ -141,7 +142,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
         )
         _parent, _first, _second = _masses
         _kin = (
-            hep.Kinematics()
+            Kinematics()
             .with_scalar_product(_P(0), _P(0), _parent**2)
             .with_scalar_product(_P(1), _P(1), _first**2)
             .with_scalar_product(_P(2), _P(2), _second**2)
@@ -163,7 +164,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep):
         if _second != zero:
             _physical_masses.append(Replacement(_second, y))
         _phase_kin = (
-            hep.Kinematics()
+            Kinematics()
             .with_scalar_product(_P(0), _P(0), H**2)
             .with_scalar_product(_P(1), _P(1), _physical_first**2)
             .with_scalar_product(_P(2), _P(2), _physical_second**2)

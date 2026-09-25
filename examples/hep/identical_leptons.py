@@ -9,12 +9,12 @@ def _():
     import marimo as mo
     from symbolica import E, Expression, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep as fk
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("lepton_scattering")
 
-    return CookSettings, E, Expression, S, TensorExpression, fk, mo
+    return (CookSettings, E, Expression, Kinematics, Model, S, TensorExpression, mo)
 
 
 @app.cell(hide_code=True)
@@ -42,8 +42,8 @@ def _(mo):
 
 
 @app.cell
-def _(fk, mo):
-    lepton_model = fk.Model.standard_model()
+def _(Model, mo):
+    lepton_model = Model.standard_model()
     reaction = mo.ui.dropdown(
         ["Bhabha", "Møller"], value="Bhabha", label="Scattering process"
     )
@@ -52,21 +52,12 @@ def _(fk, mo):
 
 
 @app.cell
-def _(
-    CookSettings,
-    E,
-    S,
-    TensorExpression,
-    fk,
-    lepton_model,
-    mo,
-    reaction,
-):
+def _(CookSettings, E, Kinematics, S, TensorExpression, lepton_model, mo, reaction):
     P = S("gammalooprs::P")
     s = S("s", is_positive=True)
     t, u, mass, charge = S("t", "u", "UFO::Me", "UFO::ee")
     _names = ["e-", "e+", "e-", "e+"] if reaction.value == "Bhabha" else ["e-"] * 4
-    _kinematics = fk.Kinematics.mandelstam(
+    _kinematics = Kinematics.mandelstam(
         [P(_position) for _position in range(4)], [mass**2] * 4, [s, t, u]
     )
     lepton_generated = lepton_model.process(
@@ -218,10 +209,10 @@ def _(mo):
 def _(
     E,
     Expression,
+    Kinematics,
     P,
     S,
     charge,
-    fk,
     lepton_interference,
     lepton_squared,
     mass,
@@ -234,7 +225,7 @@ def _(
     beta = S("beta", is_positive=True)
     cos_theta, alpha = S("cos_theta", "alpha")
     _mass_squared = s * (1 - beta**2) / 4
-    _kinematics = fk.Kinematics.mandelstam(
+    _kinematics = Kinematics.mandelstam(
         [P(_position) for _position in range(4)], [_mass_squared] * 4, [s, t, u]
     )
     # Choose the physical branch s > 0, beta > 0 after the shared calculation.

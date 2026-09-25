@@ -10,13 +10,25 @@ def _():
     import numpy as np
     from symbolica import E, Matrix, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import IBPFamily, Kinematics, Model, oneloop
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("gminus2")
 
-    return E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo, np, oneloop
+    return (
+        E,
+        IBPFamily,
+        Kinematics,
+        Matrix,
+        Model,
+        Replacement,
+        S,
+        Symbol,
+        TensorExpression,
+        mo,
+        np,
+        oneloop,
+    )
 
 
 @app.cell(hide_code=True)
@@ -49,8 +61,19 @@ def _(mo):
 
 
 @app.cell
-def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
-    model = hep.Model.standard_model()
+def _(
+    E,
+    IBPFamily,
+    Kinematics,
+    Matrix,
+    Model,
+    Replacement,
+    S,
+    Symbol,
+    TensorExpression,
+    mo,
+):
+    model = Model.standard_model()
     dimension, transfer, mass, charge, mu = S("D", "t", "UFO::Me", "UFO::ee", "mu")
     K, P, mink, bis, metric, gamma = S(
         "gammalooprs::K",
@@ -70,7 +93,7 @@ def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
         "slot_",
     )
     kinematics = (
-        hep.Kinematics(dimension, momenta=[K(0), P(0), P(1)])
+        Kinematics(dimension, momenta=[K(0), P(0), P(1)])
         .with_scalar_product(P(0), P(0), mass**2)
         .with_scalar_product(P(1), P(1), transfer)
         .with_scalar_product(P(0), P(1), transfer / 2)
@@ -173,7 +196,7 @@ def _(E, Matrix, Replacement, S, Symbol, TensorExpression, hep, mo):
             for label in denominators
         ]
         terms.append((powers, coefficient))
-    solution = hep.IBPFamily(family, name="electron_vertex").reduce_laporta(
+    solution = IBPFamily(family, name="electron_vertex").reduce_laporta(
         [powers for powers, coefficient in terms], max_depth=2
     )
     assert {tuple(powers) for powers in solution.residuals} == {

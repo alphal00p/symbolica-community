@@ -9,13 +9,12 @@ def _():
     import marimo as mo
     from symbolica import E, Replacement, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import Model
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("qcd_ghosts")
 
-    return CookSettings, E, Model, Replacement, S, TensorExpression, hep, mo
+    return (CookSettings, E, Kinematics, Model, Replacement, S, TensorExpression, mo)
 
 
 @app.cell
@@ -51,11 +50,11 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Replacement, S, TensorExpression, ghost_model, hep, mo):
+def _(CookSettings, E, Kinematics, Replacement, S, TensorExpression, ghost_model, mo):
     _P = S("gammalooprs::P")
     _s, _t, _u, _mass, _gs = S("s", "t", "u", "UFO::MB", "UFO::G")
     _Nc, _dA, _cof, _coad = S("spenso::Nc", "dA", "spenso::cof", "spenso::coad")
-    _kinematics = hep.Kinematics.mandelstam(
+    _kinematics = Kinematics.mandelstam(
         [_P(0), _P(1), _P(2), _P(3)], [_mass**2, _mass**2, E("0"), E("0")], [_s, _t, _u]
     )
     ghost_results = []

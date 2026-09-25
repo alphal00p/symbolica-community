@@ -12,10 +12,10 @@ def _():
     import marimo as mo
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep as fk
+    from symbolica.community.hep import Kinematics, Model
 
     _set_namespace("diphoton")
-    return E, S, Symbol, fk, mo
+    return E, Kinematics, Model, S, Symbol, mo
 
 
 @app.cell(hide_code=True)
@@ -37,8 +37,8 @@ def _(mo):
 
 
 @app.cell
-def _(fk):
-    model = fk.Model.standard_model()
+def _(Model):
+    model = Model.standard_model()
     return (model,)
 
 
@@ -49,17 +49,11 @@ def _(model):
 
 
 @app.cell
-def _(model):
-    model.vertex_rules
-    return
-
-
-@app.cell
-def _(E, S, fk, mo, model):
+def _(E, Kinematics, S, mo, model):
     P = S("gammalooprs::P")
     s = S("s", is_positive=True)
     t, u, mass, charge = S("t", "u", "UFO::Me", "UFO::ee")
-    kin = fk.Kinematics.mandelstam(
+    kin = Kinematics.mandelstam(
         [P(0), P(1), P(2), P(3)], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
     )
 
@@ -73,10 +67,12 @@ def _(E, S, fk, mo, model):
     return P, amplitude, charge, kin, mass, process, s, spin_summed, t, u
 
 
-@app.cell
-def _(amplitude):
-    amplitude
-    return
+app._unparsable_cell(
+    r"""
+    amplitude.diagrams[0].edges[0].
+    """,
+    name="_"
+)
 
 
 @app.cell
@@ -170,11 +166,25 @@ def _(mo):
 
 
 @app.cell
-def _(E, P, S, Symbol, charge, diphoton_squared, fk, kin, mass, mo, s, t, u):
+def _(
+    E,
+    Kinematics,
+    P,
+    S,
+    Symbol,
+    charge,
+    diphoton_squared,
+    kin,
+    mass,
+    mo,
+    s,
+    t,
+    u,
+):
     massless = diphoton_squared.replace(mass, E("0"))
     assert (massless - 2 * charge**4 * (t / u + u / t)).together() == E("0")
     cos_theta, alpha, cutoff = S("cos_theta", "alpha", "cutoff")
-    kin_massless = fk.Kinematics.mandelstam(
+    kin_massless = Kinematics.mandelstam(
         [P(0), P(1), P(2), P(3)], [E("0")] * 4, [s, t, u]
     )
     angular = (

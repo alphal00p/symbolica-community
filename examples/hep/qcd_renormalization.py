@@ -11,8 +11,14 @@ def _():
     import marimo as mo
     from symbolica import E, Matrix, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import (
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        TensorReducer,
+        oneloop,
+    )
     from symbolica.community.spenso import (
         ColorCasimirSettings,
         Representation,
@@ -24,13 +30,17 @@ def _():
     return (
         ColorCasimirSettings,
         E,
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
         Matrix,
+        Model,
         Replacement,
         Representation,
         S,
         Symbol,
         TensorExpression,
-        hep,
+        TensorReducer,
         json,
         mo,
         oneloop,
@@ -76,15 +86,19 @@ def _(mo):
 def _(
     ColorCasimirSettings,
     E,
+    IBPFamily,
+    IntegralFamily,
+    Kinematics,
+    Model,
     Representation,
     S,
     Symbol,
     TensorExpression,
-    hep,
+    TensorReducer,
     json,
     oneloop,
 ):
-    model = hep.Model.standard_model()
+    model = Model.standard_model()
     D, epsilon, M, _mUV, coordinate, integral, xi, s, Nf = S(
         "D",
         "eps",
@@ -105,7 +119,7 @@ def _(
                 "-(1-qcd_ren::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))"
                 "/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
             )
-    model = hep.Model.from_json(json.dumps(_specification))
+    model = Model.from_json(json.dumps(_specification))
     K, P, mass, gs = S("gammalooprs::K", "gammalooprs::P", "UFO::MB", "UFO::G")
     mink, bis, gamma, metric = S(
         "spenso::mink", "spenso::bis", "spenso::gamma", "spenso::g"
@@ -134,14 +148,12 @@ def _(
         "value_",
         "arguments___",
     )
-    kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
-        P(0), P(0), s
-    )
-    vacuum = hep.Kinematics(D, momenta=[K(0)])
-    family = hep.IntegralFamily(
+    kinematics = Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(P(0), P(0), s)
+    vacuum = Kinematics(D, momenta=[K(0)])
+    family = IntegralFamily(
         [K(0)], [], [vacuum.scalar_product(K(0), K(0)) - M], kinematics=vacuum
     )
-    reducer = hep.TensorReducer(D).with_integrated_vector(K(0, mink(D)))
+    reducer = TensorReducer(D).with_integrated_vector(K(0, mink(D)))
     gmunu = metric(mink(D, mu), mink(D, nu))
     ppmunu = P(0, mink(D, mu)) * P(0, mink(D, nu))
     zero, one = E("0"), E("1")
@@ -363,7 +375,7 @@ def _(
     assert len(_tree_terms) == 1 and _tree_terms[0][0] == [0]
     tree = _tree_terms[0][1]
     assert (tree + Symbol.I * gs * Nc * CF).together() == zero
-    solution = hep.IBPFamily(family, name="qcd_one_loop").reduce_laporta(
+    solution = IBPFamily(family, name="qcd_one_loop").reduce_laporta(
         sorted({tuple(p) for _terms in _parts.values() for p, c in _terms}), max_depth=2
     )
     assert solution.residuals == [[1]]
@@ -544,6 +556,7 @@ def _(
     D,
     M,
     Matrix,
+    Model,
     Nc,
     Nf,
     P,
@@ -563,7 +576,6 @@ def _(
     ghost,
     gluon,
     gmunu,
-    hep,
     index,
     interaction_rules,
     json,
@@ -715,7 +727,7 @@ def _(
             )
             _couplings[_col] = _name
     _spec["vertex_rules"].append(_ct_vertex)
-    _ct_model = hep.Model.from_json(json.dumps(_spec))
+    _ct_model = Model.from_json(json.dumps(_spec))
     _ct_quark, _ct_gluon, _ct_ghost = (
         _ct_model.particle(_name) for _name in ("b", "g", "ghG")
     )
@@ -1104,7 +1116,9 @@ def _(counterterm_names, counterterms_by_scheme, mo):
 def _(
     CA,
     D,
+    IBPFamily,
     K,
+    Kinematics,
     M,
     Matrix,
     Nf,
@@ -1126,7 +1140,6 @@ def _(
     gluon,
     gmunu,
     gs,
-    hep,
     index,
     integral,
     irr_inputs,
@@ -1159,7 +1172,7 @@ def _(
         "qcd_irr::a_",
         "qcd_irr::b_",
     )
-    _irr_kin = hep.Kinematics(D, momenta=[K(0), P(0), P(1)]).with_scalar_product(
+    _irr_kin = Kinematics(D, momenta=[K(0), P(0), P(1)]).with_scalar_product(
         P(0), P(0), s
     )
     irr_results = {}
@@ -1347,7 +1360,7 @@ def _(
                     _irr_targets.add((_power,))
             assert (_scalar - _reconstructed).together() == zero, _label
             _irr_terms[_label] = _terms
-        irr_solution = hep.IBPFamily(
+        irr_solution = IBPFamily(
             family, name="qcd_direct_irr_" + _scenario
         ).reduce_laporta([list(p) for p in sorted(_irr_targets)], max_depth=2)
         assert irr_solution.residuals == [[1]]

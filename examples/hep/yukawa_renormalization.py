@@ -15,21 +15,31 @@ def _():
     import marimo as mo
     from symbolica import E, Matrix, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import (
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        TensorReducer,
+        oneloop,
+    )
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("yukawa")
 
     return (
         E,
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
         Matrix,
+        Model,
         Replacement,
         S,
         Symbol,
         TensorExpression,
+        TensorReducer,
         copy,
-        hep,
         json,
         mo,
         oneloop,
@@ -51,9 +61,9 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, copy, hep, json, oneloop):
-    specification = json.loads(hep.Model.phi4().to_json())
-    _standard = json.loads(hep.Model.standard_model().to_json())
+def _(E, IntegralFamily, Kinematics, Model, S, TensorReducer, copy, json, oneloop):
+    specification = json.loads(Model.phi4().to_json())
+    _standard = json.loads(Model.standard_model().to_json())
     specification["particles"] += [
         _p for _p in _standard["particles"] if _p["name"] in ("e-", "e+")
     ]
@@ -96,18 +106,16 @@ def _(E, S, copy, hep, json, oneloop):
         "quad_",
     )
     zero, one = (E("0"), E("1"))
-    kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
-        P(0), P(0), s
-    )
-    _vacuum = hep.Kinematics(D, momenta=[K(0)])
-    family = hep.IntegralFamily(
+    kinematics = Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(P(0), P(0), s)
+    _vacuum = Kinematics(D, momenta=[K(0)])
+    family = IntegralFamily(
         [K(0)], [], [_vacuum.scalar_product(K(0), K(0)) - M], kinematics=_vacuum
     )
     _master_reduction = oneloop.reduce(family, [1])
     _master = _master_reduction.terms[0][1].to_expression(one)
     master_pole = oneloop.get_expression(_master, coefficient=-1)
     assert master_pole == M
-    reducer = hep.TensorReducer(D).with_integrated_vector(K(0, mink(D)))
+    reducer = TensorReducer(D).with_integrated_vector(K(0, mink(D)))
     options = {
         "maximum_bridges": 0,
         "self_energy": None,
@@ -176,9 +184,11 @@ def _(E, S, copy, hep, json, oneloop):
 @app.cell
 def _(
     D,
+    IBPFamily,
     K,
     M,
     Matrix,
+    Model,
     P,
     Replacement,
     S,
@@ -201,7 +211,6 @@ def _(
     g,
     gamma,
     h,
-    hep,
     index,
     integral,
     json,
@@ -255,7 +264,7 @@ def _(
                 "couplings": [["YUKAWA"]],
             }
         )
-        _model = hep.Model.from_json(json.dumps(_definition))
+        _model = Model.from_json(json.dumps(_definition))
         models[_variant] = _model
         _fermion, _scalar = (_model.particle("e-"), _model.particle("phi"))
         _ct_definition = json.loads(_model.to_json())
@@ -320,7 +329,7 @@ def _(
                     "couplings": [[_name]],
                 }
             )
-        _ct_model = hep.Model.from_json(json.dumps(_ct_definition))
+        _ct_model = Model.from_json(json.dumps(_ct_definition))
         _stage_parts, _stage_diagrams = ({}, {})
         for _stage, _stage_model, _loops in [("bare", _model, 1), ("ct", _ct_model, 0)]:
             _parts, _diagrams = ({}, {})
@@ -444,7 +453,7 @@ def _(
             _stage_parts[_stage], _stage_diagrams[_stage] = (_parts, _diagrams)
         _parts = _stage_parts["bare"]
         all_diagrams[_variant] = _stage_diagrams
-        _ibp = hep.IBPFamily(family, name="yukawa_one_loop")
+        _ibp = IBPFamily(family, name="yukawa_one_loop")
         _solution = _ibp.reduce_laporta(
             sorted({tuple(_p) for _terms in _parts.values() for _p, _c in _terms}),
             max_depth=2,

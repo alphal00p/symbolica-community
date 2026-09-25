@@ -14,8 +14,13 @@ def _():
     import marimo as mo
     from symbolica import E, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import (
+        IBPFamily,
+        Kinematics,
+        Model,
+        TensorReducer,
+        oneloop,
+    )
     from symbolica.community.spenso import ColorSimplifySettings, TensorExpression
 
     _set_namespace("hgg")
@@ -23,11 +28,14 @@ def _():
     return (
         ColorSimplifySettings,
         E,
+        IBPFamily,
+        Kinematics,
+        Model,
         Replacement,
         S,
         Symbol,
         TensorExpression,
-        hep,
+        TensorReducer,
         math,
         mo,
         oneloop,
@@ -60,8 +68,19 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
-    model = hep.Model.standard_model()
+def _(
+    ColorSimplifySettings,
+    E,
+    IBPFamily,
+    Kinematics,
+    Model,
+    Replacement,
+    S,
+    Symbol,
+    TensorExpression,
+    TensorReducer,
+):
+    model = Model.standard_model()
     D, s, m, gs, y, mu, nu, ca, cb, eps = S(
         "D",
         "s",
@@ -125,13 +144,13 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
     assert len(result.diagrams) == 2
     # P0=k1+k2 is incoming Higgs momentum and P1=k1 the first outgoing gluon.
     kinematics = (
-        hep.Kinematics(D, momenta=[K(0), P(0), P(1)])
+        Kinematics(D, momenta=[K(0), P(0), P(1)])
         .with_scalar_product(P(0), P(0), s)
         .with_scalar_product(P(1), P(1), E("0"))
         .with_scalar_product(P(0), P(1), s / 2)
     )
     reducer = (
-        hep.TensorReducer(D)
+        TensorReducer(D)
         .with_integrated_vector(K(0, mink(D)))
         .with_external_vector(P(0, mink(D)))
         .with_external_vector(P(1, mink(D)))
@@ -233,7 +252,7 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
             terms.append((powers, coefficient))
         terms_by_diagram.append(terms)
     assert (routed_polynomials[0] - routed_polynomials[1]).together() == E("0")
-    solution = hep.IBPFamily(family, name="higgs_gluon_triangle").reduce_laporta(
+    solution = IBPFamily(family, name="higgs_gluon_triangle").reduce_laporta(
         [list(t) for t in sorted(targets)], max_depth=2
     )
     assert {tuple(p) for p in solution.residuals} == {
@@ -356,7 +375,7 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
     # the other's null reference. Ward identities imply agreement with -g sums.
     rho, sigma = S("rho", "sigma")
     physical_kinematics = (
-        hep.Kinematics(momenta=[P(1), P(2)])
+        Kinematics(momenta=[P(1), P(2)])
         .with_scalar_product(P(1), P(1), E("0"))
         .with_scalar_product(P(2), P(2), E("0"))
         .with_scalar_product(P(1), P(2), s / 2)
@@ -406,7 +425,7 @@ def _(ColorSimplifySettings, E, Replacement, S, Symbol, TensorExpression, hep):
         physical_norm * color_norm * (alpha_s / (3 * Symbol.PI * vev)) ** 2 * A * Abar
     ).replace(dA, Nc**2 - 1)
     decay_kinematics = (
-        hep.Kinematics()
+        Kinematics()
         .with_scalar_product(P(0), P(0), MH**2)
         .with_scalar_product(P(1), P(1), E("0"))
         .with_scalar_product(P(2), P(2), E("0"))

@@ -11,13 +11,24 @@ def _():
     import marimo as mo
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import IBPFamily, Kinematics, Model, oneloop
     from symbolica.community.spenso import ColorSimplifySettings, TensorExpression
 
     _set_namespace("tadinsert")
 
-    return ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, math, mo, oneloop
+    return (
+        ColorSimplifySettings,
+        E,
+        IBPFamily,
+        Kinematics,
+        Model,
+        S,
+        Symbol,
+        TensorExpression,
+        math,
+        mo,
+        oneloop,
+    )
 
 
 @app.cell(hide_code=True)
@@ -49,8 +60,8 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep):
-    model = hep.Model.standard_model()
+def _(ColorSimplifySettings, E, Kinematics, Model, S, Symbol, TensorExpression):
+    model = Model.standard_model()
     D, eps, m, Nc, y, L, scale2 = S(
         "D",
         "eps",
@@ -131,7 +142,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep):
         trace * native_weight * diagram.numerator_prefactor_expression()
     ).expand()
     assert (coefficient + 4 * Nc * y * m).expand() == E("0")
-    kinematics = hep.Kinematics(D, momenta=[K(0)])
+    kinematics = Kinematics(D, momenta=[K(0)])
     family = diagram.integral_family(kinematics=kinematics)
     assert family.is_complete and family.is_independent
     assert len(family.denominators) == 1
@@ -188,8 +199,8 @@ def _(
 
 
 @app.cell
-def _(D, E, I, Nc, coefficient, coordinate, denominator, family, hep, m, mo, y):
-    solution = hep.IBPFamily(family, name="massive_tadpole_insertions").reduce_laporta(
+def _(D, E, I, IBPFamily, Nc, coefficient, coordinate, denominator, family, m, mo, y):
+    solution = IBPFamily(family, name="massive_tadpole_insertions").reduce_laporta(
         [[1], [2], [3]], max_depth=2
     )
     assert solution.stats["rows"] > 0

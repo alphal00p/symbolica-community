@@ -9,12 +9,11 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import Model, oneloop
+    from symbolica.community.hep import Kinematics, Model, TensorReducer, oneloop
 
     _set_namespace("photon_self_energy")
 
-    return E, Model, S, hep, mo, oneloop
+    return (E, Kinematics, Model, S, TensorReducer, mo, oneloop)
 
 
 @app.cell
@@ -49,7 +48,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, hep, mo, oneloop, qed_model):
+def _(E, Kinematics, S, TensorReducer, mo, oneloop, qed_model):
     _generated = qed_model.process(
         ["a"], ["a"], vertex_allow=["V_98"]
     ).generate_diagrams(
@@ -81,12 +80,10 @@ def _(E, S, hep, mo, oneloop, qed_model):
             {_port: (_mu, _nu)[_edge.external_index]}
         )
     _trace = _numerator.expand().simplify_gamma().expand().to_dots()
-    _kin = hep.Kinematics(_D, momenta=[_K(0), _P(0)]).with_scalar_product(
-        _P(0), _P(0), _s
-    )
+    _kin = Kinematics(_D, momenta=[_K(0), _P(0)]).with_scalar_product(_P(0), _P(0), _s)
     photon_family = _diagram.integral_family(kinematics=_kin)
     _reducer = (
-        hep.TensorReducer(_D)
+        TensorReducer(_D)
         .with_integrated_vector(_K(0, _mink(_D)))
         .with_external_vector(_P(0, _mink(_D)))
     )

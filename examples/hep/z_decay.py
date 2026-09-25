@@ -9,11 +9,11 @@ def _():
     import marimo as mo
     from symbolica import E, Expression, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep as fk
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("z_decay")
-    return CookSettings, E, Expression, S, TensorExpression, fk, mo
+    return (CookSettings, E, Expression, Kinematics, Model, S, TensorExpression, mo)
 
 
 @app.cell(hide_code=True)
@@ -37,8 +37,8 @@ def _(mo):
 
 
 @app.cell
-def _(fk, mo):
-    model = fk.Model.standard_model()
+def _(Model, mo):
+    model = Model.standard_model()
     channel = mo.ui.dropdown(
         ["Electron neutrinos", "Electrons", "Charm quarks", "Bottom quarks"],
         value="Electrons",
@@ -49,7 +49,7 @@ def _(fk, mo):
 
 
 @app.cell
-def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
+def _(CookSettings, E, Kinematics, S, TensorExpression, channel, mo, model):
     P = S("gammalooprs::P")
     charge, sw, cw, mz = S("UFO::ee", "UFO::sw", "UFO::cw", "UFO::MZ")
     conjugate, wrapped = S("spenso::conj", "adjoint_index")
@@ -139,7 +139,7 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
     )
     assert scalar.is_scalar
     kin = (
-        fk.Kinematics()
+        Kinematics()
         .with_scalar_product(P(0), P(0), mz**2)
         .with_scalar_product(P(1), P(1), mass**2)
         .with_scalar_product(P(2), P(2), mass**2)
@@ -200,6 +200,7 @@ def _(mo):
 def _(
     E,
     Expression,
+    Kinematics,
     P,
     S,
     ca,
@@ -207,7 +208,6 @@ def _(
     colors,
     cv,
     cw,
-    fk,
     mass,
     mo,
     mz,
@@ -221,7 +221,7 @@ def _(
     beta = E("1") if mass == E("0") else S("beta", is_positive=True)
     mass_squared = physical_mass**2 * (1 - beta**2) / 4
     physical_kin = (
-        fk.Kinematics()
+        Kinematics()
         .with_scalar_product(P(0), P(0), physical_mass**2)
         .with_scalar_product(P(1), P(1), mass_squared)
         .with_scalar_product(P(2), P(2), mass_squared)

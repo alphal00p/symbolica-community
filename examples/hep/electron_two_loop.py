@@ -9,12 +9,29 @@ def _():
     import marimo as mo
     from symbolica import E, Replacement, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import (
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        TensorReducer,
+    )
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("electron_2l")
 
-    return E, Replacement, S, TensorExpression, hep, mo
+    return (
+        E,
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        Replacement,
+        S,
+        TensorExpression,
+        TensorReducer,
+        mo,
+    )
 
 
 @app.cell(hide_code=True)
@@ -56,13 +73,23 @@ def _(mo):
 
 
 @app.cell
-def _(hep):
-    qed_model = hep.Model.standard_model()
+def _(Model):
+    qed_model = Model.standard_model()
     return (qed_model,)
 
 
 @app.cell
-def _(E, Replacement, S, TensorExpression, hep, qed_model):
+def _(
+    E,
+    IBPFamily,
+    IntegralFamily,
+    Kinematics,
+    Replacement,
+    S,
+    TensorExpression,
+    TensorReducer,
+    qed_model,
+):
     d, s, mass_squared, uv_mass, eps, log_mass, log_4pi, flavors, coupling = S(
         "D",
         "s",
@@ -92,11 +119,11 @@ def _(E, Replacement, S, TensorExpression, hep, qed_model):
     coordinates = list(S("d0", "d1", "d2"))
     tadpole_squared, sunset, integral = S("T2", "V", "I")
     zero, one, imaginary = E("0"), E("1"), E("1i")
-    kinematics = hep.Kinematics(d, momenta=[k(0), k(1), p(0)]).with_scalar_product(
+    kinematics = Kinematics(d, momenta=[k(0), k(1), p(0)]).with_scalar_product(
         p(0), p(0), s
     )
-    vacuum_kinematics = hep.Kinematics(d, momenta=[k(0), k(1)])
-    family = hep.IntegralFamily(
+    vacuum_kinematics = Kinematics(d, momenta=[k(0), k(1)])
+    family = IntegralFamily(
         [k(0), k(1)],
         [],
         [
@@ -106,7 +133,7 @@ def _(E, Replacement, S, TensorExpression, hep, qed_model):
         kinematics=vacuum_kinematics,
     )
     reducer = (
-        hep.TensorReducer(d)
+        TensorReducer(d)
         .with_integrated_vector(k(0, mink(d)))
         .with_integrated_vector(k(1, mink(d)))
     )
@@ -167,7 +194,7 @@ def _(E, Replacement, S, TensorExpression, hep, qed_model):
             edge_pattern, momentum_pattern, mass_pattern, quadratic_pattern
         )
         quadratics = {dict(match)[quadratic_pattern] for match in uv.match(pattern)}
-        source_family = hep.IntegralFamily(
+        source_family = IntegralFamily(
             [k(0), k(1)], [], sorted(quadratics, key=str), kinematics=vacuum_kinematics
         )
         mapping = source_family.find_mapping(family)
@@ -217,7 +244,7 @@ def _(E, Replacement, S, TensorExpression, hep, qed_model):
         diagram_integrals.append(terms)
     assert flavor_weights.count(flavors) == 1
     assert len(targets) == 22
-    solution = hep.IBPFamily(family, name="electron_two_loop").reduce_laporta(
+    solution = IBPFamily(family, name="electron_two_loop").reduce_laporta(
         [list(target) for target in sorted(targets)], max_depth=2
     )
     assert solution.stats["rows"] > 0

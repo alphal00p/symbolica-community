@@ -11,20 +11,30 @@ def _():
     import marimo as mo
     from symbolica import E, Matrix, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import (
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        TensorReducer,
+        oneloop,
+    )
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("qed_ren")
 
     return (
         E,
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
         Matrix,
+        Model,
         Replacement,
         S,
         Symbol,
         TensorExpression,
-        hep,
+        TensorReducer,
         json,
         mo,
         oneloop,
@@ -65,8 +75,20 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
-    model = hep.Model.standard_model()
+def _(
+    E,
+    IBPFamily,
+    IntegralFamily,
+    Kinematics,
+    Model,
+    S,
+    Symbol,
+    TensorExpression,
+    TensorReducer,
+    json,
+    oneloop,
+):
+    model = Model.standard_model()
     D, epsilon, M, mUV, coordinate, integral, xi, s, Nf = S(
         "D",
         "eps",
@@ -84,7 +106,7 @@ def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
             _propagator["numerator"] = (
                 "-1𝑖*(UFO::Metric(UFO::idx(1,1),UFO::idx(1,2))-(1-qed_ren::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
             )
-    model = hep.Model.from_json(json.dumps(_specification))
+    model = Model.from_json(json.dumps(_specification))
     electron, photon = (model.particle(_name) for _name in ("e-", "a"))
     vertices = [
         vertex
@@ -114,14 +136,12 @@ def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
     _ordering, _value = S(
         "feynkit_generator_factor::ExternalFermionOrderingSign", "value_"
     )
-    kinematics = hep.Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(
-        P(0), P(0), s
-    )
-    vacuum = hep.Kinematics(D, momenta=[K(0)])
-    family = hep.IntegralFamily(
+    kinematics = Kinematics(D, momenta=[K(0), P(0)]).with_scalar_product(P(0), P(0), s)
+    vacuum = Kinematics(D, momenta=[K(0)])
+    family = IntegralFamily(
         [K(0)], [], [vacuum.scalar_product(K(0), K(0)) - M], kinematics=vacuum
     )
-    reducer = hep.TensorReducer(D).with_integrated_vector(K(0, mink(D)))
+    reducer = TensorReducer(D).with_integrated_vector(K(0, mink(D)))
     gmunu = metric(mink(D, mu), mink(D, nu))
     ppmunu = P(0, mink(D, mu)) * P(0, mink(D, nu))
     zero, one = E("0"), E("1")
@@ -245,7 +265,7 @@ def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
 
     tree = _parts.pop("tree")[0][1]
     assert tree == Symbol.I * charge
-    solution = hep.IBPFamily(family, name="qed_one_loop").reduce_laporta(
+    solution = IBPFamily(family, name="qed_one_loop").reduce_laporta(
         sorted({tuple(p) for _terms in _parts.values() for p, c in _terms}), max_depth=2
     )
     assert solution.residuals == [[1]]
@@ -362,6 +382,7 @@ def _(
     D,
     M,
     Matrix,
+    Model,
     Nf,
     P,
     S,
@@ -374,7 +395,6 @@ def _(
     epsilon,
     gamma,
     gmunu,
-    hep,
     index,
     json,
     kinematics,
@@ -504,7 +524,7 @@ def _(
                 "couplings": [["CT_GC_" + _label]],
             }
         )
-    _ct_model = hep.Model.from_json(json.dumps(_specification))
+    _ct_model = Model.from_json(json.dumps(_specification))
     _ct_electron, _ct_photon = (_ct_model.particle(_name) for _name in ("e-", "a"))
     _ct_vertices = [
         vertex for vertex in _ct_model.vertex_rules if vertex.name.startswith("CT_")
@@ -748,9 +768,12 @@ def _(ct_coefficients, ct_diagrams, ct_matrix, deltas, mo):
 @app.cell
 def _(
     D,
+    IBPFamily,
     K,
+    Kinematics,
     M,
     Matrix,
+    Model,
     Nf,
     P,
     Replacement,
@@ -772,7 +795,6 @@ def _(
     family,
     gamma,
     gmunu,
-    hep,
     index,
     integral,
     json,
@@ -806,7 +828,7 @@ def _(
     for _particle in _massless_specification["particles"]:
         if _particle["name"] in ("e-", "e+"):
             _particle["mass"] = "ZERO"
-    _massless_model = hep.Model.from_json(json.dumps(_massless_specification))
+    _massless_model = Model.from_json(json.dumps(_massless_specification))
     _massless_electron, _massless_photon = (
         _massless_model.particle(_name) for _name in ("e-", "a")
     )
@@ -831,7 +853,7 @@ def _(
         "massless_b_",
         "massless_args___",
     )
-    _massless_kinematics = hep.Kinematics(
+    _massless_kinematics = Kinematics(
         D, momenta=[K(0), P(0), P(1)]
     ).with_scalar_product(P(0), P(0), s)
     _massless_loop_square = vacuum.scalar_product(K(0), K(0))
@@ -1098,7 +1120,7 @@ def _(
             - _massless_scalars["selective_uv", _kind]
         ).together() == zero
 
-    massless_solution = hep.IBPFamily(family, name="qed_massless_irr").reduce_laporta(
+    massless_solution = IBPFamily(family, name="qed_massless_irr").reduce_laporta(
         [list(target) for target in sorted(_massless_targets)], max_depth=2
     )
     assert massless_solution.residuals == [[1]]

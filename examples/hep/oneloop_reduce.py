@@ -15,18 +15,19 @@ def _():
     import numpy as np
     from symbolica import E, N, Replacement, S, Float, ComplexFloat
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import IBPFamily, IntegralFamily, Kinematics, oneloop
 
     _set_namespace("olr_example")
     return (
         ComplexFloat,
         E,
         Float,
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
         N,
         Replacement,
         S,
-        hep,
         math,
         mo,
         np,
@@ -42,8 +43,8 @@ def _(mo):
     [Browse notebooks](/) · [Integral families](/?file=hep/integral_families.py) ·
     [Unequal-mass bubble IBP](/?file=hep/ibp_bubble.py)
 
-    Build the shared `hep.IntegralFamily` with Feynkit kinematics and pass it to
-    `hep.oneloop.reduce`, reducing a loop-momentum numerator directly
+    Build the shared `IntegralFamily` with Feynkit kinematics and pass it to
+    `oneloop.reduce`, reducing a loop-momentum numerator directly
     to the primitive **`oneloopmaster::A0`, `B0`, `C0`, and `D0` symbols**.
     Their registered numerical hooks run OneLoopMaster's generated native Rust
     arithmetic. Calling `Expression.evaluate` on the resulting coefficients
@@ -86,7 +87,7 @@ def _(mo):
     $D_i=(k+r_i)^2-m^2+i0$, and the numerator is $k\cdot q_1$.
 
     Declare $q_1^2=p_1^2$, $q_2^2=p_2^2$, and
-    $q_1\cdot q_2=(s-p_1^2-p_2^2)/2$ in `hep.Kinematics`.
+    $q_1\cdot q_2=(s-p_1^2-p_2^2)/2$ in `Kinematics`.
     Build the three denominator expressions with `scalar_product`; the reducer
     derives the masses and master invariants from this shared family.
     The output master is
@@ -96,20 +97,35 @@ def _(mo):
     Keep the dimension symbolic: `Kinematics(D, ...)` retains the dependence
     needed for $D=4-2\epsilon$. The explicit powers `[1, 1, 1]` specify this
     integral; zero powers pinch propagators, and negative powers put them in
-    the numerator. The same family can also be passed to `hep.IBPFamily`.
+    the numerator. The same family can also be passed to `IBPFamily`.
     """)
     return
 
 
 @app.cell
-def _(d, hep, invariant, k, mass2, mo, mu2, oneloop, p1sq, p2sq, q1, q2):
+def _(
+    IBPFamily,
+    IntegralFamily,
+    Kinematics,
+    d,
+    invariant,
+    k,
+    mass2,
+    mo,
+    mu2,
+    oneloop,
+    p1sq,
+    p2sq,
+    q1,
+    q2,
+):
     triangle_kinematics = (
-        hep.Kinematics(d, momenta=[k, q1, q2])
+        Kinematics(d, momenta=[k, q1, q2])
         .with_scalar_product(q1, q1, p1sq)
         .with_scalar_product(q2, q2, p2sq)
         .with_scalar_product(q1, q2, (invariant - p1sq - p2sq) / 2)
     )
-    triangle = hep.IntegralFamily(
+    triangle = IntegralFamily(
         [k],
         [q1, q2],
         [
@@ -118,13 +134,13 @@ def _(d, hep, invariant, k, mass2, mo, mu2, oneloop, p1sq, p2sq, q1, q2):
         ],
         kinematics=triangle_kinematics,
     )
-    triangle_ibp = hep.IBPFamily(triangle, name="oneloop_triangle")
+    triangle_ibp = IBPFamily(triangle, name="oneloop_triangle")
     triangle_reduction = oneloop.reduce(
         triangle, [1, 1, 1], numerator=triangle_kinematics.scalar_product(k, q1)
     ).simplify()
     mo.vstack(
         [
-            mo.md("**Shared Feynkit family, also accepted by `hep.IBPFamily`**"),
+            mo.md("**Shared Feynkit family, also accepted by `IBPFamily`**"),
             triangle,
             mo.md("**Reduced expression in primitive OneLoopMaster symbols**"),
             triangle_reduction.to_expression(mu_squared=mu2),
@@ -509,9 +525,9 @@ def _(mo):
 
 
 @app.cell
-def _(A0, E, d, hep, k, mass2, mo, mu2, oneloop):
-    _vacuum = hep.Kinematics(d, momenta=[k])
-    tadpole = hep.IntegralFamily(
+def _(A0, E, IntegralFamily, Kinematics, d, k, mass2, mo, mu2, oneloop):
+    _vacuum = Kinematics(d, momenta=[k])
+    tadpole = IntegralFamily(
         [k], [], [_vacuum.scalar_product(k, k) - mass2], kinematics=_vacuum
     )
     tadpole_reduction = oneloop.reduce(tadpole, [2]).simplify()

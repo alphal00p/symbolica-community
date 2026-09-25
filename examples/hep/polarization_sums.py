@@ -9,12 +9,12 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("polarization")
 
-    return E, S, TensorExpression, hep, mo
+    return (E, Kinematics, Model, S, TensorExpression, mo)
 
 
 @app.cell(hide_code=True)
@@ -64,8 +64,10 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, TensorExpression, dimension_choice, hep, normalization, species):
-    model = hep.Model.standard_model()
+def _(
+    E, Kinematics, Model, S, TensorExpression, dimension_choice, normalization, species
+):
+    model = Model.standard_model()
     particle = model.particle(species.value)
     D = S("D") if dimension_choice.value == "Symbolic D" else E(dimension_choice.value)
     p, n, i, j, chi, zeta = S(
@@ -81,7 +83,7 @@ def _(E, S, TensorExpression, dimension_choice, hep, normalization, species):
         E("0") if particle.is_massless else S("UFO::" + particle.mass_parameter) ** 2
     )
     kinematics = (
-        hep.Kinematics(D)
+        Kinematics(D)
         .with_scalar_product(p, p, mass_squared)
         .with_scalar_product(p, n, chi)
         .with_scalar_product(n, n, zeta)

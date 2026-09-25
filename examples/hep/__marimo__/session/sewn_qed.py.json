@@ -7,15 +7,8 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "4565b83b69e4f4c21c8754b251aef8cb",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "code_hash": "95b436451b62a4e1384d81fa0e0bfab9",
+      "outputs": [],
       "console": []
     },
     {
@@ -33,35 +26,14 @@
     },
     {
       "id": "vblA",
-      "code_hash": "2daf00254a9ffcb6b1ecc51d16ed814d",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stdout",
-          "text": "Sewn electron Compton, reference=None: exact massive result passed\nSewn electron Compton, reference=P(0): exact massive result passed\nSewn positron Compton, reference=None: exact massive result passed\nSewn positron Compton, reference=P(0): exact massive result passed\nSewn annihilation, reference=None: exact massive result passed\nSewn electron-muon scattering, reference=None: exact massive result passed\n",
-          "mimetype": "text/plain"
-        }
-      ]
+      "code_hash": "318063a55515e44d4bf5295211d0413b",
+      "outputs": [],
+      "console": []
     },
     {
       "id": "bkHC",
       "code_hash": "91b79e30dc9c364934bb7368cafb3ff4",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='bkHC-0' random-id='c82838db-0c32-6835-a318-dd59fe7506d9'><marimo-dropdown data-initial-value='[&quot;electron Compton \u00b7 covariant&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eProcess and incoming-photon projector&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;electron Compton \u00b7 covariant&quot;,&quot;electron Compton \u00b7 axial n=p\u2081&quot;,&quot;positron Compton \u00b7 covariant&quot;,&quot;positron Compton \u00b7 axial n=p\u2081&quot;,&quot;annihilation \u00b7 covariant&quot;,&quot;electron-muon scattering \u00b7 covariant&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
-          }
-        }
-      ],
+      "outputs": [],
       "console": []
     },
     {

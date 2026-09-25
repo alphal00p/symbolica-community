@@ -13,11 +13,11 @@ def _():
     import marimo as mo
     from symbolica import E, Replacement, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import IntegralFamily, Kinematics
 
     _set_namespace("etac")
 
-    return mo, json, reduce, Path, E, S, Replacement, hep
+    return (E, IntegralFamily, Kinematics, Path, Replacement, S, json, mo, reduce)
 
 
 @app.cell(hide_code=True)
@@ -56,7 +56,7 @@ def _(Path, json):
 
 
 @app.cell
-def _(E, S, Replacement, hep, fixture, reduce):
+def _(E, IntegralFamily, Kinematics, Replacement, S, fixture, reduce):
     def prepare_topologies():
         D, k1, k2, n, nb, gkin, meta, u0b = S(
             "D",
@@ -70,7 +70,7 @@ def _(E, S, Replacement, hep, fixture, reduce):
             is_real=True,
         )
         kin = (
-            hep.Kinematics(D, momenta=[k1, k2, n, nb])
+            Kinematics(D, momenta=[k1, k2, n, nb])
             .with_scalar_product(n, n, E("0"))
             .with_scalar_product(nb, nb, E("0"))
             .with_scalar_product(n, nb, E("2"))
@@ -107,7 +107,7 @@ def _(E, S, Replacement, hep, fixture, reduce):
         input_rows = []
         for number, row in enumerate(fixture["integrals"], 1):
             denominators = [pool[i] for i in row["propagators"]]
-            family = hep.IntegralFamily([k1, k2], [n, nb], denominators, kinematics=kin)
+            family = IntegralFamily([k1, k2], [n, nb], denominators, kinematics=kin)
             fractions = family.partial_fraction(row["powers"])
             original = reduce(
                 lambda a, b: a * b,
@@ -221,7 +221,7 @@ def _(E, S, Replacement, hep, fixture, reduce):
         # the retained representatives when constructing final integral coordinates.
         surviving_rows = [row for row in completed_rows if row[2] == "not detected"]
         surviving = [row[0] for row in surviving_rows]
-        mappings = hep.IntegralFamily.find_mappings(surviving)
+        mappings = IntegralFamily.find_mappings(surviving)
         representatives = sorted({target for target, _ in mappings})
         for source, (target, mapping) in enumerate(mappings):
             assert mappings[target][0] == target
@@ -243,7 +243,7 @@ def _(E, S, Replacement, hep, fixture, reduce):
             ).together() == E("0")
         assert [
             target
-            for target, _ in hep.IntegralFamily.find_mappings(
+            for target, _ in IntegralFamily.find_mappings(
                 [surviving[i] for i in representatives]
             )
         ] == list(range(len(representatives)))

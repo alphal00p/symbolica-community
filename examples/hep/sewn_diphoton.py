@@ -12,12 +12,12 @@ def _():
     import marimo as mo
     from symbolica import E, Replacement, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("sewn_diphoton")
 
-    return CookSettings, E, Replacement, S, TensorExpression, hep, mo
+    return (CookSettings, E, Kinematics, Model, Replacement, S, TensorExpression, mo)
 
 
 @app.cell(hide_code=True)
@@ -47,9 +47,9 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, Replacement, S, TensorExpression, hep):
+def _(CookSettings, E, Kinematics, Model, Replacement, S, TensorExpression):
     def calculate_sewn_diphotons():
-        model = hep.Model.standard_model()
+        model = Model.standard_model()
         electron, photon = (model.particle(name) for name in ("e-", "a"))
         vertices = [
             vertex
@@ -73,7 +73,7 @@ def _(CookSettings, E, Replacement, S, TensorExpression, hep):
         k1, k2, index = S("k1", "k2", "index_")
         a, b, c, inverse = S("a_", "b_", "c_", "inverse_")
         metric, mink = S("spenso::g", "spenso::mink")
-        kin = hep.Kinematics.mandelstam(
+        kin = Kinematics.mandelstam(
             [P(0), P(1), k1, k2], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
         )
         x, y = t - mass**2, u - mass**2

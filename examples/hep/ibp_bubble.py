@@ -10,12 +10,11 @@ def _():
     import numpy as np
     from symbolica import E, Replacement, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import IBPFamily, IntegralFamily, Kinematics, oneloop
 
     _set_namespace("ibp_bubble")
 
-    return E, Replacement, S, hep, mo, np, oneloop
+    return (E, IBPFamily, IntegralFamily, Kinematics, Replacement, S, mo, np, oneloop)
 
 
 @app.cell(hide_code=True)
@@ -43,7 +42,7 @@ def _(mo):
 
 
 @app.cell
-def _(S, hep, mo):
+def _(IBPFamily, IntegralFamily, Kinematics, S, mo):
     dimension, loop, external, invariant, mass_a, mass_b, epsilon = S(
         "D",
         "k",
@@ -54,10 +53,10 @@ def _(S, hep, mo):
         "eps",
     )
     integral = S("I")
-    kinematics = hep.Kinematics(
-        dimension, momenta=[loop, external]
-    ).with_scalar_product(external, external, invariant)
-    bubble_family = hep.IntegralFamily(
+    kinematics = Kinematics(dimension, momenta=[loop, external]).with_scalar_product(
+        external, external, invariant
+    )
+    bubble_family = IntegralFamily(
         [loop],
         [external],
         [
@@ -66,7 +65,7 @@ def _(S, hep, mo):
         ],
         kinematics=kinematics,
     )
-    bubble_ibp = hep.IBPFamily(bubble_family, name="bubble")
+    bubble_ibp = IBPFamily(bubble_family, name="bubble")
     discriminant = (
         invariant**2
         + mass_a**2

@@ -9,13 +9,12 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import Model
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("compton")
 
-    return CookSettings, E, Model, S, TensorExpression, hep, mo
+    return (CookSettings, E, Kinematics, Model, S, TensorExpression, mo)
 
 
 @app.cell
@@ -50,7 +49,7 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, S, TensorExpression, hep, mo, qed_model):
+def _(CookSettings, E, Kinematics, S, TensorExpression, mo, qed_model):
     _result = qed_model.process(
         ["e-", "a"], ["e-", "a"], vertex_allow=["V_98"]
     ).generate_diagrams(
@@ -62,7 +61,7 @@ def _(CookSettings, E, S, TensorExpression, hep, mo, qed_model):
     )
     _P = S("gammalooprs::P")
     _s, _t, _u, _me, _e = S("s", "t", "u", "UFO::Me", "UFO::ee")
-    _kin = hep.Kinematics.mandelstam(
+    _kin = Kinematics.mandelstam(
         [_P(0), _P(1), _P(2), _P(3)], [_me**2, E("0"), _me**2, E("0")], [_s, _t, _u]
     )
     _a, _b, _c, _inv = S("a_", "b_", "c_", "inv_")

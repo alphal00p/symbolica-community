@@ -12,7 +12,6 @@ def _():
     from ibp_phi4 import app as self_energy_app
     from symbolica import E, Matrix, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("ibp_phi4")
@@ -24,7 +23,6 @@ def _():
         S,
         Symbol,
         TensorExpression,
-        hep,
         mo,
         prod,
         self_energy_app,
@@ -158,7 +156,6 @@ async def _(self_energy_app):
 
 @app.cell
 def _(
-    hep,
     E,
     K,
     Replacement,
@@ -339,7 +336,6 @@ def _(mo):
 
 @app.cell
 def _(
-    hep,
     E,
     K,
     Matrix,

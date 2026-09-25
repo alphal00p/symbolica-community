@@ -15,7 +15,13 @@ def _():
     import marimo as mo
     from symbolica import E, Expression, Matrix, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import (
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        TensorReducer,
+    )
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("ibp_phi4")
@@ -23,12 +29,16 @@ def _():
     return (
         E,
         Expression,
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
         Matrix,
+        Model,
         Replacement,
         S,
         Symbol,
         TensorExpression,
-        hep,
+        TensorReducer,
         json,
         mo,
         prod,
@@ -55,7 +65,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, Expression, Replacement, S, hep):
+def _(E, Expression, Replacement, S, TensorReducer):
     d, k1, k2, mass_squared, p_squared, eps, coupling = S(
         "d",
         "k1",
@@ -78,7 +88,7 @@ def _(E, Expression, Replacement, S, hep):
     _taylor = (
         _shifted_line.series(_scaling, 0, 2).to_expression().replace(_scaling, E("1"))
     )
-    _taylor = hep.TensorReducer(d).with_integrated_vector(_qc).reduce(_taylor)
+    _taylor = TensorReducer(d).with_integrated_vector(_qc).reduce(_taylor)
     _taylor = (
         _taylor.replace(_dot(_qc, _qc), _denominator + mass_squared)
         .replace(_dot(_pc, _pc), p_squared)
@@ -123,10 +133,14 @@ def _(E, Expression, Replacement, S, hep):
 
 @app.cell
 def _(
+    IBPFamily,
+    IntegralFamily,
+    Kinematics,
+    Model,
     S,
     Symbol,
+    TensorReducer,
     d,
-    hep,
     integral,
     k1,
     k2,
@@ -138,15 +152,15 @@ def _(
     reference_bare_input,
     zero,
 ):
-    _kinematics = hep.Kinematics(d, momenta=[k1, k2])
-    family = hep.IntegralFamily(
+    _kinematics = Kinematics(d, momenta=[k1, k2])
+    family = IntegralFamily(
         [k1, k2],
         [],
         [_kinematics.scalar_product(_k, _k) - mass_squared for _k in (k1, k2, k1 + k2)],
         kinematics=_kinematics,
     )
     assert family.is_complete and family.is_independent
-    model = hep.Model.phi4()
+    model = Model.phi4()
     particle = model.particle("phi")
     generated = model.process([particle], [particle]).generate_diagrams(
         loops=2,
@@ -172,7 +186,7 @@ def _(
     coordinates = S("x1", "x2", "x3")
     external_kinematics = _kinematics.with_scalar_product(P(0), P(0), p_squared)
     _reducer = (
-        hep.TensorReducer(d)
+        TensorReducer(d)
         .with_integrated_vector(k1(mink(d)))
         .with_integrated_vector(k2(mink(d)))
     )
@@ -185,7 +199,7 @@ def _(
             _diagram.overall_factor_expression(evaluate=True)
             * _diagram.numerator_prefactor_expression()
         )
-        _raw_family = _diagram.propagator_family(kinematics=hep.Kinematics(d))
+        _raw_family = _diagram.propagator_family(kinematics=Kinematics(d))
         _raw = _factor * _numerator / (Symbol.I * model_coupling**2)
         for _propagator in _raw_family.denominators:
             _raw /= _propagator
@@ -252,7 +266,7 @@ def _(
         for _reference in _raw_reference
     )
     assert (bare_input - reference_bare_input).together() == zero
-    ibp = hep.IBPFamily(family, name="phi4_vacuum")
+    ibp = IBPFamily(family, name="phi4_vacuum")
     _identities = ibp.ibp_identities()
     assert len(_identities) == 4
     symmetries = [
@@ -445,7 +459,11 @@ def _(mo):
 
 @app.cell
 def _(
+    IBPFamily,
+    IntegralFamily,
     K,
+    Kinematics,
+    Model,
     S,
     Symbol,
     d,
@@ -454,7 +472,6 @@ def _(
     edge_,
     eps,
     external_kinematics,
-    hep,
     index,
     json,
     k1,
@@ -471,14 +488,14 @@ def _(
     quad_,
     zero,
 ):
-    _tadpole_kin = hep.Kinematics(d, momenta=[k1])
-    tadpole_family = hep.IntegralFamily(
+    _tadpole_kin = Kinematics(d, momenta=[k1])
+    tadpole_family = IntegralFamily(
         [k1],
         [],
         [_tadpole_kin.scalar_product(k1, k1) - mass_squared],
         kinematics=_tadpole_kin,
     )
-    parametric = hep.IBPFamily(tadpole_family, name="phi4_tadpole").solve_parametric(
+    parametric = IBPFamily(tadpole_family, name="phi4_tadpole").solve_parametric(
         [True], max_depth=1
     )
     assert parametric.rules
@@ -532,7 +549,7 @@ def _(
                     "couplings": [[_name]],
                 }
             )
-    ct_model = hep.Model.from_json(json.dumps(_specification))
+    ct_model = Model.from_json(json.dumps(_specification))
     ct_diagrams = {}
     ct_integral, ct_coordinate = S("J", "y")
     ct_input, tree_ct = (zero, zero)

@@ -12,13 +12,22 @@ def _():
     import marimo as mo
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import Model
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import Representation, TensorExpression, chain
 
     _set_namespace("qed_example")
 
-    return E, Model, Representation, S, Symbol, TensorExpression, chain, hep, mo
+    return (
+        E,
+        Kinematics,
+        Model,
+        Representation,
+        S,
+        Symbol,
+        TensorExpression,
+        chain,
+        mo,
+    )
 
 
 @app.cell(hide_code=True)
@@ -44,7 +53,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, Model, S, hep, mo):
+def _(E, Kinematics, Model, S, mo):
     qed_model = Model.standard_model()
     _process = qed_model.process(
         ["e-", "e+"], ["mu-", "mu+"], vertex_allow=["V_98", "V_99"]
@@ -75,7 +84,7 @@ def _(E, Model, S, hep, mo):
     qed_s = S("s", is_positive=True)
     qed_t, qed_u = S("t", "u")
     qed_me, qed_mm, qed_e = S("UFO::Me", "UFO::MM", "UFO::ee")
-    _kin = hep.Kinematics.mandelstam(
+    _kin = Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
         [qed_me**2, qed_me**2, qed_mm**2, qed_mm**2],
         [qed_s, qed_t, qed_u],
@@ -160,9 +169,9 @@ def _(E, Model, S, hep, mo):
 @app.cell
 def _(
     E,
+    Kinematics,
     S,
     Symbol,
-    hep,
     mo,
     qed_e,
     qed_k1,
@@ -178,7 +187,7 @@ def _(
 ):
     qed_cos_theta, qed_alpha = S("cos_theta", "alpha")
     _pi = Symbol.PI
-    _kin = hep.Kinematics.mandelstam(
+    _kin = Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
         [E("0")] * 4,
         [qed_s, qed_t, qed_u],
@@ -254,11 +263,11 @@ def _(mo):
 @app.cell
 def _(
     E,
+    Kinematics,
     Representation,
     S,
     TensorExpression,
     chain,
-    hep,
     mo,
     qed_diagram,
     qed_e,
@@ -307,7 +316,7 @@ def _(
         .expand()
         .to_dots()
     )
-    _kin = hep.Kinematics.mandelstam(
+    _kin = Kinematics.mandelstam(
         [qed_p1, qed_p2, qed_k1, qed_k2],
         [qed_me**2, qed_me**2, qed_mm**2, qed_mm**2],
         [qed_s, qed_t, qed_u],

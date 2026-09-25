@@ -11,12 +11,12 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep as fk
+    from symbolica.community.hep import Model
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("symmetric_color_vertex")
 
-    return E, S, TensorExpression, fk, json, mo
+    return (E, Model, S, TensorExpression, json, mo)
 
 
 @app.cell(hide_code=True)
@@ -42,8 +42,8 @@ def _(mo):
 
 
 @app.cell
-def _(fk, json):
-    _source = json.loads(fk.Model.standard_model().to_json())
+def _(Model, json):
+    _source = json.loads(Model.standard_model().to_json())
     _source["name"] = "adjoint_scalar_example"
     for _particle in _source["particles"]:
         if _particle["name"] == "H":
@@ -52,12 +52,12 @@ def _(fk, json):
         _vertex for _vertex in _source["vertex_rules"] if _vertex["name"] == "V_9"
     ]
     _source["vertex_rules"][0]["color_structures"] = ["d(1,2,3)"]
-    adjoint_model = fk.Model.from_json(json.dumps(_source))
+    adjoint_model = Model.from_json(json.dumps(_source))
     return (adjoint_model,)
 
 
 @app.cell
-def _(adjoint_model, fk, mo):
+def _(adjoint_model, mo):
     symmetric_generated = adjoint_model.process(["H", "H"], ["H"]).generate_diagrams(
         loops=0,
         max_vertices=1,

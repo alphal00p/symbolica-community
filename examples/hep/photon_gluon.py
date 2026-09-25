@@ -13,11 +13,11 @@ def _():
     import numpy as np
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("photon_gluon")
-    return CookSettings, E, S, Symbol, TensorExpression, hep, mo, np
+    return (CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression, mo, np)
 
 
 @app.cell(hide_code=True)
@@ -49,9 +49,9 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, S, Symbol, TensorExpression, hep, np):
+def _(CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression, np):
     def calculate_channels():
-        model = hep.Model.standard_model()
+        model = Model.standard_model()
         P = S("gammalooprs::P")
         mass, ee, gs = S("UFO::MB", "UFO::ee", "UFO::G")
         s, t, u, virtuality = S("s", "t", "u", "q2")
@@ -66,7 +66,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep, np):
                 else E("0")
                 for name in names
             ]
-            kin = hep.Kinematics.mandelstam([P(i) for i in range(4)], masses, [s, t, u])
+            kin = Kinematics.mandelstam([P(i) for i in range(4)], masses, [s, t, u])
             allowed = [
                 v
                 for v in model.vertex_rules

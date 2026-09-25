@@ -10,12 +10,12 @@ def _():
     import numpy as np
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("gg")
 
-    return CookSettings, E, S, Symbol, TensorExpression, hep, mo, np
+    return (CookSettings, E, Kinematics, Model, S, Symbol, TensorExpression, mo, np)
 
 
 @app.cell(hide_code=True)
@@ -45,9 +45,9 @@ def _(mo):
 
 
 @app.cell
-def _(CookSettings, E, S, TensorExpression, hep):
+def _(CookSettings, E, Kinematics, Model, S, TensorExpression):
     def calculate_scattering():
-        model = hep.Model.standard_model()
+        model = Model.standard_model()
         P = S("gammalooprs::P")
         s = S("s", is_positive=True)
         t, u, D, N, dA, gs = S("t", "u", "D", "N", "dA", "UFO::G")
@@ -73,7 +73,7 @@ def _(CookSettings, E, S, TensorExpression, hep):
         )
         assert len(generated.diagrams) == 4
         kin = (
-            hep.Kinematics(D)
+            Kinematics(D)
             .with_scalar_product(P(0), P(0), E("0"))
             .with_scalar_product(P(1), P(1), E("0"))
             .with_scalar_product(P(2), P(2), E("0"))
@@ -248,12 +248,10 @@ def _(D, E, N, averaging, colors, dimension, dimensional_average, fixed_two, gs,
 
 
 @app.cell
-def _(D, E, N, P, S, Symbol, fixed_two, gs, hep, np, s, t, u):
+def _(D, E, Kinematics, N, P, S, Symbol, fixed_two, gs, np, s, t, u):
     def integrate_rate():
         z, cutoff, alpha = S("z", "cutoff", "alpha_s")
-        kin4 = hep.Kinematics.mandelstam(
-            [P(i) for i in range(4)], [E("0")] * 4, [s, t, u]
-        )
+        kin4 = Kinematics.mandelstam([P(i) for i in range(4)], [E("0")] * 4, [s, t, u])
         phase = kin4.two_body_phase_space(P(2), P(3)) / kin4.flux(P(0), P(1))
         assert (phase - 1 / (64 * Symbol.PI**2 * s)).together() == 0
         # Azimuth integration supplies 2*pi and identical gluon events supply 1/2!.

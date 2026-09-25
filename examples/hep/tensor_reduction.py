@@ -12,10 +12,10 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import TensorReducer
 
     _set_namespace("angular_demo")
-    return E, S, hep, mo
+    return (E, S, TensorReducer, mo)
 
 
 @app.cell(hide_code=True)
@@ -27,7 +27,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, hep, mo):
+def _(E, S, TensorReducer, mo):
     _D, _k, _p, _mink, _dot = S(
         "D",
         "k",
@@ -36,7 +36,7 @@ def _(E, S, hep, mo):
         "spenso::dot",
     )
     _kc, _pc = _k(_mink(_D)), _p(_mink(_D))
-    _reducer = hep.TensorReducer(_D).with_integrated_vector(_kc)
+    _reducer = TensorReducer(_D).with_integrated_vector(_kc)
     compact_dot_average = _reducer.reduce(_dot(_kc, _pc) ** 2)
     assert _reducer.reduce(_dot(_kc, _pc)) == E("0")
     assert (compact_dot_average - _dot(_kc, _kc) * _dot(_pc, _pc) / _D).together() == E(

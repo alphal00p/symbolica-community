@@ -12,11 +12,16 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import (
+        FeynmanDiagram,
+        IntegralFamily,
+        Kinematics,
+        Model,
+    )
 
     _set_namespace("parameters")
 
-    return E, S, hep, mo
+    return (E, FeynmanDiagram, IntegralFamily, Kinematics, Model, S, mo)
 
 
 @app.cell(hide_code=True)
@@ -41,9 +46,9 @@ def _(mo):
 
 
 @app.cell
-def _(hep, mo):
-    _sunrise = hep.FeynmanDiagram.from_dot(
-        hep.Model.phi4(),
+def _(FeynmanDiagram, Model, mo):
+    _sunrise = FeynmanDiagram.from_dot(
+        Model.phi4(),
         """digraph sunrise {
             ext [style=invis];
             ext -> a [particle="phi"];
@@ -88,7 +93,7 @@ def _(mo):
 
 
 @app.cell
-def _(E, S, hep, mo):
+def _(E, IntegralFamily, Kinematics, S, mo):
     _k, _l, _p, _s, _m2, _delta, _x, _y = S(
         "k",
         "l",
@@ -99,8 +104,8 @@ def _(E, S, hep, mo):
         "x",
         "y",
     )
-    _kin = hep.Kinematics(momenta=[_k, _l, _p]).with_scalar_product(_p, _p, _s)
-    parameter_family = hep.IntegralFamily(
+    _kin = Kinematics(momenta=[_k, _l, _p]).with_scalar_product(_p, _p, _s)
+    parameter_family = IntegralFamily(
         [_k, _l],
         [_p],
         [

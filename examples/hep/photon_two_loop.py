@@ -15,11 +15,30 @@ def _():
     import marimo as mo
     from symbolica import E, Replacement, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import (
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        TensorReducer,
+    )
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("photon_2l")
-    return E, Replacement, S, TensorExpression, hep, json, math, mo
+    return (
+        E,
+        IBPFamily,
+        IntegralFamily,
+        Kinematics,
+        Model,
+        Replacement,
+        S,
+        TensorExpression,
+        TensorReducer,
+        json,
+        math,
+        mo,
+    )
 
 
 @app.cell(hide_code=True)
@@ -47,8 +66,19 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(E, Replacement, S, TensorExpression, hep, json):
-    model = hep.Model.standard_model()
+def _(
+    E,
+    IBPFamily,
+    IntegralFamily,
+    Kinematics,
+    Model,
+    Replacement,
+    S,
+    TensorExpression,
+    TensorReducer,
+    json,
+):
+    model = Model.standard_model()
     d, s, mass_squared, uv_mass, eps, log_mass, log_4pi, flavors = S(
         "D",
         "s",
@@ -76,11 +106,11 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     coordinates = list(S("d0", "d1", "d2"))
     tadpole_squared, sunset, integral = S("T2", "V", "I")
     zero, one, imaginary = E("0"), E("1"), E("1i")
-    kinematics = hep.Kinematics(d, momenta=[k(0), k(1), p(0)]).with_scalar_product(
+    kinematics = Kinematics(d, momenta=[k(0), k(1), p(0)]).with_scalar_product(
         p(0), p(0), s
     )
-    vacuum_kinematics = hep.Kinematics(d, momenta=[k(0), k(1)])
-    family = hep.IntegralFamily(
+    vacuum_kinematics = Kinematics(d, momenta=[k(0), k(1)])
+    family = IntegralFamily(
         [k(0), k(1)],
         [],
         [
@@ -90,7 +120,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
         kinematics=vacuum_kinematics,
     )
     reducer = (
-        hep.TensorReducer(d)
+        TensorReducer(d)
         .with_integrated_vector(k(0, mink(d)))
         .with_integrated_vector(k(1, mink(d)))
     )
@@ -106,7 +136,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
             propagator["numerator"] = (
                 "-1𝑖*(UFO::Metric(UFO::idx(1,1),UFO::idx(1,2))-(1-photon_2l::xi)*UFO::P(UFO::idx(1,1))*UFO::P(UFO::idx(1,2))/spenso::dot(UFO::P(spenso::mink(4)),UFO::P(spenso::mink(4))))"
             )
-    model = hep.Model.from_json(json.dumps(specification))
+    model = Model.from_json(json.dumps(specification))
     gmunu = metric(mink(d, mu), mink(d, nu))
     ppmunu = p(0, mink(d, mu)) * p(0, mink(d, nu))
     Qg, Qpp = S("metric_basis", "momentum_basis")
@@ -170,7 +200,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
             dict(match)[quadratic_pattern].replace(uv_mass**2, mass_squared)
             for match in uv.match(pattern)
         }
-        source_family = hep.IntegralFamily(
+        source_family = IntegralFamily(
             [k(0), k(1)], [], sorted(quadratics, key=str), kinematics=vacuum_kinematics
         )
         mapping = source_family.find_mapping(family)
@@ -240,7 +270,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
             targets.add(tuple(powers))
             terms.append((powers, coefficient))
         diagram_integrals.append(terms)
-    solution = hep.IBPFamily(family, name="photon_two_loop").reduce_laporta(
+    solution = IBPFamily(family, name="photon_two_loop").reduce_laporta(
         [list(target) for target in sorted(targets)], max_depth=2
     )
     assert solution.stats["rows"] > 0
@@ -351,17 +381,17 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     numerator = model.expand_couplings(
         one_loop_diagram.numerator_expression().to_expression()
     ).replace(mass, zero)
-    ct_kinematics = hep.Kinematics(d, momenta=[k(0), p(0)]).with_scalar_product(
+    ct_kinematics = Kinematics(d, momenta=[k(0), p(0)]).with_scalar_product(
         p(0), p(0), s
     )
-    ct_vacuum = hep.Kinematics(d, momenta=[k(0)])
-    ct_family = hep.IntegralFamily(
+    ct_vacuum = Kinematics(d, momenta=[k(0)])
+    ct_family = IntegralFamily(
         [k(0)],
         [],
         [ct_vacuum.scalar_product(k(0), k(0)) - mass_squared],
         kinematics=ct_vacuum,
     )
-    ct_reducer = hep.TensorReducer(d).with_integrated_vector(k(0, mink(d)))
+    ct_reducer = TensorReducer(d).with_integrated_vector(k(0, mink(d)))
     # Supplied one-loop field counterterm; the bubble and insertion sum are computed.
     zpsi_one = -xi / eps
     insertions = [
@@ -441,7 +471,7 @@ def _(E, Replacement, S, TensorExpression, hep, json):
             ct_targets.add((power,))
             terms.append(([power], coefficient))
         ct_parts[label] = terms
-    ct_solution = hep.IBPFamily(ct_family, name="photon2_ct").reduce_laporta(
+    ct_solution = IBPFamily(ct_family, name="photon2_ct").reduce_laporta(
         [list(target) for target in sorted(ct_targets)], max_depth=2
     )
     assert ct_solution.residuals == [[1]]

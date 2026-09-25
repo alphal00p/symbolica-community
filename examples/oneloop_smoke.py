@@ -4,8 +4,7 @@ from decimal import Decimal
 from math import isclose, log
 
 from symbolica import Expression, S
-from symbolica.community import hep
-from symbolica.community.hep import oneloop
+from symbolica.community.hep import FourMomentum, TensorReducer, oneloop
 
 
 def main():
@@ -13,7 +12,7 @@ def main():
     assert oneloop.EXPRESSION_INTEROP
 
     # FeynKit supplies Minkowski kinematics; OneLOop takes squared invariants.
-    momentum = hep.FourMomentum(3.0, 1.0, 0.0, 0.0)
+    momentum = FourMomentum(3.0, 1.0, 0.0, 0.0)
     bubble = oneloop.b0(momentum.mass_squared, 4.0, 4.0)
     bubble_jit = oneloop.b0(momentum.mass_squared, 4.0, 4.0, backend="symjit")
     assert all(abs(a - b) < 1e-12 for a, b in zip(bubble, bubble_jit))
@@ -23,7 +22,7 @@ def main():
     x = S("oneloop_smoke::x")
     coefficients = oneloop.master_coefficients(oneloop.A0(x, 1))
     assert all(isinstance(c, Expression) for c in coefficients)
-    reducer = hep.TensorReducer.feynkit(S("oneloop_smoke::D"))
+    reducer = TensorReducer.feynkit(S("oneloop_smoke::D"))
     expression = reducer.reduce(coefficients[0] + coefficients[1])
     evaluator = oneloop.compile_native([expression], [x])
     value = complex(evaluator.evaluate_complex([2 + 0j]).reshape(-1)[0])

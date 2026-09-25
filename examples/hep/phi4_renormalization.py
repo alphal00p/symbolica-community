@@ -11,13 +11,25 @@ def _():
     import marimo as mo
     from symbolica import E, Matrix, Replacement, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
-    from symbolica.community.hep import oneloop
+    from symbolica.community.hep import IntegralFamily, Kinematics, Model, oneloop
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("phi4_one")
 
-    return json, mo, E, Matrix, Replacement, S, Symbol, hep, oneloop, TensorExpression
+    return (
+        E,
+        IntegralFamily,
+        Kinematics,
+        Matrix,
+        Model,
+        Replacement,
+        S,
+        Symbol,
+        TensorExpression,
+        json,
+        mo,
+        oneloop,
+    )
 
 
 @app.cell(hide_code=True)
@@ -33,8 +45,8 @@ def _(mo):
 
 
 @app.cell
-def _(E, Replacement, S, Symbol, hep, mo, oneloop):
-    model = hep.Model.phi4()
+def _(E, IntegralFamily, Kinematics, Model, Replacement, S, Symbol, mo, oneloop):
+    model = Model.phi4()
     particle = model.particle("phi")
     mass, coupling = S("UFO::mass", "UFO::lam")
     M, s, t, u, mu2, p2, eps = S(
@@ -49,10 +61,8 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
     Q, K, P = S("gammalooprs::Q", "gammalooprs::K", "gammalooprs::P")
     _dimension = S("D")
     zero, one, pi = (E("0"), E("1"), Symbol.PI)
-    _kinematics = hep.Kinematics.mandelstam(
-        [P(_i) for _i in range(4)], [M] * 4, [s, t, u]
-    )
-    _routing_kinematics = hep.Kinematics(momenta=[K(0), *[P(_i) for _i in range(4)]])
+    _kinematics = Kinematics.mandelstam([P(_i) for _i in range(4)], [M] * 4, [s, t, u])
+    _routing_kinematics = Kinematics(momenta=[K(0), *[P(_i) for _i in range(4)]])
     options = {
         "maximum_bridges": 0,
         "self_energy": None,
@@ -109,10 +119,10 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
             * _diagram.numerator_prefactor_expression()
         )
         assert _coefficient == coupling**2 / 2
-        _master_kinematics = hep.Kinematics(
+        _master_kinematics = Kinematics(
             _dimension, momenta=[K(0), P(0)]
         ).with_scalar_product(P(0), P(0), _invariant)
-        _master_family = hep.IntegralFamily(
+        _master_family = IntegralFamily(
             [K(0)],
             [P(0)],
             [
@@ -148,8 +158,8 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
     assert _self_numerator == coupling / 2
     _self_family = _self_diagram.propagator_family()
     assert len(_self_family.denominators) == 1
-    _vacuum = hep.Kinematics(_dimension, momenta=[K(0)])
-    _tadpole_family = hep.IntegralFamily(
+    _vacuum = Kinematics(_dimension, momenta=[K(0)])
+    _tadpole_family = IntegralFamily(
         [K(0)], [], [_vacuum.scalar_product(K(0), K(0)) - M], kinematics=_vacuum
     )
     _self_reduction = oneloop.reduce(_tadpole_family, [1])
@@ -227,15 +237,16 @@ def _(mo):
 @app.cell
 def _(
     E,
+    Kinematics,
     M,
     Matrix,
+    Model,
     P,
     Replacement,
     S,
     Symbol,
     coupling,
     eps,
-    hep,
     json,
     loop_poles,
     mass,
@@ -286,9 +297,9 @@ def _(
                 "couplings": [[_name]],
             }
         )
-    _ct_model = hep.Model.from_json(json.dumps(_specification))
+    _ct_model = Model.from_json(json.dumps(_specification))
     ct_diagrams, ct_amplitudes = ({}, {})
-    _self_kinematics = hep.Kinematics().with_scalar_product(P(0), P(0), p2)
+    _self_kinematics = Kinematics().with_scalar_product(P(0), P(0), p2)
     for _label, _legs, _count in [("self_energy", 1, 2), ("vertex", 2, 1)]:
         _result = _ct_model.process(
             [particle.name] * _legs, [particle.name] * _legs

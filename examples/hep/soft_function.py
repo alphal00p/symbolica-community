@@ -10,7 +10,7 @@ def _():
     import numpy as np
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep
+    from symbolica.community.hep import Kinematics, Model
     from symbolica.community.spenso import (
         GammaChainOrdering,
         GammaSimplifySettings,
@@ -24,13 +24,14 @@ def _():
 
     return (
         E,
-        S,
-        Symbol,
-        hep,
         GammaChainOrdering,
         GammaSimplifySettings,
+        Kinematics,
+        Model,
         Representation,
+        S,
         SchoonschipSettings,
+        Symbol,
         TensorExpression,
         TensorName,
         mo,
@@ -66,18 +67,19 @@ def _(mo):
 @app.cell
 def _(
     E,
-    S,
-    Symbol,
-    hep,
     GammaChainOrdering,
     GammaSimplifySettings,
+    Kinematics,
+    Model,
     Representation,
+    S,
     SchoonschipSettings,
+    Symbol,
     TensorExpression,
     TensorName,
 ):
     def calculate_soft_function():
-        model = hep.Model.standard_model()
+        model = Model.standard_model()
         vertices = [
             vertex
             for vertex in model.vertex_rules
@@ -93,7 +95,7 @@ def _(
         ]
         mink, bis = S("spenso::mink", "spenso::bis")
         zero, one = E("0"), E("1")
-        kin = hep.Kinematics(D, momenta=[n, nb, k])
+        kin = Kinematics(D, momenta=[n, nb, k])
         for vector in (n, nb, k):
             kin = kin.with_scalar_product(vector, vector, zero)
         kin = (

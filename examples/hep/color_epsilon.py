@@ -11,12 +11,12 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community import hep as fk
+    from symbolica.community.hep import Model
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("color_epsilon")
 
-    return E, S, TensorExpression, fk, json, mo
+    return (E, Model, S, TensorExpression, json, mo)
 
 
 @app.cell(hide_code=True)
@@ -43,8 +43,8 @@ def _(mo):
 
 
 @app.cell
-def _(fk, json):
-    _source = json.loads(fk.Model.standard_model().to_json())
+def _(Model, json):
+    _source = json.loads(Model.standard_model().to_json())
     _source["name"] = "triplet_scalar_epsilon_example"
     _epsilon_base = max(abs(_p["pdg_code"]) for _p in _source["particles"]) + 10
     _scalar = next(_p for _p in _source["particles"] if _p["name"] == "G+")
@@ -76,12 +76,12 @@ def _(fk, json):
         )
         for _conjugate in (False, True)
     ]
-    epsilon_model = fk.Model.from_json(json.dumps(_source))
+    epsilon_model = Model.from_json(json.dumps(_source))
     return (epsilon_model,)
 
 
 @app.cell
-def _(epsilon_model, fk, mo):
+def _(epsilon_model, mo):
     epsilon_diagrams = []
     for _incoming, _outgoing in (
         (["X1"], ["X2~", "X3~"]),
