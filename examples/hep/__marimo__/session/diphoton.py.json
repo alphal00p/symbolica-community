@@ -7,7 +7,7 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "f5e4481bec7acb000970b1bfcdcb4353",
+      "code_hash": "4fa7f1376bae53efcddda907a71b90b6",
       "outputs": [
         {
           "type": "data",
@@ -20,12 +20,12 @@
     },
     {
       "id": "MJUe",
-      "code_hash": "86826553a494b2ce36c246f726e8588e",
+      "code_hash": "713a9d87199ccbb5d2196033034bea98",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"electronpositron-annihilation-into-two-photons\">Electron\u2013positron annihilation into two photons</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/compton.py\">Compton scattering</a></span>\n<span class=\"paragraph\">Generate both diagrams for <marimo-tex class=\"arithmatex\">||(e^-e^+\\to\\gamma\\gamma||)</marimo-tex>, retaining the electron\nmass and their interference. Average the two incoming spins and sum the\nphoton polarizations using shared Feynkit, Spenso and Idenso operations.\nThe result agrees with the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/Tree/ElAel-GaGa\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc example</a>.\nThe kinematics obey <marimo-tex class=\"arithmatex\">||(s+t+u=2m_e^2||)</marimo-tex>.</span></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"electronpositron-annihilation-into-two-photons\">Electron\u2013positron annihilation into two photons</h1>\n<span class=\"paragraph\"><a href=\"/\">Browse all notebooks</a> \u00b7 <a href=\"/?file=hep/sewn_diphoton.py\">Sewn diphoton calculation</a> \u00b7\n<a href=\"/?file=hep/compton.py\">Compton scattering</a></span>\n<span class=\"paragraph\">Generate both diagrams for <marimo-tex class=\"arithmatex\">||(e^-e^+\\to\\gamma\\gamma||)</marimo-tex>, retaining the electron\nmass and their interference. Average the two incoming spins and sum the\nphoton polarizations using shared Feynkit, Spenso and Idenso operations.\nThe result agrees with the\n<a href=\"https://feyncalc.github.io/FeynCalcExamples/QED/Tree/ElAel-GaGa\" rel=\"noopener noreferrer\" target=\"_blank\">FeynCalc example</a>.\nThe kinematics obey <marimo-tex class=\"arithmatex\">||(s+t+u=2m_e^2||)</marimo-tex>.</span></span>"
           }
         }
       ],
@@ -33,7 +33,7 @@
     },
     {
       "id": "vblA",
-      "code_hash": "1cc02084272c7005487b79ce05e4b02a",
+      "code_hash": "6810b3d4884316da8a4d45772b38a562",
       "outputs": [
         {
           "type": "data",
@@ -46,7 +46,13 @@
     },
     {
       "id": "bkHC",
-      "code_hash": "feaa40a10190c9e37715ec237d1e3416",
+      "code_hash": "870325a0b6f7c6158e1e866116878543",
+      "outputs": [],
+      "console": []
+    },
+    {
+      "id": "xhhe",
+      "code_hash": "b467c34039e87d538ba65d390d81a201",
       "outputs": [],
       "console": []
     },
@@ -57,7 +63,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='lEQa-0' random-id='36d6935b-c096-c836-ecb7-537b02fa8f95'><marimo-dropdown data-initial-value='[&quot;Covariant&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003ePhoton polarization reference&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Covariant&quot;,&quot;Other photon&quot;,&quot;Incoming electron&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='lEQa-0' random-id='ccd285d9-3060-e9bd-3af6-859ac8d96c1f'><marimo-dropdown data-initial-value='[&quot;Covariant&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003ePhoton polarization reference&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Covariant&quot;,&quot;Other photon&quot;,&quot;Incoming electron&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
           }
         }
       ],
@@ -65,7 +71,7 @@
     },
     {
       "id": "PKri",
-      "code_hash": "27f20d9b4ab73e02baaa6e6600d5acdc",
+      "code_hash": "5ab237c46aee303381f42e1ba0e419fd",
       "outputs": [
         {
           "type": "data",
@@ -91,7 +97,7 @@
     },
     {
       "id": "SFPL",
-      "code_hash": "1a6ad49a3c466e7757d8174c36d2e83c",
+      "code_hash": "5f1e8133acb2d8dc44af74472e216193",
       "outputs": [
         {
           "type": "data",
@@ -109,7 +115,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='f7273c2d-c31f-e2e6-39a1-2825e6a60702'><marimo-slider data-initial-value='0.8' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eAcceptance C&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.1' data-stop='0.95' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='ac69db5a-6be7-c391-6f04-2460003244bd'><marimo-slider data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eIncoming speed beta&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.05' data-stop='1.0' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='ec49087b-71e3-11f8-b21f-6cd95541a8db'><marimo-slider data-initial-value='0.8' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eAcceptance C&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.1' data-stop='0.95' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='af7df24e-4ef0-78f5-d0fa-7b02e38f4aba'><marimo-slider data-initial-value='1.0' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eIncoming speed beta&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-start='0.05' data-stop='1.0' data-step='0.05' data-steps='[]' data-debounce='false' data-disabled='false' data-orientation='&quot;horizontal&quot;' data-show-value='false' data-include-input='false' data-full-width='false'></marimo-slider></marimo-ui-element></div>"
           }
         }
       ],
@@ -122,7 +128,7 @@
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Accepted event rate: <strong>1.03460105538811</strong> \u00d7 <marimo-tex class=\"arithmatex\">||(2\\pi\\alpha^2/s||)</marimo-tex>.</span></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Accepted event rate: <strong>1.39722457733622</strong> \u00d7 <marimo-tex class=\"arithmatex\">||(2\\pi\\alpha^2/s||)</marimo-tex>.</span></span>"
           }
         }
       ],

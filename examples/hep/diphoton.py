@@ -13,11 +13,9 @@ def _():
     from symbolica import E, S, Symbol
     from symbolica import set_namespace as _set_namespace
     from symbolica.community import hep as fk
-    from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("diphoton")
-
-    return CookSettings, E, S, Symbol, TensorExpression, fk, mo
+    return E, S, Symbol, fk, mo
 
 
 @app.cell(hide_code=True)
@@ -45,91 +43,35 @@ def _(fk):
 
 
 @app.cell
-def _(CookSettings, E, S, TensorExpression, fk, mo, model):
+def _(E, S, fk, mo, model):
     P = S("gammalooprs::P")
     s = S("s", is_positive=True)
     t, u, mass, charge = S("t", "u", "UFO::Me", "UFO::ee")
     kin = fk.Kinematics.mandelstam(
         [P(0), P(1), P(2), P(3)], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
     )
+
     generated = fk.Generator(model).generate(
         fk.Process.amplitude(["e-", "e+"], ["a", "a"]).with_loop_count(0, 0),
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=["V_98"],
         numerator_grouping=None,
-        progress=None,
     )
     assert len(generated.diagrams) == 2
-    ports = S(
-        "external_0",
-        "external_1",
-        "external_2",
-        "external_3",
-    )
-    a, b, c, inverse, wave, rep, index = S(
-        "a_", "b_", "c_", "inverse_", "wave_", "rep_", "index_"
-    )
-    conjugate, adjoint_index = S("spenso::conj", "adjoint_index")
-    amplitude = E("0")
-    denominators = []
-    for diagram in generated.diagrams:
-        numerator = model.expand_couplings(
-            diagram.numerator_expression(in_lmb=True).to_expression()
-        )
-        # Align external tensor ports with the generated wavefunctions, independent
-        # of the two diagrams' internal half-edge numbering.
-        for edge in diagram.external_edges:
-            matches = list(
-                diagram.projector_expression().match(
-                    wave(edge.id, rep(4, index)), max_level=0
-                )
-            )
-            assert len(matches) == 1
-            match = dict(matches[0])
-            numerator = numerator.replace(
-                match[rep](4, match[index]), match[rep](4, ports[edge.external_index])
-            )
-        denominator = kin.apply(
-            diagram.denominator_expression(dimension=4, in_lmb=True)
-            .to_expression()
-            .replace(S("gammalooprs::denom")(a, b, c, inverse), inverse)
-        ).expand()
-        denominators.append(denominator)
-        amplitude += (
-            numerator
-            * diagram.overall_factor_expression(evaluate=True)
-            * diagram.numerator_prefactor_expression()
-            / denominator
-        )
-    assert set(denominators) == {t - mass**2, u - mass**2}
-    operator = TensorExpression(amplitude.expand())
-    assert len(operator.structure.slots) == 4
-    adjoint = operator.dirac_adjoint().expand().simplify_gamma0().to_expression()
-    adjoint = adjoint.replace(conjugate(P(a, b)), P(a, b))
-    # Physical momenta and tree-level parameters are real; keep that assumption explicit.
-    for real in (mass, charge, s, t, u):
-        adjoint = adjoint.replace(conjugate(real), real)
-    adjoint = TensorExpression(adjoint).wrap_indices(adjoint_index)
-    # Dirac adjunction exchanges the open fermion chain's endpoints.
-    spins = model.particle("e-").spin_sum(
-        P(0), ports[0], adjoint_index(ports[1]), average=True
-    ) * model.particle("e+").spin_sum(
-        P(1), adjoint_index(ports[0]), ports[1], average=True
-    )
-    spin_summed = (
-        TensorExpression(
-            operator.to_expression() * adjoint * spins,
-            cook_indices=CookSettings.indices(),
-        )
-        .expand()
-        .simplify_gamma()
-        .expand()
-        .simplify_gamma()
-    )
+    amplitude = fk.Amplitude(generated.diagrams)
+    assert amplitude.expression().rank == 4
+    spin_summed = amplitude.squared().sum_spins([0, 1], average_initial=True)
 
-    mo.hstack(generated.diagrams)
-    return P, adjoint_index, charge, kin, mass, ports, s, spin_summed, t, u
+    mo.vstack([mo.hstack(generated.diagrams), amplitude])
+    return P, charge, kin, mass, s, spin_summed, t, u
+
+
+@app.cell
+def _(mo, model):
+    generated2 = model.generate_diagrams(["e-", "e+"], ["a", "a"], maximum_bridges=None)
+    mo.vstack([mo.hstack(generated2.diagrams)])
+    return
 
 
 @app.cell
@@ -144,42 +86,26 @@ def _(mo):
 
 
 @app.cell
-def _(
-    CookSettings,
-    E,
-    P,
-    TensorExpression,
-    adjoint_index,
-    charge,
-    gauge,
-    kin,
-    mass,
-    mo,
-    model,
-    ports,
-    s,
-    spin_summed,
-    t,
-    u,
-):
+def _(E, P, charge, gauge, kin, mass, mo, s, spin_summed, t, u):
     _references = {
         "Covariant": (None, None),
         "Other photon": (P(3), P(2)),
         "Incoming electron": (P(0), P(0)),
     }[gauge.value]
-    _density = E("1")
-    for _position, _reference in zip((2, 3), _references):
-        _density *= model.particle("a").spin_sum(
-            P(_position),
-            ports[_position],
-            adjoint_index(ports[_position]),
-            reference=_reference,
-        )
     _scalar = (
-        TensorExpression(
-            spin_summed.to_expression() * _density, cook_indices=CookSettings.indices()
+        spin_summed.sum_spins(
+            [2, 3],
+            references={
+                position: reference
+                for position, reference in zip((2, 3), _references)
+                if reference is not None
+            },
         )
+        .expression()
         .expand()
+        .simplify_gamma()
+        .expand()
+        .simplify_gamma()
         .simplify_metrics()
         .to_dots()
     )
