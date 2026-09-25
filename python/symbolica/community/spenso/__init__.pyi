@@ -14,6 +14,7 @@ AUTO: _AutoIndex
 _: _AutoIndex
 _Components: typing.TypeAlias = "Expression | float | complex | list[_Components]"
 _IndexInput: typing.TypeAlias = "int | str | Expression | Slot | _AutoIndex"
+_LibraryDefault = typing.TypeVar("_LibraryDefault")
 _RealInput: typing.TypeAlias = "Float | int | float | str | decimal.Decimal"
 _ReplacementInput: typing.TypeAlias = "_ScalarInput | HeldExpression | typing.Callable[[dict[Expression, Expression]], Expression]"
 _ScalarInput: typing.TypeAlias = "Expression | int | float | complex | str | decimal.Decimal | Float | ComplexFloat | tuple[_RealInput, _RealInput]"
@@ -465,14 +466,20 @@ class GammaSimplifySettings:
         Whether closed gamma chains are evaluated as traces.
         """
     @property
+    def expand_traces(self) -> builtins.bool:
+        r"""
+        Whether each evaluated trace body is expanded, preserving surrounding factors.
+        Ignored when `evaluate_traces` is false.
+        """
+    @property
     def expand_three_gamma_epsilon(self) -> builtins.bool:
         r"""
         Whether three four-dimensional gammas expand into a gamma5-epsilon basis.
         """
     def __repr__(self) -> builtins.str: ...
-    def __new__(cls, *, chain_ordering: typing.Optional[GammaChainOrdering] = None, evaluate_traces: builtins.bool = True, expand_three_gamma_epsilon: builtins.bool = False) -> GammaSimplifySettings:
+    def __new__(cls, *, chain_ordering: typing.Optional[GammaChainOrdering] = None, evaluate_traces: builtins.bool = True, expand_traces: builtins.bool = False, expand_three_gamma_epsilon: builtins.bool = False) -> GammaSimplifySettings:
         r"""
-        Configure gamma-chain ordering, trace evaluation, and the optional 4D three-gamma identity.
+        Configure gamma-chain ordering, trace evaluation and expansion, and the optional 4D identity.
 
         `chain_ordering=None` selects `GammaChainOrdering.RepeatedPairs`.
         """
@@ -1685,8 +1692,18 @@ class TensorExpression(Expression):
         Construct a tensor expression, preserving existing tensor metadata or inferring it.
 
         Pass `cook_indices=CookSettings.indices()` to flatten nested index payloads before
-        inferring the tensor interface, including expressions returned by `wrap_indices()`.
+        inferring the tensor interface for arbitrary nested index expressions.
         Custom settings control the index encoding, source filters, and output tags.
+        """
+    @staticmethod
+    def unsafe_from_expression(expression: _ScalarInput, *, structure: TensorStructure) -> TensorExpression:
+        r"""
+        Construct without tensor inference, validation, or contraction normalization.
+
+        Copy the supplied TensorStructure exactly, including logical slot order,
+        identity, and arguments. The caller must ensure it matches the expression;
+        subsequent tensor operations trust it. Prefer TensorExpression(expression)
+        when that correspondence has not already been established.
         """
     @staticmethod
     def g(rep: Representation, other: typing.Optional[Representation] = None) -> TensorExpression:
@@ -1863,7 +1880,7 @@ class TensorExpression(Expression):
         """
     def simplify(self, settings: typing.Optional[SimplifySettings] = None) -> TensorExpression:
         r"""
-        Apply Idenso's gamma-algebra simplifier and re-infer the tensor interface.
+        Apply the selected algebra identities while retaining the ordered external interface.
 
         Apply selected algebra passes to a fixed point and return a tensor expression.
 
@@ -1952,7 +1969,7 @@ class TensorExpression(Expression):
         """
     def simplify_metrics(self) -> TensorExpression:
         r"""
-        Contract metric and identity tensors and re-infer the external interface.
+        Contract metric and identity tensors while retaining the ordered external interface.
 
         Simplifies contractions involving metric tensors and identity tensors.
 
@@ -1991,7 +2008,7 @@ class TensorExpression(Expression):
         """
     def simplify_color(self, settings: typing.Optional[ColorSimplifySettings] = None) -> TensorExpression:
         r"""
-        Apply Idenso's SU(N) color-algebra simplifier and re-infer the interface.
+        Apply Idenso's SU(N) color-algebra simplifier while retaining the external interface.
 
         Simplify registered Spenso color chains, traces, generators, and structure constants.
 
@@ -2244,45 +2261,21 @@ class TensorExpression(Expression):
 
         Results retain the Rust API's `(structure, coefficient)` factorization.
         """
-    def wrap_indices(self, header: Expression) -> Expression:
+    def wrap_indices(self, header: Expression) -> TensorExpression:
         r"""
-        Wrap every abstract-index payload with `header` and return an ordinary expression.
+        Put all explicit indices in a named scope, preserving the tensor interface.
 
-        Wrapped payloads are not Spenso abstract indices until they are cooked, so the result
-        intentionally has no `TensorExpression` interface.
+        Scoped copies contract internally as before, but their indices are distinct
+        from the original. Alphabet display uses primed labels for scoped indices.
+        Applying the same outer scope twice is idempotent; different scopes nest.
 
-        Wrap all abstract indices with a header symbol
-
-        # Arguments
-        - `self`: input expression containing tensor indices
-        - `header`: symbol to use as the wrapper function for all indices
-
-        # Returns
-        Expression with all indices wrapped by the header symbol.
-
-        # Examples:
-        ```python
-        from symbolica.community.spenso import TensorName, Slot, Representation
-        import symbolica as sp
-        from symbolica.community.spenso import TensorExpression
-
-        T = TensorName("T")
-        rep = Representation.euc(3)
-        # With slots (creates TensorExpression)
-        mu = rep("mu")
-        nu = rep("nu")
-        x = sp.S("x")
-        tensor_with_args = T(x, mu, nu)  # T(x; mu, nu)
-        print(tensor_with_args)
-        print(tensor_with_args.wrap_indices(sp.S('wrap')))
-
-        ```
+        >>> conjugate = tensor.dirac_adjoint().wrap_indices(S("bra"))
         """
     def cook_indices(self, settings: typing.Optional[CookSettings] = None) -> TensorExpression:
         r"""
         Flatten nested representation-index payloads using index cooking by default.
 
-        Convert complex nested index structures into flattened symbolic names.
+        Transform both the expression and its stored explicit slots, retaining logical order.
 
         Transforms hierarchical index expressions within tensor function arguments
         into simplified, flat symbolic representations. This "cooking" process is
@@ -2305,24 +2298,14 @@ class TensorExpression(Expression):
 
         # Examples:
         ```python
-        from symbolica.community.spenso import TensorName, Slot, Representation
-        import symbolica as sp
-        from symbolica.community.spenso import CookSettings, TensorExpression
+        from symbolica import S
+        from symbolica.community.spenso import CookSettings, Representation, TensorName
 
-        T = TensorName("T")
         rep = Representation.euc(3)
-        # With slots (creates TensorExpression)
-        mu = rep("mu")
-        nu = rep("nu")
-        x = sp.S("x")
-        tensor_with_args = T(x, mu, nu)  # T(x; mu, nu)
-        print(tensor_with_args)
-        print(
-            TensorExpression(
-                tensor_with_args.wrap_indices(sp.S("wrap")),
-                cook_indices=CookSettings.indices(),
-            )
-        )
+        template = TensorName("T")(rep, rep)
+        nested = S("outer")(S("mu"))
+        # Cook an arbitrary payload when filling the tensor's open ports.
+        tensor = template(nested, "nu", cook_indices=CookSettings.indices())
         ```
         """
     def cook_function(self, settings: typing.Optional[CookSettings] = None) -> Expression:
@@ -2424,7 +2407,7 @@ class TensorExpression(Expression):
 
         Raises `ValueError` when the expression cannot be parsed as a tensor network.
 
-        Lists the dangling (external, uncontracted) indices present in the expression.
+        Uses the stored logical slot order when all external ports are indexed.
 
         Identifies and returns all indices that are not summed over (i.e., not dummy
         indices). These are the "free" indices that appear in the final result and
@@ -2642,7 +2625,7 @@ class TensorExpression(Expression):
         """
     def collect_chains(self, representation: Representation) -> TensorExpression:
         r"""
-        Join adjacent open chains for `representation` and re-infer the interface.
+        Join adjacent open chains for `representation`, retaining the external interface.
 
         Join adjacent open chains for the supplied representation.
         """
@@ -2981,6 +2964,30 @@ class TensorLibrary:
 
         >>> stored = lib[TensorName("T")(1, Representation.euc(3))]
         >>> reference = stored.expression()
+        """
+    def __contains__(self, key: TensorExpression | TensorName | Expression | builtins.str) -> builtins.bool:
+        r"""
+        Whether a signature can be resolved, including dimension-dependent factories.
+
+        Accepts the same keys as lookup. Missing signatures return False;
+        ambiguous names and invalid keys raise the same errors as lookup.
+        Factories are checked without constructing their component data.
+        """
+    @typing.overload
+    def get(self, key: TensorExpression | TensorName | Expression | builtins.str) -> Tensor | None:
+        r"""
+        Retrieve an independent Tensor snapshot, or default if the signature is missing.
+
+        The default is None when omitted. Ambiguous names and invalid keys raise
+        the same errors as lookup; they do not return the default.
+        """
+    @typing.overload
+    def get(self, key: TensorExpression | TensorName | Expression | builtins.str, default: _LibraryDefault) -> Tensor | _LibraryDefault:
+        r"""
+        Retrieve an independent Tensor snapshot, or default if the signature is missing.
+
+        The default is None when omitted. Ambiguous names and invalid keys raise
+        the same errors as lookup; they do not return the default.
         """
     def __len__(self) -> builtins.int:
         r"""
