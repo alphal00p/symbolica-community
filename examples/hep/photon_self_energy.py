@@ -51,13 +51,16 @@ def _(mo):
 
 @app.cell
 def _(E, S, TensorExpression, hep, mo, oneloop, qed_model):
-    _generated = hep.Generator(qed_model).generate(
-        hep.Process.amplitude(["a"], ["a"]).with_loop_count(1, 1),
-        max_vertices=2,
-        maximum_bridges=None,
-        vertex_allow=["V_98"],
-        numerator_grouping=None,
-        progress=None,
+    _generated = (
+        hep.Process(qed_model, ["a"], ["a"])
+        .with_loop_count(1, 1)
+        .generate_diagrams(
+            max_vertices=2,
+            maximum_bridges=None,
+            vertex_allow=["V_98"],
+            numerator_grouping=None,
+            progress=None,
+        )
     )
     assert len(_generated.diagrams) == 1
     _diagram = _generated.diagrams[0]
@@ -136,9 +139,7 @@ def _(E, S, TensorExpression, hep, mo, oneloop, qed_model):
     assert (photon_uv + 4 * _charge**2 / 3).together() == 0
     _finite = dict(_laurent.expand().coefficient_list(_eps))[E("1")]
     _a_coeffs = oneloop.master_coefficients(oneloop.A0(_mass**2, E("1")))
-    _b_coeffs = oneloop.master_coefficients(
-        oneloop.B0(_s, _mass**2, _mass**2, E("1"))
-    )
+    _b_coeffs = oneloop.master_coefficients(oneloop.B0(_s, _mass**2, _mass**2, E("1")))
     _finite = _finite.replace(_af, _a_coeffs[0]).replace(_bf, _b_coeffs[0])
     photon_finite_values = [
         {

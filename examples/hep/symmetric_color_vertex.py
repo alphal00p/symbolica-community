@@ -58,12 +58,12 @@ def _(fk, json):
 
 @app.cell
 def _(adjoint_model, fk, mo):
-    symmetric_generated = fk.Generator(adjoint_model).generate(
-        fk.Process.amplitude(["H", "H"], ["H"]).with_loop_count(0, 0),
-        max_vertices=1,
-        maximum_bridges=None,
-        numerator_grouping=None,
-        progress=None,
+    symmetric_generated = (
+        fk.Process(adjoint_model, ["H", "H"], ["H"])
+        .with_loop_count(0, 0)
+        .generate_diagrams(
+            max_vertices=1, maximum_bridges=None, numerator_grouping=None, progress=None
+        )
     )
     assert len(symmetric_generated.diagrams) == 1
     mo.vstack(

@@ -67,13 +67,11 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
         ("vertex", 2, 1, 2),
         ("tree", 2, 0, 1),
     ]:
-        diagrams[_label] = model.generate_diagrams(
-            [particle] * _legs,
-            [particle] * _legs,
-            loops=_loops,
-            max_vertices=_vertices,
-            **options,
-        ).diagrams
+        diagrams[_label] = (
+            hep.Process(model, [particle] * _legs, [particle] * _legs)
+            .generate_diagrams(loops=_loops, max_vertices=_vertices, **options)
+            .diagrams
+        )
     assert [len(diagrams[_k]) for _k in ("self_energy", "vertex", "tree")] == [1, 3, 1]
     _tree = diagrams["tree"][0]
     tree_amplitude = (
@@ -115,7 +113,8 @@ def _(E, Replacement, S, Symbol, hep, mo, oneloop):
             _dimension, momenta=[K(0), P(0)]
         ).with_scalar_product(P(0), P(0), _invariant)
         _master_family = hep.IntegralFamily(
-            [K(0)], [P(0)],
+            [K(0)],
+            [P(0)],
             [
                 _master_kinematics.scalar_product(_momentum, _momentum) - M
                 for _momentum in [K(0), K(0) + P(0)]
@@ -292,13 +291,10 @@ def _(
     ct_diagrams, ct_amplitudes = ({}, {})
     _self_kinematics = hep.Kinematics().with_scalar_product(P(0), P(0), p2)
     for _label, _legs, _count in [("self_energy", 1, 2), ("vertex", 2, 1)]:
-        _result = _ct_model.generate_diagrams(
-            [particle.name] * _legs,
-            [particle.name] * _legs,
-            loops=0,
-            max_vertices=1,
-            coupling_orders={"CT": 1},
-            **options,
+        _result = hep.Process(
+            _ct_model, [particle.name] * _legs, [particle.name] * _legs
+        ).generate_diagrams(
+            loops=0, max_vertices=1, coupling_orders={"CT": 1}, **options
         )
         assert len(_result.diagrams) == _count
         ct_diagrams[_label] = _result.diagrams

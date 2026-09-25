@@ -78,10 +78,7 @@ def _(E, S, TensorExpression, fk):
             else [_me**2, _mm**2, _me**2, _mm**2]
         )
         _kin = fk.Kinematics.mandelstam([_P(0), _P(1), _k1, _k2], _masses, [_s, _t, _u])
-        _result = _model.generate_diagrams(
-            _incoming,
-            _outgoing,
-            kind="cross_section",
+        _result = fk.Process(_model, _incoming, _outgoing).generate_cross_section(
             loops=1,
             max_vertices=4,
             maximum_bridges=None,

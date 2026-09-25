@@ -51,13 +51,16 @@ def _(mo):
 
 @app.cell
 def _(CookSettings, E, S, TensorExpression, hep, mo, qed_model):
-    _result = hep.Generator(qed_model).generate(
-        hep.Process.amplitude(["e-", "a"], ["e-", "a"]).with_loop_count(0, 0),
-        max_vertices=2,
-        maximum_bridges=None,
-        vertex_allow=["V_98"],
-        numerator_grouping=None,
-        progress=None,
+    _result = (
+        hep.Process(qed_model, ["e-", "a"], ["e-", "a"])
+        .with_loop_count(0, 0)
+        .generate_diagrams(
+            max_vertices=2,
+            maximum_bridges=None,
+            vertex_allow=["V_98"],
+            numerator_grouping=None,
+            progress=None,
+        )
     )
     _P = S("gammalooprs::P")
     _s, _t, _u, _me, _e = S("s", "t", "u", "UFO::Me", "UFO::ee")

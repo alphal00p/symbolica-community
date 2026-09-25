@@ -74,13 +74,10 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep):
     assert len(_vertices) == 1
 
     # Establish the Yukawa phase from the same typed model rule used in the loop.
-    _tree_result = model.generate_diagrams(
-        [_higgs],
-        [_top, _top.antiparticle],
-        max_vertices=1,
-        vertex_allow=_vertices,
-        numerator_grouping=None,
-        progress=None,
+    _tree_result = hep.Process(
+        model, [_higgs], [_top, _top.antiparticle]
+    ).generate_diagrams(
+        max_vertices=1, vertex_allow=_vertices, numerator_grouping=None, progress=None
     )
     assert len(_tree_result.diagrams) == 1
     yukawa_tree = _tree_result.diagrams[0]
@@ -93,9 +90,7 @@ def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep):
     assert yukawa_tree.overall_factor_expression(evaluate=True) == E("1")
     assert yukawa_tree.numerator_prefactor_expression() == E("1")
 
-    _generated = model.generate_diagrams(
-        [_higgs],
-        [],
+    _generated = hep.Process(model, [_higgs], []).generate_diagrams(
         loops=1,
         max_vertices=1,
         allow_self_loops=True,
@@ -323,9 +318,7 @@ def _(Af, D, E, I, L, Nc, derivative, eps, m, mo, reductions, tadpole, y):
 
 @app.cell(hide_code=True)
 def _(Af, finite, m, oneloop, scale2):
-    master_coefficients = oneloop.master_coefficients(
-        oneloop.A0(m**2, scale2)
-    )
+    master_coefficients = oneloop.master_coefficients(oneloop.A0(m**2, scale2))
     numeric_expressions = {
         _label: _expression.replace(Af, master_coefficients[0])
         for _label, _expression in finite.items()

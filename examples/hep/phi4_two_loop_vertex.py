@@ -158,6 +158,7 @@ async def _(self_energy_app):
 
 @app.cell
 def _(
+    hep,
     E,
     K,
     Replacement,
@@ -194,18 +195,20 @@ def _(
     vacuum_poles,
     zero,
 ):
-    vertex_diagrams = model.generate_diagrams(
-        [particle] * 2,
-        [particle] * 2,
-        loops=2,
-        max_vertices=3,
-        maximum_bridges=0,
-        self_energy=None,
-        tadpoles=None,
-        zero_snails=None,
-        numerator_grouping=None,
-        progress=None,
-    ).diagrams
+    vertex_diagrams = (
+        hep.Process(model, [particle] * 2, [particle] * 2)
+        .generate_diagrams(
+            loops=2,
+            max_vertices=3,
+            maximum_bridges=0,
+            self_energy=None,
+            tadpoles=None,
+            zero_snails=None,
+            numerator_grouping=None,
+            progress=None,
+        )
+        .diagrams
+    )
     assert len(vertex_diagrams) == 12
     vertex_input, vertex_terms = (zero, [])
     for _diagram in vertex_diagrams:
@@ -338,6 +341,7 @@ def _(mo):
 
 @app.cell
 def _(
+    hep,
     E,
     K,
     Matrix,
@@ -389,9 +393,9 @@ def _(
     vertex_ct_input, _vertex_tree_ct = (zero, zero)
     _external_index = S("external_")
     for _loops, _order in [(1, 1), (0, 2)]:
-        _result = ct_model.generate_diagrams(
-            [particle.name] * 2,
-            [particle.name] * 2,
+        _result = hep.Process(
+            ct_model, [particle.name] * 2, [particle.name] * 2
+        ).generate_diagrams(
             loops=_loops,
             max_vertices=3 if _loops else 1,
             coupling_orders={"CT": _order},

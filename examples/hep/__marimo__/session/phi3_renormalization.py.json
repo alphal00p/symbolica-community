@@ -6,16 +6,9 @@
   },
   "cells": [
     {
-      "id": "Hbol",
-      "code_hash": "b3bfa6b5058e1e1e5abc10130a05618f",
-      "outputs": [
-        {
-          "type": "data",
-          "data": {
-            "text/plain": ""
-          }
-        }
-      ],
+      "id": "setup",
+      "code_hash": null,
+      "outputs": [],
       "console": []
     },
     {
@@ -33,23 +26,9 @@
     },
     {
       "id": "vblA",
-      "code_hash": "05a58b09712a29931f6cb087734bd23c",
-      "outputs": [
-        {
-          "type": "error",
-          "ename": "exception",
-          "evalue": "unexpected argument: external-centroid-bias",
-          "traceback": null
-        }
-      ],
-      "console": [
-        {
-          "type": "stream",
-          "name": "stderr",
-          "text": "<span class=\"codehilite\"><div class=\"highlight\"><pre><span></span><span class=\"gt\">Traceback (most recent call last):</span>\n  File <span class=\"nb\">\"/tmp/marimo_3856790/__marimo__cell_vblA_.py\"</span>, line <span class=\"m\">78</span>, in <span class=\"n\">&lt;module&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">mo</span><span class=\"o\">.</span><span class=\"n\">hstack</span><span class=\"p\">([</span><span class=\"n\">diagrams</span><span class=\"p\">[</span><span class=\"s2\">\"self_energy\"</span><span class=\"p\">],</span> <span class=\"n\">diagrams</span><span class=\"p\">[</span><span class=\"s2\">\"vertex\"</span><span class=\"p\">]]),</span>\n<span class=\"w\">    </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_plugins/stateless/flex.py\"</span>, line <span class=\"m\">248</span>, in <span class=\"n\">hstack</span>\n<span class=\"w\">    </span><span class=\"k\">return</span> <span class=\"n\">_flex</span><span class=\"p\">(</span>\n<span class=\"w\">           </span><span class=\"pm\">^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_plugins/stateless/flex.py\"</span>, line <span class=\"m\">111</span>, in <span class=\"n\">_flex</span>\n<span class=\"w\">    </span><span class=\"n\">live_children</span> <span class=\"o\">=</span> <span class=\"p\">[</span><span class=\"n\">as_html</span><span class=\"p\">(</span><span class=\"n\">item</span><span class=\"p\">)</span> <span class=\"k\">for</span> <span class=\"n\">item</span> <span class=\"ow\">in</span> <span class=\"n\">items</span><span class=\"p\">]</span>\n<span class=\"w\">                    </span><span class=\"pm\">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_plugins/stateless/flex.py\"</span>, line <span class=\"m\">111</span>, in <span class=\"n\">&lt;listcomp&gt;</span>\n<span class=\"w\">    </span><span class=\"n\">live_children</span> <span class=\"o\">=</span> <span class=\"p\">[</span><span class=\"n\">as_html</span><span class=\"p\">(</span><span class=\"n\">item</span><span class=\"p\">)</span> <span class=\"k\">for</span> <span class=\"n\">item</span> <span class=\"ow\">in</span> <span class=\"n\">items</span><span class=\"p\">]</span>\n<span class=\"w\">                     </span><span class=\"pm\">^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_output/formatting.py\"</span>, line <span class=\"m\">314</span>, in <span class=\"n\">as_html</span>\n<span class=\"w\">    </span><span class=\"n\">mimetype</span><span class=\"p\">,</span> <span class=\"n\">data</span> <span class=\"o\">=</span> <span class=\"n\">formatter</span><span class=\"p\">(</span><span class=\"n\">value</span><span class=\"p\">)</span>\n<span class=\"w\">                     </span><span class=\"pm\">^^^^^^^^^^^^^^^^</span>\n  File <span class=\"nb\">\"/common/dev/symbolica-community/main/.venv-feynkit/lib/python3.11/site-packages/marimo/_output/formatters/repr_formatters.py\"</span>, line <span class=\"m\">190</span>, in <span class=\"n\">f_repr</span>\n<span class=\"w\">    </span><span class=\"n\">contents</span> <span class=\"o\">=</span> <span class=\"n\">method</span><span class=\"p\">()</span>\n<span class=\"w\">               </span><span class=\"pm\">^^^^^^^^</span>\n<span class=\"gr\">typst.TypstError</span>: <span class=\"n\">unexpected argument: external-centroid-bias</span>\n</pre></div>\n</span>",
-          "mimetype": "application/vnd.marimo+traceback"
-        }
-      ]
+      "code_hash": "7f964364317336950be5943df1b36424",
+      "outputs": [],
+      "console": []
     },
     {
       "id": "bkHC",
@@ -66,13 +45,13 @@
     },
     {
       "id": "lEQa",
-      "code_hash": "5cb8a8800411dae56bd88c4f62f84326",
+      "code_hash": "eb5787b57addf1351fc09a7ac9579da7",
       "outputs": [
         {
-          "type": "error",
-          "ename": "exception",
-          "evalue": "An ancestor raised an exception (TypstError): ",
-          "traceback": null
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Doubled and tripled tadpoles</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>d\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>-2\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span>/M</div><div style=\"white-space: pre-wrap; margin: 0;\">1/8\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>-6\u00b7d\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>+8\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span>+d\u00b2\u00b7I<span style=\"color: rgb(0, 95, 175)\">(</span>1<span style=\"color: rgb(0, 95, 175)\">)</span><span style=\"color: rgb(128, 128, 128)\">)</span>/M\u00b2</div></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Self-energy and vertex UV residues</strong></span></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><div style=\"white-space: pre-wrap; margin: 0;\">1/2\u00b7g\u00b2</div><div style=\"white-space: pre-wrap; margin: 0;\">0</div></div><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Finite zero-momentum triangle</strong></span></span><div style=\"white-space: pre-wrap; margin: 0;\">-1/2\u00b7g\u00b3/M</div></div>"
+          }
         }
       ],
       "console": []
@@ -92,26 +71,19 @@
     },
     {
       "id": "Xref",
-      "code_hash": "2dda4333dbdb561ef40996550a815b1b",
-      "outputs": [
-        {
-          "type": "error",
-          "ename": "exception",
-          "evalue": "An ancestor raised an exception (TypstError): ",
-          "traceback": null
-        }
-      ],
+      "code_hash": "6bd59e497435df1e984298b9657ee015",
+      "outputs": [],
       "console": []
     },
     {
       "id": "SFPL",
-      "code_hash": "8a4f242d2eca3de5f1e980d4d64c941d",
+      "code_hash": "9253b391dc5065fda2ec8d3e75629718",
       "outputs": [
         {
-          "type": "error",
-          "ename": "exception",
-          "evalue": "An ancestor raised an exception (TypstError): ",
-          "traceback": null
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
         }
       ],
       "console": []
@@ -123,7 +95,7 @@
         {
           "type": "data",
           "data": {
-            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='2f7dd307-9024-56eb-3f76-a746d8912735'><marimo-dropdown data-initial-value='[&quot;MSbar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSubtraction scheme&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;MSbar&quot;,&quot;MS&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='3cf24b9a-1def-6c18-3a33-987d30e6b8f9'><marimo-dropdown data-initial-value='[&quot;Zero external momentum&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eFinite evaluation&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Zero external momentum&quot;,&quot;Spacelike momentum&quot;,&quot;Timelike below threshold&quot;,&quot;Lighter scalar&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='BYtC-0' random-id='6174bda5-d496-69ef-1dc7-54872d613320'><marimo-dropdown data-initial-value='[&quot;MSbar&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eSubtraction scheme&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;MSbar&quot;,&quot;MS&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element><marimo-ui-element object-id='BYtC-1' random-id='d6fd5ffb-314e-2e98-107e-65558f839442'><marimo-dropdown data-initial-value='[&quot;Zero external momentum&quot;]' data-label='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003eFinite evaluation&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-options='[&quot;Zero external momentum&quot;,&quot;Spacelike momentum&quot;,&quot;Timelike below threshold&quot;,&quot;Lighter scalar&quot;]' data-allow-select-none='false' data-searchable='false' data-full-width='false' data-disabled='false'></marimo-dropdown></marimo-ui-element></div>"
           }
         }
       ],
@@ -134,10 +106,10 @@
       "code_hash": "d057bc3fbacf6f33b8c1d5b9646d6645",
       "outputs": [
         {
-          "type": "error",
-          "ename": "exception",
-          "evalue": "An ancestor raised an exception (TypstError): ",
-          "traceback": null
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"renormalization-constants\">Renormalization constants</h2></span><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Z\u03c6</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1</div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Zm</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1<span style=\"color: rgb(205, 205, 0)\">+</span>1/32\u00b7g\u00b2\u00b7<span style=\"color: rgb(128, 128, 128)\">(</span>log4pi-gamma_E+1/eps<span style=\"color: rgb(128, 128, 128)\">)</span>/<span style=\"color: rgb(128, 128, 128)\">(</span><span style=\"color: rgb(205, 0, 205)\">\ud835\udf0b</span>\u00b2\u00b7M<span style=\"color: rgb(128, 128, 128)\">)</span></div></div><div style='display: flex;flex: 1;flex-direction: row;justify-content: space-between;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Zg</span></span><div style=\"white-space: pre-wrap; margin: 0;\">1</div></div><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"finite-renormalized-amplitudes\">Finite renormalized amplitudes</h2></span><marimo-ui-element object-id='RGSE-0' random-id='637f5bac-0490-ebed-b329-bd789e79a47e'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;M&#92;&quot;:1.0,&#92;&quot;g&#92;&quot;:0.5,&#92;&quot;\u03bc\u00b2&#92;&quot;:1.0,&#92;&quot;p\u00b2&#92;&quot;:0.0}]&quot;' data-total-rows='1' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><marimo-ui-element object-id='RGSE-1' random-id='3114a307-7e0f-c94c-7ae8-ed3faaa3201e'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Amplitude&#92;&quot;:&#92;&quot;Self-energy at p\u00b2=0&#92;&quot;,&#92;&quot;Generated + IBP/OneLOop&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Independent reference&#92;&quot;:&#92;&quot;0j&#92;&quot;},{&#92;&quot;Amplitude&#92;&quot;:&#92;&quot;Triangle at zero external momenta&#92;&quot;,&#92;&quot;Generated + IBP/OneLOop&#92;&quot;:&#92;&quot;(-0-0.00039578587360288194j)&#92;&quot;,&#92;&quot;Independent reference&#92;&quot;:&#92;&quot;(-0-0.00039578587360288194j)&#92;&quot;},{&#92;&quot;Amplitude&#92;&quot;:&#92;&quot;Self-energy at selected p\u00b2&#92;&quot;,&#92;&quot;Generated + IBP/OneLOop&#92;&quot;:&#92;&quot;0j&#92;&quot;,&#92;&quot;Independent reference&#92;&quot;:&#92;&quot;0j&#92;&quot;}]&quot;' data-total-rows='3' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-show-filters='false' data-show-download='true' data-show-search='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-hidden-columns='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Maximum absolute difference: <code>0</code>. The self-energy reference is a direct Feynman-parameter integral. The triangle reference is the zero-momentum simplex integral \u2212g\u00b3/(2M). The displayed amplitudes include i/(16\u03c0\u00b2).</span></span></div>"
+          }
         }
       ],
       "console": []

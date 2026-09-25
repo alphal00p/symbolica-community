@@ -17,7 +17,6 @@ def _():
     from symbolica.community.spenso import CookSettings, TensorExpression
 
     _set_namespace("muon_decay")
-
     return (
         CookSettings,
         E,
@@ -43,6 +42,7 @@ def _(mo):
 
     Write $M=m_\mu$, $m=m_e$, $s=(p_e+p_{\bar\nu_e})^2$ and $t=(p_e+p_{\nu_\mu})^2$. Both neutrinos are massless. The coupling convention is $e^4=32G_F^2m_W^4\sin^4\theta_W$.
     """)
+    return
 
 
 @app.cell
@@ -56,9 +56,7 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
         and any(_p in ("e-", "e+", "mu-", "mu+") for _p in _v.particles)
     ]
     assert len(_vertices) == 4
-    _generated = _model.generate_diagrams(
-        ["mu-"],
-        ["e-", "ve~", "vm"],
+    _generated = hep.Process(_model, ["mu-"], ["e-", "ve~", "vm"]).generate_diagrams(
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=_vertices,
@@ -208,7 +206,21 @@ def _(CookSettings, E, Replacement, S, Symbol, TensorExpression, hep, mo):
     dalitz_measure = (
         _kin.three_body_phase_space(P(1), P(2), P(3)).replace(_mm, M).together()
     )
-    return GF, M, P, dalitz_measure, fermi, finite_W, mass, one, pi, s, t, z, zero
+    return (
+        GF,
+        M,
+        P,
+        dalitz_measure,
+        fermi,
+        finite_W,
+        mass,
+        one,
+        pi,
+        s,
+        t,
+        z,
+        zero,
+    )
 
 
 @app.cell(hide_code=True)
@@ -219,6 +231,7 @@ def _(mo):
 
     On the physical domain $m^2<t<M^2$, the two positive square roots are $M^2-t$ and $t-m^2$. The derived boundaries are $m^2M^2/t\leq s\leq M^2+m^2-t$. All final particles are distinct.
     """)
+    return
 
 
 @app.cell
@@ -289,6 +302,7 @@ def _(mo):
 
     For a massless electron, $x_E=2E_e/M$ runs from zero to one. Integrating at fixed $x_E$ derives the normalized Michel spectrum. Expanding the full generated W amplitude also gives its first propagator correction. The finite-mass result uses the Fermi limit; the finite-W result below uses a massless electron.
     """)
+    return
 
 
 @app.cell
@@ -467,6 +481,7 @@ def _(
             ),
         ]
     )
+    return
 
 
 if __name__ == "__main__":

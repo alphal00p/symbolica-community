@@ -2246,7 +2246,7 @@ def _(
                     .schoonschip()
                     .normalize_dots()
                     .to_expression()
-                   # .expand()
+                    # .expand()
                 )
                 _seconds = perf_counter() - _start
                 _cumulative += _seconds

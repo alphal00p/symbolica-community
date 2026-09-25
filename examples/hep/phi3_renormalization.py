@@ -88,12 +88,10 @@ def _(E, S, Symbol, hep, mo):
         ("vertex", 2, 1, 1),
         ("tree", 2, 1, 0),
     ]:
-        _generated = model.generate_diagrams(
-            [particle] * _incoming,
-            [particle] * _outgoing,
-            loops=_loops,
-            max_vertices=_incoming + _outgoing if _loops else 1,
-            **options,
+        _generated = hep.Process(
+            model, [particle] * _incoming, [particle] * _outgoing
+        ).generate_diagrams(
+            loops=_loops, max_vertices=_incoming + _outgoing if _loops else 1, **options
         )
         assert len(_generated.diagrams) == 1
         _diagram = _generated.diagrams[0]
@@ -238,9 +236,9 @@ def _(
     assert (finite["vertex"] + coupling**3 / (2 * M)).together() == zero
     _self_diagram = diagrams["self_energy"]
     _basis = _self_diagram.momentum_basis()
-    _routed_kinematics = hep.Kinematics(d, momenta=[K(0), P(0), P(1)]).with_scalar_product(
-        P(0), P(0), p2
-    )
+    _routed_kinematics = hep.Kinematics(
+        d, momenta=[K(0), P(0), P(1)]
+    ).with_scalar_product(P(0), P(0), p2)
     _shifts = []
     for _edge in _self_diagram.internal_edges:
         _sign = _basis.edge_signatures[_edge.id].loops[0]
@@ -252,7 +250,8 @@ def _(
     )
     assert _invariant == p2
     _bubble_family = hep.IntegralFamily(
-        [K(0)], [P(0)],
+        [K(0)],
+        [P(0)],
         [
             _routed_kinematics.scalar_product(_momentum, _momentum) - M
             for _momentum in [K(0), K(0) + P(0)]
@@ -355,13 +354,10 @@ def _(
     ct_diagrams, _counterterms = ({}, {})
     _self_kinematics = hep.Kinematics().with_scalar_product(P(0), P(0), p2)
     for _label, _incoming, _count in [("self_energy", 1, 2), ("vertex", 2, 1)]:
-        _generated = _ct_model.generate_diagrams(
-            [particle.name] * _incoming,
-            [particle.name],
-            loops=0,
-            max_vertices=1,
-            coupling_orders={"CT": 1},
-            **options,
+        _generated = hep.Process(
+            _ct_model, [particle.name] * _incoming, [particle.name]
+        ).generate_diagrams(
+            loops=0, max_vertices=1, coupling_orders={"CT": 1}, **options
         )
         ct_diagrams[_label] = _generated.diagrams
         assert len(_generated.diagrams) == _count

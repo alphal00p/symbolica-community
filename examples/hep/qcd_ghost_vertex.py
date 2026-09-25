@@ -113,11 +113,9 @@ def _(E, S, Symbol, TensorExpression, hep, json):
             ("self", [particle_name], 1, 1),
         ):
             diagrams = (
-                hep.Generator(model)
-                .generate(
-                    hep.Process.amplitude([particle_name], outgoing).with_loop_count(
-                        loops, loops
-                    ),
+                hep.Process(model, [particle_name], outgoing)
+                .with_loop_count(loops, loops)
+                .generate_diagrams(
                     max_vertices=len(outgoing) - 1 + 2 * loops,
                     maximum_bridges=0,
                     vertex_allow=["V_35", "V_36"],

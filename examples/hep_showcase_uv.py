@@ -359,9 +359,9 @@ def _(mo):
 
 
 @app.cell
-def _(SnailFilterOptions, g, model):
-    diagrams = model.generate_diagrams(
-        [g], [g], loops=1,
+def _(fk, SnailFilterOptions, g, model):
+    diagrams = fk.Process(model, [g], [g]).generate_diagrams(
+        loops=1,
         coupling_orders={"QCD": 2, "QED": 0},
         particle_veto=["c", "t", "s", "u", "d"],
         zero_snails=SnailFilterOptions(),
@@ -566,7 +566,7 @@ def _(mo):
 @app.cell
 def _(D, L, TensorReducer, mink, uv_data):
     tensor_reducer = TensorReducer(D).with_integrated_vector(L(mink(D)))
-    tensor_reduced = tensor_reducer.reduce(uv_data['shifted'])
+    tensor_reduced = tensor_reducer.reduce(uv_data["shifted"])
     tensor_reduced
     return
 
@@ -608,7 +608,7 @@ def _(uv_data):
 
 @app.cell
 def _(E, eps, uv_residue):
-    loop_uv_pole = E("1i") * uv_residue / (16 * E("pi")**2 * eps)
+    loop_uv_pole = E("1i") * uv_residue / (16 * E("pi") ** 2 * eps)
     uv_counterterm = -loop_uv_pole
     uv_counterterm
     return

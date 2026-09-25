@@ -67,7 +67,7 @@ def _(S, oneloop):
     # the shared Feynkit frontend; only scalar masters use its backend namespace.
     k, q1, q2, d = S("k", "q1", "q2", "D")
     A0, B0, C0 = oneloop.A0, oneloop.B0, oneloop.C0
-    mass2,mu2,mass2B = S("mass2", "mu2","mass2B", is_positive=True)
+    mass2, mu2, mass2B = S("mass2", "mu2", "mass2B", is_positive=True)
     p1sq, p2sq, invariant = S(
         "p1sq",
         "p2sq",
@@ -188,15 +188,27 @@ def _(ComplexFloat, Float, mo, oneloop):
     _exact_master = oneloop.A0(2, 1)
     _exact_finite = oneloop.A0(0, 2, 1)
     _float_finite = oneloop.A0(0, Float("2", decimal_digits=50), 1)
-    _complex_finite = oneloop.A0(
-        0, ComplexFloat("2", "-0.1", decimal_digits=50), 1
+    _complex_finite = oneloop.A0(0, ComplexFloat("2", "-0.1", decimal_digits=50), 1)
+    mo.vstack(
+        [
+            mo.hstack(
+                [mo.md("Untagged master for inspection"), _exact_master],
+                justify="start",
+            ),
+            mo.hstack([mo.md("Exact tagged call"), _exact_finite], justify="start"),
+            mo.hstack(
+                [mo.md("Native result from a 50-digit Float input"), _float_finite],
+                justify="start",
+            ),
+            mo.hstack(
+                [
+                    mo.md("Native result from a 50-digit ComplexFloat input"),
+                    _complex_finite,
+                ],
+                justify="start",
+            ),
+        ]
     )
-    mo.vstack([
-        mo.hstack([mo.md("Untagged master for inspection"), _exact_master], justify="start"),
-        mo.hstack([mo.md("Exact tagged call"), _exact_finite], justify="start"),
-        mo.hstack([mo.md("Native result from a 50-digit Float input"), _float_finite], justify="start"),
-        mo.hstack([mo.md("Native result from a 50-digit ComplexFloat input"), _complex_finite], justify="start"),
-    ])
     return
 
 
@@ -339,7 +351,7 @@ def _():
 @app.cell
 def _(inspection_master_hs, oneloop):
 
-    hs_expr=oneloop.select_branch(oneloop.get_expression(inspection_master_hs))
+    hs_expr = oneloop.select_branch(oneloop.get_expression(inspection_master_hs))
     return
 
 
@@ -351,7 +363,9 @@ def _(C0, N, Replacement, mass2, mass2B, mu2, oneloop):
         Replacement(mu2, N(1)),
     ]
     hs_expr2 = C0(0, -mass2, mass2, mass2, mass2, mass2B, mu2)
-    oneloop.select_branch(oneloop.get_expression(hs_expr2,max_nodes=100000000), branch_probe2)
+    oneloop.select_branch(
+        oneloop.get_expression(hs_expr2, max_nodes=100000000), branch_probe2
+    )
     return
 
 

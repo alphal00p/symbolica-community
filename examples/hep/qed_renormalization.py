@@ -132,16 +132,19 @@ def _(E, S, Symbol, TensorExpression, hep, json, oneloop):
         ("photon", [photon], [photon], 1),
         ("vertex", [electron], [photon, electron], 1),
     ]:
-        _generated = hep.Generator(model).generate(
-            hep.Process.amplitude(_incoming, _outgoing).with_loop_count(_loops, _loops),
-            max_vertices=len(_incoming) + len(_outgoing) - 2 + 2 * _loops,
-            maximum_bridges=0,
-            vertex_allow=vertices,
-            self_energy=None,
-            tadpoles=None,
-            zero_snails=None,
-            numerator_grouping=None,
-            progress=None,
+        _generated = (
+            hep.Process(model, _incoming, _outgoing)
+            .with_loop_count(_loops, _loops)
+            .generate_diagrams(
+                max_vertices=len(_incoming) + len(_outgoing) - 2 + 2 * _loops,
+                maximum_bridges=0,
+                vertex_allow=vertices,
+                self_energy=None,
+                tadpoles=None,
+                zero_snails=None,
+                numerator_grouping=None,
+                progress=None,
+            )
         )
         assert len(_generated.diagrams) == 1
         _diagram = _generated.diagrams[0]
@@ -529,16 +532,15 @@ def _(
             "numerator_grouping": None,
             "progress": None,
         }
-        _generated = _ct_model.generate_diagrams(
-            _incoming,
-            _outgoing,
-            coupling_orders={"QED": _qed_order, "CT": 1},
-            **_options,
+        _generated = hep.Process(_ct_model, _incoming, _outgoing).generate_diagrams(
+            coupling_orders={"QED": _qed_order, "CT": 1}, **_options
         )
         assert len(_generated.diagrams) == _count
-        assert not _ct_model.generate_diagrams(
-            _incoming, _outgoing, coupling_orders={"CT": 0}, **_options
-        ).diagrams
+        assert (
+            not hep.Process(_ct_model, _incoming, _outgoing)
+            .generate_diagrams(coupling_orders={"CT": 0}, **_options)
+            .diagrams
+        )
         ct_diagrams[_kind] = _generated.diagrams
         for _diagram in _generated.diagrams:
             assert len(_diagram.internal_edges) == 0
@@ -851,9 +853,9 @@ def _(
         ("photon", [_massless_photon], [_massless_photon]),
         ("vertex", [_massless_electron], [_massless_photon, _massless_electron]),
     ]:
-        _generated = _massless_model.generate_diagrams(
-            _incoming,
-            _outgoing,
+        _generated = hep.Process(
+            _massless_model, _incoming, _outgoing
+        ).generate_diagrams(
             loops=1,
             max_vertices=len(_incoming) + len(_outgoing),
             maximum_bridges=0,

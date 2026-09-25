@@ -113,16 +113,19 @@ def _(E, Replacement, S, TensorExpression, hep, qed_model):
 
     zpsi_one = -one / eps
 
-    result = hep.Generator(qed_model).generate(
-        hep.Process.amplitude(["e-"], ["e-"]).with_loop_count(2, 2),
-        max_vertices=4,
-        maximum_bridges=0,
-        vertex_allow=["V_98"],
-        self_energy=None,
-        tadpoles=None,
-        zero_snails=None,
-        numerator_grouping=None,
-        progress=None,
+    result = (
+        hep.Process(qed_model, ["e-"], ["e-"])
+        .with_loop_count(2, 2)
+        .generate_diagrams(
+            max_vertices=4,
+            maximum_bridges=0,
+            vertex_allow=["V_98"],
+            self_energy=None,
+            tadpoles=None,
+            zero_snails=None,
+            numerator_grouping=None,
+            progress=None,
+        )
     )
     assert len(result.diagrams) == 3
     targets, diagram_integrals, flavor_weights = set(), [], []

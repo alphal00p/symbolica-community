@@ -1,7 +1,10 @@
 import marimo
 
 __generated_with = "0.24.0"
-app = marimo.App(width="medium", app_title="Two-loop photon renormalization and IBP")
+app = marimo.App(
+    width="medium",
+    app_title="Two-loop photon renormalization and IBP",
+)
 
 
 @app.cell
@@ -16,7 +19,6 @@ def _():
     from symbolica.community.spenso import TensorExpression
 
     _set_namespace("photon_2l")
-
     return E, Replacement, S, TensorExpression, hep, json, math, mo
 
 
@@ -41,6 +43,7 @@ def _(mo):
     Both tensor coefficients are checked independently. Adjust the gauge,
     flavor count and auxiliary mass below to see the cancellation.
     """)
+    return
 
 
 @app.cell(hide_code=True)
@@ -108,16 +111,19 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     ppmunu = p(0, mink(d, mu)) * p(0, mink(d, nu))
     Qg, Qpp = S("metric_basis", "momentum_basis")
     Q, dot = S("gammalooprs::Q", "spenso::dot")
-    result = hep.Generator(model).generate(
-        hep.Process.amplitude(["a"], ["a"]).with_loop_count(2, 2),
-        max_vertices=4,
-        maximum_bridges=0,
-        vertex_allow=["V_98"],
-        self_energy=None,
-        tadpoles=None,
-        zero_snails=None,
-        numerator_grouping=None,
-        progress=None,
+    result = (
+        hep.Process(model, ["a"], ["a"])
+        .with_loop_count(2, 2)
+        .generate_diagrams(
+            max_vertices=4,
+            maximum_bridges=0,
+            vertex_allow=["V_98"],
+            self_energy=None,
+            tadpoles=None,
+            zero_snails=None,
+            numerator_grouping=None,
+            progress=None,
+        )
     )
     assert len(result.diagrams) == 3
     targets, diagram_integrals = set(), []
@@ -313,16 +319,19 @@ def _(E, Replacement, S, TensorExpression, hep, json):
     # Keeping the latter's squared denominator through IR rearrangement is essential.
     # Physical electron mass is zero, so its mass counterterm contributes nothing.
     # These explicit local insertions are not automatic CT/forest generation.
-    one_loop_generated = hep.Generator(model).generate(
-        hep.Process.amplitude(["a"], ["a"]).with_loop_count(1, 1),
-        max_vertices=2,
-        maximum_bridges=0,
-        vertex_allow=["V_98"],
-        self_energy=None,
-        tadpoles=None,
-        zero_snails=None,
-        numerator_grouping=None,
-        progress=None,
+    one_loop_generated = (
+        hep.Process(model, ["a"], ["a"])
+        .with_loop_count(1, 1)
+        .generate_diagrams(
+            max_vertices=2,
+            maximum_bridges=0,
+            vertex_allow=["V_98"],
+            self_energy=None,
+            tadpoles=None,
+            zero_snails=None,
+            numerator_grouping=None,
+            progress=None,
+        )
     )
     assert len(one_loop_generated.diagrams) == 1
     one_loop_diagram = one_loop_generated.diagrams[0]
@@ -521,34 +530,33 @@ def _(E, Replacement, S, TensorExpression, hep, json):
         - flavors * (mass_squared * xi * Qg * (2 / eps**2 - 1 / eps) - 2 * T / eps)
     ).together() == zero
     return (
-        bare_finite,
-        result,
-        one_loop_diagram,
-        family,
-        solution,
-        ct_family,
-        ct_solution,
-        bare_uv,
-        ct_sum,
-        za_one,
-        zam_one,
-        za_two,
-        zam_two,
-        tree_two,
-        eps,
-        xi,
-        flavors,
-        mass_squared,
-        log_mass,
-        log_4pi,
-        s,
         Qg,
         Qpp,
-        d,
-        gmunu,
-        ppmunu,
-        integral,
+        bare_finite,
+        bare_uv,
+        ct_family,
         ct_integral,
+        ct_solution,
+        ct_sum,
+        eps,
+        family,
+        flavors,
+        gmunu,
+        integral,
+        log_4pi,
+        log_mass,
+        mass_squared,
+        one_loop_diagram,
+        ppmunu,
+        result,
+        s,
+        solution,
+        tree_two,
+        xi,
+        za_one,
+        za_two,
+        zam_one,
+        zam_two,
     )
 
 
@@ -574,6 +582,7 @@ def _(mo):
     The two-loop master coefficients are checked to be regular at $D=4$.
     The remaining loop-measure factor is $(4\pi)^{L\epsilon}$.
     """)
+    return
 
 
 @app.cell
@@ -618,6 +627,7 @@ def _(
             ),
         }
     )
+    return
 
 
 @app.cell
@@ -630,6 +640,7 @@ def _(mo, one_loop_diagram, result):
             one_loop_diagram,
         ]
     )
+    return
 
 
 @app.cell(hide_code=True)
@@ -652,6 +663,7 @@ def _(mo):
     $iM(Z_{Am}^2-1)g^{\mu\nu}$, so its two-loop term includes
     $2\delta Z_{Am,2}+\delta Z_{Am,1}^2$.
     """)
+    return
 
 
 @app.cell
@@ -678,6 +690,7 @@ def _(mo, za_one, za_two, zam_one, zam_two):
             ),
         ]
     )
+    return
 
 
 @app.cell
@@ -704,8 +717,8 @@ def _(
     flavor_count,
     flavors,
     gauge_parameter,
-    log_mass,
     log_4pi,
+    log_mass,
     mass_squared,
     math,
     mo,
@@ -775,7 +788,7 @@ def _(
             mo.md(f"Largest cancellation residual: **{cancellation_error:.1e}**"),
         ]
     )
-    return cancellation_error, selected_constants
+    return
 
 
 if __name__ == "__main__":

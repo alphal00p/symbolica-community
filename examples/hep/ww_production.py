@@ -54,9 +54,7 @@ def _(CookSettings, E, S, Symbol, TensorExpression, hep):
         for _v in model.vertex_rules
         if set(_v.particles) <= {"e-", "e+", "a", "Z", "W-", "W+", "ve", "ve~", "H"}
     ]
-    generated = model.generate_diagrams(
-        ["e-", "e+"],
-        ["W-", "W+"],
+    generated = hep.Process(model, ["e-", "e+"], ["W-", "W+"]).generate_diagrams(
         max_vertices=2,
         maximum_bridges=None,
         vertex_allow=_vertices,

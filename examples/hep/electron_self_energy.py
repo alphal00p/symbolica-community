@@ -81,9 +81,7 @@ def _(E, S, Symbol, TensorExpression, hep, json):
         == sorted([_electron.name, _electron.antiname, _photon.name])
     ]
     assert len(_vertices) == 1
-    result = model.generate_diagrams(
-        [_electron],
-        [_electron],
+    result = hep.Process(model, [_electron], [_electron]).generate_diagrams(
         loops=1,
         max_vertices=2,
         maximum_bridges=0,
@@ -123,13 +121,10 @@ def _(E, S, Symbol, TensorExpression, hep, json):
     # carry +i and -i. Their product gives the unweighted kernel -e^2 N.
     # Both generated e->e and e->gamma e amplitudes have an additional external
     # Wick-ordering factor -1. Establish that sign independently at tree level.
-    _tree_result = model.generate_diagrams(
-        [_electron],
-        [_photon, _electron],
-        max_vertices=1,
-        vertex_allow=_vertices,
-        numerator_grouping=None,
-        progress=None,
+    _tree_result = hep.Process(
+        model, [_electron], [_photon, _electron]
+    ).generate_diagrams(
+        max_vertices=1, vertex_allow=_vertices, numerator_grouping=None, progress=None
     )
     assert len(_tree_result.diagrams) == 1
     tree_diagram = _tree_result.diagrams[0]
@@ -489,12 +484,8 @@ def _(
 
     # Shared OneLOop callbacks. Preserve the D-dependent coefficients through the
     # Laurent expansion: the finite rational terms are -xi and +2 respectively.
-    a_coefficients = oneloop.master_coefficients(
-        oneloop.A0(mass**2, scale2)
-    )
-    b_coefficients = oneloop.master_coefficients(
-        oneloop.B0(s, mass**2, 0, scale2)
-    )
+    a_coefficients = oneloop.master_coefficients(oneloop.A0(mass**2, scale2))
+    b_coefficients = oneloop.master_coefficients(oneloop.B0(s, mass**2, 0, scale2))
     finite_oneloop = [
         _expression.replace(Af, a_coefficients[0]).replace(Bf, b_coefficients[0])
         for _expression in finite

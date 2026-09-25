@@ -51,24 +51,21 @@ def _(E, S, fk, mo, model):
         [P(0), P(1), P(2), P(3)], [mass**2, mass**2, E("0"), E("0")], [s, t, u]
     )
 
-    generated = fk.Generator(model).generate(
-        fk.Process.amplitude(["e-", "e+"], ["a", "a"]).with_loop_count(0, 0),
-        max_vertices=2,
-        vertex_allow=["V_98"],
-        numerator_grouping=None,
-    )
-    assert len(generated.diagrams) == 2
-    amplitude = fk.Amplitude(generated.diagrams)
+    process = fk.Process(model, ["e-", "e+"], ["a", "a"])
+    amplitude = process.generate_amplitude(max_vertices=2, vertex_allow=["V_98"])
+    assert len(amplitude.diagrams) == 2
     assert amplitude.expression().rank == 4
     spin_summed = amplitude.squared().sum_spins([0, 1], average_initial=True)
 
-    mo.vstack([mo.hstack(generated.diagrams), amplitude])
+    mo.vstack([mo.hstack(amplitude.diagrams), amplitude])
     return P, charge, kin, mass, s, spin_summed, t, u
 
 
 @app.cell
-def _(mo, model):
-    generated2 = model.generate_diagrams(["e-", "e+"], ["a", "a"], maximum_bridges=None)
+def _(fk, mo, model):
+    generated2 = fk.Process(model, ["e-", "e+"], ["a", "a"]).generate_diagrams(
+        maximum_bridges=None
+    )
     mo.vstack([mo.hstack(generated2.diagrams)])
     return
 

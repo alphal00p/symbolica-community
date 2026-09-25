@@ -177,9 +177,7 @@ def _(
             2,
         ),
     ]:
-        _generated = model.generate_diagrams(
-            _incoming,
-            _outgoing,
+        _generated = hep.Process(model, _incoming, _outgoing).generate_diagrams(
             loops=_loops,
             max_vertices=len(_incoming) + len(_outgoing) - 2 + 2 * _loops,
             maximum_bridges=0,
@@ -743,16 +741,15 @@ def _(
             "numerator_grouping": None,
             "progress": None,
         }
-        _generated = _ct_model.generate_diagrams(
-            _incoming,
-            _outgoing,
-            coupling_orders={"QCD": _qcd_order, "CT": 1},
-            **_options,
+        _generated = hep.Process(_ct_model, _incoming, _outgoing).generate_diagrams(
+            coupling_orders={"QCD": _qcd_order, "CT": 1}, **_options
         )
         assert len(_generated.diagrams) == _count
-        assert not _ct_model.generate_diagrams(
-            _incoming, _outgoing, coupling_orders={"CT": 0}, **_options
-        ).diagrams
+        assert (
+            not hep.Process(_ct_model, _incoming, _outgoing)
+            .generate_diagrams(coupling_orders={"CT": 0}, **_options)
+            .diagrams
+        )
         ct_diagrams[_kind] = _generated.diagrams
         for _diagram in _generated.diagrams:
             assert len(_diagram.internal_edges) == 0

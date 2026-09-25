@@ -46,13 +46,16 @@ def _(mo):
 
 @app.cell
 def _(ColorSimplifySettings, E, S, Symbol, TensorExpression, hep, mo, qcd_model):
-    _result = hep.Generator(qcd_model).generate(
-        hep.Process.cross_section(["b", "b~"], ["t", "t~"]).with_loop_count(1, 1),
-        max_vertices=4,
-        maximum_bridges=None,
-        vertex_allow=["V_76", "V_137"],
-        numerator_grouping=None,
-        progress=None,
+    _result = (
+        hep.Process(qcd_model, ["b", "b~"], ["t", "t~"])
+        .with_loop_count(1, 1)
+        .generate_cross_section(
+            max_vertices=4,
+            maximum_bridges=None,
+            vertex_allow=["V_76", "V_137"],
+            numerator_grouping=None,
+            progress=None,
+        )
     )
     assert len(_result.diagrams) == 1
     qcd_diagram = _result.diagrams[0]

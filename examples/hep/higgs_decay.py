@@ -71,11 +71,8 @@ def _(CookSettings, E, S, TensorExpression, channel, fk, mo, model):
         "Z bosons": (("Z", "Z"), mz, None, None),
     }[channel.value]
     particles = [model.particle(name) for name in particle_names]
-    generated = fk.Generator(model).generate(
-        fk.Process.amplitude(["H"], particles),
-        max_vertices=1,
-        numerator_grouping=None,
-        progress=None,
+    generated = fk.Process(model, ["H"], particles).generate_diagrams(
+        max_vertices=1, numerator_grouping=None, progress=None
     )
     assert len(generated.diagrams) == 1
     diagram = generated.diagrams[0]

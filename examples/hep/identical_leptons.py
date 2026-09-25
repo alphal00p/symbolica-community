@@ -69,13 +69,16 @@ def _(
     _kinematics = fk.Kinematics.mandelstam(
         [P(_position) for _position in range(4)], [mass**2] * 4, [s, t, u]
     )
-    lepton_generated = fk.Generator(lepton_model).generate(
-        fk.Process.amplitude(_names[:2], _names[2:]).with_loop_count(0, 0),
-        max_vertices=2,
-        maximum_bridges=None,
-        vertex_allow=["V_98"],
-        numerator_grouping=None,
-        progress=None,
+    lepton_generated = (
+        fk.Process(lepton_model, _names[:2], _names[2:])
+        .with_loop_count(0, 0)
+        .generate_diagrams(
+            max_vertices=2,
+            maximum_bridges=None,
+            vertex_allow=["V_98"],
+            numerator_grouping=None,
+            progress=None,
+        )
     )
     assert len(lepton_generated.diagrams) == 2
     _ports = S(

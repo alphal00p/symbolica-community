@@ -388,11 +388,9 @@ def _(mo):
 
 
 @app.cell
-def _(g, model):
+def _(fk, g, model):
     loops = 2
-    diagrams = model.generate_diagrams(
-        [g],
-        [g],
+    diagrams = fk.Process(model, [g], [g]).generate_diagrams(
         loops=loops,
         coupling_orders={"QCD": 2 * loops, "QED": 0},
         particle_veto=["c", "t", "s", "u", "d"],

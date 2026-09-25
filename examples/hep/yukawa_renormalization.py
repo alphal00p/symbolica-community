@@ -330,9 +330,9 @@ def _(
                 ("vertex", [_fermion], [_scalar, _fermion], 1, 1),
                 ("quartic", [_scalar] * 2, [_scalar] * 2, 9, 1),
             ]:
-                _generated = _stage_model.generate_diagrams(
-                    _incoming,
-                    _outgoing,
+                _generated = hep.Process(
+                    _stage_model, _incoming, _outgoing
+                ).generate_diagrams(
                     loops=_loops,
                     max_vertices=len(_incoming) + len(_outgoing) if _loops else 1,
                     coupling_orders={"CT": 1} if not _loops else None,
