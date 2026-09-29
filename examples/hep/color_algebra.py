@@ -9,11 +9,26 @@ def _():
     import marimo as mo
     from symbolica import E, S
     from symbolica import set_namespace as _set_namespace
-    from symbolica.community.spenso import AUTO, Representation, TensorExpression, chain
+    from symbolica.community.spenso import (
+        AUTO,
+        ColorSimplifySettings,
+        Representation,
+        TensorExpression,
+        chain,
+    )
 
     _set_namespace("color_algebra")
 
-    return AUTO, E, Representation, S, TensorExpression, chain, mo
+    return (
+        AUTO,
+        ColorSimplifySettings,
+        E,
+        Representation,
+        S,
+        TensorExpression,
+        chain,
+        mo,
+    )
 
 
 @app.cell
@@ -44,34 +59,54 @@ def _(mo):
 
 
 @app.cell
-def _(Representation, TensorExpression):
+def _(ColorSimplifySettings, Representation, TensorExpression):
     generator = TensorExpression.t(8, 3)
     fundamental = Representation.cof(3)
     explicit_word = generator("a", "i", "k") * generator("b", "k", "j")
-    color_word = explicit_word.collect_chains(fundamental)
-    color_conjugate = color_word.spenso_conjugate()
-    _expected = (generator("b", "j", "k") * generator("a", "k", "i")).collect_chains(
-        fundamental
-    )
-    assert color_conjugate.to_expression() == _expected.to_expression()
+    explicit_conjugate = explicit_word.dirac_adjoint()
+    _expected_explicit = generator("a", "k", "i") * generator("b", "j", "k")
+    assert explicit_word.rank == explicit_conjugate.rank == 4
+    assert explicit_conjugate.to_expression() == _expected_explicit.to_expression()
     assert (
-        color_conjugate.spenso_conjugate().to_expression() == color_word.to_expression()
+        explicit_conjugate.dirac_adjoint().to_expression()
+        == explicit_word.to_expression()
     )
-    assert color_conjugate.simplify_color().to_expression() == (
-        explicit_word.spenso_conjugate().simplify_color().to_expression()
+    compact_color_settings = ColorSimplifySettings(
+        evaluate_traces=False, expand_cross_chain_fierz=False
     )
-    assert color_word.dirac_adjoint().to_expression() == color_conjugate.to_expression()
+    color_settings = ColorSimplifySettings(substitute_cof_dimension_invariants=True)
+    color_word = explicit_word.simplify_color(compact_color_settings).to_expression()
+    color_conjugate = color_word.dirac_adjoint()
+    _expected = _expected_explicit.simplify_color(
+        compact_color_settings
+    ).to_expression()
+    assert color_conjugate.to_expression() == _expected.to_expression()
+    assert color_conjugate.dirac_adjoint().to_expression() == color_word.to_expression()
+    assert color_conjugate.simplify_color().to_expression().to_expression() == (
+        explicit_conjugate.simplify_color().to_expression().to_expression()
+    )
 
-    return color_conjugate, color_word, explicit_word, fundamental, generator
+    return (
+        color_conjugate,
+        color_settings,
+        color_word,
+        compact_color_settings,
+        explicit_conjugate,
+        explicit_word,
+        fundamental,
+        generator,
+    )
 
 
 @app.cell
-def _(color_conjugate, color_word, explicit_word, mo):
+def _(color_conjugate, color_word, explicit_conjugate, explicit_word, mo):
     mo.vstack(
         [
             mo.md("**Explicit indexed network**"),
             explicit_word,
-            mo.md("**Collected chain**"),
+            mo.md("**Explicit conjugate**"),
+            explicit_conjugate,
+            mo.md("**Compact chain**"),
             color_word,
             mo.md("**Complex conjugate**"),
             color_conjugate,
@@ -81,40 +116,68 @@ def _(color_conjugate, color_word, explicit_word, mo):
 
 
 @app.cell
-def _(E, color_conjugate, color_word, mo):
-    color_norm = (
-        (color_word * color_conjugate)
-        .simplify_color()
-        .to_cof_dimension_invariants()
-        .simplify_metrics()
-    )
+def _(
+    E,
+    S,
+    color_conjugate,
+    color_settings,
+    color_word,
+    explicit_conjugate,
+    explicit_word,
+    mo,
+):
+    ket_word = explicit_word.wrap_indices(S("ket"), dummies_only=True)
+    bra_word = explicit_conjugate.wrap_indices(S("bra"), dummies_only=True)
+    assert ket_word.structure.slots == explicit_word.structure.slots
+    assert bra_word.structure.slots == explicit_conjugate.structure.slots
+    scoped_norm = ket_word * bra_word
+    color_norm = scoped_norm.simplify_color(color_settings).to_expression()
     assert color_norm.is_scalar
     assert color_norm.to_expression() == E("16/3")
+    assert (color_word * color_conjugate).simplify_color(
+        color_settings
+    ).to_expression().to_expression() == E("16/3")
+    _network = scoped_norm.to_network()
+    _network.execute()
+    numeric_norm = _network.result_scalar()
+    assert abs(complex(numeric_norm) - 16 / 3) < 1e-12
     mo.vstack(
         [
-            mo.md(
-                r"**Summed norm:** $\sum_{a,b,i,j}|(T^aT^b)_{ij}|^2=16/3$ for $T_R=1/2$."
-            ),
+            mo.md(r"""
+            **Independent dummy indices in a squared word**
+
+            Each explicit word sums over its own internal `k`. Multiplying the raw
+            expressions would put `k` on four tensor ports. Give the two copies
+            distinct dummy scopes before multiplying them. `dummies_only=True`
+            keeps the external `a`, `b`, `i`, and `j` labels shared, so those ports
+            contract in the norm. Compact chains already hide their internal sums.
+
+            **Summed norm:** $\sum_{a,b,i,j}|(T^aT^b)_{ij}|^2=16/3$
+            for $T_R=1/2$. The explicit SU(3) component network checks the same value.
+            """),
+            ket_word,
+            bra_word,
             color_norm,
+            numeric_norm,
         ]
     )
-    return
+    return bra_word, color_norm, ket_word, numeric_norm, scoped_norm
 
 
 @app.cell
-def _(fundamental, generator, mo):
+def _(compact_color_settings, generator, mo):
     _explicit_loop = (
         generator("a", "i", "j") * generator("b", "j", "k") * generator("c", "k", "i")
     )
-    color_trace = _explicit_loop.collect_chains(fundamental)
-    color_trace_conjugate = color_trace.spenso_conjugate()
+    color_trace = _explicit_loop.simplify_color(compact_color_settings).to_expression()
+    color_trace_conjugate = color_trace.dirac_adjoint()
     assert color_trace_conjugate.to_expression() != color_trace.to_expression()
     assert (
-        color_trace_conjugate.spenso_conjugate().to_expression()
+        color_trace_conjugate.dirac_adjoint().to_expression()
         == color_trace.to_expression()
     )
-    assert color_trace_conjugate.simplify_color().to_expression() == (
-        _explicit_loop.spenso_conjugate().simplify_color().to_expression()
+    assert color_trace_conjugate.simplify_color().to_expression().to_expression() == (
+        _explicit_loop.dirac_adjoint().simplify_color().to_expression().to_expression()
     )
     mo.vstack(
         [
@@ -145,19 +208,25 @@ def _(Symbols, E, S, TensorExpression, color_trace, color_trace_conjugate, mo):
         color_trace.to_expression().replace(_cyclic(_factors), _antisym(_factors))
     )
     assert (
-        symmetric_color_trace.spenso_conjugate().to_expression()
+        symmetric_color_trace.dirac_adjoint().to_expression()
         == symmetric_color_trace.to_expression()
     )
     assert (
-        antisymmetric_color_trace.spenso_conjugate() + antisymmetric_color_trace
-    ).simplify_color().to_expression() == E("0")
+        antisymmetric_color_trace.dirac_adjoint() + antisymmetric_color_trace
+    ).simplify_color().to_expression().to_expression() == E("0")
     assert (
-        symmetric_color_trace.simplify_color().to_expression()
-        == ((color_trace + color_trace_conjugate) / 2).simplify_color().to_expression()
+        symmetric_color_trace.simplify_color().to_expression().to_expression()
+        == ((color_trace + color_trace_conjugate) / 2)
+        .simplify_color()
+        .to_expression()
+        .to_expression()
     )
     assert (
-        antisymmetric_color_trace.simplify_color().to_expression()
-        == ((color_trace - color_trace_conjugate) / 2).simplify_color().to_expression()
+        antisymmetric_color_trace.simplify_color().expand().to_expression()
+        == ((color_trace - color_trace_conjugate) / 2)
+        .simplify_color()
+        .expand()
+        .to_expression()
     )
     mo.vstack(
         [
@@ -172,7 +241,7 @@ def _(Symbols, E, S, TensorExpression, color_trace, color_trace_conjugate, mo):
             symmetric_color_trace,
             antisymmetric_color_trace,
             mo.md("**Conjugate antisymmetric trace**"),
-            antisymmetric_color_trace.spenso_conjugate(),
+            antisymmetric_color_trace.dirac_adjoint(),
         ]
     )
     return
@@ -187,19 +256,14 @@ def _(AUTO, E, S, TensorExpression, chain, fundamental, generator, mo):
         _z**2 * generator("a", AUTO, AUTO),
         generator("b", AUTO, AUTO),
     )
-    weighted_color_conjugate = weighted_color_word.spenso_conjugate()
+    weighted_color_conjugate = weighted_color_word.dirac_adjoint()
     assert (
-        weighted_color_conjugate.spenso_conjugate().to_expression()
+        weighted_color_conjugate.dirac_adjoint().to_expression()
         == weighted_color_word.to_expression()
     )
-    _norm = TensorExpression(
-        weighted_color_word.to_expression() * weighted_color_conjugate.to_expression()
-    )
-    _network = (
-        TensorExpression(_norm.to_expression().replace(_z, E("1+2𝑖")))
-        .undo_chain()
-        .to_network()
-    )
+    _norm = weighted_color_word * weighted_color_conjugate
+    _numeric_norm = TensorExpression(_norm.to_expression().replace(_z, E("1+2𝑖")))
+    _network = _numeric_norm.to_network()
     _network.execute()
     weighted_numeric_norm = _network.result_scalar()
     assert abs(complex(weighted_numeric_norm) - 400 / 3) < 1e-12
@@ -221,7 +285,7 @@ def _(AUTO, E, S, TensorExpression, chain, fundamental, generator, mo):
             weighted_numeric_norm,
         ]
     )
-    return
+    return (weighted_numeric_norm,)
 
 
 if __name__ == "__main__":

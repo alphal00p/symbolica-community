@@ -301,8 +301,8 @@ def _(mo):
     ## 3. Slashed momenta
 
     Compact momenta inside a gamma factor represent a slash. This example
-    constructs that registered Symbolica form directly:
-    `gamma(bis(4,a), bis(4,b), p(mink(4)))`.
+    registers rank-one momenta, contracts the typed gamma's Lorentz port
+    with the momentum, and simplifies that contraction to its compact form.
     No mass-shell relation is assumed: $p^2$ remains a scalar product.
     """)
     return
@@ -321,13 +321,19 @@ def _(
     spin,
     word,
 ):
-    p, q = S("gamma_tutorial::p", "gamma_tutorial::q")
+    p, q = (
+        TensorName.vector(f"gamma_tutorial::{name}").to_expression()
+        for name in ("p", "q")
+    )
     gamma_head = TensorName.gamma().to_expression()
     metric_head = TensorName.g().to_expression()
 
     def slash(momentum):
-        return TensorExpression(
-            gamma_head(spin.to_expression(), spin.to_expression(), momentum)
+        return (
+            TensorExpression.gamma(4)
+            .contract_ports(TensorExpression(momentum), left=2, right=0)
+            .simplify_gamma()
+            .to_expression()
         )
 
     p_compact, q_compact = p(lorentz.to_expression()), q(lorentz.to_expression())
@@ -4173,9 +4179,10 @@ def _(mo):
     numerators; its 4D/D comparison does not invoke a Dirac trace. Its FORM
     program is `gluon_propagator_ladder.frm`.
 
-    **Measured 2026-09-27:** five alternating warm batches per mode, pinned to
-    CPU 8 on the shared host, using FORM 5.0.0 and the current optimized
-    community host (`4eace950`). These are complete algebra **median CPU
+    **Historical measurement, 2026-09-27:** five alternating warm batches per mode, pinned to
+    CPU 8 on the shared host, using FORM 5.0.0 and the then-current optimized
+    community host (`4eace950`). The newer algebra table below supersedes
+    these timings for the consolidated implementation. These are complete algebra **median CPU
     milliseconds**; ratios divide the two engines' medians:
 
     | Numerator | Dimension | Idenso | FORM | Idenso / FORM | Scalar terms |
@@ -4187,8 +4194,8 @@ def _(mo):
     | Four-loop gluon | 4D | 773.030 | 778.000 | 0.99× | 2,425 |
     | Four-loop gluon | D | 1,410.728 | 1,479.000 | 0.95× | 7,102 |
 
-    The three-loop case meets the requested factor-three threshold in both
-    modes. The four-loop gluonic case is close to FORM; its engine-specific
+    In this historical cohort, the three-loop case met the requested
+    factor-three threshold in both modes. The four-loop gluonic case is close to FORM; its engine-specific
     orders are `1,2,8,3,7,4,6,5` for Idenso and `5,4,6,3,7,2,8,1` for FORM.
     This uses tensor-safe vertex replacement, local Schoonschip contraction,
     and contraction against the remaining opaque vertices. It does not expand
@@ -4229,6 +4236,104 @@ def _(mo):
       --particle gluonic --loops 4 --rounds 5 --cpu 8 --output /tmp/gluon-ladder.json
     ```
     """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    import json as _json
+    from pathlib import Path as _Path
+
+    _report = _json.loads(
+        (
+            _Path(__file__).resolve().parent / "data/tensor_full_stack_timing.json"
+        ).read_text()
+    )
+    _rows = [
+        {
+            "Case": _row["case"],
+            "Checkpoint fresh CPU (ms)": _row["checkpoint_fresh_ms"],
+            "Current fresh CPU (ms)": _row["current_fresh_ms"],
+            "Current prepared CPU (ms)": _row["current_ms"],
+            "FORM body CPU (ms)": _row["FORM_ms"],
+            "Prepared / FORM": _row["current_over_FORM"],
+        }
+        for _row in _report["summary"]
+    ]
+    _phases = [
+        {"Case": _row["case"], "Phase": _phase, "CPU (ms)": _time}
+        for _row in _report["summary"]
+        for _phase, _time in _row["separate_phase_median_ms"].items()
+    ]
+    _history = [
+        {
+            "Case": _row["case"],
+            "Historical M1 CPU (ms)": _row["historical_M1_ms"],
+            "Current CPU (ms)": _row["current_ms"],
+        }
+        for _row in _report["summary"]
+    ]
+    mo.vstack(
+        [
+            mo.md(r"""
+            ## Current algebra simplification timing
+
+            The checkpoint (`78a0a22f`) and current release (`73c246d1`) use
+            the same Symbolica revision (`6a96c9d77b21`). These are three
+            alternating fresh-process rounds on CPU 8 of a shared host,
+            measured on 2026-09-29. Each measured boundary has one fixed warmup.
+
+            **Fresh CPU** is the primary full algebra measurement: it
+            constructs input tensors and reusable rules, reduces them and
+            materializes the requested result inside one continuous clock.
+            **Prepared CPU** starts after input/rule construction. Interpreter
+            startup, imports, checks and rendering are excluded. FORM uses
+            calibrated batches of independent expressions and its body CPU
+            clock, excluding startup and declarations.
+
+            Both releases use their **default contraction order** for the
+            gluonic ladders. The historical original/early labels select
+            different FORM schedules; the native default now chooses its own
+            order. The primary totals include local rule application,
+            interface admission, contraction and explicit materialization.
+            Separate phase medians below are diagnostics, not summed totals.
+
+            The ladder gains coexist with a substantial gamma performance
+            regression relative to the saved M1 implementation. That earlier
+            build used Symbolica `06906976` and the pre-consolidation gamma
+            API; its numbers below are historical algebra context, not a
+            same-source attribution to the latest patch. Exact polynomial or
+            finite exact HEP component checks run outside the timing clocks.
+            The captured production numerator has no FORM program in this
+            suite, so its FORM entry is blank.
+            """),
+            mo.ui.table(_rows, selection=None, pagination=False),
+            mo.accordion(
+                {
+                    "Separate current phase clocks": mo.ui.table(
+                        _phases, selection=None, pagination=False
+                    ),
+                    "Historical M1 context (different dependency and API)": mo.ui.table(
+                        _history, selection=None, pagination=False
+                    ),
+                    "Sources, raw samples and correctness receipts": mo.json(_report),
+                    "Reproduce the full default-order suite": mo.md(r"""
+                    ```sh
+                    python examples/hep/fermion_ladder.py --suite consolidation \
+                      --ladder-route baseline=factorized \
+                      --contraction-order graph --complete-algebra \
+                      --form /path/to/form --rounds 3 --calls 1 --cpu 8 \
+                      --output /tmp/tensor-full-stack.json
+                    ```
+                    Use `--contraction-order explicit` to measure the saved
+                    fixture order instead. Each run preserves raw samples,
+                    FORM source/results, exact/component checks and source
+                    hashes next to its report.
+                    """),
+                }
+            ),
+        ]
+    )
     return
 
 
